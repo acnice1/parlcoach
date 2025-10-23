@@ -82,8 +82,10 @@
 </label>
 
         <div class="row">
-          <button @click="saveDrillPrefs">Save Settings</button>
-          <button @click="startDrill" :disabled="verbs.length===0">Start Drill</button>
+         
+         <button class="start-drills-btn" @click="startDrill()">▶ Start Drills</button>
+ <button @click="saveDrillPrefs">Save Settings</button>
+ 
           <span class="dim" v-if="verbs.length===0">Add verbs first (My Verbs or Seed).</span>
         </div>
       </div>

@@ -210,3 +210,52 @@ body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:
 .rule-help li::marker {
   color: #e6b400; /* accent the bullets */
 }
+
+/* === Unified Button Styles === */
+button,
+.save-btn,
+.save-settings-btn {
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* --- Primary action buttons (Start, Save, Save Settings) --- */
+.start-drills-btn,
+.save-btn,
+.save-settings-btn {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(59, 130, 246, 0.25);
+  margin-top: 12px;
+  display: inline-block;
+}
+
+.start-drills-btn:hover,
+.save-btn:hover,
+.save-settings-btn:hover {
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  box-shadow: 0 5px 14px rgba(59, 130, 246, 0.35);
+  transform: translateY(-1px);
+}
+
+.start-drills-btn:active,
+.save-btn:active,
+.save-settings-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+}
+
+/* --- Layout alignment --- */
+.button-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
