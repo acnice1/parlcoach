@@ -92,50 +92,62 @@
     </div>
 
     <!-- Pretty Drill Card -->
-    <div v-if="drillSession.running && drillSession.question" class="box card drill-card">
-<div
-  :class="['score-display', scoreClass]"
->
-  🧠 Score: {{ drillSession.right }} / {{ drillSession.total }}
-</div>
 
-      <div class="prompt">
-       <div class="hint" v-if="drillSession.question.prompt.english">
-  {{ drillSession.question.prompt.english }}
-</div>
+    <!-- Pretty Drill Card -->
+<div v-if="drillSession.running && drillSession.question" class="box card drill-card">
+  <div :class="['score-display', scoreClass]">
+    🧠 Score: {{ drillSession.right }} / {{ drillSession.total }}
+  </div>
 
-        <div class="label">{{ drillSession.question.prompt.label }}</div>
-      </div>
-
-      <input class="drill-input"
-             v-model="drillSession.input"
-             @keyup.enter="checkDrill"
-             placeholder="Type it exactly (e.g., j’ai parlé)">
-
-      <div class="controls">
-        <button @click="checkDrill" title="Enter">Check</button>
-        <button @click="nextDrill" title="N">Next</button>
-        <button @click="stopDrill" title="Esc">Stop</button>
-      </div>
-
-      <div v-if="drillSession.correct === true" class="feedback correct">
-  ✅ Correct! Next question loading...
-</div>
-      <div class="feedback wrong" v-else-if="drillSession.correct === false">
-        Expected: <strong>{{ drillSession.question.answer }}</strong></div>
-              <div class="meta" v-if="drillSession.question.ex">
-        Ex: {{ drillSession.question.ex.fr }} — {{ drillSession.question.ex.en }}
-      </div>
-<!-- Rule help: shown when answer is wrong -->
-<div class="rule-help" v-if="drillSession.correct === false && drillSession.help?.lines?.length">
-  <h4 style="margin:8px 0 4px">How to form it</h4>
-  <ul style="margin:0; padding-left:18px">
-    <li v-for="(ln,i) in drillSession.help.lines" :key="i">{{ ln }}</li>
-  </ul>
-</div>
-
-
+  <div class="prompt">
+    <div class="hint" v-if="drillSession.question.prompt.english">
+      {{ drillSession.question.prompt.english }}
     </div>
+
+    <div class="label">{{ drillSession.question.prompt.label }}</div>
+
+    <!-- ✅ Input: placeholder INSIDE the element, plus a class -->
+<input
+  ref="drillInputEl"
+  v-model="drillSession.input"
+  @keyup.enter.prevent.stop="checkDrill"
+  placeholder="Type it exactly (e.g., j’ai parlé ou parlé)"
+  class="drill-input"
+  autocomplete="off"
+  autocapitalize="off"
+  spellcheck="false"
+/>
+
+
+    <div class="controls">
+      <button @click="checkDrill" title="Enter">Check</button>
+      <button @click="nextDrill" title="N">Next</button>
+      <button @click="stopDrill" title="Esc">Stop</button>
+    </div>
+
+    <div v-if="drillSession.correct === true" class="feedback correct">
+      ✅ Correct! Next question loading...
+    </div>
+
+    <div v-else-if="drillSession.correct === false" class="feedback wrong">
+      Expected: <strong>{{ drillSession.question.answer }}</strong>
+    </div>
+
+    <div class="meta" v-if="drillSession.question.ex">
+      Ex: {{ drillSession.question.ex.fr }} — {{ drillSession.question.ex.en }}
+    </div>
+
+    <!-- ✅ Single rule-help block (removed duplicate) -->
+    <div class="rule-help" v-if="drillSession.correct === false && drillSession.help?.lines?.length">
+      <h4 style="margin:8px 0 4px">How to form it</h4>
+      <ul style="margin:0; padding-left:18px">
+        <li v-for="(ln,i) in drillSession.help.lines" :key="i">{{ ln }}</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
 
     <div v-else class="box empty">
       <p>Choose persons/tenses and click <strong>Start Drill</strong>.</p>

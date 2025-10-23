@@ -52,6 +52,53 @@ function randChoice(a){ return a[Math.floor(Math.random()*a.length)]; }
 function clamp(n,min,max){ return Math.max(min, Math.min(max,n)); }
 function isVowelStart(s){ return /^[aeiouhâêîôûéèëïüAEIOUH]/.test(s||''); }
 
+// Allow skipping subject pronoun (je/j’, tu, il/elle/on, nous, vous, ils/elles)
+// Accept optional subject pronoun at the start (je/j’/j', tu, il/elle/on, nous, vous, ils/elles).
+// Also tolerates labels like "il/elle" or "ils/elles".
+const PRONOUN_RE = /^\s*(?:j’|j'|je|tu|il(?:\/elle)?|elle(?:\/il)?|on|nous|vous|ils(?:\/elles)?|elles(?:\/ils)?)\s+/i;
+
+function normalize(s){
+  return (s || '')
+    .replace(/\u00A0|\u202F/g, ' ')       // NBSP & narrow no-break space → space
+    .replaceAll('’', "'")                 // curly apostrophe → straight
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function stripSubjectPronoun(s){
+  return normalize(s).replace(PRONOUN_RE, '').trim();
+}
+
+function answersEqual(userInput, expectedFull){
+  // Compare exact AND pronoun-stripped forms
+  const a = normalize(userInput);
+  const b = normalize(expectedFull);
+  return a === b || stripSubjectPronoun(a) === stripSubjectPronoun(b);
+}
+
+
+function normalize(s){
+  return (s || '')
+    .toLowerCase()
+    .replaceAll('’', "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function stripSubjectPronoun(s){
+  return normalize(s).replace(PRONOUN_RE, '').trim();
+}
+
+// one authoritative comparator used everywhere
+function answersEqual(userInput, expectedFull){
+  const a = normalize(userInput);
+  const b = normalize(expectedFull);
+  // accept exact match OR match when both sides drop the pronoun
+  return a === b || stripSubjectPronoun(a) === stripSubjectPronoun(b);
+}
+
+
 // =============================== Schedulers ==================================
 function sm2Schedule(card, q/*0..5*/){
   let ease = card.ease ?? 2.5, reps = card.reps ?? 0, interval = card.interval ?? 0;
@@ -721,51 +768,42 @@ createApp({
       if (!state.drillSession.question) { alert('No verbs available for drill. Add some first.'); state.drillSession.running=false; return; }
       nextTick(()=>drillInputEl.value?.focus());
     }
-    function normalize(s){ return (s||'').toLowerCase().replaceAll('’',"'").replace(/\s+/g,' ').trim(); }
 
-    function checkDrill() {
-      if (!state.drillSession.running || !state.drillSession.question) return;
+  function checkDrill() {
+  if (!state.drillSession.running || !state.drillSession.question) return;
 
-      const expected = normalize(state.drillSession.question.answer);
-      const given = normalize(state.drillSession.input);
+  // 🚧 ignore extra checks during the 2s "Correct!" window
+  if (state.drillSession.correct === true) return;
 
-      function stripPronoun(text) {
-        return text
-          .replace(/^(je|j’|j'|tu|il|elle|on|nous|vous|ils|elles)\s+/i, '')
-          .trim();
-      }
+  const expected = state.drillSession.question.answer; // full form (may include pronoun)
+  const given    = state.drillSession.input;
 
-      const ok =
-        given === expected ||
-        stripPronoun(given) === expected ||
-        given === stripPronoun(expected) ||
-        stripPronoun(given) === stripPronoun(expected);
+  const ok = answersEqual(given, expected);
 
-      state.drillSession.total += 1;
-      if (ok) state.drillSession.right += 1;
-      state.drillSession.correct = ok;
+  state.drillSession.total += 1;
+  if (ok) state.drillSession.right += 1;
+  state.drillSession.correct = ok;
 
-      if (!ok) {
-        const q = state.drillSession.question;
-        state.drillSession.help = buildRuleHelp(
-          q.verb,
-          q.prompt.tense,
-          q.prompt.personIndex
-        );
-      } else {
-        state.drillSession.help = null;
-        // Auto-advance after ~2s when correct
-        setTimeout(() => { nextDrill(); }, 2000);
-      }
+  if (!ok) {
+    const q = state.drillSession.question;
+    state.drillSession.help = buildRuleHelp(q.verb, q.prompt.tense, q.prompt.personIndex);
+    // keep focus so Enter on the correction always hits checkDrill()
+    Vue.nextTick(() => drillInputEl.value?.focus());
+  } else {
+    state.drillSession.help = null;
+    setTimeout(() => { nextDrill(); }, 2000);
+  }
 
-      state.drillSession.history.unshift({
-        at: todayISO(),
-        prompt: state.drillSession.question.prompt,
-        expected: state.drillSession.question.answer,
-        got: state.drillSession.input,
-        ok
-      });
-    }
+  state.drillSession.history.unshift({
+    at: todayISO(),
+    prompt: state.drillSession.question.prompt,
+    expected,
+    got: given,
+    ok
+  });
+}
+
+
 
     function nextDrill(){
       state.drillSession.input=''; state.drillSession.correct=null;

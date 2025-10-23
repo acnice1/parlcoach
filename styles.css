@@ -312,3 +312,21 @@ button,
 .rule-help li::first-line {
   font-weight: 500;
 }
+/* === Wrong Answer Feedback === */
+.feedback.wrong {
+  font-size: 1.25rem;        /* make it bigger */
+  font-weight: 600;
+  color: #b91c1c;            /* deep red for visibility */
+  background: #fee2e2;       /* light red background */
+  border: 2px solid #fecaca; /* soft red border */
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  line-height: 1.4;
+  box-shadow: 0 2px 6px rgba(185, 28, 28, 0.1);
+}
+
+.feedback.wrong strong {
+  font-size: 1.4rem;         /* even bigger for the expected answer */
+  color: #7f1d1d;            /* darker red for emphasis */
+}
