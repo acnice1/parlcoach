@@ -325,7 +325,8 @@ createApp({
         tenses: ['present','passeCompose','imparfait','plusQueParfait','futur','conditionnelPresent','subjonctifPresent','imperatif'],
         persons: [0,1,2,3,4,5],
         includeOnlyTags: [],
-        excludeTags: []
+        excludeTags: [],
+        autoNext: true
       },
       drillSession: { running:false, question:null, input:'', correct:null, total:0, right:0, history:[], help:null },
 
@@ -792,10 +793,17 @@ createApp({
     state.drillSession.help = buildRuleHelp(q.verb, q.prompt.tense, q.prompt.personIndex);
     // keep focus so Enter on the correction always hits checkDrill()
     Vue.nextTick(() => drillInputEl.value?.focus());
-  } else {
-    state.drillSession.help = null;
+} else {
+  const q = state.drillSession.question;
+  // Always build rule help so it can be shown if autoNext is off
+  state.drillSession.help = buildRuleHelp(q.verb, q.prompt.tense, q.prompt.personIndex);
+
+  if (state.drillPrefs.autoNext) {
     setTimeout(() => { nextDrill(); }, 2000);
   }
+}
+
+
 
   state.drillSession.history.unshift({
     at: todayISO(),

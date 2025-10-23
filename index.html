@@ -80,6 +80,12 @@
     <option value="imperatif">impératif</option>
   </select>
 </label>
+<label class="inline">
+ <label class="inline">
+  <input type="checkbox" v-model="drillPrefs.autoNext">
+  Auto-advance on correct
+</label>
+
 
         <div class="row">
          
@@ -90,8 +96,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Pretty Drill Card -->
 
     <!-- Pretty Drill Card -->
 <div v-if="drillSession.running && drillSession.question" class="box card drill-card">
@@ -125,25 +129,30 @@
       <button @click="stopDrill" title="Esc">Stop</button>
     </div>
 
-    <div v-if="drillSession.correct === true" class="feedback correct">
-      ✅ Correct! Next question loading...
-    </div>
+<div v-if="drillSession.correct === true" class="feedback correct">
+  ✅ Correct<span v-if="drillPrefs.autoNext">! Next question loading...</span>
+</div>
+
 
     <div v-else-if="drillSession.correct === false" class="feedback wrong">
       Expected: <strong>{{ drillSession.question.answer }}</strong>
     </div>
 
-    <div class="meta" v-if="drillSession.question.ex">
-      Ex: {{ drillSession.question.ex.fr }} — {{ drillSession.question.ex.en }}
-    </div>
+   <div class="meta" v-if="drillSession.correct === false && drillSession.question.ex">
+  Ex: {{ drillSession.question.ex.fr }} — {{ drillSession.question.ex.en }}
+</div>
+
 
     <!-- ✅ Single rule-help block (removed duplicate) -->
-    <div class="rule-help" v-if="drillSession.correct === false && drillSession.help?.lines?.length">
-      <h4 style="margin:8px 0 4px">How to form it</h4>
-      <ul style="margin:0; padding-left:18px">
-        <li v-for="(ln,i) in drillSession.help.lines" :key="i">{{ ln }}</li>
-      </ul>
-    </div>
+    <div class="rule-help"
+     v-if="(drillSession.correct === false) ||
+            (drillSession.correct === true && !drillPrefs.autoNext)">
+  <h4 style="margin:8px 0 4px">How to form it</h4>
+  <ul style="margin:0; padding-left:18px">
+    <li v-for="(ln,i) in drillSession.help?.lines" :key="i">{{ ln }}</li>
+  </ul>
+</div>
+
   </div>
 </div>
 
