@@ -85,7 +85,7 @@
          
          <button class="start-drills-btn" @click="startDrill()">▶ Start Drills</button>
  <button @click="saveDrillPrefs">Save Settings</button>
- 
+
           <span class="dim" v-if="verbs.length===0">Add verbs first (My Verbs or Seed).</span>
         </div>
       </div>
@@ -93,7 +93,11 @@
 
     <!-- Pretty Drill Card -->
     <div v-if="drillSession.running && drillSession.question" class="box card drill-card">
-      <div class="pill">Score {{ drillSession.right }} / {{ drillSession.total }}</div>
+<div
+  :class="['score-display', scoreClass]"
+>
+  🧠 Score: {{ drillSession.right }} / {{ drillSession.total }}
+</div>
 
       <div class="prompt">
        <div class="hint" v-if="drillSession.question.prompt.english">
@@ -114,7 +118,9 @@
         <button @click="stopDrill" title="Esc">Stop</button>
       </div>
 
-      <div class="feedback" v-if="drillSession.correct === true">✅ Correct</div>
+      <div v-if="drillSession.correct === true" class="feedback correct">
+  ✅ Correct! Next question loading...
+</div>
       <div class="feedback wrong" v-else-if="drillSession.correct === false">
         Expected: <strong>{{ drillSession.question.answer }}</strong></div>
               <div class="meta" v-if="drillSession.question.ex">

@@ -1,5 +1,6 @@
 // ParlFR — app.js
-// Local-first IndexedDB (Dexie); seed examples from verbs.top20.json; drills first.
+// Local-first IndexedDB (Dexie); drills first.
+// Dataset-first conjugation (top200_french_verbs_conjugations.json) with rule fallbacks.
 
 // =========================== Dexie (IndexedDB) ===============================
 if (!window.Dexie) {
@@ -8,6 +9,8 @@ if (!window.Dexie) {
 }
 
 const db = new Dexie('parlcoach');
+const USE_TOP200_ONLY = true;
+
 /*
  v1 -> initial
  v2 -> adds drill prefs, plan, etc.
@@ -73,14 +76,15 @@ function fixedSchedule(card, intervalsDays, q){
 
 // =========================== Conjugator (fallback) ===========================
 const PRONOUNS = ['je','tu','il/elle','nous','vous','ils/elles'];
+const PERSON_KEY = ['je','tu','il/elle/on','nous','vous','ils/elles'];
 const INTERNAL_TENSES = ['present','passeCompose','imparfait','plusQueParfait','futur','conditionnelPresent','subjonctifPresent','imperatif'];
 const DISPLAY_TENSE = {
   present:'Présent', passeCompose:'Passé composé', imparfait:'Imparfait', plusQueParfait:'Plus-que-parfait',
   futur:'Futur simple', conditionnelPresent:'Conditionnel présent', subjonctifPresent:'Subjonctif présent',
   imperatif:'Impératif'
 };
-const PERSON_KEY = ['je','tu','il/elle/on','nous','vous','ils/elles'];
 
+// Irregular present (by array per person index 0..5)
 const IRREGULAR_PRESENT = {
   'être': ['suis','es','est','sommes','êtes','sont'],
   'avoir': ['ai','as','a','avons','avez','ont'],
@@ -95,9 +99,18 @@ const IRREGULAR_PRESENT = {
   'mettre': ['mets','mets','met','mettons','mettez','mettent'],
   'dire': ['dis','dis','dit','disons','dites','disent'],
   'voir': ['vois','vois','voit','voyons','voyez','voient'],
+  // added:
+  'tenir': ['tiens','tiens','tient','tenons','tenez','tiennent'],
+  'ouvrir': ['ouvre','ouvres','ouvre','ouvrons','ouvrez','ouvrent'],
 };
-const IRREGULAR_IMPARFAIT_STEM = { 'être':'ét','avoir':'av','aller':'all','faire':'fais','pouvoir':'pouv','vouloir':'voul','devoir':'dev','savoir':'sav','venir':'ven','prendre':'pren','mettre':'mett','dire':'dis','voir':'voy' };
-const FUTUR_STEM_IRREG = { 'être':'ser','avoir':'aur','aller':'ir','faire':'fer','pouvoir':'pourr','vouloir':'voudr','devoir':'devr','savoir':'saur','venir':'viendr','prendre':'prendr','mettre':'mettr','dire':'dir','voir':'verr' };
+
+// -ir verbs that take -er endings in the present (and present-based stems)
+const ER_LIKE_IR = new Set([
+  'ouvrir','couvrir','découvrir','recouvrir','rouvrir','offrir','souffrir'
+]);
+
+const IRREGULAR_IMPARFAIT_STEM = { 'être':'ét','avoir':'av','aller':'all','faire':'fais','pouvoir':'pouv','vouloir':'voul','devoir':'dev','savoir':'sav','venir':'ven','prendre':'pren','mettre':'mett','dire':'dis','voir':'voy','tenir':'ten' };
+const FUTUR_STEM_IRREG = { 'être':'ser','avoir':'aur','aller':'ir','faire':'fer','pouvoir':'pourr','vouloir':'voudr','devoir':'devr','savoir':'saur','venir':'viendr','prendre':'prendr','mettre':'mettr','dire':'dir','voir':'verr','tenir':'tiendr' };
 const IMPARFAIT_END = ['ais','ais','ait','ions','iez','aient'];
 const FUTUR_END = ['ai','as','a','ons','ez','ont'];
 
@@ -123,23 +136,53 @@ function inferGroup(inf) {
   return null; // unknown/irregular container
 }
 
-function participePasseRegular(inf){ if (inf.endsWith('er')) return inf.slice(0,-2)+'é'; if (inf.endsWith('ir')) return inf.slice(0,-2)+'i'; if (inf.endsWith('re')) return inf.slice(0,-2)+'u'; return inf; }
+function participePasseRegular(inf){
+  if (inf.endsWith('er')) return inf.slice(0,-2)+'é';
+  if (inf.endsWith('ir')) return inf.slice(0,-2)+'i';
+  if (inf.endsWith('re')) return inf.slice(0,-2)+'u';
+  return inf;
+}
+
+// Present stems
 function presentNousStem(inf){
   if (IRREGULAR_PRESENT[inf]) return IRREGULAR_PRESENT[inf][3].replace(/ons$/,'');
+  if (ER_LIKE_IR.has(inf)) return inf.slice(0,-2); // treat like -er
   if (inf.endsWith('ir')) return inf.slice(0,-2)+'iss';
   if (inf.endsWith('er') || inf.endsWith('re')) return inf.slice(0,-2);
   return inf;
 }
+function presentIlsStem(inf){
+  if (IRREGULAR_PRESENT[inf]) return IRREGULAR_PRESENT[inf][5].replace(/ent$/,'');
+  return presentRegular(inf, 5).replace(/ent$/,'');
+}
+
+// Present forms
 function presentRegular(inf,i){
   if (IRREGULAR_PRESENT[inf]) return IRREGULAR_PRESENT[inf][i];
-  if (inf.endsWith('er')) return inf.slice(0,-2)+['e','es','e','ons','ez','ent'][i];
-  if (inf.endsWith('ir')) return inf.slice(0,-2)+['is','is','it','issons','issez','issent'][i];
-  if (inf.endsWith('re')) return inf.slice(0,-2)+['s','s','','ons','ez','ent'][i];
+  if (ER_LIKE_IR.has(inf))    return inf.slice(0,-2)+['e','es','e','ons','ez','ent'][i];  // -er endings
+  if (inf.endsWith('er'))     return inf.slice(0,-2)+['e','es','e','ons','ez','ent'][i];
+  if (inf.endsWith('ir'))     return inf.slice(0,-2)+['is','is','it','issons','issez','issent'][i];
+  if (inf.endsWith('re'))     return inf.slice(0,-2)+['s','s','','ons','ez','ent'][i];
   return inf;
 }
+
+// Other tenses
 function imparfait(inf,i){ return (IRREGULAR_IMPARFAIT_STEM[inf] ?? presentNousStem(inf)) + IMPARFAIT_END[i]; }
 function futurSimple(inf,i){ const stem = FUTUR_STEM_IRREG[inf] ?? (inf.endsWith('re') ? inf.slice(0,-1) : inf); return stem + FUTUR_END[i]; }
+function subjonctifPresentPlain(inf, i){
+  const bootStem = presentIlsStem(inf);   // je/tu/il/ils
+  const nousStem = presentNousStem(inf);  // nous/vous
+  const ends = ['e','es','e','ions','iez','ent'];
+  const useNous = (i === 3 || i === 4);
+  const stem = useNous ? nousStem : bootStem;
+  return stem + ends[i];
+}
+function plusQueParfaitPlain(inf,i){
+  const avoirImp = ['avais','avais','avait','avions','aviez','avaient'];
+  return `${avoirImp[i]} ${participePasseRegular(inf)}`;
+}
 function passeCompose(inf,i){ const avoir = ['ai','as','a','avons','avez','ont'][i]; const pp = participePasseRegular(inf); return `${avoir} ${pp}`; }
+
 // Minimal EN glosses; add more as you go.
 const EN_GLOSS = {
   'manger': 'to eat',
@@ -171,97 +214,37 @@ const EN_GLOSS = {
 };
 
 function englishGlossDefault(inf){
-  // Prefer dictionary; otherwise just show the FR infinitive (no bad stemming).
   return EN_GLOSS[inf] || '';
 }
 
-// ======================== Robust Top-200 JSON loader ==========================
-async function loadTop200JSON(){
-  const url = './top200_french_verbs_conjugations.json?ts=' + Date.now();
-  try {
-    console.info('[Top200] Fetching', url);
-    const res = await fetch(url, { cache:'no-store', headers:{ 'accept':'application/json, text/plain;q=0.6, */*;q=0.5' } });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const ct = (res.headers.get('content-type')||'').toLowerCase();
-    const data = ct.includes('application/json') ? await res.json() : JSON.parse(await res.text());
-    console.info('[Top200] Loaded via fetch:', data?.verbs?.length ?? 0, 'verbs');
-    return data;
-  } catch (e) {
-    console.warn('[Top200] Fetch failed:', e.message);
-  }
-  const tag = document.getElementById('top200-json');
-  if (tag?.textContent) {
-    try { const inline = JSON.parse(tag.textContent); console.info('[Top200] Loaded inline:', inline?.verbs?.length ?? 0); return inline; }
-    catch (e) { console.error('[Top200] Inline JSON parse failed:', e.message); }
-  }
-  console.error('[Top200] No dataset available. Ensure JSON is next to index.html and served over HTTP.');
-  return null;
-}
+// ===================== Dataset (Top-200) — direct index ======================
+const DATASET_URL = 'top200_french_verbs_conjugations.json';
+const TENSE_DS_KEY = {
+  present: 'Présent',
+  imparfait: 'Imparfait',
+  passeCompose: 'Passé composé',
+  plusQueParfait: 'Plus-que-parfait',
+  futur: 'Futur simple',
+  conditionnelPresent: 'Conditionnel présent',
+  subjonctifPresent: 'Subjonctif présent',
+  imperatif: 'Impératif'
+};
+const PERSON_LABELS = ['je','tu','il/elle/on','nous','vous','ils/elles'];
 
-// ============================== Dataset helpers ==============================
-function getConjFromDataset(verbRow, tenseId, personIndex){
-  const conj = verbRow?.conj; if (!conj) return null;
-  const tenseName = DISPLAY_TENSE[tenseId] || tenseId;
-  const tenseBlock = conj[tenseName]; if (!tenseBlock) return null;
-  const lookupKey = (personIndex === 2) ? 'il/elle/on' : PERSON_KEY[personIndex];
-  const form = tenseBlock[lookupKey]; if (typeof form !== 'string') return null;
-  const cleaned = form.trim(); return cleaned || null;
-}
-function makeFullAnswer(tenseId, personIndex, plainForm){
-  if (tenseId === 'imperatif') return plainForm; // no subject
-  const subj = PRONOUNS[personIndex];
-  if (personIndex===0) return isVowelStart(plainForm) ? `j'${plainForm}` : `je ${plainForm}`;
-  return `${subj} ${plainForm}`;
-}
-function prettyTense(t){ return DISPLAY_TENSE[t] || t; }
-
-// ========================= Seed example loader (NEW) =========================
-// One curated example (il/elle/on) per tense, stored in verbs.top50.json
+// ========================= Seed example loader (optional) ====================
+// One curated example (il/elle/on) per tense, stored in verbs.top50.json (optional)
 const EXTERNAL_VERBS_URL = 'verbs.top50.json?v=1';
 const seedVerbsByInf = new Map();
-
-// Map internal drill keys -> example JSON keys
 const TENSE_EXAMPLE_KEY = {
   present: 'present',
   passeCompose: 'passeCompose',
   imparfait: 'imparfait',
   plusQueParfait: 'plusQueParfait',
-  futur: 'futurSimple',                // internal 'futur' maps to JSON 'futurSimple'
+  futur: 'futurSimple',
   conditionnelPresent: 'conditionnelPresent',
   subjonctifPresent: 'subjonctifPresent',
   imperatif: 'imperatif'
 };
-
-async function loadExternalVerbs(){
-  try{
-    const res = await fetch(EXTERNAL_VERBS_URL, { cache:'no-store' });
-    if(!res.ok) throw new Error(`Failed to load ${EXTERNAL_VERBS_URL}`);
-    const list = await res.json();
-    seedVerbsByInf.clear();
-    list.forEach(v => seedVerbsByInf.set(v.infinitive, v));
-    console.info(`[verbs] loaded ${seedVerbsByInf.size} seed example items`);
-  } catch(e){
-    console.error(e);
-    alert('Could not load seed verb examples (verbs.top50.json).');
-  }
-}
-
-// Prefer a user-edited verb in Dexie if you later add examples there; else seed
-function resolveVerbExamples(infinitive){
-  // (future-ready) if you ever store examples inside db.verbs, prefer those:
-  // const mine = /* lookup by infinitive from a map you maintain */;
-  // if (mine?.examples) return mine.examples;
-  const seed = seedVerbsByInf.get(infinitive);
-  return seed?.examples || null;
-}
-
-function getExample(infinitive, internalTenseKey){
-  const examples = resolveVerbExamples(infinitive);
-  if (!examples) return null;
-  const key = TENSE_EXAMPLE_KEY[internalTenseKey] || internalTenseKey;
-  const ex = examples[key];
-  return (ex && ex.fr && ex.en) ? ex : null;
-}
 
 // ================================ Vue App ====================================
 const { createApp, reactive, computed, onMounted, ref, nextTick } = Vue;
@@ -271,8 +254,9 @@ createApp({
     const state = reactive({
       jsonEditor: { open:false, verb:null, text:'', readonly:false, error:'' },
 
-      // --- RULES ---
+      // --- RULES + DATASET ---
       rules: null,
+      dataset: null, // Map<infinitive, tensesObj>
 
       // --- TABS ---
       tab: 'learn',
@@ -293,7 +277,7 @@ createApp({
         includeOnlyTags: [],
         excludeTags: []
       },
-      drillSession: { running:false, question:null, input:'', correct:null, total:0, right:0, history:[] },
+      drillSession: { running:false, question:null, input:'', correct:null, total:0, right:0, history:[], help:null },
 
       // --- RECORD ---
       isRecording:false, mediaRecorder:null, chunks:[], recordings:[],
@@ -316,10 +300,61 @@ createApp({
     const myVerbs = computed(() => state.verbs.filter(v => !(v.tags || []).includes('top200')));
     const seedVerbs = computed(() => state.verbs.filter(v => (v.tags || []).includes('top200')));
 
+    const scoreClass = computed(() => {
+      const t = state.drillSession.total || 0;
+      const r = state.drillSession.right || 0;
+      if (t === 0) return 'default';
+      const pct = (r / t) * 100;
+      if (pct >= 80) return 'good';
+      if (pct >= 50) return 'ok';
+      return 'bad';
+    });
+
     // ---------------------------- Load / Save --------------------------------
+    async function loadDataset() {
+      try {
+        const res = await fetch(DATASET_URL, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        const index = new Map();
+        for (const v of json.verbs || []) index.set(v.verb, v.tenses || {});
+        state.dataset = index;
+      } catch (e) {
+        console.warn('[dataset] load failed:', e);
+        state.dataset = null;
+      }
+    }
+
+    async function loadRules() {
+      try {
+        const res = await fetch(RULES_URL, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        state.rules = await res.json();
+      } catch (e) {
+        console.warn('[rules] load failed:', e);
+        state.rules = null;
+      }
+    }
+
+    async function loadExternalVerbs(){
+      try{
+        const res = await fetch(EXTERNAL_VERBS_URL, { cache:'no-store' });
+        if(!res.ok) throw new Error(`Failed to load ${EXTERNAL_VERBS_URL}`);
+        const list = await res.json();
+        seedVerbsByInf.clear();
+        list.forEach(v => seedVerbsByInf.set(v.infinitive, v));
+        console.info(`[verbs] loaded ${seedVerbsByInf.size} seed example items`);
+      } catch(e){
+        console.error(e);
+        // optional: no alert to avoid noise if file missing
+      }
+    }
+
     async function loadAll(){
-      await loadRules();
+      await loadDataset();          // <— dataset first
+      await loadRules();            // <— rules for help
       await fixBadEnglishGlosses();
+
       const [settings, plan, drill] = await Promise.all([ db.settings.get('v1'), db.plan.get('v1'), db.drill.get('v1') ]);
       if (settings) {
         state.settings = settings;
@@ -338,23 +373,9 @@ createApp({
       await ensureSeedTaggingAndImport();
       state.verbs = await db.verbs.orderBy('infinitive').toArray();
 
-      await loadExternalVerbs(); // <— NEW: load curated examples
-
+      await loadExternalVerbs();
       state.recordings = await loadRecordings();
     }
-
-    //  ---------------------------- Load Rules --------------------------------
-    async function loadRules() {
-    try {
-        const res = await fetch(RULES_URL, { cache: 'no-store' });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        state.rules = await res.json();
-    } catch (e) {
-        console.warn('[rules] load failed:', e);
-        state.rules = null;
-    }
-    }
-
 
     async function saveSettings(){ await db.settings.put({ ...state.settings, translator: state.translator }); }
     async function savePlan(){ await db.plan.put(state.plan); }
@@ -390,6 +411,27 @@ createApp({
     }
 
     // ---------------------- VERBS: seed/import & CRUD ------------------------
+    // Loader for the same top200 file to seed DB if empty, preserving your existing flow
+    async function loadTop200JSON(){
+      const url = './top200_french_verbs_conjugations.json?ts=' + Date.now();
+      try {
+        const res = await fetch(url, { cache:'no-store', headers:{ 'accept':'application/json, text/plain;q=0.6, */*;q=0.5' } });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const ct = (res.headers.get('content-type')||'').toLowerCase();
+        const data = ct.includes('application/json') ? await res.json() : JSON.parse(await res.text());
+        return data;
+      } catch (e) {
+        console.warn('[Top200] Fetch failed:', e.message);
+      }
+      const tag = document.getElementById('top200-json');
+      if (tag?.textContent) {
+        try { const inline = JSON.parse(tag.textContent); return inline; }
+        catch (e) { console.error('[Top200] Inline JSON parse failed:', e.message); }
+      }
+      console.error('[Top200] No dataset available. Ensure JSON is next to index.html and served over HTTP.');
+      return null;
+    }
+
     async function loadTop200AndNormalize(){
       const data = await loadTop200JSON(); if (!data) return [];
       const arr = Array.isArray(data?.verbs) ? data.verbs : []; if (!arr.length) return [];
@@ -398,28 +440,19 @@ createApp({
         return { infinitive: inf, english: englishGlossDefault(inf), tags: ['top200'], conj };
       });
     }
-    async function maybeSeedVerbsFromTop200(){
-      const count = await db.verbs.count(); if (count > 0) { console.info('[Top200] verbs exists:', count); return; }
-      let rows = []; try { rows = await loadTop200AndNormalize(); } catch (e) { console.warn('[Top200] loader crashed:', e); }
-      if (rows.length) { console.info('[Top200] seeding', rows.length); await db.verbs.bulkAdd(rows); return; }
-      // minimal fallback
-      const seed = [
-        { infinitive:'être', english:'to be', tags:['core'] },
-        { infinitive:'avoir', english:'to have', tags:['core'] },
-        { infinitive:'aller', english:'to go', tags:['core'] },
-        { infinitive:'faire', english:'to do/make', tags:['core'] },
-        { infinitive:'pouvoir', english:'to be able to/can', tags:['core'] },
-        { infinitive:'vouloir', english:'to want', tags:['core'] },
-        { infinitive:'devoir', english:'to have to/must', tags:['core'] },
-        { infinitive:'savoir', english:'to know', tags:['core'] },
-        { infinitive:'venir', english:'to come', tags:['core'] },
-        { infinitive:'parler', english:'to speak', tags:['regular','er'] },
-        { infinitive:'finir', english:'to finish', tags:['regular','ir'] },
-        { infinitive:'prendre', english:'to take', tags:[] },
-      ];
-      await db.verbs.bulkAdd(seed);
-    }
-    // Self-heal: ensure seed verbs are tagged & present
+  async function maybeSeedVerbsFromTop200(){
+  const count = await db.verbs.count();
+  if (count > 0) return;
+
+  let rows = [];
+  try { rows = await loadTop200AndNormalize(); } catch (e) { console.warn('[Top200] loader crashed:', e); }
+  if (rows.length) {
+    await db.verbs.bulkAdd(rows);
+  } else {
+    console.warn('[Top200] No dataset rows available; verbs table will remain empty.');
+  }
+}
+
     async function ensureSeedTaggingAndImport(){
       const all = await db.verbs.toArray();
       let seedCount = all.filter(v => (v.tags || []).includes('top200')).length;
@@ -460,30 +493,92 @@ createApp({
     }
     async function deleteVerb(v){ await db.verbs.delete(v.id); state.verbs = state.verbs.filter(x=>x.id!==v.id); }
 
-    // ------------------------------- DRILLS ----------------------------------
-    function filterVerbsForDrill(list){
-      const { includeOnlyTags, excludeTags } = state.drillPrefs;
-      let out = list.slice();
-      if (includeOnlyTags?.length) out = out.filter(v => (v.tags||[]).some(t => includeOnlyTags.includes(t)));
-      if (excludeTags?.length) out = out.filter(v => !(v.tags||[]).some(t => excludeTags.includes(t)));
-      return out;
+    // ------------------------------- DATA LOOKUPS -----------------------------
+    // Prefer in-memory dataset; if not found, try DB row's conj; else null
+    function getConjFromDatasetFirst(inf, tenseId, personIndex){
+      // 1) in-memory dataset from top200 file
+      if (state.dataset) {
+        const tenses = state.dataset.get(inf);
+        if (tenses) {
+          const block = tenses[TENSE_DS_KEY[tenseId] || tenseId];
+          if (block) {
+            const form = block[PERSON_LABELS[personIndex]];
+            if (typeof form === 'string' && form.trim() !== '') return form.trim(); // NOTE: plain form (no pronoun)
+          }
+        }
+      }
+      // 2) DB-stored conj blob (same shape as dataset)
+      const row = state.verbs.find(v => v.infinitive === inf);
+      if (row && row.conj) {
+        const tenseName = DISPLAY_TENSE[tenseId] || tenseId;
+        const block = row.conj[tenseName];
+        if (block) {
+          const key = (personIndex === 2) ? 'il/elle/on' : PERSON_KEY[personIndex];
+          const form = block[key];
+          if (typeof form === 'string' && form.trim() !== '') return form.trim();
+        }
+      }
+      return null;
     }
+
+    function makeFullAnswer(tenseId, personIndex, plainForm){
+      if (tenseId === 'imperatif') return plainForm; // no subject
+      const subj = PRONOUNS[personIndex];
+      if (personIndex===0) return isVowelStart(plainForm) ? `j'${plainForm}` : `je ${plainForm}`;
+      return `${subj} ${plainForm}`;
+    }
+    function prettyTense(t){ return DISPLAY_TENSE[t] || t; }
+
+    // Prefer a user-edited verb in Dexie if you later add examples there; else seed
+    function resolveVerbExamples(infinitive){
+      const seed = seedVerbsByInf.get(infinitive);
+      return seed?.examples || null;
+    }
+    function getExample(infinitive, internalTenseKey){
+      const examples = resolveVerbExamples(infinitive);
+      if (!examples) return null;
+      const key = TENSE_EXAMPLE_KEY[internalTenseKey] || internalTenseKey;
+      const ex = examples[key];
+      return (ex && ex.fr && ex.en) ? ex : null;
+    }
+
+    // ------------------------------- DRILLS ----------------------------------
+  function filterVerbsForDrill(list){
+  // Only verbs that exist in the Top-200 dataset (by infinitive) or are tagged top200
+  const onlyTop200 = list.filter(v =>
+    (state.dataset && state.dataset.has(v.infinitive)) ||
+    (v.tags || []).includes('top200')
+  );
+
+  const { includeOnlyTags, excludeTags } = state.drillPrefs;
+  let out = onlyTop200;
+
+  if (includeOnlyTags?.length) out = out.filter(v => (v.tags || []).some(t => includeOnlyTags.includes(t)));
+  if (excludeTags?.length) out = out.filter(v => !(v.tags || []).some(t => excludeTags.includes(t)));
+
+  return out;
+}
+
+
     function conjugateFromAny(verbRow, tense, personIndex){
-      const dsForm = getConjFromDataset(verbRow, tense, personIndex);
-      if (dsForm) return makeFullAnswer(tense, personIndex, dsForm);
+      // 0) dataset/plain form first (top200 file or DB conj)
+      const dsPlain = getConjFromDatasetFirst(verbRow.infinitive, tense, personIndex);
+      if (dsPlain) return makeFullAnswer(tense, personIndex, dsPlain);
+
+      // 1) rule-based fallback
       let plain = '';
       switch (tense) {
         case 'present': plain = presentRegular(verbRow.infinitive, personIndex); break;
         case 'imparfait': plain = imparfait(verbRow.infinitive, personIndex); break;
         case 'futur': plain = futurSimple(verbRow.infinitive, personIndex); break;
         case 'passeCompose': plain = passeCompose(verbRow.infinitive, personIndex); break;
-        case 'plusQueParfait': plain = 'avais ' + participePasseRegular(verbRow.infinitive); break;
+        case 'plusQueParfait': plain = plusQueParfaitPlain(verbRow.infinitive, personIndex); break;
         case 'conditionnelPresent': {
           const fs = futurSimple(verbRow.infinitive, personIndex);
           const ends = ['ais','ais','ait','ions','iez','aient'];
           plain = fs.replace(/(ai|as|a|ons|ez|ont)$/, ends[personIndex]); break;
         }
-        case 'subjonctifPresent': plain = presentNousStem(verbRow.infinitive)+['e','es','e','ions','iez','ent'][personIndex]; break;
+        case 'subjonctifPresent': plain = subjonctifPresentPlain(verbRow.infinitive, personIndex); break;
         case 'imperatif': return presentRegular(verbRow.infinitive, personIndex);
         default: plain = presentRegular(verbRow.infinitive, personIndex);
       }
@@ -491,152 +586,186 @@ createApp({
     }
 
     function buildRuleHelp(verbRow, tense, personIndex) {
-  const R = state.rules;
-  if (!R) return null;
+      const R = state.rules;
+      if (!R) return null;
 
-  const lines = [];
-  const groupKey = inferGroup(verbRow.infinitive);
-  const tenseKey = TENSE_RULE_KEY[tense] || tense;
+      const lines = [];
+      const groupKey = inferGroup(verbRow.infinitive);
+      const tenseKey = TENSE_RULE_KEY[tense] || tense;
 
-  // 1) Quick template (high-level reminder)
-  const quick = R.quick_help_templates?.[tenseKey];
-  if (quick) lines.push(quick);
+      // 0) Tense-level description + explanation (ALL tenses if present)
+      const tObj = R.tenses?.[tenseKey];
+      if (tObj?.description) lines.push(tObj.description);
+      if (tObj?.explanation) lines.push(`Explanation: ${tObj.explanation}`);
 
-  // 2) Group-specific stem + endings (simple tenses)
-  if (['present','imparfait','futur','conditionnelPresent','subjonctifPresent','imperatif'].includes(tense)) {
-    if (tense === 'present' && groupKey && R.tenses?.present?.formation?.[groupKey]) {
-      const g = R.groups?.[groupKey];
-      const f = R.tenses.present.formation[groupKey];
+      // 0.1) Targeted "how-to" if sample lookup exists for this person+verb+tense
       const personStr = PERSON_KEY[personIndex];
-      const ending = f.endings?.[personStr];
-      if (g?.stem_rule) lines.push(`Group: ${g.name} — ${g.stem_rule}`);
-      if (ending != null) lines.push(`Ending for “${personStr}”: “${ending || '∅'}”`);
-      if (R.tenses.present?.notes?.length) {
-        // Only add je elision if it applies
-        if (personIndex === 0 && isVowelStart(verbRow.infinitive)) {
-          lines.push(R.orthography?.je_elision || "Use “j’” before vowel/mute h.");
+      const targetedKey = `${personStr}+${verbRow.infinitive}+${tenseKey}`;
+      const targeted = R.sample_lookups?.[targetedKey];
+      if (targeted) {
+        if (targeted.how_to) lines.push(`How-to: ${targeted.how_to}`);
+        if (targeted.correct_form_example) lines.push(`Example: ${targeted.correct_form_example}`);
+      }
+
+      // 0.2) Show dataset authoritative form (if present)
+      const dsForm = getConjFromDatasetFirst(verbRow.infinitive, tense, personIndex);
+      if (dsForm) lines.push(`Dataset form: ${personStr} ${dsForm}`);
+
+      // 1) Quick template (high-level reminder)
+      const quick = R.quick_help_templates?.[tenseKey];
+      if (quick) lines.push(quick);
+
+      // 2) Group-specific stem + endings (simple tenses)
+      if (['present','imparfait','futur','conditionnelPresent','subjonctifPresent','imperatif'].includes(tense)) {
+        if (tense === 'present' && groupKey && R.tenses?.present?.formation?.[groupKey]) {
+          const g = R.groups?.[groupKey];
+          const f = R.tenses.present.formation[groupKey];
+          const ending = f.endings?.[personStr];
+          if (g?.stem_rule) lines.push(`Group: ${g.name} — ${g.stem_rule}`);
+          if (ending != null) lines.push(`Ending for “${personStr}”: “${ending || '∅'}”`);
+          if (R.tenses.present?.notes?.length) {
+            if (personIndex === 0 && isVowelStart(verbRow.infinitive)) {
+              lines.push(R.orthography?.je_elision || "Use “j’” before vowel/mute h.");
+            }
+          }
+        } else if (tense === 'imparfait' && R.tenses?.imparfait) {
+          lines.push(R.tenses.imparfait.stem_rule);
+          const end = R.tenses.imparfait.endings?.[personIndex];
+          if (end) lines.push(`Imparfait ending for “${personStr}”: “${end}”`);
+        } else if (tense === 'futur' && R.tenses?.futurSimple) {
+          lines.push(R.tenses.futurSimple.stem_rule);
+          const end = R.tenses.futurSimple.endings?.[personStr];
+          if (end) lines.push(`Futur ending for “${personStr}”: “${end}”`);
+        } else if (tense === 'conditionnelPresent' && R.tenses?.conditionnelPresent) {
+          lines.push(R.tenses.conditionnelPresent.stem_rule);
+          const end = R.tenses.conditionnelPresent.endings?.[personStr];
+          if (end) lines.push(`Conditionnel ending for “${personStr}”: “${end}”`);
+        } else if (tense === 'subjonctifPresent' && R.tenses?.subjonctifPresent) {
+          lines.push(R.tenses.subjonctifPresent.stem_rule);
+          const srEnd = (R.endings_reference?.subjonctifPresent || [])[personIndex];
+          if (srEnd) lines.push(`Subjonctif ending for “${personStr}”: “${srEnd}”`);
+        } else if (tense === 'imperatif' && R.tenses?.imperatif) {
+          lines.push(R.tenses.imperatif.description);
+          const g = groupKey && R.tenses.imperatif.formation?.[groupKey];
+          if (g) {
+            const iperson = ['tu','nous','vous'][personIndex === 2 ? 0 : (personIndex === 3 ? 1 : (personIndex === 4 ? 2 : -1))];
+            if (iperson && g[iperson]) lines.push(`Imperative (“${iperson}”): ${g[iperson]}`);
+          }
+          if (R.orthography?.imperatif_pronoun_drop) lines.push(R.orthography.imperatif_pronoun_drop);
         }
       }
-    } else if (tense === 'imparfait' && R.tenses?.imparfait) {
-      lines.push(R.tenses.imparfait.stem_rule);
-      const end = R.tenses.imparfait.endings?.[personIndex];
-      if (end) lines.push(`Imparfait ending for “${PERSON_KEY[personIndex]}”: “${end}”`);
-    } else if (tense === 'futur' && R.tenses?.futurSimple) {
-      lines.push(R.tenses.futurSimple.stem_rule);
-      const end = R.tenses.futurSimple.endings?.[PERSON_KEY[personIndex]];
-      if (end) lines.push(`Futur ending for “${PERSON_KEY[personIndex]}”: “${end}”`);
-    } else if (tense === 'conditionnelPresent' && R.tenses?.conditionnelPresent) {
-      lines.push(R.tenses.conditionnelPresent.stem_rule);
-      const end = R.tenses.conditionnelPresent.endings?.[PERSON_KEY[personIndex]];
-      if (end) lines.push(`Conditionnel ending for “${PERSON_KEY[personIndex]}”: “${end}”`);
-    } else if (tense === 'subjonctifPresent' && R.tenses?.subjonctifPresent) {
-      lines.push(R.tenses.subjonctifPresent.stem_rule);
-      const end = R.tenses.subjonctifPresent?.[personIndex]; // also mirrored in endings_reference
-      // Prefer explicit endings_reference if present:
-      const srEnd = (R.endings_reference?.subjonctifPresent || [])[personIndex];
-      if (srEnd) lines.push(`Subjonctif ending for “${PERSON_KEY[personIndex]}”: “${srEnd}”`);
-    } else if (tense === 'imperatif' && R.tenses?.imperatif) {
-      lines.push(R.tenses.imperatif.description);
-      const g = groupKey && R.tenses.imperatif.formation?.[groupKey];
-      if (g) {
-        const personStr = ['tu','nous','vous'][personIndex === 2 ? 0 : (personIndex === 3 ? 1 : (personIndex === 4 ? 2 : -1))];
-        if (personStr && g[personStr]) lines.push(`Imperative (“${personStr}”): ${g[personStr]}`);
+
+      // 3) Compound tenses (passé composé / plus-que-parfait)
+      if (['passeCompose','plusQueParfait'].includes(tense)) {
+        const isPC = tense === 'passeCompose';
+        const T = isPC ? R.tenses.passeCompose : R.tenses.plusQueParfait;
+        const tenseName = isPC ? 'Passé composé' : 'Plus-que-parfait';
+        lines.push(T.description || `${tenseName}: auxiliary + past participle.`);
+
+        const tpl = T.templates?.avoir?.[personStr] || null;
+        const gKey = inferGroup(verbRow.infinitive);
+        const ppSuffix = gKey && R.participles?.formation?.[gKey];
+
+        if (tpl && ppSuffix) {
+          const participle = verbRow.infinitive.slice(0, -2) + ppSuffix;
+          const example = tpl.replace('{participle}', participle);
+          lines.push(`Example: ${example}`);
+          lines.push(`Past participle rule: replace “${gKey}” with “${ppSuffix}”.`);
+        }
+        if (T.formation?.auxiliary) lines.push(`Auxiliary used: ${T.formation.auxiliary}.`);
+        if (T.agreement) lines.push(`Agreement rule: ${T.agreement}`);
       }
-      if (R.orthography?.imperatif_pronoun_drop) lines.push(R.orthography.imperatif_pronoun_drop);
+
+      // 4) Spelling hints for -cer/-ger in present/imparfait nous
+      if ((tense === 'present' || tense === 'imparfait') && R.orthography?.c_g_spelling && (verbRow.infinitive.endsWith('cer') || verbRow.infinitive.endsWith('ger'))) {
+        lines.push(R.orthography.c_g_spelling);
+      }
+
+      return { lines };
     }
+
+    function exampleSentence(){ return null; }
+
+   function newDrillQuestion(){
+  let pool = filterVerbsForDrill(state.verbs);
+
+  // If user has no verb rows yet, but dataset is loaded, build a pool from dataset keys
+  if (USE_TOP200_ONLY && (!pool.length) && state.dataset && state.dataset.size > 0) {
+    const infs = [...state.dataset.keys()];
+    pool = infs.map(inf => ({
+      id: 0,
+      infinitive: inf,
+      english: englishGlossDefault(inf),
+      tags: ['top200'],
+      conj: null
+    }));
   }
 
-  // 3) Compound tenses (passé composé / plus-que-parfait)
-// 3) Compound tenses (passé composé / plus-que-parfait)
-if (['passeCompose','plusQueParfait'].includes(tense)) {
-  const isPC = tense === 'passeCompose';
-  const T = isPC ? R.tenses.passeCompose : R.tenses.plusQueParfait;
-  const tenseName = isPC ? 'Passé composé' : 'Plus-que-parfait';
+  if (!pool.length) return null;
 
-  lines.push(T.description || `${tenseName}: auxiliary + past participle.`);
+  const verb = randChoice(pool);
+  const tensesPool   = state.drillPrefs.tenses.length   ? state.drillPrefs.tenses   : ['present'];
+  const personsPool  = state.drillPrefs.persons.length  ? state.drillPrefs.persons  : [0,1,2,3,4,5];
+  const tense = randChoice(tensesPool), personIndex = randChoice(personsPool);
 
-  // pick avoir template for the person if present
-  const tpl = T.templates?.avoir?.[PERSON_KEY[personIndex]] || null;
-  const groupKey = inferGroup(verbRow.infinitive);
-  const ppSuffix = groupKey && R.participles?.formation?.[groupKey];
+  const answer = conjugateFromAny(verb, tense, personIndex);
+  const prompt = { infinitive: verb.infinitive, english: verb.english, tense, personIndex,
+    label: `${PRONOUNS[personIndex]} — ${verb.infinitive} — ${prettyTense(tense)}` };
 
-  if (tpl && ppSuffix) {
-    const participle = verbRow.infinitive.slice(0, -2) + ppSuffix;
-    const example = tpl.replace('{participle}', participle);
-    lines.push(`Example: ${example}`);
-    lines.push(`Past participle rule: replace “${groupKey}” with “${ppSuffix}”.`);
-  }
-
-  // Auxiliary reminder
-  if (T.formation?.auxiliary) {
-    lines.push(`Auxiliary used: ${T.formation.auxiliary}.`);
-  }
-
-  // Agreement note if any
-  if (T.agreement) {
-    lines.push(`Agreement rule: ${T.agreement}`);
-  }
+  const ex = getExample(verb.infinitive, tense);
+  return { verb, prompt, answer, ex };
 }
 
-
-
-  // 4) Spelling hints for -cer/-ger in present/imparfait nous
-  if ((tense === 'present' || tense === 'imparfait') && R.orthography?.c_g_spelling && (verbRow.infinitive.endsWith('cer') || verbRow.infinitive.endsWith('ger'))) {
-    lines.push(R.orthography.c_g_spelling);
-  }
-
-  return { lines };
-}
-
-    // Hard stop: no synthetic examples. Only curated JSON.
-    function exampleSentence(){
-      return null;
-    }
-
-    function newDrillQuestion(){
-      const pool = filterVerbsForDrill(state.verbs);
-      if (!pool.length) return null;
-      const verb = randChoice(pool);
-      const tensesPool = state.drillPrefs.tenses.length ? state.drillPrefs.tenses : ['present'];
-      const personsPool = state.drillPrefs.persons.length ? state.drillPrefs.persons : [0,1,2,3,4,5];
-      const tense = randChoice(tensesPool), personIndex = randChoice(personsPool);
-      const answer = conjugateFromAny(verb, tense, personIndex);
-      const prompt = { infinitive: verb.infinitive, english: verb.english, tense, personIndex,
-        label: `${PRONOUNS[personIndex]} — ${verb.infinitive} — ${prettyTense(tense)}` };
-      const ex = getExample(verb.infinitive, tense); // <— curated (il/elle/on) example, may be null
-      return { verb, prompt, answer, ex };
-    }
     function startDrill(){
-      
       state.drillSession = { running:true, question:newDrillQuestion(), input:'', correct:null, total:0, right:0, history:[], help:null };
-
       if (!state.drillSession.question) { alert('No verbs available for drill. Add some first.'); state.drillSession.running=false; return; }
       nextTick(()=>drillInputEl.value?.focus());
     }
     function normalize(s){ return (s||'').toLowerCase().replaceAll('’',"'").replace(/\s+/g,' ').trim(); }
-  
-    function checkDrill(){
-  if (!state.drillSession.running || !state.drillSession.question) return;
-  const ok = normalize(state.drillSession.input) === normalize(state.drillSession.question.answer);
-  state.drillSession.total += 1; if (ok) state.drillSession.right += 1;
-  state.drillSession.correct = ok;
 
-  // Build targeted rule help when wrong
-  if (!ok) {
-    const q = state.drillSession.question;
-    state.drillSession.help = buildRuleHelp(q.verb, q.prompt.tense, q.prompt.personIndex);
-  } else {
-    state.drillSession.help = null;
-  }
+    function checkDrill() {
+      if (!state.drillSession.running || !state.drillSession.question) return;
 
-  state.drillSession.history.unshift({
-    at: todayISO(),
-    prompt: state.drillSession.question.prompt,
-    expected: state.drillSession.question.answer,
-    got: state.drillSession.input,
-    ok
-  });
-}
+      const expected = normalize(state.drillSession.question.answer);
+      const given = normalize(state.drillSession.input);
+
+      function stripPronoun(text) {
+        return text
+          .replace(/^(je|j’|j'|tu|il|elle|on|nous|vous|ils|elles)\s+/i, '')
+          .trim();
+      }
+
+      const ok =
+        given === expected ||
+        stripPronoun(given) === expected ||
+        given === stripPronoun(expected) ||
+        stripPronoun(given) === stripPronoun(expected);
+
+      state.drillSession.total += 1;
+      if (ok) state.drillSession.right += 1;
+      state.drillSession.correct = ok;
+
+      if (!ok) {
+        const q = state.drillSession.question;
+        state.drillSession.help = buildRuleHelp(
+          q.verb,
+          q.prompt.tense,
+          q.prompt.personIndex
+        );
+      } else {
+        state.drillSession.help = null;
+        // Auto-advance after ~2s when correct
+        setTimeout(() => { nextDrill(); }, 2000);
+      }
+
+      state.drillSession.history.unshift({
+        at: todayISO(),
+        prompt: state.drillSession.question.prompt,
+        expected: state.drillSession.question.answer,
+        got: state.drillSession.input,
+        ok
+      });
+    }
 
     function nextDrill(){
       state.drillSession.input=''; state.drillSession.correct=null;
@@ -712,7 +841,6 @@ if (['passeCompose','plusQueParfait'].includes(tense)) {
 
     // ---------------------------- JSON Editor (verbs.conj) --------------------
     function openJsonEditor(verb, readonly=false){
-      console.debug('[JSON] open', verb?.infinitive, { readonly });
       state.jsonEditor.open = true;
       state.jsonEditor.verb = verb;
       state.jsonEditor.readonly = !!readonly;
@@ -751,17 +879,16 @@ if (['passeCompose','plusQueParfait'].includes(tense)) {
       state.jsonEditor.text = '{}';
     }
     async function fixBadEnglishGlosses(){
-  const all = await db.verbs.toArray();
-  for (const v of all) {
-    // Detect the bad pattern: "to " + stem (infinitive minus last 2)
-    const bad = 'to ' + (v.infinitive.endsWith('er')||v.infinitive.endsWith('ir')||v.infinitive.endsWith('re')
-      ? v.infinitive.slice(0,-2) : v.infinitive);
-    const good = EN_GLOSS[v.infinitive] || '';
-    if (v.english === bad || (v.english && /^(to\s+[a-z]{2,}|to\s*$)/i.test(v.english) && good)) {
-      await db.verbs.update(v.id, { english: good });
+      const all = await db.verbs.toArray();
+      for (const v of all) {
+        const bad = 'to ' + (v.infinitive.endsWith('er')||v.infinitive.endsWith('ir')||v.infinitive.endsWith('re')
+          ? v.infinitive.slice(0,-2) : v.infinitive);
+        const good = EN_GLOSS[v.infinitive] || '';
+        if (v.english === bad || (v.english && /^(to\s+[a-z]{2,}|to\s*$)/i.test(v.english) && good)) {
+          await db.verbs.update(v.id, { english: good });
+        }
+      }
     }
-  }
-}
 
     function conjSkeletonBlank(){
       const persons = ['je','tu','il/elle/on','nous','vous','ils/elles'];
@@ -785,21 +912,29 @@ if (['passeCompose','plusQueParfait'].includes(tense)) {
     onMounted(loadAll);
     const api = {
       // state & derived
-      ...Vue.toRefs(state), myVerbs, seedVerbs, drillInputEl,
+      ...Vue.toRefs(state), myVerbs, seedVerbs, drillInputEl, scoreClass,
+
       // utils
       toDateOnly, prettyTense,
+
       // vocab
       addCard, rate, deleteCard, updateFixedIntervals,
+
       // json editor
       openJsonEditor, closeJsonEditor, prettyJson, saveJsonEditor, clearConj, insertConjSkeleton,
+
       // verbs
       addVerb, deleteVerb,
+
       // drills
       startDrill, checkDrill, nextDrill, stopDrill,
+
       // audio
       startRecording, stopRecording, deleteRecording,
+
       // QA
       saveQA,
+
       // settings
       requestPersistence, exportData, importData, savePlan, saveSettings, saveDrillPrefs,
       simulateSyncPush, simulateSyncPull, saveTranslator

@@ -2,7 +2,7 @@
   "meta": {
     "title": "French Conjugation Rules – Drill Lookup",
     "language": "fr",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "updated": "2025-10-23",
     "notes": [
       "This file encodes algorithmic rules for regular -er, -ir, -re verbs and core irregular stems/auxiliary rules for lookup when a user gets an answer wrong in a drill.",
@@ -94,7 +94,8 @@
       "notes": [
         "Spelling changes for -cer/-ger in nous form: commençons, mangeons.",
         "Je elides to j' before vowel/mute-h."
-      ]
+      ],
+      "explanation": "Le présent exprime une action en cours, une habitude ou une vérité générale."
     },
     "passeCompose": {
       "code": "passeCompose",
@@ -109,7 +110,8 @@
         "etre_verbs_hint_ref": "#/auxiliaries/etre_verbs_hint",
         "reflexive": "être"
       },
-      "agreement": "With être, past participle agrees with subject; with avoir, agreement with preceding direct object only."
+      "agreement": "With être, past participle agrees with subject; with avoir, agreement with preceding direct object only.",
+      "explanation": "Le passé composé exprime une action achevée dans le passé, souvent ponctuelle et liée au présent."
     },
     "imparfait": {
       "code": "imparfait",
@@ -124,7 +126,8 @@
         "vous": "iez",
         "ils/elles": "aient"
       },
-      "examples_rule": "parler → nous parlons → je parlais; finir → nous finissons → je finissais; vendre → nous vendons → je vendais"
+      "examples_rule": "parler → nous parlons → je parlais; finir → nous finissons → je finissais; vendre → nous vendons → je vendais",
+      "explanation": "L’imparfait exprime des actions habituelles, inachevées ou des descriptions dans le passé."
     },
     "plusQueParfait": {
       "code": "plusQueParfait",
@@ -156,7 +159,8 @@
           "vous": "vous étiez {participle}[agree]",
           "ils/elles": "ils/elles étaient {participle}[agree]"
         }
-      }
+      },
+      "explanation": "Le plus-que-parfait exprime une action antérieure à une autre action passée."
     },
     "futurSimple": {
       "code": "futurSimple",
@@ -184,7 +188,8 @@
         "savoir": "saur",
         "falloir": "faudr",
         "pleuvoir": "pleuvr"
-      }
+      },
+      "explanation": "Le futur simple exprime une action à venir, prévue ou certaine."
     },
     "conditionnelPresent": {
       "code": "conditionnelPresent",
@@ -198,7 +203,8 @@
         "nous": "ions",
         "vous": "iez",
         "ils/elles": "aient"
-      }
+      },
+      "explanation": "Le conditionnel présent exprime l’éventualité, la politesse ou un fait soumis à une condition."
     },
     "subjonctifPresent": {
       "code": "subjonctifPresent",
@@ -232,7 +238,8 @@
         "savoir": {
           "je": "sache"
         }
-      }
+      },
+      "explanation": "Le subjonctif est un mode verbal qui exprime une action ou un état comme incertain, souhaité, douté, ou soumis à une volonté."
     },
     "imperatif": {
       "code": "imperatif",
@@ -264,7 +271,8 @@
         "affirmative": "Verb-TOI/NOUS/VOUS (Lève-toi !)",
         "negative": "Ne + te/nous/vous + Verb + pas (Ne te lève pas !)"
       },
-      "negation": "Ne + Verb + pas"
+      "negation": "Ne + Verb + pas",
+      "explanation": "L’impératif sert à donner un ordre, un conseil ou une invitation, sans sujet exprimé."
     }
   },
   "endings_reference": {
