@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ParlCoach</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+  <meta name="theme-color" content="#0f172a">
+</head>
+<body>
+  <div id="app">
+    <header class="app-header">
+      <h1>ParlCoach</h1>
+      <small class="tag">ParlFR</small>
+    </header>
+
+    <!-- Tabs -->
+    <nav class="tabs">
+      <button :class="{active: tab==='learn'}" @click="tab='learn'">Learn</button>
+      <button :class="{active: tab==='record'}" @click="tab='record'">Record</button>
+      <button :class="{active: tab==='plan'}" @click="tab='plan'">Plan</button>
+      <button :class="{active: tab==='settings'}" @click="tab='settings'">Settings</button>
+    </nav>
+
+    <main class="view">
+      <!-- LEARN -->
+
+      <!-- LEARN -->
+<section v-if="tab==='learn'" class="panel">
+  <header class="panel-head">
+    <h2>Learn</h2>
+    <div class="actions">
+      <select v-model="settings.srsMode" @change="saveSettings" title="SRS Mode">
+        <option value="SM2">SM-2</option>
+        <option value="FIXED">Fixed</option>
+      </select>
+      <input v-if="settings.srsMode==='FIXED'" class="fixed-input"
+             v-model="fixedIntervalsText" @change="updateFixedIntervals"
+             placeholder="1,3,7,14,30" title="Days between reviews">
+    </div>
+  </header>
+
+  <!-- Learn sub-tabs (Drills first) -->
+  <nav class="subtabs">
+    <button :class="{active: learnTab==='drills'}" @click="learnTab='drills'">Drills</button>
+    <button :class="{active: learnTab==='vocab'}" @click="learnTab='vocab'">General Vocab</button>
+    <button :class="{active: learnTab==='myverbs'}" @click="learnTab='myverbs'">My Verbs</button>
+    <button :class="{active: learnTab==='seedverbs'}" @click="learnTab='seedverbs'">Seed (Top 200)</button>
+  </nav>
+
+  <!-- DRILLS -->
+  <div v-if="learnTab==='drills'">
+    <div class="box">
+      <h3>Drill Settings</h3>
+      <div class="drill-grid">
+        <label>Persons
+          <select multiple v-model="drillPrefs.persons">
+            <option :value="0">je</option>
+            <option :value="1">tu</option>
+            <option :value="2">il/elle</option>
+            <option :value="3">nous</option>
+            <option :value="4">vous</option>
+            <option :value="5">ils/elles</option>
+          </select>
+        </label>
+
+  <label>Tenses
+  <select multiple v-model="drillPrefs.tenses">
+    <option value="present">présent</option>
+    <option value="passeCompose">passé composé</option>
+    <option value="imparfait">imparfait</option>
+    <option value="plusQueParfait">plus-que-parfait</option>
+    <option value="futur">futur simple</option>
+    <option value="conditionnelPresent">conditionnel présent</option>
+    <option value="subjonctifPresent">subjonctif présent</option>
+    <option value="imperatif">impératif</option>
+  </select>
+</label>
+
+        <div class="row">
+          <button @click="saveDrillPrefs">Save Settings</button>
+          <button @click="startDrill" :disabled="verbs.length===0">Start Drill</button>
+          <span class="dim" v-if="verbs.length===0">Add verbs first (My Verbs or Seed).</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pretty Drill Card -->
+    <div v-if="drillSession.running && drillSession.question" class="box card drill-card">
+      <div class="pill">Score {{ drillSession.right }} / {{ drillSession.total }}</div>
+
+      <div class="prompt">
+        <div class="hint">{{ drillSession.question.prompt.english }}</div>
+        <div class="label">{{ drillSession.question.prompt.label }}</div>
+      </div>
+
+      <input class="drill-input"
+             v-model="drillSession.input"
+             @keyup.enter="checkDrill"
+             placeholder="Type it exactly (e.g., j’ai parlé)">
+
+      <div class="controls">
+        <button @click="checkDrill" title="Enter">Check</button>
+        <button @click="nextDrill" title="N">Next</button>
+        <button @click="stopDrill" title="Esc">Stop</button>
+      </div>
+
+      <div class="feedback" v-if="drillSession.correct === true">✅ Correct</div>
+      <div class="feedback wrong" v-else-if="drillSession.correct === false">
+        Expected: <strong>{{ drillSession.question.answer }}</strong>
+      </div>
+
+      <div class="meta" v-if="drillSession.question.ex">
+        Ex: {{ drillSession.question.ex.fr }} — {{ drillSession.question.ex.en }}
+      </div>
+    </div>
+
+    <div v-else class="box empty">
+      <p>Choose persons/tenses and click <strong>Start Drill</strong>.</p>
+    </div>
+  </div>
+
+  <!-- VOCAB (unchanged) -->
+  <div v-else-if="learnTab==='vocab'">
+    <div class="add-row">
+      <input v-model="newVocabFront" placeholder="Front (e.g., to guess)" />
+      <input v-model="newVocabBack" placeholder="Back (e.g., deviner)" />
+      <button @click="addCard">Add</button>
+    </div>
+
+    <div v-if="dueCards.length" class="card">
+      <div class="front">{{ currentCard.front }}</div>
+      <div class="back" v-if="showBack">{{ currentCard.back }}</div>
+      <div class="card-actions">
+        <button @click="showBack=true" v-if="!showBack">Show</button>
+        <template v-else>
+          <button @click="rate(0)">Again</button>
+          <button @click="rate(3)">Hard</button>
+          <button @click="rate(4)">Good</button>
+          <button @click="rate(5)">Easy</button>
+        </template>
+      </div>
+      <div class="meta">Due: {{ dueCards.length }} • Total: {{ counts.total }} • Learned: {{ counts.learned }}</div>
+    </div>
+    <p v-else class="empty">No cards due. 🎉 Add more above or come back later.</p>
+
+    <details class="list">
+      <summary>All Cards ({{ counts.total }})</summary>
+      <div class="list-row" v-for="c in allCards" :key="c.id">
+        <span class="front">{{ c.front }}</span>
+        <span class="sep">→</span>
+        <span class="back">{{ c.back }}</span>
+        <span class="dim">due {{ toDateOnly(c.due) }}</span>
+        <button class="small" @click="deleteCard(c.id)">Delete</button>
+      </div>
+    </details>
+  </div>
+
+  <!-- MY VERBS -->
+  <div v-else-if="learnTab==='myverbs'">
+    <div class="verbs-grid">
+      <div class="box">
+        <h3>Add Verbs</h3>
+        <div class="row">
+          <input v-model="newVerb.infinitive" placeholder="infinitive (e.g., parler)">
+          <input v-model="newVerb.english" placeholder="english (e.g., to speak)">
+        </div>
+        <div class="row">
+          <input v-model="newVerb.tags" placeholder="tags (comma-separated, e.g., regular,er)">
+        </div>
+        <button @click="addVerb">Add Verb</button>
+      </div>
+
+      <div class="box">
+        <h3>My Verbs ({{ myVerbs.length }})</h3>
+        <div class="list-row" v-for="v in myVerbs" :key="v.id">
+          <span class="front">{{ v.infinitive }}</span>
+          <span class="sep">→</span>
+          <span class="back">{{ v.english || '—' }}</span>
+          <span class="dim">{{ (v.tags && v.tags.length) ? v.tags.join(', ') : '—' }}</span>
+          <button class="small" @click="deleteVerb(v)">Delete</button>
+        </div>
+        <p v-if="myVerbs.length===0" class="dim">No custom verbs yet. Add some above.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEED VERBS -->
+  <div v-else-if="learnTab==='seedverbs'">
+    <div class="box">
+      <h3>Top 200 (Seed) — {{ seedVerbs.length }}</h3>
+      <p class="dim">Preloaded verbs with full conjugations. They’re hidden from “My Verbs”.</p>
+      <div class="list-row" v-for="v in seedVerbs" :key="v.id">
+        <span class="front">{{ v.infinitive }}</span>
+        <span class="sep">→</span>
+        <span class="back">{{ v.english || '—' }}</span>
+        <span class="dim">{{ (v.tags && v.tags.length) ? v.tags.join(', ') : '—' }}</span>
+        <button class="small" @click="deleteVerb(v)">Delete</button>
+      </div>
+      <p v-if="seedVerbs.length===0" class="dim">No seed verbs present.</p>
+    </div>
+  </div>
+</section>
+
+
+
+      <!-- RECORD -->
+      <section v-if="tab==='record'" class="panel">
+        <header class="panel-head">
+          <h2>Record & Save</h2>
+          <div class="actions">
+            <button :disabled="isRecording" @click="startRecording">🎙️ Start</button>
+            <button :disabled="!isRecording" @click="stopRecording">⏹ Stop</button>
+          </div>
+        </header>
+
+        <div class="qa">
+          <input v-model="newQA.q" placeholder="Question (EN/FR)" />
+          <textarea v-model="newQA.a" placeholder="Your answer / Notes"></textarea>
+          <button @click="saveQA">Save Q/A</button>
+        </div>
+
+        <h3>My Recordings</h3>
+        <div v-if="recordings.length===0" class="empty">No recordings yet.</div>
+        <div class="recording" v-for="r in recordings" :key="r.id">
+          <audio :src="r.url" controls></audio>
+          <div class="rec-meta">
+            <span>{{ r.name }}</span>
+            <span class="dim">({{ (r.size/1024).toFixed(1) }} KB)</span>
+          </div>
+          <div class="rec-actions">
+            <a :href="r.url" :download="r.name">Download</a>
+            <button class="danger small" @click="deleteRecording(r)">Delete</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PLAN -->
+      <section v-if="tab==='plan'" class="panel">
+        <header class="panel-head">
+          <h2>French Learning Plan</h2>
+        </header>
+        <div class="plan-grid">
+          <label>Level Goal
+            <select v-model="plan.goal" @change="savePlan">
+              <option>Government B</option>
+              <option>Government C</option>
+              <option>DELF B1</option>
+              <option>DELF B2</option>
+              <option>Custom</option>
+            </select>
+          </label>
+          <label>Daily Minutes
+            <input type="number" min="10" step="5" v-model.number="plan.dailyMinutes" @change="savePlan">
+          </label>
+          <label>Focus (comma-sep)
+            <input v-model="plan.focus" @change="savePlan" placeholder="listening, oral, vocab, grammar">
+          </label>
+        </div>
+
+        <h3>Weekly Schedule</h3>
+        <textarea class="plan-text" v-model="plan.weeklySchedule" @change="savePlan"
+          placeholder="- Mon: 30m listening + 20m SRS
+- Tue: 30m oral drills + 20m vocab
+- Wed: mock interview 30m
+- Thu: grammar 30m + SRS 20m
+- Fri: conversation 45m
+- Sat: review 30m
+- Sun: rest / light SRS"></textarea>
+
+        <h3>Notes</h3>
+        <textarea class="plan-text" v-model="plan.notes" @change="savePlan"
+          placeholder="Personal constraints, upcoming exam date, target topics, etc."></textarea>
+      </section>
+
+      <!-- SETTINGS -->
+      <section v-if="tab==='settings'" class="panel">
+        <header class="panel-head">
+          <h2>Settings</h2>
+        </header>
+
+        <div class="set-grid">
+          <div>
+            <h4>Storage</h4>
+            <p class="dim">Audio: OPFS with IndexedDB fallback</p>
+            <button @click="requestPersistence">Request Persistent Storage</button>
+            <div class="dim">Persistent? {{ storagePersisted ? 'Yes' : 'No' }}</div>
+          </div>
+
+          <div>
+            <h4>Export / Import</h4>
+            <button @click="exportData">Export JSON</button>
+            <input type="file" accept="application/json" @change="importData">
+          </div>
+
+          <div>
+            <h4>Sync</h4>
+            <p class="dim">No provider configured. You can wire a custom API later.</p>
+            <button @click="simulateSyncPush">Simulate Push</button>
+            <button @click="simulateSyncPull">Simulate Pull</button>
+          </div>
+
+          <div>
+            <h4>Translator (optional)</h4>
+            <label>Endpoint (LibreTranslate-style)</label>
+            <input v-model="translator.endpoint" placeholder="https://…/translate">
+            <label>API Key (stored locally)</label>
+            <input v-model="translator.apiKey" placeholder="optional key">
+            <button @click="saveTranslator">Save Translator Settings</button>
+            <p class="dim">If empty, a local fallback will try simple guesses only.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Vue / Dexie from CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <script src="https://unpkg.com/dexie@4.0.8/dist/dexie.min.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service-worker.js');
+    }
+  </script>
+</body>
+</html>
