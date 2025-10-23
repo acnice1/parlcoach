@@ -55,7 +55,10 @@ function isVowelStart(s){ return /^[aeiouhâêîôûéèëïüAEIOUH]/.test(s||'
 // Allow skipping subject pronoun (je/j’, tu, il/elle/on, nous, vous, ils/elles)
 // Accept optional subject pronoun at the start (je/j’/j', tu, il/elle/on, nous, vous, ils/elles).
 // Also tolerates labels like "il/elle" or "ils/elles".
-const PRONOUN_RE = /^\s*(?:j’|j'|je|tu|il(?:\/elle)?|elle(?:\/il)?|on|nous|vous|ils(?:\/elles)?|elles(?:\/ils)?)\s+/i;
+// Accept optional subject pronoun at the start.
+// - j’ / j' (no space needed)
+// - je / tu / il/elle/on / nous / vous / ils/elles (space required)
+const PRONOUN_RE = /^\s*(?:(?:j’|j')|je\s+|tu\s+|il(?:\/elle)?\s+|elle(?:\/il)?\s+|on\s+|nous\s+|vous\s+|ils(?:\/elles)?\s+|elles(?:\/ils)?\s+)/i;
 
 function normalize(s){
   return (s || '')
