@@ -1,10 +1,10 @@
 // ParlFR — app.js
-// Local-first IndexedDB (Dexie); robust Top-200 verbs import; sleek drills first.
+// Local-first IndexedDB (Dexie); seed examples from verbs.top20.json; drills first.
 
 // =========================== Dexie (IndexedDB) ===============================
 if (!window.Dexie) {
   alert('Dexie failed to load. Check your connection or CDN.');
-  throw new Error('Dexie missing'); // stop early with a clear reason
+  throw new Error('Dexie missing');
 }
 
 const db = new Dexie('parlcoach');
@@ -27,30 +27,30 @@ db.version(3).stores({
 const opfs = {
   supported: !!(navigator.storage && navigator.storage.getDirectory),
   root: null,
-  async ensure() { if (!this.supported) return null; if (!this.root) this.root = await navigator.storage.getDirectory(); return this.root; },
-  async dir(name) { const root = await this.ensure(); if (!root) return null; return await root.getDirectoryHandle(name, { create: true }); },
-  async saveFile(path, blob) {
+  async ensure(){ if(!this.supported) return null; if(!this.root) this.root = await navigator.storage.getDirectory(); return this.root; },
+  async dir(name){ const root = await this.ensure(); if(!root) return null; return await root.getDirectoryHandle(name, { create:true }); },
+  async saveFile(path, blob){
     const [dirName, fileName] = path.split('/');
-    const dir = await this.dir(dirName); if (!dir) return null;
-    const fh = await dir.getFileHandle(fileName, { create: true });
+    const dir = await this.dir(dirName); if(!dir) return null;
+    const fh = await dir.getFileHandle(fileName, { create:true });
     const w = await fh.createWritable(); await w.write(blob); await w.close(); return fh;
   },
-  async readURL(path) {
-    const [d, f] = path.split('/'); const dir = await this.dir(d); if (!dir) return null;
+  async readURL(path){
+    const [d,f] = path.split('/'); const dir = await this.dir(d); if(!dir) return null;
     const fh = await dir.getFileHandle(f); const file = await fh.getFile(); return URL.createObjectURL(file);
   },
-  async delete(path) { const [d, f] = path.split('/'); const dir = await this.dir(d); if (!dir) return false; await dir.removeEntry(f); return true; }
+  async delete(path){ const [d,f] = path.split('/'); const dir = await this.dir(d); if(!dir) return false; await dir.removeEntry(f); return true; }
 };
 
 // ================================ Utilities ==================================
 function todayISO(){ return new Date().toISOString(); }
-function toDateOnly(iso){ try { return new Date(iso).toLocaleDateString(); } catch { return 'n/a'; } }
+function toDateOnly(iso){ try{ return new Date(iso).toLocaleDateString(); }catch{ return 'n/a'; } }
 function randChoice(a){ return a[Math.floor(Math.random()*a.length)]; }
-function clamp(n,min,max){ return Math.max(min,Math.min(max,n)); }
+function clamp(n,min,max){ return Math.max(min, Math.min(max,n)); }
 function isVowelStart(s){ return /^[aeiouhâêîôûéèëïüAEIOUH]/.test(s||''); }
 
 // =============================== Schedulers ==================================
-function sm2Schedule(card, q /*0..5*/) {
+function sm2Schedule(card, q/*0..5*/){
   let ease = card.ease ?? 2.5, reps = card.reps ?? 0, interval = card.interval ?? 0;
   if (q < 3) { reps = 0; interval = 1; }
   else {
@@ -64,7 +64,7 @@ function sm2Schedule(card, q /*0..5*/) {
   const now = new Date(); const due = new Date(now); due.setDate(now.getDate()+interval);
   return { ease, reps, interval, due: due.toISOString(), last: now.toISOString() };
 }
-function fixedSchedule(card, intervalsDays, q) {
+function fixedSchedule(card, intervalsDays, q){
   let reps = card.reps ?? 0; if (q < 3) reps = 0; else reps += 1;
   const idx = clamp(reps, 0, intervalsDays.length - 1), interval = intervalsDays[idx];
   const now = new Date(); const due = new Date(now); due.setDate(now.getDate()+interval);
@@ -125,7 +125,7 @@ async function loadTop200JSON(){
   const url = './top200_french_verbs_conjugations.json?ts=' + Date.now();
   try {
     console.info('[Top200] Fetching', url);
-    const res = await fetch(url, { cache:'no-store', headers: { 'accept':'application/json, text/plain;q=0.6, */*;q=0.5' } });
+    const res = await fetch(url, { cache:'no-store', headers:{ 'accept':'application/json, text/plain;q=0.6, */*;q=0.5' } });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const ct = (res.headers.get('content-type')||'').toLowerCase();
     const data = ct.includes('application/json') ? await res.json() : JSON.parse(await res.text());
@@ -159,43 +159,76 @@ function makeFullAnswer(tenseId, personIndex, plainForm){
   return `${subj} ${plainForm}`;
 }
 function prettyTense(t){ return DISPLAY_TENSE[t] || t; }
-function pastParticipleEn(gloss){ const v=(gloss||'').replace(/^to\s+/,''); if (v.endsWith('e')) return v+'d'; if (v.endsWith('y')) return v.slice(0,-1)+'ied'; return v+'ed'; }
-function exampleSentence(inf, tense, i, gloss){
-  const base = gloss || englishGlossDefault(inf);
-  const subj = ['I','you','he/she','we','you (pl)','they'][i];
-  switch (tense) {
-    case 'present': return { fr: makeFullAnswer(tense,i,presentRegular(inf,i)), en: `${subj} ${base.replace(/^to\s+/,'')}` };
-    case 'imparfait': return { fr: makeFullAnswer(tense,i,imparfait(inf,i)), en: `${subj} used to ${base.replace(/^to\s+/,'')}` };
-    case 'futur': return { fr: makeFullAnswer(tense,i,futurSimple(inf,i)), en: `${subj} will ${base.replace(/^to\s+/,'')}` };
-    case 'passeCompose': return { fr: makeFullAnswer(tense,i,passeCompose(inf,i)), en: `${subj} ${['have','have','has','have','have','have'][i]} ${pastParticipleEn(base)}` };
-    default: return { fr:'', en:'' };
+
+// ========================= Seed example loader (NEW) =========================
+// One curated example (il/elle/on) per tense, stored in verbs.top20.json
+const EXTERNAL_VERBS_URL = 'verbs.top20.json?v=1';
+const seedVerbsByInf = new Map();
+
+// Map internal drill keys -> example JSON keys
+const TENSE_EXAMPLE_KEY = {
+  present: 'present',
+  passeCompose: 'passeCompose',
+  imparfait: 'imparfait',
+  plusQueParfait: 'plusQueParfait',
+  futur: 'futurSimple',                // internal 'futur' maps to JSON 'futurSimple'
+  conditionnelPresent: 'conditionnelPresent',
+  subjonctifPresent: 'subjonctifPresent',
+  imperatif: 'imperatif'
+};
+
+async function loadExternalVerbs(){
+  try{
+    const res = await fetch(EXTERNAL_VERBS_URL, { cache:'no-store' });
+    if(!res.ok) throw new Error(`Failed to load ${EXTERNAL_VERBS_URL}`);
+    const list = await res.json();
+    seedVerbsByInf.clear();
+    list.forEach(v => seedVerbsByInf.set(v.infinitive, v));
+    console.info(`[verbs] loaded ${seedVerbsByInf.size} seed example items`);
+  } catch(e){
+    console.error(e);
+    alert('Could not load seed verb examples (verbs.top20.json).');
   }
+}
+
+// Prefer a user-edited verb in Dexie if you later add examples there; else seed
+function resolveVerbExamples(infinitive){
+  // (future-ready) if you ever store examples inside db.verbs, prefer those:
+  // const mine = /* lookup by infinitive from a map you maintain */;
+  // if (mine?.examples) return mine.examples;
+  const seed = seedVerbsByInf.get(infinitive);
+  return seed?.examples || null;
+}
+
+function getExample(infinitive, internalTenseKey){
+  const examples = resolveVerbExamples(infinitive);
+  if (!examples) return null;
+  const key = TENSE_EXAMPLE_KEY[internalTenseKey] || internalTenseKey;
+  const ex = examples[key];
+  return (ex && ex.fr && ex.en) ? ex : null;
 }
 
 // ================================ Vue App ====================================
 const { createApp, reactive, computed, onMounted, ref, nextTick } = Vue;
 
 createApp({
-  setup() {
+  setup(){
     const state = reactive({
-        jsonEditor: { open:false, verb:null, text:'', readonly:false, error:'' },
+      jsonEditor: { open:false, verb:null, text:'', readonly:false, error:'' },
 
       tab: 'learn',
-
-      // Learn sub-tabs (now: drills | vocab | myverbs | seedverbs)
-      learnTab: 'drills',
+      learnTab: 'drills', // drills | vocab | myverbs | seedverbs
 
       // --- VOCAB (SRS) ---
-      newVocabFront: '', newVocabBack: '',
-      allCards: [], dueCards: [], currentCard: null, showBack: false,
-      counts: { total: 0, learned: 0 },
+      newVocabFront:'', newVocabBack:'',
+      allCards:[], dueCards:[], currentCard:null, showBack:false,
+      counts:{ total:0, learned:0 },
 
       // --- VERBS & DRILLS ---
       verbs: [], // { id, infinitive, english, tags[], conj? }
       newVerb: { infinitive:'', english:'', tags:'' },
       drillPrefs: {
         key: 'v1',
-        // expose all eight tenses by default
         tenses: ['present','passeCompose','imparfait','plusQueParfait','futur','conditionnelPresent','subjonctifPresent','imperatif'],
         persons: [0,1,2,3,4,5],
         includeOnlyTags: [],
@@ -205,27 +238,27 @@ createApp({
 
       // --- RECORD ---
       isRecording:false, mediaRecorder:null, chunks:[], recordings:[],
-      newQA: { q:'', a:'' },
+
+      // --- QA ---
+      newQA:{ q:'', a:'' },
 
       // --- PLAN ---
-      plan: { key:'v1', goal:'Government B', dailyMinutes:60, focus:'listening, oral, vocab', weeklySchedule:'', notes:'' },
+      plan:{ key:'v1', goal:'Government B', dailyMinutes:60, focus:'listening, oral, vocab', weeklySchedule:'', notes:'' },
 
       // --- SETTINGS ---
-      settings: { key:'v1', srsMode:'SM2', fixedIntervals:[1,3,7,14,30], translator:{ endpoint:'', apiKey:'' } },
+      settings:{ key:'v1', srsMode:'SM2', fixedIntervals:[1,3,7,14,30], translator:{ endpoint:'', apiKey:'' } },
       fixedIntervalsText:'1,3,7,14,30',
       storagePersisted:false,
       translator:{ endpoint:'', apiKey:'' }
     });
 
-    // Refs for drill input autofocus
     const drillInputEl = ref(null);
 
-    // Derived lists for Learn tabs
     const myVerbs = computed(() => state.verbs.filter(v => !(v.tags || []).includes('top200')));
     const seedVerbs = computed(() => state.verbs.filter(v => (v.tags || []).includes('top200')));
 
     // ---------------------------- Load / Save --------------------------------
-    async function loadAll() {
+    async function loadAll(){
       const [settings, plan, drill] = await Promise.all([ db.settings.get('v1'), db.plan.get('v1'), db.drill.get('v1') ]);
       if (settings) {
         state.settings = settings;
@@ -241,8 +274,10 @@ createApp({
       computeDue();
 
       await maybeSeedVerbsFromTop200();
-      await ensureSeedTaggingAndImport(); // self-heal seed visibility
+      await ensureSeedTaggingAndImport();
       state.verbs = await db.verbs.orderBy('infinitive').toArray();
+
+      await loadExternalVerbs(); // <— NEW: load curated examples
 
       state.recordings = await loadRecordings();
     }
@@ -311,12 +346,12 @@ createApp({
       await db.verbs.bulkAdd(seed);
     }
     // Self-heal: ensure seed verbs are tagged & present
-    async function ensureSeedTaggingAndImport() {
+    async function ensureSeedTaggingAndImport(){
       const all = await db.verbs.toArray();
       let seedCount = all.filter(v => (v.tags || []).includes('top200')).length;
       if (seedCount > 0) return;
 
-      // 1) Backfill 'top200' on rows that have a conj blob (likely imported before)
+      // 1) Backfill 'top200' on rows that have a conj blob
       let modified = 0;
       for (const v of all) {
         if (v && v.conj && typeof v.conj === 'object') {
@@ -380,6 +415,12 @@ createApp({
       }
       return makeFullAnswer(tense, personIndex, plain);
     }
+
+    // Hard stop: no synthetic examples. Only curated JSON.
+    function exampleSentence(){
+      return null;
+    }
+
     function newDrillQuestion(){
       const pool = filterVerbsForDrill(state.verbs);
       if (!pool.length) return null;
@@ -390,7 +431,7 @@ createApp({
       const answer = conjugateFromAny(verb, tense, personIndex);
       const prompt = { infinitive: verb.infinitive, english: verb.english, tense, personIndex,
         label: `${PRONOUNS[personIndex]} — ${verb.infinitive} — ${prettyTense(tense)}` };
-      const ex = exampleSentence(verb.infinitive, tense, personIndex, verb.english);
+      const ex = getExample(verb.infinitive, tense); // <— curated (il/elle/on) example, may be null
       return { verb, prompt, answer, ex };
     }
     function startDrill(){
@@ -479,91 +520,63 @@ createApp({
     async function simulateSyncPull(){ state.allCards = await db.vocab.toArray(); state.verbs = await db.verbs.orderBy('infinitive').toArray(); computeDue(); alert('Simulated: pulled remote changes (refreshed).'); }
     async function saveTranslator(){ state.settings.translator = { ...state.translator }; await saveSettings(); alert('Translator settings saved locally.'); }
 
+    // ---------------------------- JSON Editor (verbs.conj) --------------------
     function openJsonEditor(verb, readonly=false){
-    //  
-        console.debug('[JSON] open', verb?.infinitive, { readonly });
- 
-
-
-  state.jsonEditor.open = true;
-  state.jsonEditor.verb = verb;
-  state.jsonEditor.readonly = !!readonly;
-  const safe = (verb.conj && typeof verb.conj === 'object') ? verb.conj : {};
-  state.jsonEditor.text = JSON.stringify(safe, null, 2);
-  state.jsonEditor.error = '';
-}
-
-function closeJsonEditor(){
-  state.jsonEditor.open = false;
-  state.jsonEditor.verb = null;
-  state.jsonEditor.text = '';
-  state.jsonEditor.error = '';
-}
-
-function prettyJson(){
-  try {
-    const obj = JSON.parse(state.jsonEditor.text);
-    state.jsonEditor.text = JSON.stringify(obj, null, 2);
-    state.jsonEditor.error = '';
-  } catch (e) {
-    state.jsonEditor.error = 'Invalid JSON: ' + e.message;
-  }
-}
-
-async function saveJsonEditor(){
-  if (!state.jsonEditor.verb) return;
-  try {
-    const obj = JSON.parse(state.jsonEditor.text);
-    // Optionally validate expected tense keys map to display names used by drills:
-    // ('Présent','Passé composé','Imparfait','Plus-que-parfait','Futur simple','Conditionnel présent','Subjonctif présent','Impératif')
-    await db.verbs.update(state.jsonEditor.verb.id, { conj: obj });
-    // Refresh in-memory row
-    const fresh = await db.verbs.get(state.jsonEditor.verb.id);
-    const idx = state.verbs.findIndex(v => v.id === state.jsonEditor.verb.id);
-    if (idx >= 0) state.verbs[idx] = fresh;
-    closeJsonEditor();
-  } catch (e) {
-    state.jsonEditor.error = 'Invalid JSON: ' + e.message;
-  }
-}
-
-async function clearConj(){
-  if (!state.jsonEditor.verb) return;
-  await db.verbs.update(state.jsonEditor.verb.id, { conj: null });
-  const idx = state.verbs.findIndex(v => v.id === state.jsonEditor.verb.id);
-  if (idx >= 0) state.verbs[idx].conj = null;
-  state.jsonEditor.text = '{}';
-}
-
-// Quick skeletons to speed editing
-function conjSkeletonBlank(){
-  // These display keys are what the drill lookup expects before mapping from internal IDs. :contentReference[oaicite:3]{index=3}
-  const persons = ['je','tu','il/elle/on','nous','vous','ils/elles'];
-  const tenses = ['Présent','Passé composé','Imparfait','Plus-que-parfait','Futur simple','Conditionnel présent','Subjonctif présent','Impératif'];
-  const base = {};
-  for (const t of tenses){
-    base[t] = {};
-    for (const p of persons) base[t][p] = '';
-  }
-  return base;
-}
-function conjSkeletonPresentOnly(){
-  return {
-    'Présent': {
-      'je':'','tu':'','il/elle/on':'','nous':'','vous':'','ils/elles':''
+      console.debug('[JSON] open', verb?.infinitive, { readonly });
+      state.jsonEditor.open = true;
+      state.jsonEditor.verb = verb;
+      state.jsonEditor.readonly = !!readonly;
+      const safe = (verb.conj && typeof verb.conj === 'object') ? verb.conj : {};
+      state.jsonEditor.text = JSON.stringify(safe, null, 2);
+      state.jsonEditor.error = '';
     }
-  };
-}
-function insertConjSkeleton(which){
-  if (state.jsonEditor.readonly) return;
-  const current = (()=>{ try{ return JSON.parse(state.jsonEditor.text||'{}'); }catch{ return {}; }})();
-  let add = {};
-  if (which === 'blank') add = conjSkeletonBlank();
-  if (which === 'present') add = conjSkeletonPresentOnly();
-  const merged = { ...add, ...current }; // keep existing keys
-  state.jsonEditor.text = JSON.stringify(merged, null, 2);
-}
-
+    function closeJsonEditor(){
+      state.jsonEditor.open = false;
+      state.jsonEditor.verb = null;
+      state.jsonEditor.text = '';
+      state.jsonEditor.error = '';
+    }
+    function prettyJson(){
+      try{ const obj = JSON.parse(state.jsonEditor.text); state.jsonEditor.text = JSON.stringify(obj, null, 2); state.jsonEditor.error=''; }
+      catch(e){ state.jsonEditor.error = 'Invalid JSON: ' + e.message; }
+    }
+    async function saveJsonEditor(){
+      if (!state.jsonEditor.verb) return;
+      try{
+        const obj = JSON.parse(state.jsonEditor.text);
+        await db.verbs.update(state.jsonEditor.verb.id, { conj: obj });
+        const fresh = await db.verbs.get(state.jsonEditor.verb.id);
+        const idx = state.verbs.findIndex(v => v.id === state.jsonEditor.verb.id);
+        if (idx >= 0) state.verbs[idx] = fresh;
+        closeJsonEditor();
+      } catch(e){
+        state.jsonEditor.error = 'Invalid JSON: ' + e.message;
+      }
+    }
+    async function clearConj(){
+      if (!state.jsonEditor.verb) return;
+      await db.verbs.update(state.jsonEditor.verb.id, { conj: null });
+      const idx = state.verbs.findIndex(v => v.id === state.jsonEditor.verb.id);
+      if (idx >= 0) state.verbs[idx].conj = null;
+      state.jsonEditor.text = '{}';
+    }
+    function conjSkeletonBlank(){
+      const persons = ['je','tu','il/elle/on','nous','vous','ils/elles'];
+      const tenses = ['Présent','Passé composé','Imparfait','Plus-que-parfait','Futur simple','Conditionnel présent','Subjonctif présent','Impératif'];
+      const base = {};
+      for (const t of tenses){ base[t] = {}; for (const p of persons) base[t][p] = ''; }
+      return base;
+    }
+    function conjSkeletonPresentOnly(){
+      return { 'Présent': { 'je':'','tu':'','il/elle/on':'','nous':'','vous':'','ils/elles':'' } };
+    }
+    function insertConjSkeleton(which){
+      if (state.jsonEditor.readonly) return;
+      const current = (()=>{ try{ return JSON.parse(state.jsonEditor.text||'{}'); }catch{ return {}; }})();
+      let add={}; if (which==='blank') add = conjSkeletonBlank(); if (which==='present') add = conjSkeletonPresentOnly();
+      const merged = { ...add, ...current };
+      state.jsonEditor.text = JSON.stringify(merged, null, 2);
+    }
 
     // ------------------------------ Expose -----------------------------------
     onMounted(loadAll);
@@ -574,9 +587,8 @@ function insertConjSkeleton(which){
       toDateOnly, prettyTense,
       // vocab
       addCard, rate, deleteCard, updateFixedIntervals,
-      //
+      // json editor
       openJsonEditor, closeJsonEditor, prettyJson, saveJsonEditor, clearConj, insertConjSkeleton,
-
       // verbs
       addVerb, deleteVerb,
       // drills
@@ -589,9 +601,7 @@ function insertConjSkeleton(which){
       requestPersistence, exportData, importData, savePlan, saveSettings, saveDrillPrefs,
       simulateSyncPush, simulateSyncPull, saveTranslator
     };
-    // Optional: quick console hooks for debugging seeds
-    window.debugSeed = { ensureSeedTaggingAndImport, loadTop200JSON };
-
+    window.debugSeed = { ensureSeedTaggingAndImport, loadTop200JSON, loadExternalVerbs, getExample };
     return api;
   }
 }).mount('#app');

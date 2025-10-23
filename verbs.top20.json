@@ -1,0 +1,962 @@
+[
+  {
+    "infinitive": "être",
+    "english": "to be",
+    "group": "irregular",
+    "frequency": "A",
+    "examples": {
+      "present": {
+        "fr": "Il est prêt.",
+        "en": "He is ready."
+      },
+      "passeCompose": {
+        "fr": "Il a été patient.",
+        "en": "He was patient."
+      },
+      "imparfait": {
+        "fr": "Il était souvent en retard.",
+        "en": "He was often late."
+      },
+      "plusQueParfait": {
+        "fr": "Il avait été averti.",
+        "en": "He had been warned."
+      },
+      "futurSimple": {
+        "fr": "Il sera disponible demain.",
+        "en": "He will be available tomorrow."
+      },
+      "conditionnelPresent": {
+        "fr": "Il serait d’accord.",
+        "en": "He would agree."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il soit prudent.",
+        "en": "He must be careful."
+      },
+      "imperatif": {
+        "fr": "Qu’il soit à l’heure !",
+        "en": "Let him be on time!"
+      }
+    }
+  },
+  {
+    "infinitive": "avoir",
+    "english": "to have",
+    "group": "irregular",
+    "frequency": "A",
+    "examples": {
+      "present": {
+        "fr": "Il a une idée.",
+        "en": "He has an idea."
+      },
+      "passeCompose": {
+        "fr": "Il a eu un problème.",
+        "en": "He had a problem."
+      },
+      "imparfait": {
+        "fr": "Il avait beaucoup de travail.",
+        "en": "He had a lot of work."
+      },
+      "plusQueParfait": {
+        "fr": "Il avait eu raison.",
+        "en": "He had been right."
+      },
+      "futurSimple": {
+        "fr": "Il aura du temps plus tard.",
+        "en": "He will have time later."
+      },
+      "conditionnelPresent": {
+        "fr": "Il aurait des questions.",
+        "en": "He would have questions."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il ait confiance.",
+        "en": "He needs to have confidence."
+      },
+      "imperatif": {
+        "fr": "Qu’il ait de la patience !",
+        "en": "Let him have patience!"
+      }
+    }
+  },
+  {
+    "infinitive": "aller",
+    "english": "to go",
+    "group": "irregular",
+    "frequency": "A",
+    "examples": {
+      "present": {
+        "fr": "Il va au bureau.",
+        "en": "He goes to the office."
+      },
+      "passeCompose": {
+        "fr": "Il est allé à la réunion.",
+        "en": "He went to the meeting."
+      },
+      "imparfait": {
+        "fr": "Il allait souvent au gymnase.",
+        "en": "He used to go to the gym often."
+      },
+      "plusQueParfait": {
+        "fr": "Il était allé en France auparavant.",
+        "en": "He had gone to France before."
+      },
+      "futurSimple": {
+        "fr": "Il ira à la conférence demain.",
+        "en": "He will go to the conference tomorrow."
+      },
+      "conditionnelPresent": {
+        "fr": "Il irait si c’était nécessaire.",
+        "en": "He would go if it were necessary."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il aille chez le médecin.",
+        "en": "He must go to the doctor."
+      },
+      "imperatif": {
+        "fr": "Qu’il aille se reposer !",
+        "en": "Let him go rest!"
+      }
+    }
+  },
+  {
+    "infinitive": "faire",
+    "english": "to do; to make",
+    "group": "irregular",
+    "frequency": "A",
+    "examples": {
+      "present": {
+        "fr": "Il fait un rapport.",
+        "en": "He is writing a report."
+      },
+      "passeCompose": {
+        "fr": "Il a fait une erreur.",
+        "en": "He made a mistake."
+      },
+      "imparfait": {
+        "fr": "Il faisait la cuisine chaque soir.",
+        "en": "He cooked every evening."
+      },
+      "plusQueParfait": {
+        "fr": "Il avait fait ses devoirs.",
+        "en": "He had done his homework."
+      },
+      "futurSimple": {
+        "fr": "Il fera de son mieux.",
+        "en": "He will do his best."
+      },
+      "conditionnelPresent": {
+        "fr": "Il ferait mieux de se reposer.",
+        "en": "He would do better to rest."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il fasse attention.",
+        "en": "He must pay attention."
+      },
+      "imperatif": {
+        "fr": "Qu’il fasse silence !",
+        "en": "Let him be quiet!"
+      }
+    }
+  },
+  {
+    "infinitive": "pouvoir",
+    "english": "to be able to; can",
+    "group": "irregular",
+    "frequency": "A",
+    "examples": {
+      "present": {
+        "fr": "Il peut finir aujourd’hui.",
+        "en": "He can finish today."
+      },
+      "passeCompose": {
+        "fr": "Il a pu entrer.",
+        "en": "He was able to enter."
+      },
+      "imparfait": {
+        "fr": "Il pouvait comprendre.",
+        "en": "He could understand."
+      },
+      "plusQueParfait": {
+        "fr": "Il avait pu joindre l’équipe.",
+        "en": "He had been able to reach the team."
+      },
+      "futurSimple": {
+        "fr": "Il pourra vous aider demain.",
+        "en": "He will be able to help you tomorrow."
+      },
+      "conditionnelPresent": {
+        "fr": "Il pourrait proposer une solution.",
+        "en": "He could propose a solution."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il puisse participer.",
+        "en": "He must be able to participate."
+      },
+      "imperatif": {
+        "fr": "Qu’il puisse décider !",
+        "en": "Let him be able to decide!"
+      }
+    }
+  },
+  {
+    "infinitive": "devoir",
+    "english": "to have to; must",
+    "group": "irregular",
+    "frequency": "A",
+    "examples": {
+      "present": {
+        "fr": "Il doit partir tôt.",
+        "en": "He has to leave early."
+      },
+      "passeCompose": {
+        "fr": "Il a dû annuler.",
+        "en": "He had to cancel."
+      },
+      "imparfait": {
+        "fr": "Il devait travailler tard.",
+        "en": "He had to work late."
+      },
+      "plusQueParfait": {
+        "fr": "Il avait dû expliquer la décision.",
+        "en": "He had had to explain the decision."
+      },
+      "futurSimple": {
+        "fr": "Il devra choisir.",
+        "en": "He will have to choose."
+      },
+      "conditionnelPresent": {
+        "fr": "Il devrait répondre bientôt.",
+        "en": "He should reply soon."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il doive justifier le budget.",
+        "en": "He must have to justify the budget."
+      },
+      "imperatif": {
+        "fr": "Qu’il doive rendre des comptes !",
+        "en": "Let him be required to account!"
+      }
+    }
+  },
+  {
+    "infinitive": "vouloir",
+    "english": "to want",
+    "group": "irregular",
+    "frequency": "A",
+    "examples": {
+      "present": {
+        "fr": "Il veut comprendre.",
+        "en": "He wants to understand."
+      },
+      "passeCompose": {
+        "fr": "Il a voulu essayer.",
+        "en": "He wanted to try."
+      },
+      "imparfait": {
+        "fr": "Il voulait apprendre.",
+        "en": "He wanted to learn."
+      },
+      "plusQueParfait": {
+        "fr": "Il avait voulu changer d’équipe.",
+        "en": "He had wanted to change teams."
+      },
+      "futurSimple": {
+        "fr": "Il voudra des précisions.",
+        "en": "He will want details."
+      },
+      "conditionnelPresent": {
+        "fr": "Il voudrait un avis.",
+        "en": "He would like an opinion."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il veuille coopérer.",
+        "en": "He must be willing to cooperate."
+      },
+      "imperatif": {
+        "fr": "Qu’il veuille bien patienter !",
+        "en": "Let him kindly wait!"
+      }
+    }
+  },
+  {
+    "infinitive": "savoir",
+    "english": "to know (a fact)",
+    "group": "irregular",
+    "frequency": "A",
+    "examples": {
+      "present": {
+        "fr": "Il sait la réponse.",
+        "en": "He knows the answer."
+      },
+      "passeCompose": {
+        "fr": "Il a su la vérité.",
+        "en": "He found out the truth."
+      },
+      "imparfait": {
+        "fr": "Il savait nager.",
+        "en": "He knew how to swim."
+      },
+      "plusQueParfait": {
+        "fr": "Il avait su garder son calme.",
+        "en": "He had known how to stay calm."
+      },
+      "futurSimple": {
+        "fr": "Il saura quoi faire.",
+        "en": "He will know what to do."
+      },
+      "conditionnelPresent": {
+        "fr": "Il saurait l’expliquer.",
+        "en": "He would know how to explain it."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il sache attendre.",
+        "en": "He must know how to wait."
+      },
+      "imperatif": {
+        "fr": "Qu’il sache rester discret !",
+        "en": "Let him know to remain discreet!"
+      }
+    }
+  },
+  {
+    "infinitive": "dire",
+    "english": "to say; to tell",
+    "group": "irregular",
+    "frequency": "A",
+    "examples": {
+      "present": {
+        "fr": "Il dit la vérité.",
+        "en": "He tells the truth."
+      },
+      "passeCompose": {
+        "fr": "Il a dit non.",
+        "en": "He said no."
+      },
+      "imparfait": {
+        "fr": "Il disait souvent merci.",
+        "en": "He often said thank you."
+      },
+      "plusQueParfait": {
+        "fr": "Il avait dit la même chose.",
+        "en": "He had said the same thing."
+      },
+      "futurSimple": {
+        "fr": "Il dira son avis demain.",
+        "en": "He will give his opinion tomorrow."
+      },
+      "conditionnelPresent": {
+        "fr": "Il dirait oui.",
+        "en": "He would say yes."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il dise pourquoi.",
+        "en": "He must say why."
+      },
+      "imperatif": {
+        "fr": "Qu’il dise la vérité !",
+        "en": "Let him tell the truth!"
+      }
+    }
+  },
+  {
+    "infinitive": "voir",
+    "english": "to see",
+    "group": "irregular",
+    "frequency": "A",
+    "examples": {
+      "present": {
+        "fr": "Il voit le problème.",
+        "en": "He sees the problem."
+      },
+      "passeCompose": {
+        "fr": "Il a vu le message.",
+        "en": "He saw the message."
+      },
+      "imparfait": {
+        "fr": "Il voyait souvent ses amis.",
+        "en": "He often saw his friends."
+      },
+      "plusQueParfait": {
+        "fr": "Il avait vu les résultats.",
+        "en": "He had seen the results."
+      },
+      "futurSimple": {
+        "fr": "Il verra plus tard.",
+        "en": "He will see later."
+      },
+      "conditionnelPresent": {
+        "fr": "Il verrait cela autrement.",
+        "en": "He would see it differently."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il voie le rapport.",
+        "en": "He must see the report."
+      },
+      "imperatif": {
+        "fr": "Qu’il voie par lui-même !",
+        "en": "Let him see for himself!"
+      }
+    }
+  },
+  {
+    "infinitive": "prendre",
+    "english": "to take",
+    "group": "3",
+    "frequency": "A",
+    "examples": {
+      "present": {
+        "fr": "Il prend des notes.",
+        "en": "He takes notes."
+      },
+      "passeCompose": {
+        "fr": "Il a pris une décision.",
+        "en": "He made a decision."
+      },
+      "imparfait": {
+        "fr": "Il prenait le train tous les jours.",
+        "en": "He took the train every day."
+      },
+      "plusQueParfait": {
+        "fr": "Il avait pris du retard.",
+        "en": "He had fallen behind."
+      },
+      "futurSimple": {
+        "fr": "Il prendra la parole demain.",
+        "en": "He will speak tomorrow."
+      },
+      "conditionnelPresent": {
+        "fr": "Il prendrait une autre approche.",
+        "en": "He would take another approach."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il prenne une décision.",
+        "en": "He must make a decision."
+      },
+      "imperatif": {
+        "fr": "Qu’il prenne la parole !",
+        "en": "Let him speak!"
+      }
+    }
+  },
+  {
+    "infinitive": "venir",
+    "english": "to come",
+    "group": "irregular",
+    "frequency": "A",
+    "examples": {
+      "present": {
+        "fr": "Il vient tout de suite.",
+        "en": "He is coming right away."
+      },
+      "passeCompose": {
+        "fr": "Il est venu plus tard.",
+        "en": "He came later."
+      },
+      "imparfait": {
+        "fr": "Il venait chaque semaine.",
+        "en": "He used to come every week."
+      },
+      "plusQueParfait": {
+        "fr": "Il était venu auparavant.",
+        "en": "He had come earlier."
+      },
+      "futurSimple": {
+        "fr": "Il viendra demain matin.",
+        "en": "He will come tomorrow morning."
+      },
+      "conditionnelPresent": {
+        "fr": "Il viendrait si on l’invitait.",
+        "en": "He would come if invited."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il vienne à l’heure.",
+        "en": "He must come on time."
+      },
+      "imperatif": {
+        "fr": "Qu’il vienne maintenant !",
+        "en": "Let him come now!"
+      }
+    }
+  },
+  {
+    "infinitive": "mettre",
+    "english": "to put; to set",
+    "group": "3",
+    "frequency": "A",
+    "examples": {
+      "present": {
+        "fr": "Il met la table.",
+        "en": "He sets the table."
+      },
+      "passeCompose": {
+        "fr": "Il a mis à jour le dossier.",
+        "en": "He updated the file."
+      },
+      "imparfait": {
+        "fr": "Il mettait toujours sa ceinture.",
+        "en": "He always wore his seatbelt."
+      },
+      "plusQueParfait": {
+        "fr": "Il avait mis de côté des fonds.",
+        "en": "He had set aside funds."
+      },
+      "futurSimple": {
+        "fr": "Il mettra fin au contrat.",
+        "en": "He will end the contract."
+      },
+      "conditionnelPresent": {
+        "fr": "Il mettrait plus de ressources.",
+        "en": "He would put in more resources."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il mette à jour le plan.",
+        "en": "He must update the plan."
+      },
+      "imperatif": {
+        "fr": "Qu’il mette ses priorités au clair !",
+        "en": "Let him clarify his priorities!"
+      }
+    }
+  },
+  {
+    "infinitive": "donner",
+    "english": "to give",
+    "group": "1",
+    "frequency": "A",
+    "examples": {
+      "present": {
+        "fr": "Il donne des exemples.",
+        "en": "He gives examples."
+      },
+      "passeCompose": {
+        "fr": "Il a donné son avis.",
+        "en": "He gave his opinion."
+      },
+      "imparfait": {
+        "fr": "Il donnait souvent un coup de main.",
+        "en": "He often gave a hand."
+      },
+      "plusQueParfait": {
+        "fr": "Il avait donné des indications.",
+        "en": "He had given directions."
+      },
+      "futurSimple": {
+        "fr": "Il donnera une présentation.",
+        "en": "He will give a presentation."
+      },
+      "conditionnelPresent": {
+        "fr": "Il donnerait plus de temps.",
+        "en": "He would give more time."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il donne des nouvelles.",
+        "en": "He must give an update."
+      },
+      "imperatif": {
+        "fr": "Qu’il donne l’exemple !",
+        "en": "Let him set an example!"
+      }
+    }
+  },
+  {
+    "infinitive": "parler",
+    "english": "to speak; to talk",
+    "group": "1",
+    "frequency": "A",
+    "examples": {
+      "present": {
+        "fr": "Il parle français au travail.",
+        "en": "He speaks French at work."
+      },
+      "passeCompose": {
+        "fr": "Il a parlé avec son chef.",
+        "en": "He spoke with his manager."
+      },
+      "imparfait": {
+        "fr": "Il parlait doucement.",
+        "en": "He was speaking softly."
+      },
+      "plusQueParfait": {
+        "fr": "Il avait parlé trop vite.",
+        "en": "He had spoken too quickly."
+      },
+      "futurSimple": {
+        "fr": "Il parlera demain.",
+        "en": "He will speak tomorrow."
+      },
+      "conditionnelPresent": {
+        "fr": "Il parlerait volontiers.",
+        "en": "He would gladly speak."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il parle clairement.",
+        "en": "He must speak clearly."
+      },
+      "imperatif": {
+        "fr": "Qu’il parle sans détour !",
+        "en": "Let him speak plainly!"
+      }
+    }
+  },
+  {
+    "infinitive": "trouver",
+    "english": "to find",
+    "group": "1",
+    "frequency": "A",
+    "examples": {
+      "present": {
+        "fr": "Il trouve une solution.",
+        "en": "He finds a solution."
+      },
+      "passeCompose": {
+        "fr": "Il a trouvé son passeport.",
+        "en": "He found his passport."
+      },
+      "imparfait": {
+        "fr": "Il trouvait cela difficile.",
+        "en": "He used to find it difficult."
+      },
+      "plusQueParfait": {
+        "fr": "Il avait trouvé un compromis.",
+        "en": "He had found a compromise."
+      },
+      "futurSimple": {
+        "fr": "Il trouvera une idée.",
+        "en": "He will find an idea."
+      },
+      "conditionnelPresent": {
+        "fr": "Il trouverait ça utile.",
+        "en": "He would find that useful."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il trouve un remplaçant.",
+        "en": "He must find a replacement."
+      },
+      "imperatif": {
+        "fr": "Qu’il trouve une solution durable !",
+        "en": "Let him find a lasting solution!"
+      }
+    }
+  },
+  {
+    "infinitive": "rendre",
+    "english": "to give back; to render; to make",
+    "group": "3",
+    "frequency": "B",
+    "examples": {
+      "present": {
+        "fr": "Il rend le livre.",
+        "en": "He returns the book."
+      },
+      "passeCompose": {
+        "fr": "Il a rendu compte des résultats.",
+        "en": "He reported the results."
+      },
+      "imparfait": {
+        "fr": "Il rendait visite à sa mère.",
+        "en": "He used to visit his mother."
+      },
+      "plusQueParfait": {
+        "fr": "Il avait rendu le matériel.",
+        "en": "He had returned the equipment."
+      },
+      "futurSimple": {
+        "fr": "Il rendra le document demain.",
+        "en": "He will return the document tomorrow."
+      },
+      "conditionnelPresent": {
+        "fr": "Il rendrait service volontiers.",
+        "en": "He would gladly help."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il rende le rapport.",
+        "en": "He must hand in the report."
+      },
+      "imperatif": {
+        "fr": "Qu’il rende ce qui ne lui appartient pas !",
+        "en": "Let him return what doesn’t belong to him!"
+      }
+    }
+  },
+  {
+    "infinitive": "comprendre",
+    "english": "to understand",
+    "group": "3",
+    "frequency": "A",
+    "examples": {
+      "present": {
+        "fr": "Il comprend la situation.",
+        "en": "He understands the situation."
+      },
+      "passeCompose": {
+        "fr": "Il a compris le message.",
+        "en": "He understood the message."
+      },
+      "imparfait": {
+        "fr": "Il comprenait mal à l’époque.",
+        "en": "He didn’t understand well back then."
+      },
+      "plusQueParfait": {
+        "fr": "Il avait compris trop tard.",
+        "en": "He had understood too late."
+      },
+      "futurSimple": {
+        "fr": "Il comprendra avec le temps.",
+        "en": "He will understand with time."
+      },
+      "conditionnelPresent": {
+        "fr": "Il comprendrait avec un exemple.",
+        "en": "He would understand with an example."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il comprenne les risques.",
+        "en": "He must understand the risks."
+      },
+      "imperatif": {
+        "fr": "Qu’il comprenne bien l’enjeu !",
+        "en": "Let him fully grasp the issue!"
+      }
+    }
+  },
+  {
+    "infinitive": "tenir",
+    "english": "to hold; to keep",
+    "group": "3",
+    "frequency": "B",
+    "examples": {
+      "present": {
+        "fr": "Il tient sa promesse.",
+        "en": "He keeps his promise."
+      },
+      "passeCompose": {
+        "fr": "Il a tenu parole.",
+        "en": "He kept his word."
+      },
+      "imparfait": {
+        "fr": "Il tenait un journal.",
+        "en": "He kept a journal."
+      },
+      "plusQueParfait": {
+        "fr": "Il avait tenu le délai.",
+        "en": "He had met the deadline."
+      },
+      "futurSimple": {
+        "fr": "Il tiendra bon.",
+        "en": "He will hold firm."
+      },
+      "conditionnelPresent": {
+        "fr": "Il tiendrait compte des avis.",
+        "en": "He would take opinions into account."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il tienne ses engagements.",
+        "en": "He must keep his commitments."
+      },
+      "imperatif": {
+        "fr": "Qu’il tienne sa ligne !",
+        "en": "Let him hold his line!"
+      }
+    }
+  },
+  {
+    "infinitive": "sortir",
+    "english": "to go out; to take out",
+    "group": "3",
+    "frequency": "B",
+    "examples": {
+      "present": {
+        "fr": "Il sort avec des amis.",
+        "en": "He goes out with friends."
+      },
+      "passeCompose": {
+        "fr": "Il est sorti tard.",
+        "en": "He went out late."
+      },
+      "imparfait": {
+        "fr": "Il sortait tous les vendredis.",
+        "en": "He used to go out every Friday."
+      },
+      "plusQueParfait": {
+        "fr": "Il était déjà sorti lorsqu’on a appelé.",
+        "en": "He had already gone out when we called."
+      },
+      "futurSimple": {
+        "fr": "Il sortira après le travail.",
+        "en": "He will go out after work."
+      },
+      "conditionnelPresent": {
+        "fr": "Il sortirait volontiers ce soir.",
+        "en": "He would gladly go out tonight."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il sorte prendre l’air.",
+        "en": "He must go get some fresh air."
+      },
+      "imperatif": {
+        "fr": "Qu’il sorte immédiatement !",
+        "en": "Let him go out immediately!"
+      }
+    }
+  },
+  {
+    "infinitive": "partir",
+    "english": "to leave; to depart",
+    "group": "3",
+    "frequency": "A",
+    "examples": {
+      "present": {
+        "fr": "Il part tôt.",
+        "en": "He leaves early."
+      },
+      "passeCompose": {
+        "fr": "Il est parti hier soir.",
+        "en": "He left last night."
+      },
+      "imparfait": {
+        "fr": "Il partait avant l’aube.",
+        "en": "He used to leave before dawn."
+      },
+      "plusQueParfait": {
+        "fr": "Il était parti sans prévenir.",
+        "en": "He had left without warning."
+      },
+      "futurSimple": {
+        "fr": "Il partira demain matin.",
+        "en": "He will leave tomorrow morning."
+      },
+      "conditionnelPresent": {
+        "fr": "Il partirait en cas d’urgence.",
+        "en": "He would leave in an emergency."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il parte à l’heure.",
+        "en": "He must leave on time."
+      },
+      "imperatif": {
+        "fr": "Qu’il parte tout de suite !",
+        "en": "Let him leave right away!"
+      }
+    }
+  },
+  {
+    "infinitive": "arriver",
+    "english": "to arrive; to happen",
+    "group": "1",
+    "frequency": "A",
+    "examples": {
+      "present": {
+        "fr": "Il arrive à midi.",
+        "en": "He arrives at noon."
+      },
+      "passeCompose": {
+        "fr": "Il est arrivé en retard.",
+        "en": "He arrived late."
+      },
+      "imparfait": {
+        "fr": "Il arrivait souvent le premier.",
+        "en": "He often arrived first."
+      },
+      "plusQueParfait": {
+        "fr": "Il était arrivé avant moi.",
+        "en": "He had arrived before me."
+      },
+      "futurSimple": {
+        "fr": "Il arrivera bientôt.",
+        "en": "He will arrive soon."
+      },
+      "conditionnelPresent": {
+        "fr": "Il arriverait plus tôt en taxi.",
+        "en": "He would arrive earlier by taxi."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il arrive à l’heure.",
+        "en": "He must arrive on time."
+      },
+      "imperatif": {
+        "fr": "Qu’il arrive préparé !",
+        "en": "Let him arrive prepared!"
+      }
+    }
+  },
+  {
+    "infinitive": "rester",
+    "english": "to stay; to remain",
+    "group": "1",
+    "frequency": "B",
+    "examples": {
+      "present": {
+        "fr": "Il reste calme.",
+        "en": "He remains calm."
+      },
+      "passeCompose": {
+        "fr": "Il est resté chez lui.",
+        "en": "He stayed at home."
+      },
+      "imparfait": {
+        "fr": "Il restait discret.",
+        "en": "He remained discreet."
+      },
+      "plusQueParfait": {
+        "fr": "Il était resté silencieux.",
+        "en": "He had remained silent."
+      },
+      "futurSimple": {
+        "fr": "Il restera disponible.",
+        "en": "He will remain available."
+      },
+      "conditionnelPresent": {
+        "fr": "Il resterait volontiers.",
+        "en": "He would gladly stay."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il reste concentré.",
+        "en": "He must stay focused."
+      },
+      "imperatif": {
+        "fr": "Qu’il reste prudent !",
+        "en": "Let him stay cautious!"
+      }
+    }
+  },
+  {
+    "infinitive": "finir",
+    "english": "to finish; to end",
+    "group": "2",
+    "frequency": "A",
+    "examples": {
+      "present": {
+        "fr": "Il finit le rapport.",
+        "en": "He is finishing the report."
+      },
+      "passeCompose": {
+        "fr": "Il a fini à temps.",
+        "en": "He finished on time."
+      },
+      "imparfait": {
+        "fr": "Il finissait tard.",
+        "en": "He used to finish late."
+      },
+      "plusQueParfait": {
+        "fr": "Il avait fini avant midi.",
+        "en": "He had finished before noon."
+      },
+      "futurSimple": {
+        "fr": "Il finira demain.",
+        "en": "He will finish tomorrow."
+      },
+      "conditionnelPresent": {
+        "fr": "Il finirait plus vite avec de l’aide.",
+        "en": "He would finish faster with help."
+      },
+      "subjonctifPresent": {
+        "fr": "Il faut qu’il finisse aujourd’hui.",
+        "en": "He must finish today."
+      },
+      "imperatif": {
+        "fr": "Qu’il finisse ce qu’il a commencé !",
+        "en": "Let him finish what he started!"
+      }
+    }
+  }
+]
