@@ -281,9 +281,8 @@ const TENSE_DS_KEY = {
 };
 const PERSON_LABELS = ['je','tu','il/elle/on','nous','vous','ils/elles'];
 
-// ========================= Seed example loader (optional) ====================
-// One curated example (il/elle/on) per tense, stored in verbs.top50.json (optional)
-const EXTERNAL_VERBS_URL = 'verbs.top50.json?v=1';
+// Verbs with examples for all conjugations + translations
+const EXTERNAL_VERBS_URL = 'verbs_translations_examples.json?v=1';
 const seedVerbsByInf = new Map();
 const TENSE_EXAMPLE_KEY = {
   present: 'present',
@@ -394,10 +393,10 @@ createApp({
         const list = await res.json();
         seedVerbsByInf.clear();
         list.forEach(v => seedVerbsByInf.set(v.infinitive, v));
-        console.info(`[verbs] loaded ${seedVerbsByInf.size} seed example items`);
+        console.info(` ${seedVerbsByInf.size} verbs with definitions and examples loaded (JSON) `);
       } catch(e){
         console.error(e);
-        // optional: no alert to avoid noise if file missing
+         console.log(' No external verbs with examples/definitions loaded. ');
       }
     }
 
