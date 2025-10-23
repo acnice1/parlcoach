@@ -384,7 +384,7 @@ verbs = [
       "subjonctifPresent": {"fr": "Il faut qu’il finisse aujourd’hui.", "en": "He must finish today."},
       "imperatif": {"fr": "Qu’il finisse ce qu’il a commencé !", "en": "Let him finish what he started!"}
     }
-  }
+  },
  {
     "infinitive": "croire",
     "english": "to believe",
@@ -866,10 +866,10 @@ verbs = [
     }
   }
 ]
-]
 
-path = "/mnt/data/verbs.top20.json"
+
+path = "/mnt/data/verbs.top50.json"
 with open(path, "w", encoding="utf-8") as f:
     json.dump(verbs, f, ensure_ascii=False, indent=2)
 
-path
+print("Saved to", path)

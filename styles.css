@@ -175,3 +175,38 @@ body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:
 .modal-actions{ display:flex; gap:8px; align-items:center; margin-top:10px }
 .modal-actions .danger{ border-color:#3b1f28; background:#2a0e14 }
 .modal .err{ color:#fca5a5 }
+
+/* === Rule Help Styling === */
+.rule-help {
+  background: #fffef8; /* warm off-white for contrast */
+  border: 2px solid #f5d26b; /* soft golden accent */
+  border-left: 6px solid #e6b400; /* thicker accent bar */
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-top: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.rule-help h4 {
+  margin: 0 0 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #b58900; /* dark amber tone */
+}
+
+.rule-help ul {
+  list-style-type: disc;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.rule-help li {
+  margin-bottom: 3px;
+  line-height: 1.4;
+}
+
+.rule-help li::marker {
+  color: #e6b400; /* accent the bullets */
+}

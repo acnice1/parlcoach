@@ -1,0 +1,372 @@
+{
+  "meta": {
+    "title": "French Conjugation Rules – Drill Lookup",
+    "language": "fr",
+    "version": "1.0.0",
+    "updated": "2025-10-23",
+    "notes": [
+      "This file encodes algorithmic rules for regular -er, -ir, -re verbs and core irregular stems/auxiliary rules for lookup when a user gets an answer wrong in a drill.",
+      "Field names are stable; add more irregulars as needed without breaking structure."
+    ]
+  },
+  "orthography": {
+    "je_elision": "Use \"j'\" before vowel or mute-h initial: e.g., j’aime, j’habite.",
+    "imperatif_pronoun_drop": "Imperative omits subject pronoun: Parle ! Finissons ! Vendez !",
+    "c_g_spelling": "For -cer → ç before a/o (nous commençons); -ger → ge before a/o (nous mangeons)."
+  },
+  "groups": {
+    "-er": {
+      "name": "1st group",
+      "stem_rule": "Remove the -er of the infinitive to get the stem (e.g., parler → parl-).",
+      "participles": {
+        "passe": "é"
+      }
+    },
+    "-ir": {
+      "name": "2nd group (regular -ir with -issant)",
+      "stem_rule": "Remove the -ir to get the stem (finir → fin-).",
+      "participles": {
+        "passe": "i"
+      }
+    },
+    "-re": {
+      "name": "3rd group (regular -re pattern only)",
+      "stem_rule": "Remove the -re to get the stem (vendre → vend-).",
+      "participles": {
+        "passe": "u"
+      }
+    }
+  },
+  "participles": {
+    "formation": {
+      "-er": "Replace -er with -é (parlé).",
+      "-ir": "Replace -ir with -i (fini).",
+      "-re": "Replace -re with -u (vendu)."
+    },
+    "agreement_rules": "With auxiliary être (including all reflexives), agree past participle with subject in gender/number. With avoir, agree with preceding direct object only."
+  },
+  "auxiliaries": {
+    "default": "avoir",
+    "etre_verbs_hint": "Use être with verbs of motion/state commonly listed as DR & MRS VANDERTRAMP (aller, venir, entrer, sortir, arriver, partir, monter, descendre, naître, mourir, rester, tomber, retourner, passer [intransitive], etc.) and with all reflexive verbs.",
+    "reflexive": "être"
+  },
+  "tenses": {
+    "present": {
+      "code": "present",
+      "description": "Current facts, habits, states, actions in progress.",
+      "type": "simple",
+      "formation": {
+        "-er": {
+          "stem": "infinitive -er",
+          "endings": {
+            "je": "e",
+            "tu": "es",
+            "il/elle/on": "e",
+            "nous": "ons",
+            "vous": "ez",
+            "ils/elles": "ent"
+          },
+          "special": "For -er, imperative tu form drops final -s (Parle !)."
+        },
+        "-ir": {
+          "stem": "infinitive -ir",
+          "endings": {
+            "je": "is",
+            "tu": "is",
+            "il/elle/on": "it",
+            "nous": "issons",
+            "vous": "issez",
+            "ils/elles": "issent"
+          }
+        },
+        "-re": {
+          "stem": "infinitive -re",
+          "endings": {
+            "je": "s",
+            "tu": "s",
+            "il/elle/on": "",
+            "nous": "ons",
+            "vous": "ez",
+            "ils/elles": "ent"
+          }
+        }
+      },
+      "notes": [
+        "Spelling changes for -cer/-ger in nous form: commençons, mangeons.",
+        "Je elides to j' before vowel/mute-h."
+      ]
+    },
+    "passeCompose": {
+      "code": "passeCompose",
+      "description": "Completed actions/events in the past.",
+      "type": "compound",
+      "formation": {
+        "auxiliary": "present of avoir (default) or être (movement/reflexive)",
+        "participle": "see participles.formation"
+      },
+      "auxiliary_rules": {
+        "default": "avoir",
+        "etre_verbs_hint_ref": "#/auxiliaries/etre_verbs_hint",
+        "reflexive": "être"
+      },
+      "agreement": "With être, past participle agrees with subject; with avoir, agreement with preceding direct object only."
+    },
+    "imparfait": {
+      "code": "imparfait",
+      "description": "Habitual/ongoing or background past actions and states.",
+      "type": "simple",
+      "stem_rule": "Use nous-present form minus -ons (except être → ét-).",
+      "endings": {
+        "je": "ais",
+        "tu": "ais",
+        "il/elle/on": "ait",
+        "nous": "ions",
+        "vous": "iez",
+        "ils/elles": "aient"
+      },
+      "examples_rule": "parler → nous parlons → je parlais; finir → nous finissons → je finissais; vendre → nous vendons → je vendais"
+    },
+    "plusQueParfait": {
+      "code": "plusQueParfait",
+      "description": "Past of the past: action completed before another past reference point.",
+      "type": "compound",
+      "formation": {
+        "auxiliary": "imparfait of avoir/être",
+        "participle": "see participles.formation"
+      },
+      "auxiliary_rules": {
+        "default": "avoir",
+        "etre_verbs_hint_ref": "#/auxiliaries/etre_verbs_hint",
+        "reflexive": "être"
+      },
+      "templates": {
+        "avoir": {
+          "je": "j’avais {participle}",
+          "tu": "tu avais {participle}",
+          "il/elle/on": "il/elle/on avait {participle}",
+          "nous": "nous avions {participle}",
+          "vous": "vous aviez {participle}",
+          "ils/elles": "ils/elles avaient {participle}"
+        },
+        "etre": {
+          "je": "j’étais {participle}[agree]",
+          "tu": "tu étais {participle}[agree]",
+          "il/elle/on": "il/elle/on était {participle}[agree]",
+          "nous": "nous étions {participle}[agree]",
+          "vous": "vous étiez {participle}[agree]",
+          "ils/elles": "ils/elles étaient {participle}[agree]"
+        }
+      }
+    },
+    "futurSimple": {
+      "code": "futurSimple",
+      "description": "Future actions/intentions.",
+      "type": "simple",
+      "stem_rule": "Use infinitive; for -re verbs, drop final -e (vendre → vendr-).",
+      "endings": {
+        "je": "ai",
+        "tu": "as",
+        "il/elle/on": "a",
+        "nous": "ons",
+        "vous": "ez",
+        "ils/elles": "ont"
+      },
+      "irregular_stems": {
+        "etre": "ser",
+        "avoir": "aur",
+        "aller": "ir",
+        "faire": "fer",
+        "venir": "viendr",
+        "voir": "verr",
+        "pouvoir": "pourr",
+        "vouloir": "voudr",
+        "devoir": "devr",
+        "savoir": "saur",
+        "falloir": "faudr",
+        "pleuvoir": "pleuvr"
+      }
+    },
+    "conditionnelPresent": {
+      "code": "conditionnelPresent",
+      "description": "Politeness, hypothetical statements, reported speech in the future of the past.",
+      "type": "simple",
+      "stem_rule": "Use futur simple stem (infinitive; -re drop final -e; or irregular) + imparfait endings.",
+      "endings": {
+        "je": "ais",
+        "tu": "ais",
+        "il/elle/on": "ait",
+        "nous": "ions",
+        "vous": "iez",
+        "ils/elles": "aient"
+      }
+    },
+    "subjonctifPresent": {
+      "code": "subjonctifPresent",
+      "description": "Necessity, doubt, emotion, purpose — usually after que.",
+      "type": "simple",
+      "stem_rule": "Use ils-present minus -ent for je/tu/il/ils; nous/vous take an -ions/-iez pattern often matching imparfait stem.",
+      "endings": {
+        "je": "e",
+        "tu": "es",
+        "il/elle/on": "e",
+        "nous": "ions",
+        "vous": "iez",
+        "ils/elles": "ent"
+      },
+      "common_irregular": {
+        "etre": {
+          "je": "sois"
+        },
+        "avoir": {
+          "je": "aie"
+        },
+        "aller": {
+          "je": "aille"
+        },
+        "faire": {
+          "je": "fasse"
+        },
+        "pouvoir": {
+          "je": "puisse"
+        },
+        "savoir": {
+          "je": "sache"
+        }
+      }
+    },
+    "imperatif": {
+      "code": "imperatif",
+      "description": "Commands, requests, advice (tu, nous, vous only; no subject pronoun).",
+      "type": "simple",
+      "persons": [
+        "tu",
+        "nous",
+        "vous"
+      ],
+      "formation": {
+        "-er": {
+          "tu": "present tu form minus final -s",
+          "nous": "present nous",
+          "vous": "present vous"
+        },
+        "-ir": {
+          "tu": "present tu",
+          "nous": "present nous",
+          "vous": "present vous"
+        },
+        "-re": {
+          "tu": "present tu",
+          "nous": "present nous",
+          "vous": "present vous"
+        }
+      },
+      "reflexive": {
+        "affirmative": "Verb-TOI/NOUS/VOUS (Lève-toi !)",
+        "negative": "Ne + te/nous/vous + Verb + pas (Ne te lève pas !)"
+      },
+      "negation": "Ne + Verb + pas"
+    }
+  },
+  "endings_reference": {
+    "present": {
+      "-er": [
+        "e",
+        "es",
+        "e",
+        "ons",
+        "ez",
+        "ent"
+      ],
+      "-ir": [
+        "is",
+        "is",
+        "it",
+        "issons",
+        "issez",
+        "issent"
+      ],
+      "-re": [
+        "s",
+        "s",
+        "",
+        "ons",
+        "ez",
+        "ent"
+      ]
+    },
+    "imparfait": [
+      "ais",
+      "ais",
+      "ait",
+      "ions",
+      "iez",
+      "aient"
+    ],
+    "futur_conditionnel_bases": {
+      "futurSimple": [
+        "ai",
+        "as",
+        "a",
+        "ons",
+        "ez",
+        "ont"
+      ],
+      "conditionnelPresent": [
+        "ais",
+        "ais",
+        "ait",
+        "ions",
+        "iez",
+        "aient"
+      ]
+    },
+    "subjonctifPresent": [
+      "e",
+      "es",
+      "e",
+      "ions",
+      "iez",
+      "ent"
+    ]
+  },
+  "algorithms": {
+    "simple_tense": "Resolve stem according to tense rules and group, then append person-specific ending.",
+    "compound_tense": "Pick auxiliary (avoir/être) according to rules; conjugate auxiliary in required tense; form past participle; apply agreement rules."
+  },
+  "quick_help_templates": {
+    "present": "Remove infinitive ending (-er/-ir/-re) to get the stem, then add the person ending.",
+    "passeCompose": "Use present of avoir (default) or être (movement/reflexive) + past participle (parlé/fini/vendu).",
+    "imparfait": "Nous-present minus -ons + endings (-ais, -ais, -ait, -ions, -iez, -aient). Être uses ét- + endings.",
+    "plusQueParfait": "Imparfait of auxiliary (avais/étais, etc.) + past participle (parlé/fini/vendu).",
+    "futurSimple": "Infinitive (drop final -e for -re) + endings (-ai, -as, -a, -ons, -ez, -ont).",
+    "conditionnelPresent": "Future stem + imparfait endings.",
+    "subjonctifPresent": "Ils-present minus -ent + endings (-e, -es, -e, -ions, -iez, -ent).",
+    "imperatif": "Use tu/nous/vous forms from present; -er verbs drop -s in tu."
+  },
+  "sample_lookups": {
+    "je+parler+plusQueParfait": {
+      "rule_path": [
+        "tenses",
+        "plusQueParfait"
+      ],
+      "how_to": "Use imparfait of avoir for je (j’avais) + past participle of parler (parlé).",
+      "correct_form_example": "j’avais parlé"
+    },
+    "je+finir+imparfait": {
+      "rule_path": [
+        "tenses",
+        "imparfait"
+      ],
+      "how_to": "Nous form finissons → drop -ons → finiss- + je ending -ais.",
+      "correct_form_example": "je finissais"
+    },
+    "tu+vendre+futurSimple": {
+      "rule_path": [
+        "tenses",
+        "futurSimple"
+      ],
+      "how_to": "Infinitive vendre → drop final -e → vendr- + tu ending -as.",
+      "correct_form_example": "tu vendras"
+    }
+  }
+}
