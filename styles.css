@@ -49,10 +49,8 @@ body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:
 
 .recording{padding:10px;border:1px solid #243041;border-radius:10px;margin:8px 0;background:#0e1726}
 .rec-meta{display:flex;gap:8px;align-items:center;margin:6px 0}
-.rec-actions{d:root{
-  --ink:#0f172a; --ink-2:#334155; --bg:#0b1020; --card:#111927; --accent:#22d3ee; --muted:#94a3b8;
-  --br:14px; --shadow:0 10px 30px rgba(0,0,0,.2);
-}
+.rec-actions{display:flex;gap:12px}
+.rec-actions .danger{border-color:#3b1f28;background:#2a0e14}
 
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
@@ -157,3 +155,23 @@ body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:
 .drill-card .controls { display:flex; gap:.5rem; justify-content:center; margin:.75rem 0; }
 .drill-card .feedback { text-align:center; margin:.25rem 0; }
 .drill-card .feedback.wrong { color:#b91c1c; }
+/* --- JSON modal --- */
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(2,6,23,.6); backdrop-filter:saturate(90%) blur(2px);
+  display:flex; align-items:center; justify-content:center; z-index:9999;
+}
+.modal{
+  width:min(920px, 92vw); max-height:86vh; overflow:auto;
+  background:#0e1726; border:1px solid #243041; border-radius:14px; box-shadow:var(--shadow);
+  padding:16px;
+}
+.modal-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px }
+.modal-row{ display:flex; gap:8px; align-items:center; margin:8px 0 }
+.modal-row .grow{ flex:1 }
+.json-area{
+  width:100%; min-height:360px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  padding:10px; border:1px solid #243041; border-radius:10px; background:#0f172a; color:#e2e8f0;
+}
+.modal-actions{ display:flex; gap:8px; align-items:center; margin-top:10px }
+.modal-actions .danger{ border-color:#3b1f28; background:#2a0e14 }
+.modal .err{ color:#fca5a5 }

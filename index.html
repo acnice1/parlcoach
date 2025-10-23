@@ -7,8 +7,9 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon-192.png" sizes="192x192">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css">
   <meta name="theme-color" content="#0f172a">
+  <link rel="stylesheet" href="styles.css?v=2025-10-22-1">
+ 
 </head>
 <body>
   <div id="app">
@@ -181,6 +182,7 @@
           <span class="sep">→</span>
           <span class="back">{{ v.english || '—' }}</span>
           <span class="dim">{{ (v.tags && v.tags.length) ? v.tags.join(', ') : '—' }}</span>
+          <button class="small" @click="openJsonEditor(v, false)">JSON</button>
           <button class="small" @click="deleteVerb(v)">Delete</button>
         </div>
         <p v-if="myVerbs.length===0" class="dim">No custom verbs yet. Add some above.</p>
@@ -198,6 +200,7 @@
         <span class="sep">→</span>
         <span class="back">{{ v.english || '—' }}</span>
         <span class="dim">{{ (v.tags && v.tags.length) ? v.tags.join(', ') : '—' }}</span>
+        <button class="small" @click="openJsonEditor(v, false)">JSON</button>
         <button class="small" @click="deleteVerb(v)">Delete</button>
       </div>
       <p v-if="seedVerbs.length===0" class="dim">No seed verbs present.</p>
@@ -314,18 +317,69 @@
           </div>
         </div>
       </section>
+
+      <!-- JSON Editor Modal -->
+<div v-if="jsonEditor.open" class="modal-overlay" @click.self="closeJsonEditor">
+  <div class="modal">
+    <header class="modal-head">
+      <h3>Edit JSON — {{ jsonEditor.verb?.infinitive }}</h3>
+      <button class="small" @click="closeJsonEditor">✕</button>
+    </header>
+
+    <div class="modal-row">
+      <label>Mode
+        <select v-model="jsonEditor.readonly">
+          <option :value="false">Editable</option>
+          <option :value="true">Read-only</option>
+        </select>
+      </label>
+      <label class="grow">Helper
+        <select @change="insertConjSkeleton($event.target.value); $event.target.selectedIndex=0">
+          <option selected disabled>Insert skeleton…</option>
+          <option value="blank">Blank template (all tenses)</option>
+          <option value="present">Présent only</option>
+        </select>
+      </label>
+    </div>
+
+    <textarea class="json-area" v-model="jsonEditor.text" :readonly="jsonEditor.readonly"></textarea>
+
+    <div class="modal-actions">
+      <button @click="prettyJson" :disabled="jsonEditor.readonly">Pretty</button>
+      <button @click="saveJsonEditor" :disabled="jsonEditor.readonly">Save</button>
+      <button class="danger" @click="clearConj" :disabled="jsonEditor.readonly">Clear conj</button>
+      <span class="err" v-if="jsonEditor.error">{{ jsonEditor.error }}</span>
+    </div>
+
+    <details class="dim" style="margin-top:8px">
+      <summary>What shape should this JSON be?</summary>
+      <p>
+        Use keys like <code>Présent</code>, <code>Passé composé</code>, etc., and inside each,
+        provide person keys <code>je</code>, <code>tu</code>, <code>il/elle/on</code>, <code>nous</code>,
+        <code>vous</code>, <code>ils/elles</code>. The drill loader maps internal IDs to these display keys. :contentReference[oaicite:2]{index=2}
+      </p>
+    </details>
+  </div>
+</div>
+
+
     </main>
   </div>
 
   <!-- Vue / Dexie from CDN -->
-  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-  <script src="https://unpkg.com/dexie@4.0.8/dist/dexie.min.js"></script>
-  <script src="app.js"></script>
+<!-- Vue / Dexie from CDN -->
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js" defer></script>
+<script src="https://unpkg.com/dexie@4.0.8/dist/dexie.min.js" defer></script>
+<script src="app.js?v=2025-10-22-1" defer></script>
 
+
+  <!-- LETS SAVE THIS FOR LATER
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./service-worker.js');
     }
   </script>
+  -->
+
 </body>
 </html>

@@ -2,6 +2,11 @@
 // Local-first IndexedDB (Dexie); robust Top-200 verbs import; sleek drills first.
 
 // =========================== Dexie (IndexedDB) ===============================
+if (!window.Dexie) {
+  alert('Dexie failed to load. Check your connection or CDN.');
+  throw new Error('Dexie missing'); // stop early with a clear reason
+}
+
 const db = new Dexie('parlcoach');
 /*
  v1 -> initial
@@ -173,6 +178,8 @@ const { createApp, reactive, computed, onMounted, ref, nextTick } = Vue;
 createApp({
   setup() {
     const state = reactive({
+        jsonEditor: { open:false, verb:null, text:'', readonly:false, error:'' },
+
       tab: 'learn',
 
       // Learn sub-tabs (now: drills | vocab | myverbs | seedverbs)
@@ -472,6 +479,92 @@ createApp({
     async function simulateSyncPull(){ state.allCards = await db.vocab.toArray(); state.verbs = await db.verbs.orderBy('infinitive').toArray(); computeDue(); alert('Simulated: pulled remote changes (refreshed).'); }
     async function saveTranslator(){ state.settings.translator = { ...state.translator }; await saveSettings(); alert('Translator settings saved locally.'); }
 
+    function openJsonEditor(verb, readonly=false){
+    //  
+        console.debug('[JSON] open', verb?.infinitive, { readonly });
+ 
+
+
+  state.jsonEditor.open = true;
+  state.jsonEditor.verb = verb;
+  state.jsonEditor.readonly = !!readonly;
+  const safe = (verb.conj && typeof verb.conj === 'object') ? verb.conj : {};
+  state.jsonEditor.text = JSON.stringify(safe, null, 2);
+  state.jsonEditor.error = '';
+}
+
+function closeJsonEditor(){
+  state.jsonEditor.open = false;
+  state.jsonEditor.verb = null;
+  state.jsonEditor.text = '';
+  state.jsonEditor.error = '';
+}
+
+function prettyJson(){
+  try {
+    const obj = JSON.parse(state.jsonEditor.text);
+    state.jsonEditor.text = JSON.stringify(obj, null, 2);
+    state.jsonEditor.error = '';
+  } catch (e) {
+    state.jsonEditor.error = 'Invalid JSON: ' + e.message;
+  }
+}
+
+async function saveJsonEditor(){
+  if (!state.jsonEditor.verb) return;
+  try {
+    const obj = JSON.parse(state.jsonEditor.text);
+    // Optionally validate expected tense keys map to display names used by drills:
+    // ('Présent','Passé composé','Imparfait','Plus-que-parfait','Futur simple','Conditionnel présent','Subjonctif présent','Impératif')
+    await db.verbs.update(state.jsonEditor.verb.id, { conj: obj });
+    // Refresh in-memory row
+    const fresh = await db.verbs.get(state.jsonEditor.verb.id);
+    const idx = state.verbs.findIndex(v => v.id === state.jsonEditor.verb.id);
+    if (idx >= 0) state.verbs[idx] = fresh;
+    closeJsonEditor();
+  } catch (e) {
+    state.jsonEditor.error = 'Invalid JSON: ' + e.message;
+  }
+}
+
+async function clearConj(){
+  if (!state.jsonEditor.verb) return;
+  await db.verbs.update(state.jsonEditor.verb.id, { conj: null });
+  const idx = state.verbs.findIndex(v => v.id === state.jsonEditor.verb.id);
+  if (idx >= 0) state.verbs[idx].conj = null;
+  state.jsonEditor.text = '{}';
+}
+
+// Quick skeletons to speed editing
+function conjSkeletonBlank(){
+  // These display keys are what the drill lookup expects before mapping from internal IDs. :contentReference[oaicite:3]{index=3}
+  const persons = ['je','tu','il/elle/on','nous','vous','ils/elles'];
+  const tenses = ['Présent','Passé composé','Imparfait','Plus-que-parfait','Futur simple','Conditionnel présent','Subjonctif présent','Impératif'];
+  const base = {};
+  for (const t of tenses){
+    base[t] = {};
+    for (const p of persons) base[t][p] = '';
+  }
+  return base;
+}
+function conjSkeletonPresentOnly(){
+  return {
+    'Présent': {
+      'je':'','tu':'','il/elle/on':'','nous':'','vous':'','ils/elles':''
+    }
+  };
+}
+function insertConjSkeleton(which){
+  if (state.jsonEditor.readonly) return;
+  const current = (()=>{ try{ return JSON.parse(state.jsonEditor.text||'{}'); }catch{ return {}; }})();
+  let add = {};
+  if (which === 'blank') add = conjSkeletonBlank();
+  if (which === 'present') add = conjSkeletonPresentOnly();
+  const merged = { ...add, ...current }; // keep existing keys
+  state.jsonEditor.text = JSON.stringify(merged, null, 2);
+}
+
+
     // ------------------------------ Expose -----------------------------------
     onMounted(loadAll);
     const api = {
@@ -481,6 +574,9 @@ createApp({
       toDateOnly, prettyTense,
       // vocab
       addCard, rate, deleteCard, updateFixedIntervals,
+      //
+      openJsonEditor, closeJsonEditor, prettyJson, saveJsonEditor, clearConj, insertConjSkeleton,
+
       // verbs
       addVerb, deleteVerb,
       // drills
