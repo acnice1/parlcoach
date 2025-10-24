@@ -122,6 +122,8 @@ body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:
 .verbs textarea, .verbs input{width:100%;padding:10px;border:1px solid #243041;background:#0f172a;color:#e2e8f0;border-radius:10px}
 .drill-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
 .drill-grid select, .drill-grid input{width:100%;padding:10px;border:1px solid #243041;background:#0f172a;color:#e2e8f0;border-radius:10px}
+.drill-side{font-size:18px;margin-bottom:10px}
+
 
 .recording{padding:10px;border:1px solid #243041;border-radius:10px;margin:8px 0;background:#0e1726}
 .rec-meta{display:flex;gap:8px;align-items:center;margin:6px 0}
@@ -406,3 +408,24 @@ button,
 .switch .label-text {
   opacity: 0.9;
 }
+
+.label {
+  display: inline-block;
+  font-size: 1.5rem;              /* large and readable */
+  font-weight: 600;               /* bold for emphasis */
+  color: #0f172a;                 /* dark navy (good contrast on light backgrounds) */
+  background: #e0f2fe;            /* soft blue highlight */
+  border-left: 6px solid #2563eb; /* GC-blue accent */
+  padding: 0.4rem 1.2rem; /* spacious padding */
+  border-radius: 8px; /* rounded corners */
+  margin: 1rem 0;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.label:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+

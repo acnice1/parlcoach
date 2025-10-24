@@ -1,5 +1,4 @@
 {
-  "count": 200,
   "verbs": [
     {
       "verb": "être",
@@ -59,6 +58,14 @@
           "nous": "soyons",
           "vous": "soyez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "suis",
+          "tu": "es",
+          "il/elle/on": "est",
+          "nous": "sommes",
+          "vous": "êtes",
+          "ils/elles": "sont"
         }
       }
     },
@@ -120,6 +127,14 @@
           "nous": "ayons",
           "vous": "ayez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "ai",
+          "tu": "as",
+          "il/elle/on": "a",
+          "nous": "avons",
+          "vous": "avez",
+          "ils/elles": "ont"
         }
       }
     },
@@ -181,6 +196,14 @@
           "nous": "faisons",
           "vous": "faites",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "fais",
+          "tu": "fais",
+          "il/elle/on": "fait",
+          "nous": "faisons",
+          "vous": "faites",
+          "ils/elles": "font"
         }
       }
     },
@@ -242,6 +265,14 @@
           "nous": "disons",
           "vous": "dites",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "dis",
+          "tu": "dis",
+          "il/elle/on": "dit",
+          "nous": "disons",
+          "vous": "dites",
+          "ils/elles": "disent"
         }
       }
     },
@@ -303,6 +334,14 @@
           "nous": "",
           "vous": "",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "peux",
+          "tu": "peux",
+          "il/elle/on": "peut",
+          "nous": "pouvons",
+          "vous": "pouvez",
+          "ils/elles": "peuvent"
         }
       }
     },
@@ -364,6 +403,14 @@
           "nous": "allons",
           "vous": "allez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "vais",
+          "tu": "vas",
+          "il/elle/on": "va",
+          "nous": "allons",
+          "vous": "allez",
+          "ils/elles": "vont"
         }
       }
     },
@@ -425,6 +472,14 @@
           "nous": "voyons",
           "vous": "voyez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "vois",
+          "tu": "vois",
+          "il/elle/on": "voit",
+          "nous": "voyons",
+          "vous": "voyez",
+          "ils/elles": "voient"
         }
       }
     },
@@ -486,6 +541,14 @@
           "nous": "sachons",
           "vous": "sachez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "sais",
+          "tu": "sais",
+          "il/elle/on": "sait",
+          "nous": "savons",
+          "vous": "savez",
+          "ils/elles": "savent"
         }
       }
     },
@@ -547,6 +610,14 @@
           "nous": "veuillons",
           "vous": "veuillez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "veux",
+          "tu": "veux",
+          "il/elle/on": "veut",
+          "nous": "voulons",
+          "vous": "voulez",
+          "ils/elles": "veulent"
         }
       }
     },
@@ -608,6 +679,14 @@
           "nous": "venons",
           "vous": "venez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "viens",
+          "tu": "viens",
+          "il/elle/on": "vient",
+          "nous": "venons",
+          "vous": "venez",
+          "ils/elles": "viennent"
         }
       }
     },
@@ -669,6 +748,14 @@
           "nous": "devons",
           "vous": "devez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "dois",
+          "tu": "dois",
+          "il/elle/on": "doit",
+          "nous": "devons",
+          "vous": "devez",
+          "ils/elles": "doivent"
         }
       }
     },
@@ -730,6 +817,14 @@
           "nous": "prenons",
           "vous": "prenez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "prends",
+          "tu": "prends",
+          "il/elle/on": "prend",
+          "nous": "prenons",
+          "vous": "prenez",
+          "ils/elles": "prennent"
         }
       }
     },
@@ -791,6 +886,14 @@
           "nous": "trouvons",
           "vous": "trouvez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "trouve",
+          "tu": "trouves",
+          "il/elle/on": "trouve",
+          "nous": "trouvons",
+          "vous": "trouvez",
+          "ils/elles": "trouvent"
         }
       }
     },
@@ -852,6 +955,14 @@
           "nous": "donnons",
           "vous": "donnez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "donne",
+          "tu": "donnes",
+          "il/elle/on": "donne",
+          "nous": "donnons",
+          "vous": "donnez",
+          "ils/elles": "donnent"
         }
       }
     },
@@ -913,6 +1024,14 @@
           "nous": "",
           "vous": "",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "fallois",
+          "tu": "fallois",
+          "il/elle/on": "falloit",
+          "nous": "falloissons",
+          "vous": "falloissez",
+          "ils/elles": "falloissent"
         }
       }
     },
@@ -974,6 +1093,14 @@
           "nous": "parlons",
           "vous": "parlez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "parle",
+          "tu": "parles",
+          "il/elle/on": "parle",
+          "nous": "parlons",
+          "vous": "parlez",
+          "ils/elles": "parlent"
         }
       }
     },
@@ -1035,6 +1162,14 @@
           "nous": "mettons",
           "vous": "mettez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "mets",
+          "tu": "mets",
+          "il/elle/on": "met",
+          "nous": "mettons",
+          "vous": "mettez",
+          "ils/elles": "mettent"
         }
       }
     },
@@ -1096,6 +1231,14 @@
           "nous": "passons",
           "vous": "passez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "passe",
+          "tu": "passes",
+          "il/elle/on": "passe",
+          "nous": "passons",
+          "vous": "passez",
+          "ils/elles": "passent"
         }
       }
     },
@@ -1157,6 +1300,14 @@
           "nous": "croyons",
           "vous": "croyez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "crois",
+          "tu": "crois",
+          "il/elle/on": "croit",
+          "nous": "croyons",
+          "vous": "croyez",
+          "ils/elles": "croient"
         }
       }
     },
@@ -1218,6 +1369,14 @@
           "nous": "demandons",
           "vous": "demandez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "demande",
+          "tu": "demandes",
+          "il/elle/on": "demande",
+          "nous": "demandons",
+          "vous": "demandez",
+          "ils/elles": "demandent"
         }
       }
     },
@@ -1279,6 +1438,14 @@
           "nous": "tenons",
           "vous": "tenez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "tiens",
+          "tu": "tiens",
+          "il/elle/on": "tient",
+          "nous": "tenons",
+          "vous": "tenez",
+          "ils/elles": "tiennent"
         }
       }
     },
@@ -1340,6 +1507,14 @@
           "nous": "aimons",
           "vous": "aimez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "aime",
+          "tu": "aimes",
+          "il/elle/on": "aime",
+          "nous": "aimons",
+          "vous": "aimez",
+          "ils/elles": "aiment"
         }
       }
     },
@@ -1401,6 +1576,14 @@
           "nous": "restons",
           "vous": "restez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "reste",
+          "tu": "restes",
+          "il/elle/on": "reste",
+          "nous": "restons",
+          "vous": "restez",
+          "ils/elles": "restent"
         }
       }
     },
@@ -1462,6 +1645,14 @@
           "nous": "pensons",
           "vous": "pensez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "pense",
+          "tu": "penses",
+          "il/elle/on": "pense",
+          "nous": "pensons",
+          "vous": "pensez",
+          "ils/elles": "pensent"
         }
       }
     },
@@ -1523,6 +1714,14 @@
           "nous": "entendons",
           "vous": "entendez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "entends",
+          "tu": "entends",
+          "il/elle/on": "entend",
+          "nous": "entendons",
+          "vous": "entendez",
+          "ils/elles": "entendent"
         }
       }
     },
@@ -1584,6 +1783,14 @@
           "nous": "travaillons",
           "vous": "travaillez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "travaille",
+          "tu": "travailles",
+          "il/elle/on": "travaille",
+          "nous": "travaillons",
+          "vous": "travaillez",
+          "ils/elles": "travaillent"
         }
       }
     },
@@ -1645,6 +1852,14 @@
           "nous": "répondons",
           "vous": "répondez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "réponds",
+          "tu": "réponds",
+          "il/elle/on": "répond",
+          "nous": "répondons",
+          "vous": "répondez",
+          "ils/elles": "répondent"
         }
       }
     },
@@ -1706,6 +1921,14 @@
           "nous": "rendons",
           "vous": "rendez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "rends",
+          "tu": "rends",
+          "il/elle/on": "rend",
+          "nous": "rendons",
+          "vous": "rendez",
+          "ils/elles": "rendent"
         }
       }
     },
@@ -1767,6 +1990,14 @@
           "nous": "connaissons",
           "vous": "connaissez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "connaîts",
+          "tu": "connaîts",
+          "il/elle/on": "connaît",
+          "nous": "connaîtons",
+          "vous": "connaîtez",
+          "ils/elles": "connaîtent"
         }
       }
     },
@@ -1828,6 +2059,14 @@
           "nous": "semblons",
           "vous": "semblez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "semble",
+          "tu": "sembles",
+          "il/elle/on": "semble",
+          "nous": "semblons",
+          "vous": "semblez",
+          "ils/elles": "semblent"
         }
       }
     },
@@ -1889,6 +2128,14 @@
           "nous": "arrivons",
           "vous": "arrivez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "arrive",
+          "tu": "arrives",
+          "il/elle/on": "arrive",
+          "nous": "arrivons",
+          "vous": "arrivez",
+          "ils/elles": "arrivent"
         }
       }
     },
@@ -1950,6 +2197,14 @@
           "nous": "sentons",
           "vous": "sentez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "sens",
+          "tu": "sens",
+          "il/elle/on": "sent",
+          "nous": "sentons",
+          "vous": "sentez",
+          "ils/elles": "sentent"
         }
       }
     },
@@ -2011,6 +2266,14 @@
           "nous": "attendons",
           "vous": "attendez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "attends",
+          "tu": "attends",
+          "il/elle/on": "attend",
+          "nous": "attendons",
+          "vous": "attendez",
+          "ils/elles": "attendent"
         }
       }
     },
@@ -2072,6 +2335,14 @@
           "nous": "vivons",
           "vous": "vivez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "vis",
+          "tu": "vis",
+          "il/elle/on": "vit",
+          "nous": "vivons",
+          "vous": "vivez",
+          "ils/elles": "vivent"
         }
       }
     },
@@ -2133,6 +2404,14 @@
           "nous": "cherchons",
           "vous": "cherchez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "cherche",
+          "tu": "cherches",
+          "il/elle/on": "cherche",
+          "nous": "cherchons",
+          "vous": "cherchez",
+          "ils/elles": "cherchent"
         }
       }
     },
@@ -2194,6 +2473,14 @@
           "nous": "comprenons",
           "vous": "comprenez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "prends",
+          "tu": "prends",
+          "il/elle/on": "prend",
+          "nous": "prenons",
+          "vous": "prenez",
+          "ils/elles": "prennent"
         }
       }
     },
@@ -2255,6 +2542,14 @@
           "nous": "portons",
           "vous": "portez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "porte",
+          "tu": "portes",
+          "il/elle/on": "porte",
+          "nous": "portons",
+          "vous": "portez",
+          "ils/elles": "portent"
         }
       }
     },
@@ -2316,6 +2611,14 @@
           "nous": "entrons",
           "vous": "entrez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "entre",
+          "tu": "entres",
+          "il/elle/on": "entre",
+          "nous": "entrons",
+          "vous": "entrez",
+          "ils/elles": "entrent"
         }
       }
     },
@@ -2377,6 +2680,14 @@
           "nous": "devenons",
           "vous": "devenez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "deviens",
+          "tu": "deviens",
+          "il/elle/on": "devient",
+          "nous": "devenons",
+          "vous": "devenez",
+          "ils/elles": "deviennent"
         }
       }
     },
@@ -2438,6 +2749,14 @@
           "nous": "revenons",
           "vous": "revenez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "reviens",
+          "tu": "reviens",
+          "il/elle/on": "revient",
+          "nous": "revenons",
+          "vous": "revenez",
+          "ils/elles": "reviennent"
         }
       }
     },
@@ -2499,6 +2818,14 @@
           "nous": "sortons",
           "vous": "sortez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "sors",
+          "tu": "sors",
+          "il/elle/on": "sort",
+          "nous": "sortons",
+          "vous": "sortez",
+          "ils/elles": "sortent"
         }
       }
     },
@@ -2560,6 +2887,14 @@
           "nous": "partons",
           "vous": "partez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "pars",
+          "tu": "pars",
+          "il/elle/on": "part",
+          "nous": "partons",
+          "vous": "partez",
+          "ils/elles": "partent"
         }
       }
     },
@@ -2621,6 +2956,14 @@
           "nous": "décidons",
           "vous": "décidez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "décide",
+          "tu": "décides",
+          "il/elle/on": "décide",
+          "nous": "décidons",
+          "vous": "décidez",
+          "ils/elles": "décident"
         }
       }
     },
@@ -2682,6 +3025,14 @@
           "nous": "perdons",
           "vous": "perdez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "perds",
+          "tu": "perds",
+          "il/elle/on": "perd",
+          "nous": "perdons",
+          "vous": "perdez",
+          "ils/elles": "perdent"
         }
       }
     },
@@ -2743,6 +3094,14 @@
           "nous": "ouvrons",
           "vous": "ouvrez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "ouvre",
+          "tu": "ouvres",
+          "il/elle/on": "ouvre",
+          "nous": "ouvrons",
+          "vous": "ouvrez",
+          "ils/elles": "ouvrent"
         }
       }
     },
@@ -2804,6 +3163,14 @@
           "nous": "suivons",
           "vous": "suivez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "suis",
+          "tu": "suis",
+          "il/elle/on": "suit",
+          "nous": "suivons",
+          "vous": "suivez",
+          "ils/elles": "suivent"
         }
       }
     },
@@ -2865,6 +3232,14 @@
           "nous": "gagnons",
           "vous": "gagnez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "gagne",
+          "tu": "gagnes",
+          "il/elle/on": "gagne",
+          "nous": "gagnons",
+          "vous": "gagnez",
+          "ils/elles": "gagnent"
         }
       }
     },
@@ -2926,6 +3301,14 @@
           "nous": "existons",
           "vous": "existez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "existe",
+          "tu": "existes",
+          "il/elle/on": "existe",
+          "nous": "existons",
+          "vous": "existez",
+          "ils/elles": "existent"
         }
       }
     },
@@ -2987,6 +3370,14 @@
           "nous": "refusons",
           "vous": "refusez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "refuse",
+          "tu": "refuses",
+          "il/elle/on": "refuse",
+          "nous": "refusons",
+          "vous": "refusez",
+          "ils/elles": "refusent"
         }
       }
     },
@@ -3048,6 +3439,14 @@
           "nous": "réussissons",
           "vous": "réussissez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "réussis",
+          "tu": "réussis",
+          "il/elle/on": "réussit",
+          "nous": "réussissons",
+          "vous": "réussissez",
+          "ils/elles": "réussissent"
         }
       }
     },
@@ -3109,6 +3508,14 @@
           "nous": "changeons",
           "vous": "changez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "change",
+          "tu": "changes",
+          "il/elle/on": "change",
+          "nous": "changeons",
+          "vous": "changez",
+          "ils/elles": "changent"
         }
       }
     },
@@ -3170,6 +3577,14 @@
           "nous": "représentons",
           "vous": "représentez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "représente",
+          "tu": "représentes",
+          "il/elle/on": "représente",
+          "nous": "représentons",
+          "vous": "représentez",
+          "ils/elles": "représentent"
         }
       }
     },
@@ -3231,6 +3646,14 @@
           "nous": "assurons",
           "vous": "assurez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "assure",
+          "tu": "assures",
+          "il/elle/on": "assure",
+          "nous": "assurons",
+          "vous": "assurez",
+          "ils/elles": "assurent"
         }
       }
     },
@@ -3292,6 +3715,14 @@
           "nous": "essayons",
           "vous": "essayez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "essaye",
+          "tu": "essayes",
+          "il/elle/on": "essaye",
+          "nous": "essayons",
+          "vous": "essayez",
+          "ils/elles": "essayent"
         }
       }
     },
@@ -3353,6 +3784,14 @@
           "nous": "empêchons",
           "vous": "empêchez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "empêche",
+          "tu": "empêches",
+          "il/elle/on": "empêche",
+          "nous": "empêchons",
+          "vous": "empêchez",
+          "ils/elles": "empêchent"
         }
       }
     },
@@ -3414,6 +3853,14 @@
           "nous": "risquons",
           "vous": "risquez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "risque",
+          "tu": "risques",
+          "il/elle/on": "risque",
+          "nous": "risquons",
+          "vous": "risquez",
+          "ils/elles": "risquent"
         }
       }
     },
@@ -3475,6 +3922,14 @@
           "nous": "apprenons",
           "vous": "apprenez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "prends",
+          "tu": "prends",
+          "il/elle/on": "prend",
+          "nous": "prenons",
+          "vous": "prenez",
+          "ils/elles": "prennent"
         }
       }
     },
@@ -3536,6 +3991,14 @@
           "nous": "atteignons",
           "vous": "atteignez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "atteins",
+          "tu": "atteins",
+          "il/elle/on": "atteint",
+          "nous": "atteignons",
+          "vous": "atteignez",
+          "ils/elles": "atteignent"
         }
       }
     },
@@ -3597,6 +4060,14 @@
           "nous": "produisons",
           "vous": "produisez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "produis",
+          "tu": "produis",
+          "il/elle/on": "produit",
+          "nous": "produisons",
+          "vous": "produisez",
+          "ils/elles": "produisent"
         }
       }
     },
@@ -3658,6 +4129,14 @@
           "nous": "écrivons",
           "vous": "écrivez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "écris",
+          "tu": "écris",
+          "il/elle/on": "écrit",
+          "nous": "écrivons",
+          "vous": "écrivez",
+          "ils/elles": "écrivent"
         }
       }
     },
@@ -3719,6 +4198,14 @@
           "nous": "tombons",
           "vous": "tombez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "tombe",
+          "tu": "tombes",
+          "il/elle/on": "tombe",
+          "nous": "tombons",
+          "vous": "tombez",
+          "ils/elles": "tombent"
         }
       }
     },
@@ -3780,6 +4267,14 @@
           "nous": "tirons",
           "vous": "tirez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "tire",
+          "tu": "tires",
+          "il/elle/on": "tire",
+          "nous": "tirons",
+          "vous": "tirez",
+          "ils/elles": "tirent"
         }
       }
     },
@@ -3841,6 +4336,14 @@
           "nous": "servons",
           "vous": "servez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "sers",
+          "tu": "sers",
+          "il/elle/on": "sert",
+          "nous": "servons",
+          "vous": "servez",
+          "ils/elles": "servent"
         }
       }
     },
@@ -3902,6 +4405,14 @@
           "nous": "fournissons",
           "vous": "fournissez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "fournis",
+          "tu": "fournis",
+          "il/elle/on": "fournit",
+          "nous": "fournissons",
+          "vous": "fournissez",
+          "ils/elles": "fournissent"
         }
       }
     },
@@ -3963,6 +4474,14 @@
           "nous": "affirmons",
           "vous": "affirmez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "affirme",
+          "tu": "affirmes",
+          "il/elle/on": "affirme",
+          "nous": "affirmons",
+          "vous": "affirmez",
+          "ils/elles": "affirment"
         }
       }
     },
@@ -4024,6 +4543,14 @@
           "nous": "offrons",
           "vous": "offrez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "offre",
+          "tu": "offres",
+          "il/elle/on": "offre",
+          "nous": "offrons",
+          "vous": "offrez",
+          "ils/elles": "offrent"
         }
       }
     },
@@ -4085,6 +4612,14 @@
           "nous": "acceptons",
           "vous": "acceptez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "accepte",
+          "tu": "acceptes",
+          "il/elle/on": "accepte",
+          "nous": "acceptons",
+          "vous": "acceptez",
+          "ils/elles": "acceptent"
         }
       }
     },
@@ -4146,6 +4681,14 @@
           "nous": "lisons",
           "vous": "lisez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "lis",
+          "tu": "lis",
+          "il/elle/on": "lit",
+          "nous": "lisons",
+          "vous": "lisez",
+          "ils/elles": "lisent"
         }
       }
     },
@@ -4207,6 +4750,14 @@
           "nous": "choisissons",
           "vous": "choisissez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "choisis",
+          "tu": "choisis",
+          "il/elle/on": "choisit",
+          "nous": "choisissons",
+          "vous": "choisissez",
+          "ils/elles": "choisissent"
         }
       }
     },
@@ -4268,6 +4819,14 @@
           "nous": "permettons",
           "vous": "permettez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "mets",
+          "tu": "mets",
+          "il/elle/on": "met",
+          "nous": "mettons",
+          "vous": "mettez",
+          "ils/elles": "mettent"
         }
       }
     },
@@ -4329,6 +4888,14 @@
           "nous": "ajoutons",
           "vous": "ajoutez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "ajoute",
+          "tu": "ajoutes",
+          "il/elle/on": "ajoute",
+          "nous": "ajoutons",
+          "vous": "ajoutez",
+          "ils/elles": "ajoutent"
         }
       }
     },
@@ -4390,6 +4957,14 @@
           "nous": "rappelons",
           "vous": "rappelez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "rappele",
+          "tu": "rappeles",
+          "il/elle/on": "rappele",
+          "nous": "rappelons",
+          "vous": "rappelez",
+          "ils/elles": "rappelent"
         }
       }
     },
@@ -4451,6 +5026,14 @@
           "nous": "apportons",
           "vous": "apportez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "apporte",
+          "tu": "apportes",
+          "il/elle/on": "apporte",
+          "nous": "apportons",
+          "vous": "apportez",
+          "ils/elles": "apportent"
         }
       }
     },
@@ -4512,6 +5095,14 @@
           "nous": "utilisons",
           "vous": "utilisez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "utilise",
+          "tu": "utilises",
+          "il/elle/on": "utilise",
+          "nous": "utilisons",
+          "vous": "utilisez",
+          "ils/elles": "utilisent"
         }
       }
     },
@@ -4573,6 +5164,14 @@
           "nous": "retenons",
           "vous": "retenez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "retiens",
+          "tu": "retiens",
+          "il/elle/on": "retient",
+          "nous": "retenons",
+          "vous": "retenez",
+          "ils/elles": "retiennent"
         }
       }
     },
@@ -4634,6 +5233,14 @@
           "nous": "manquons",
           "vous": "manquez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "manque",
+          "tu": "manques",
+          "il/elle/on": "manque",
+          "nous": "manquons",
+          "vous": "manquez",
+          "ils/elles": "manquent"
         }
       }
     },
@@ -4695,6 +5302,14 @@
           "nous": "créons",
           "vous": "créez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "crée",
+          "tu": "crées",
+          "il/elle/on": "crée",
+          "nous": "créons",
+          "vous": "créez",
+          "ils/elles": "créent"
         }
       }
     },
@@ -4756,6 +5371,14 @@
           "nous": "obtenons",
           "vous": "obtenez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "obtiens",
+          "tu": "obtiens",
+          "il/elle/on": "obtient",
+          "nous": "obtenons",
+          "vous": "obtenez",
+          "ils/elles": "obtiennent"
         }
       }
     },
@@ -4817,6 +5440,14 @@
           "nous": "découvrons",
           "vous": "découvrez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "découvre",
+          "tu": "découvres",
+          "il/elle/on": "découvre",
+          "nous": "découvrons",
+          "vous": "découvrez",
+          "ils/elles": "découvrent"
         }
       }
     },
@@ -4878,6 +5509,14 @@
           "nous": "jugeons",
           "vous": "jugez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "juge",
+          "tu": "juges",
+          "il/elle/on": "juge",
+          "nous": "jugeons",
+          "vous": "jugez",
+          "ils/elles": "jugent"
         }
       }
     },
@@ -4939,6 +5578,14 @@
           "nous": "préparons",
           "vous": "préparez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "prépare",
+          "tu": "prépares",
+          "il/elle/on": "prépare",
+          "nous": "préparons",
+          "vous": "préparez",
+          "ils/elles": "préparent"
         }
       }
     },
@@ -5000,6 +5647,14 @@
           "nous": "remarquons",
           "vous": "remarquez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "remarque",
+          "tu": "remarques",
+          "il/elle/on": "remarque",
+          "nous": "remarquons",
+          "vous": "remarquez",
+          "ils/elles": "remarquent"
         }
       }
     },
@@ -5061,6 +5716,14 @@
           "nous": "mangeons",
           "vous": "mangez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "mange",
+          "tu": "manges",
+          "il/elle/on": "mange",
+          "nous": "mangeons",
+          "vous": "mangez",
+          "ils/elles": "mangent"
         }
       }
     },
@@ -5122,6 +5785,14 @@
           "nous": "buvons",
           "vous": "buvez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "bois",
+          "tu": "bois",
+          "il/elle/on": "boit",
+          "nous": "buvons",
+          "vous": "buvez",
+          "ils/elles": "boivent"
         }
       }
     },
@@ -5183,6 +5854,14 @@
           "nous": "envoyons",
           "vous": "envoyez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "envoye",
+          "tu": "envoyes",
+          "il/elle/on": "envoye",
+          "nous": "envoyons",
+          "vous": "envoyez",
+          "ils/elles": "envoyent"
         }
       }
     },
@@ -5244,6 +5923,14 @@
           "nous": "recevons",
           "vous": "recevez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "recevois",
+          "tu": "recevois",
+          "il/elle/on": "recevoit",
+          "nous": "recevoissons",
+          "vous": "recevoissez",
+          "ils/elles": "recevoissent"
         }
       }
     },
@@ -5305,6 +5992,14 @@
           "nous": "écoutons",
           "vous": "écoutez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "écoute",
+          "tu": "écoutes",
+          "il/elle/on": "écoute",
+          "nous": "écoutons",
+          "vous": "écoutez",
+          "ils/elles": "écoutent"
         }
       }
     },
@@ -5366,6 +6061,14 @@
           "nous": "achetons",
           "vous": "achetez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "achete",
+          "tu": "achetes",
+          "il/elle/on": "achete",
+          "nous": "achetons",
+          "vous": "achetez",
+          "ils/elles": "achetent"
         }
       }
     },
@@ -5427,6 +6130,14 @@
           "nous": "jouons",
           "vous": "jouez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "joue",
+          "tu": "joues",
+          "il/elle/on": "joue",
+          "nous": "jouons",
+          "vous": "jouez",
+          "ils/elles": "jouent"
         }
       }
     },
@@ -5488,6 +6199,14 @@
           "nous": "lançons",
           "vous": "lancez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "lance",
+          "tu": "lances",
+          "il/elle/on": "lance",
+          "nous": "lançons",
+          "vous": "lancez",
+          "ils/elles": "lancent"
         }
       }
     },
@@ -5549,6 +6268,14 @@
           "nous": "montrons",
           "vous": "montrez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "montre",
+          "tu": "montres",
+          "il/elle/on": "montre",
+          "nous": "montrons",
+          "vous": "montrez",
+          "ils/elles": "montrent"
         }
       }
     },
@@ -5610,6 +6337,14 @@
           "nous": "comptons",
           "vous": "comptez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "compte",
+          "tu": "comptes",
+          "il/elle/on": "compte",
+          "nous": "comptons",
+          "vous": "comptez",
+          "ils/elles": "comptent"
         }
       }
     },
@@ -5671,6 +6406,14 @@
           "nous": "appelons",
           "vous": "appelez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "appele",
+          "tu": "appeles",
+          "il/elle/on": "appele",
+          "nous": "appelons",
+          "vous": "appelez",
+          "ils/elles": "appelent"
         }
       }
     },
@@ -5732,6 +6475,14 @@
           "nous": "quittons",
           "vous": "quittez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "quitte",
+          "tu": "quittes",
+          "il/elle/on": "quitte",
+          "nous": "quittons",
+          "vous": "quittez",
+          "ils/elles": "quittent"
         }
       }
     },
@@ -5793,6 +6544,14 @@
           "nous": "posons",
           "vous": "posez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "pose",
+          "tu": "poses",
+          "il/elle/on": "pose",
+          "nous": "posons",
+          "vous": "posez",
+          "ils/elles": "posent"
         }
       }
     },
@@ -5854,6 +6613,14 @@
           "nous": "retrouvons",
           "vous": "retrouvez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "retrouve",
+          "tu": "retrouves",
+          "il/elle/on": "retrouve",
+          "nous": "retrouvons",
+          "vous": "retrouvez",
+          "ils/elles": "retrouvent"
         }
       }
     },
@@ -5915,6 +6682,14 @@
           "nous": "expliquons",
           "vous": "expliquez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "explique",
+          "tu": "expliques",
+          "il/elle/on": "explique",
+          "nous": "expliquons",
+          "vous": "expliquez",
+          "ils/elles": "expliquent"
         }
       }
     },
@@ -5976,6 +6751,14 @@
           "nous": "considérons",
           "vous": "considérez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "considére",
+          "tu": "considéres",
+          "il/elle/on": "considére",
+          "nous": "considérons",
+          "vous": "considérez",
+          "ils/elles": "considérent"
         }
       }
     },
@@ -6037,6 +6820,14 @@
           "nous": "fermons",
           "vous": "fermez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "ferme",
+          "tu": "fermes",
+          "il/elle/on": "ferme",
+          "nous": "fermons",
+          "vous": "fermez",
+          "ils/elles": "ferment"
         }
       }
     },
@@ -6098,6 +6889,14 @@
           "nous": "arrêtons",
           "vous": "arrêtez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "arrête",
+          "tu": "arrêtes",
+          "il/elle/on": "arrête",
+          "nous": "arrêtons",
+          "vous": "arrêtez",
+          "ils/elles": "arrêtent"
         }
       }
     },
@@ -6159,6 +6958,14 @@
           "nous": "payons",
           "vous": "payez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "paye",
+          "tu": "payes",
+          "il/elle/on": "paye",
+          "nous": "payons",
+          "vous": "payez",
+          "ils/elles": "payent"
         }
       }
     },
@@ -6220,6 +7027,14 @@
           "nous": "élevons",
           "vous": "élevez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "éleve",
+          "tu": "éleves",
+          "il/elle/on": "éleve",
+          "nous": "élevons",
+          "vous": "élevez",
+          "ils/elles": "élevent"
         }
       }
     },
@@ -6281,6 +7096,14 @@
           "nous": "formons",
           "vous": "formez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "forme",
+          "tu": "formes",
+          "il/elle/on": "forme",
+          "nous": "formons",
+          "vous": "formez",
+          "ils/elles": "forment"
         }
       }
     },
@@ -6342,6 +7165,14 @@
           "nous": "présentons",
           "vous": "présentez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "présente",
+          "tu": "présentes",
+          "il/elle/on": "présente",
+          "nous": "présentons",
+          "vous": "présentez",
+          "ils/elles": "présentent"
         }
       }
     },
@@ -6403,6 +7234,14 @@
           "nous": "proposons",
           "vous": "proposez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "propose",
+          "tu": "proposes",
+          "il/elle/on": "propose",
+          "nous": "proposons",
+          "vous": "proposez",
+          "ils/elles": "proposent"
         }
       }
     },
@@ -6464,6 +7303,14 @@
           "nous": "saisissons",
           "vous": "saisissez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "saisis",
+          "tu": "saisis",
+          "il/elle/on": "saisit",
+          "nous": "saisissons",
+          "vous": "saisissez",
+          "ils/elles": "saisissent"
         }
       }
     },
@@ -6525,6 +7372,14 @@
           "nous": "arrangeons",
           "vous": "arrangez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "arrange",
+          "tu": "arranges",
+          "il/elle/on": "arrange",
+          "nous": "arrangeons",
+          "vous": "arrangez",
+          "ils/elles": "arrangent"
         }
       }
     },
@@ -6586,6 +7441,14 @@
           "nous": "couvrons",
           "vous": "couvrez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "couvre",
+          "tu": "couvres",
+          "il/elle/on": "couvre",
+          "nous": "couvrons",
+          "vous": "couvrez",
+          "ils/elles": "couvrent"
         }
       }
     },
@@ -6647,6 +7510,14 @@
           "nous": "remettons",
           "vous": "remettez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "mets",
+          "tu": "mets",
+          "il/elle/on": "met",
+          "nous": "mettons",
+          "vous": "mettez",
+          "ils/elles": "mettent"
         }
       }
     },
@@ -6708,6 +7579,14 @@
           "nous": "levons",
           "vous": "levez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "leve",
+          "tu": "leves",
+          "il/elle/on": "leve",
+          "nous": "levons",
+          "vous": "levez",
+          "ils/elles": "levent"
         }
       }
     },
@@ -6769,6 +7648,14 @@
           "nous": "remplaçons",
           "vous": "remplacez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "remplace",
+          "tu": "remplaces",
+          "il/elle/on": "remplace",
+          "nous": "remplaçons",
+          "vous": "remplacez",
+          "ils/elles": "remplacent"
         }
       }
     },
@@ -6830,6 +7717,14 @@
           "nous": "craignons",
           "vous": "craignez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "crains",
+          "tu": "crains",
+          "il/elle/on": "craint",
+          "nous": "craignons",
+          "vous": "craignez",
+          "ils/elles": "craignent"
         }
       }
     },
@@ -6891,6 +7786,14 @@
           "nous": "valons",
           "vous": "valez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "valois",
+          "tu": "valois",
+          "il/elle/on": "valoit",
+          "nous": "valoissons",
+          "vous": "valoissez",
+          "ils/elles": "valoissent"
         }
       }
     },
@@ -6952,6 +7855,14 @@
           "nous": "conduisons",
           "vous": "conduisez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "conduis",
+          "tu": "conduis",
+          "il/elle/on": "conduit",
+          "nous": "conduisons",
+          "vous": "conduisez",
+          "ils/elles": "conduisent"
         }
       }
     },
@@ -7013,6 +7924,14 @@
           "nous": "battons",
           "vous": "battez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "batts",
+          "tu": "batts",
+          "il/elle/on": "batt",
+          "nous": "battons",
+          "vous": "battez",
+          "ils/elles": "battent"
         }
       }
     },
@@ -7074,6 +7993,14 @@
           "nous": "naissons",
           "vous": "naissez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "nais",
+          "tu": "nais",
+          "il/elle/on": "naît",
+          "nous": "naissons",
+          "vous": "naissez",
+          "ils/elles": "naissent"
         }
       }
     },
@@ -7135,6 +8062,14 @@
           "nous": "mourons",
           "vous": "mourez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "meurs",
+          "tu": "meurs",
+          "il/elle/on": "meurt",
+          "nous": "mourons",
+          "vous": "mourez",
+          "ils/elles": "meurent"
         }
       }
     },
@@ -7196,6 +8131,14 @@
           "nous": "rions",
           "vous": "riez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "ris",
+          "tu": "ris",
+          "il/elle/on": "rit",
+          "nous": "rions",
+          "vous": "riez",
+          "ils/elles": "rient"
         }
       }
     },
@@ -7257,6 +8200,14 @@
           "nous": "sourions",
           "vous": "souriez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "souris",
+          "tu": "souris",
+          "il/elle/on": "souri",
+          "nous": "sourions",
+          "vous": "souriez",
+          "ils/elles": "sourient"
         }
       }
     },
@@ -7318,6 +8269,14 @@
           "nous": "plaisons",
           "vous": "plaisez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "plais",
+          "tu": "plais",
+          "il/elle/on": "plai",
+          "nous": "plaions",
+          "vous": "plaiez",
+          "ils/elles": "plaient"
         }
       }
     },
@@ -7379,6 +8338,14 @@
           "nous": "craquons",
           "vous": "craquez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "craque",
+          "tu": "craques",
+          "il/elle/on": "craque",
+          "nous": "craquons",
+          "vous": "craquez",
+          "ils/elles": "craquent"
         }
       }
     },
@@ -7440,6 +8407,14 @@
           "nous": "convainquons",
           "vous": "convainquez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "convaincs",
+          "tu": "convaincs",
+          "il/elle/on": "convainc",
+          "nous": "convaincons",
+          "vous": "convaincez",
+          "ils/elles": "convaincent"
         }
       }
     },
@@ -7501,6 +8476,14 @@
           "nous": "vainquons",
           "vous": "vainquez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "vaincs",
+          "tu": "vaincs",
+          "il/elle/on": "vainc",
+          "nous": "vaincons",
+          "vous": "vaincez",
+          "ils/elles": "vaincent"
         }
       }
     },
@@ -7562,6 +8545,14 @@
           "nous": "peignons",
           "vous": "peignez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "peins",
+          "tu": "peins",
+          "il/elle/on": "peint",
+          "nous": "peignons",
+          "vous": "peignez",
+          "ils/elles": "peignent"
         }
       }
     },
@@ -7623,6 +8614,14 @@
           "nous": "joignons",
           "vous": "joignez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "joins",
+          "tu": "joins",
+          "il/elle/on": "joint",
+          "nous": "joignons",
+          "vous": "joignez",
+          "ils/elles": "joignent"
         }
       }
     },
@@ -7684,6 +8683,14 @@
           "nous": "éteignons",
           "vous": "éteignez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "éteins",
+          "tu": "éteins",
+          "il/elle/on": "éteint",
+          "nous": "éteignons",
+          "vous": "éteignez",
+          "ils/elles": "éteignent"
         }
       }
     },
@@ -7745,6 +8752,14 @@
           "nous": "paraissons",
           "vous": "paraissez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "paraîts",
+          "tu": "paraîts",
+          "il/elle/on": "paraît",
+          "nous": "paraîtons",
+          "vous": "paraîtez",
+          "ils/elles": "paraîtent"
         }
       }
     },
@@ -7806,6 +8821,14 @@
           "nous": "apparaissons",
           "vous": "apparaissez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "apparaîts",
+          "tu": "apparaîts",
+          "il/elle/on": "apparaît",
+          "nous": "apparaîtons",
+          "vous": "apparaîtez",
+          "ils/elles": "apparaîtent"
         }
       }
     },
@@ -7867,6 +8890,14 @@
           "nous": "disparaissons",
           "vous": "disparaissez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "disparaîts",
+          "tu": "disparaîts",
+          "il/elle/on": "disparaît",
+          "nous": "disparaîtons",
+          "vous": "disparaîtez",
+          "ils/elles": "disparaîtent"
         }
       }
     },
@@ -7928,6 +8959,14 @@
           "nous": "construisons",
           "vous": "construisez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "construis",
+          "tu": "construis",
+          "il/elle/on": "construit",
+          "nous": "construisons",
+          "vous": "construisez",
+          "ils/elles": "construisent"
         }
       }
     },
@@ -7989,6 +9028,14 @@
           "nous": "détruisons",
           "vous": "détruisez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "détruis",
+          "tu": "détruis",
+          "il/elle/on": "détruit",
+          "nous": "détruisons",
+          "vous": "détruisez",
+          "ils/elles": "détruisent"
         }
       }
     },
@@ -8050,6 +9097,14 @@
           "nous": "traduisons",
           "vous": "traduisez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "traduis",
+          "tu": "traduis",
+          "il/elle/on": "traduit",
+          "nous": "traduisons",
+          "vous": "traduisez",
+          "ils/elles": "traduisent"
         }
       }
     },
@@ -8111,6 +9166,14 @@
           "nous": "réduisons",
           "vous": "réduisez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "réduis",
+          "tu": "réduis",
+          "il/elle/on": "réduit",
+          "nous": "réduisons",
+          "vous": "réduisez",
+          "ils/elles": "réduisent"
         }
       }
     },
@@ -8172,6 +9235,14 @@
           "nous": "introduisons",
           "vous": "introduisez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "introduis",
+          "tu": "introduis",
+          "il/elle/on": "introduit",
+          "nous": "introduisons",
+          "vous": "introduisez",
+          "ils/elles": "introduisent"
         }
       }
     },
@@ -8233,6 +9304,14 @@
           "nous": "séduisons",
           "vous": "séduisez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "séduis",
+          "tu": "séduis",
+          "il/elle/on": "séduit",
+          "nous": "séduisons",
+          "vous": "séduisez",
+          "ils/elles": "séduisent"
         }
       }
     },
@@ -8294,6 +9373,14 @@
           "nous": "maintenons",
           "vous": "maintenez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "maintiens",
+          "tu": "maintiens",
+          "il/elle/on": "maintient",
+          "nous": "maintenons",
+          "vous": "maintenez",
+          "ils/elles": "maintiennent"
         }
       }
     },
@@ -8355,6 +9442,14 @@
           "nous": "obtenons",
           "vous": "obtenez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "obtiens",
+          "tu": "obtiens",
+          "il/elle/on": "obtient",
+          "nous": "obtenons",
+          "vous": "obtenez",
+          "ils/elles": "obtiennent"
         }
       }
     },
@@ -8416,6 +9511,14 @@
           "nous": "prévenons",
           "vous": "prévenez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "préviens",
+          "tu": "préviens",
+          "il/elle/on": "prévient",
+          "nous": "prévenons",
+          "vous": "prévenez",
+          "ils/elles": "préviennent"
         }
       }
     },
@@ -8477,6 +9580,14 @@
           "nous": "prévoyons",
           "vous": "prévoyez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "prévois",
+          "tu": "prévois",
+          "il/elle/on": "prévoit",
+          "nous": "prévoissons",
+          "vous": "prévoissez",
+          "ils/elles": "prévoissent"
         }
       }
     },
@@ -8538,6 +9649,14 @@
           "nous": "revoyons",
           "vous": "revoyez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "revois",
+          "tu": "revois",
+          "il/elle/on": "revoit",
+          "nous": "revoissons",
+          "vous": "revoissez",
+          "ils/elles": "revoissent"
         }
       }
     },
@@ -8599,6 +9718,14 @@
           "nous": "pourvoyons",
           "vous": "pourvoyez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "pourvois",
+          "tu": "pourvois",
+          "il/elle/on": "pourvoit",
+          "nous": "pourvoissons",
+          "vous": "pourvoissez",
+          "ils/elles": "pourvoissent"
         }
       }
     },
@@ -8660,6 +9787,14 @@
           "nous": "survivons",
           "vous": "survivez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "survivs",
+          "tu": "survivs",
+          "il/elle/on": "surviv",
+          "nous": "survivons",
+          "vous": "survivez",
+          "ils/elles": "survivent"
         }
       }
     },
@@ -8721,6 +9856,14 @@
           "nous": "revivons",
           "vous": "revivez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "revivs",
+          "tu": "revivs",
+          "il/elle/on": "reviv",
+          "nous": "revivons",
+          "vous": "revivez",
+          "ils/elles": "revivent"
         }
       }
     },
@@ -8782,6 +9925,14 @@
           "nous": "élisons",
           "vous": "élisez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "élis",
+          "tu": "élis",
+          "il/elle/on": "éli",
+          "nous": "élions",
+          "vous": "éliez",
+          "ils/elles": "élient"
         }
       }
     },
@@ -8843,6 +9994,14 @@
           "nous": "redisons",
           "vous": "redites",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "dis",
+          "tu": "dis",
+          "il/elle/on": "dit",
+          "nous": "disons",
+          "vous": "disez",
+          "ils/elles": "disent"
         }
       }
     },
@@ -8904,6 +10063,14 @@
           "nous": "prédisons",
           "vous": "prédisez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "dis",
+          "tu": "dis",
+          "il/elle/on": "dit",
+          "nous": "disons",
+          "vous": "disez",
+          "ils/elles": "disent"
         }
       }
     },
@@ -8965,6 +10132,14 @@
           "nous": "interdisons",
           "vous": "interdisez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "dis",
+          "tu": "dis",
+          "il/elle/on": "dit",
+          "nous": "disons",
+          "vous": "disez",
+          "ils/elles": "disent"
         }
       }
     },
@@ -9026,6 +10201,14 @@
           "nous": "résolvons",
           "vous": "résolvez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "résouds",
+          "tu": "résouds",
+          "il/elle/on": "résoud",
+          "nous": "résoudons",
+          "vous": "résoudez",
+          "ils/elles": "résoudent"
         }
       }
     },
@@ -9087,6 +10270,14 @@
           "nous": "recevons",
           "vous": "recevez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "recevois",
+          "tu": "recevois",
+          "il/elle/on": "recevoit",
+          "nous": "recevoissons",
+          "vous": "recevoissez",
+          "ils/elles": "recevoissent"
         }
       }
     },
@@ -9148,6 +10339,14 @@
           "nous": "apercevons",
           "vous": "apercevez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "apercevois",
+          "tu": "apercevois",
+          "il/elle/on": "apercevoit",
+          "nous": "apercevoissons",
+          "vous": "apercevoissez",
+          "ils/elles": "apercevoissent"
         }
       }
     },
@@ -9209,6 +10408,14 @@
           "nous": "concevons",
           "vous": "concevez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "concevois",
+          "tu": "concevois",
+          "il/elle/on": "concevoit",
+          "nous": "concevoissons",
+          "vous": "concevoissez",
+          "ils/elles": "concevoissent"
         }
       }
     },
@@ -9270,6 +10477,14 @@
           "nous": "décevons",
           "vous": "décevez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "décevois",
+          "tu": "décevois",
+          "il/elle/on": "décevoit",
+          "nous": "décevoissons",
+          "vous": "décevoissez",
+          "ils/elles": "décevoissent"
         }
       }
     },
@@ -9331,6 +10546,14 @@
           "nous": "percevons",
           "vous": "percevez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "percevois",
+          "tu": "percevois",
+          "il/elle/on": "percevoit",
+          "nous": "percevoissons",
+          "vous": "percevoissez",
+          "ils/elles": "percevoissent"
         }
       }
     },
@@ -9392,6 +10615,14 @@
           "nous": "promouvons",
           "vous": "promouvez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "promouvois",
+          "tu": "promouvois",
+          "il/elle/on": "promouvoit",
+          "nous": "promouvoissons",
+          "vous": "promouvoissez",
+          "ils/elles": "promouvoissent"
         }
       }
     },
@@ -9453,6 +10684,14 @@
           "nous": "assoyons",
           "vous": "assoyez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "asseois",
+          "tu": "asseois",
+          "il/elle/on": "asseoit",
+          "nous": "asseoissons",
+          "vous": "asseoissez",
+          "ils/elles": "asseoissent"
         }
       }
     },
@@ -9514,6 +10753,14 @@
           "nous": "écrivons",
           "vous": "écrivez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "écris",
+          "tu": "écris",
+          "il/elle/on": "écrit",
+          "nous": "écrivons",
+          "vous": "écrivez",
+          "ils/elles": "écrivent"
         }
       }
     },
@@ -9575,6 +10822,14 @@
           "nous": "décrivons",
           "vous": "décrivez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "décris",
+          "tu": "décris",
+          "il/elle/on": "décri",
+          "nous": "décrions",
+          "vous": "décriez",
+          "ils/elles": "décrient"
         }
       }
     },
@@ -9636,6 +10891,14 @@
           "nous": "prescrivons",
           "vous": "prescrivez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "prescris",
+          "tu": "prescris",
+          "il/elle/on": "prescri",
+          "nous": "prescrions",
+          "vous": "prescriez",
+          "ils/elles": "prescrient"
         }
       }
     },
@@ -9697,6 +10960,14 @@
           "nous": "inscrivons",
           "vous": "inscrivez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "inscris",
+          "tu": "inscris",
+          "il/elle/on": "inscri",
+          "nous": "inscrions",
+          "vous": "inscriez",
+          "ils/elles": "inscrient"
         }
       }
     },
@@ -9758,6 +11029,14 @@
           "nous": "souscrivons",
           "vous": "souscrivez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "souscris",
+          "tu": "souscris",
+          "il/elle/on": "souscri",
+          "nous": "souscrions",
+          "vous": "souscriez",
+          "ils/elles": "souscrient"
         }
       }
     },
@@ -9819,6 +11098,14 @@
           "nous": "conduisons",
           "vous": "conduisez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "conduis",
+          "tu": "conduis",
+          "il/elle/on": "conduit",
+          "nous": "conduisons",
+          "vous": "conduisez",
+          "ils/elles": "conduisent"
         }
       }
     },
@@ -9880,6 +11167,14 @@
           "nous": "induisons",
           "vous": "induisez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "induis",
+          "tu": "induis",
+          "il/elle/on": "induit",
+          "nous": "induisons",
+          "vous": "induisez",
+          "ils/elles": "induisent"
         }
       }
     },
@@ -9941,6 +11236,14 @@
           "nous": "réduisons",
           "vous": "réduisez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "réduis",
+          "tu": "réduis",
+          "il/elle/on": "réduit",
+          "nous": "réduisons",
+          "vous": "réduisez",
+          "ils/elles": "réduisent"
         }
       }
     },
@@ -10002,6 +11305,14 @@
           "nous": "traduisons",
           "vous": "traduisez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "traduis",
+          "tu": "traduis",
+          "il/elle/on": "traduit",
+          "nous": "traduisons",
+          "vous": "traduisez",
+          "ils/elles": "traduisent"
         }
       }
     },
@@ -10063,6 +11374,14 @@
           "nous": "incluons",
           "vous": "incluez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "inclus",
+          "tu": "inclus",
+          "il/elle/on": "inclu",
+          "nous": "incluons",
+          "vous": "incluez",
+          "ils/elles": "incluent"
         }
       }
     },
@@ -10124,6 +11443,14 @@
           "nous": "excluons",
           "vous": "excluez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "exclus",
+          "tu": "exclus",
+          "il/elle/on": "exclu",
+          "nous": "excluons",
+          "vous": "excluez",
+          "ils/elles": "excluent"
         }
       }
     },
@@ -10185,6 +11512,14 @@
           "nous": null,
           "vous": null,
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "clos",
+          "tu": "clos",
+          "il/elle/on": "clo",
+          "nous": "cloons",
+          "vous": "cloez",
+          "ils/elles": "cloent"
         }
       }
     },
@@ -10246,6 +11581,14 @@
           "nous": "allons",
           "vous": "allez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "vais",
+          "tu": "vas",
+          "il/elle/on": "va",
+          "nous": "allons",
+          "vous": "allez",
+          "ils/elles": "vont"
         }
       }
     },
@@ -10307,6 +11650,14 @@
           "nous": "balayons",
           "vous": "balayez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "balaye",
+          "tu": "balayes",
+          "il/elle/on": "balaye",
+          "nous": "balayons",
+          "vous": "balayez",
+          "ils/elles": "balayent"
         }
       }
     },
@@ -10368,6 +11719,14 @@
           "nous": "essuyons",
           "vous": "essuyez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "essuye",
+          "tu": "essuyes",
+          "il/elle/on": "essuye",
+          "nous": "essuyons",
+          "vous": "essuyez",
+          "ils/elles": "essuyent"
         }
       }
     },
@@ -10429,6 +11788,14 @@
           "nous": "payons",
           "vous": "payez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "paye",
+          "tu": "payes",
+          "il/elle/on": "paye",
+          "nous": "payons",
+          "vous": "payez",
+          "ils/elles": "payent"
         }
       }
     },
@@ -10490,6 +11857,14 @@
           "nous": "appuyons",
           "vous": "appuyez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "appuye",
+          "tu": "appuyes",
+          "il/elle/on": "appuye",
+          "nous": "appuyons",
+          "vous": "appuyez",
+          "ils/elles": "appuyent"
         }
       }
     },
@@ -10551,6 +11926,14 @@
           "nous": "ennuyons",
           "vous": "ennuyez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "ennuye",
+          "tu": "ennuyes",
+          "il/elle/on": "ennuye",
+          "nous": "ennuyons",
+          "vous": "ennuyez",
+          "ils/elles": "ennuyent"
         }
       }
     },
@@ -10612,6 +11995,14 @@
           "nous": "nettoyons",
           "vous": "nettoyez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "nettoye",
+          "tu": "nettoyes",
+          "il/elle/on": "nettoye",
+          "nous": "nettoyons",
+          "vous": "nettoyez",
+          "ils/elles": "nettoyent"
         }
       }
     },
@@ -10673,6 +12064,14 @@
           "nous": "renvoyons",
           "vous": "renvoyez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "renvoye",
+          "tu": "renvoyes",
+          "il/elle/on": "renvoye",
+          "nous": "renvoyons",
+          "vous": "renvoyez",
+          "ils/elles": "renvoyent"
         }
       }
     },
@@ -10734,6 +12133,14 @@
           "nous": "employons",
           "vous": "employez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "employe",
+          "tu": "employes",
+          "il/elle/on": "employe",
+          "nous": "employons",
+          "vous": "employez",
+          "ils/elles": "employent"
         }
       }
     },
@@ -10795,6 +12202,14 @@
           "nous": "tutoyons",
           "vous": "tutoyez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "tutoye",
+          "tu": "tutoyes",
+          "il/elle/on": "tutoye",
+          "nous": "tutoyons",
+          "vous": "tutoyez",
+          "ils/elles": "tutoyent"
         }
       }
     },
@@ -10856,6 +12271,14 @@
           "nous": "vouvoyons",
           "vous": "vouvoyez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "vouvoye",
+          "tu": "vouvoyes",
+          "il/elle/on": "vouvoye",
+          "nous": "vouvoyons",
+          "vous": "vouvoyez",
+          "ils/elles": "vouvoyent"
         }
       }
     },
@@ -10917,6 +12340,14 @@
           "nous": "ouvrons",
           "vous": "ouvrez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "ouvre",
+          "tu": "ouvres",
+          "il/elle/on": "ouvre",
+          "nous": "ouvrons",
+          "vous": "ouvrez",
+          "ils/elles": "ouvrent"
         }
       }
     },
@@ -10978,6 +12409,14 @@
           "nous": "découvrons",
           "vous": "découvrez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "découvre",
+          "tu": "découvres",
+          "il/elle/on": "découvre",
+          "nous": "découvrons",
+          "vous": "découvrez",
+          "ils/elles": "découvrent"
         }
       }
     },
@@ -11039,6 +12478,14 @@
           "nous": "offrons",
           "vous": "offrez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "offre",
+          "tu": "offres",
+          "il/elle/on": "offre",
+          "nous": "offrons",
+          "vous": "offrez",
+          "ils/elles": "offrent"
         }
       }
     },
@@ -11100,6 +12547,14 @@
           "nous": "souffrons",
           "vous": "souffrez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "souffre",
+          "tu": "souffres",
+          "il/elle/on": "souffre",
+          "nous": "souffrons",
+          "vous": "souffrez",
+          "ils/elles": "souffrent"
         }
       }
     },
@@ -11161,6 +12616,14 @@
           "nous": "cueillons",
           "vous": "cueillez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "cueille",
+          "tu": "cueilles",
+          "il/elle/on": "cueille",
+          "nous": "cueillons",
+          "vous": "cueillez",
+          "ils/elles": "cueillent"
         }
       }
     },
@@ -11222,6 +12685,14 @@
           "nous": "accueillons",
           "vous": "accueillez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "accueille",
+          "tu": "accueilles",
+          "il/elle/on": "accueille",
+          "nous": "accueillons",
+          "vous": "accueillez",
+          "ils/elles": "accueillent"
         }
       }
     },
@@ -11283,6 +12754,14 @@
           "nous": "recueillons",
           "vous": "recueillez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "recueille",
+          "tu": "recueilles",
+          "il/elle/on": "recueille",
+          "nous": "recueillons",
+          "vous": "recueillez",
+          "ils/elles": "recueillent"
         }
       }
     },
@@ -11344,6 +12823,14 @@
           "nous": "fuyons",
           "vous": "fuyez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "fuis",
+          "tu": "fuis",
+          "il/elle/on": "fuit",
+          "nous": "fuissons",
+          "vous": "fuissez",
+          "ils/elles": "fuissent"
         }
       }
     },
@@ -11466,6 +12953,14 @@
           "nous": "bouillons",
           "vous": "bouillez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "bouillis",
+          "tu": "bouillis",
+          "il/elle/on": "bouillit",
+          "nous": "bouillissons",
+          "vous": "bouillissez",
+          "ils/elles": "bouillissent"
         }
       }
     },
@@ -11527,6 +13022,14 @@
           "nous": "courons",
           "vous": "courez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "couris",
+          "tu": "couris",
+          "il/elle/on": "courit",
+          "nous": "courissons",
+          "vous": "courissez",
+          "ils/elles": "courissent"
         }
       }
     },
@@ -11588,6 +13091,14 @@
           "nous": "mettons",
           "vous": "mettez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "mets",
+          "tu": "mets",
+          "il/elle/on": "met",
+          "nous": "mettons",
+          "vous": "mettez",
+          "ils/elles": "mettent"
         }
       }
     },
@@ -11649,6 +13160,14 @@
           "nous": "permettons",
           "vous": "permettez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "mets",
+          "tu": "mets",
+          "il/elle/on": "met",
+          "nous": "mettons",
+          "vous": "mettez",
+          "ils/elles": "mettent"
         }
       }
     },
@@ -11710,6 +13229,14 @@
           "nous": "admettons",
           "vous": "admettez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "mets",
+          "tu": "mets",
+          "il/elle/on": "met",
+          "nous": "mettons",
+          "vous": "mettez",
+          "ils/elles": "mettent"
         }
       }
     },
@@ -11771,6 +13298,14 @@
           "nous": "soumettons",
           "vous": "soumettez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "mets",
+          "tu": "mets",
+          "il/elle/on": "met",
+          "nous": "mettons",
+          "vous": "mettez",
+          "ils/elles": "mettent"
         }
       }
     },
@@ -11832,6 +13367,14 @@
           "nous": "transmettons",
           "vous": "transmettez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "mets",
+          "tu": "mets",
+          "il/elle/on": "met",
+          "nous": "mettons",
+          "vous": "mettez",
+          "ils/elles": "mettent"
         }
       }
     },
@@ -11893,6 +13436,14 @@
           "nous": "promettons",
           "vous": "promettez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "mets",
+          "tu": "mets",
+          "il/elle/on": "met",
+          "nous": "mettons",
+          "vous": "mettez",
+          "ils/elles": "mettent"
         }
       }
     },
@@ -11954,6 +13505,14 @@
           "nous": "omettons",
           "vous": "omettez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "mets",
+          "tu": "mets",
+          "il/elle/on": "met",
+          "nous": "mettons",
+          "vous": "mettez",
+          "ils/elles": "mettent"
         }
       }
     },
@@ -12015,6 +13574,14 @@
           "nous": "abattons",
           "vous": "abattez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "abatts",
+          "tu": "abatts",
+          "il/elle/on": "abatt",
+          "nous": "abattons",
+          "vous": "abattez",
+          "ils/elles": "abattent"
         }
       }
     },
@@ -12076,6 +13643,14 @@
           "nous": "combattons",
           "vous": "combattez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "combatts",
+          "tu": "combatts",
+          "il/elle/on": "combatt",
+          "nous": "combattons",
+          "vous": "combattez",
+          "ils/elles": "combattent"
         }
       }
     },
@@ -12137,6 +13712,14 @@
           "nous": "rompons",
           "vous": "rompez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "romps",
+          "tu": "romps",
+          "il/elle/on": "romp",
+          "nous": "rompons",
+          "vous": "rompez",
+          "ils/elles": "rompent"
         }
       }
     },
@@ -12198,6 +13781,14 @@
           "nous": "corrompons",
           "vous": "corrompez",
           "ils/elles": ""
+        },
+        "Présent": {
+          "je": "corromps",
+          "tu": "corromps",
+          "il/elle/on": "corromp",
+          "nous": "corrompons",
+          "vous": "corrompez",
+          "ils/elles": "corrompent"
         }
       }
     }
