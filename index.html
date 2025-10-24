@@ -227,6 +227,16 @@
             <button @click="addCard">Add</button>
           </div>
 
+          <button @click="reshuffleVocabDeck()" :disabled="!vocab.deck.length">Reshuffle</button>
+<button @click="nextVocabCard()" :disabled="!vocab.deck.length">Next</button>
+
+<div class="vocab-card" v-if="currentVocabCard()">
+  <div class="fr">{{ currentVocabCard().fr }}</div>
+  <div class="en" v-if="showEnglishTranslation">{{ currentVocabCard().en }}</div>
+</div>
+<span v-if="vocab.deck.length">{{ vocab.deckPtr + 1 }} / {{ vocab.deck.length }}</span>
+
+
           <div v-if="dueCards.length" class="card">
             <div class="front">{{ currentCard.front }}</div>
             <div class="back" v-if="showBack">{{ currentCard.back }}</div>
