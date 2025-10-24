@@ -13732,6 +13732,76 @@
       }
     },
     {
+  "verb": "bouillir",
+  "tenses": {
+    "Passé composé": {
+      "je": "ai bouilli",
+      "tu": "as bouilli",
+      "il/elle/on": "a bouilli",
+      "nous": "avons bouilli",
+      "vous": "avez bouilli",
+      "ils/elles": "ont bouilli"
+    },
+    "Imparfait": {
+      "je": "bouillais",
+      "tu": "bouillais",
+      "il/elle/on": "bouillait",
+      "nous": "bouillions",
+      "vous": "bouilliez",
+      "ils/elles": "bouillaient"
+    },
+    "Plus-que-parfait": {
+      "je": "avais bouilli",
+      "tu": "avais bouilli",
+      "il/elle/on": "avait bouilli",
+      "nous": "avions bouilli",
+      "vous": "aviez bouilli",
+      "ils/elles": "avaient bouilli"
+    },
+    "Futur simple": {
+      "je": "bouillirai",
+      "tu": "bouilliras",
+      "il/elle/on": "bouillira",
+      "nous": "bouillirons",
+      "vous": "bouillirez",
+      "ils/elles": "bouilliront"
+    },
+    "Conditionnel présent": {
+      "je": "bouillirais",
+      "tu": "bouillirais",
+      "il/elle/on": "bouillirait",
+      "nous": "bouillirions",
+      "vous": "bouilliriez",
+      "ils/elles": "bouilliraient"
+    },
+    "Subjonctif présent": {
+      "je": "bouille",
+      "tu": "bouilles",
+      "il/elle/on": "bouille",
+      "nous": "bouillions",
+      "vous": "bouilliez",
+      "ils/elles": "bouillent"
+    },
+    "Impératif": {
+      "je": "",
+      "tu": "bouille",
+      "il/elle/on": "",
+      "nous": "bouillons",
+      "vous": "bouillez",
+      "ils/elles": ""
+    },
+    "Présent": {
+      "je": "bous",
+      "tu": "bous",
+      "il/elle/on": "bout",
+      "nous": "bouillons",
+      "vous": "bouillez",
+      "ils/elles": "bouillent"
+    }
+  }
+},
+
+    {
       "verb": "corrompre",
       "tenses": {
         "Passé composé": {
