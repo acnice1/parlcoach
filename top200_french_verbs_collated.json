@@ -111,7 +111,9 @@
           "fr": "Sois à l’heure !",
           "en": "Let him be on time!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "avoir",
@@ -215,7 +217,9 @@
           "fr": "Aie de la patience !",
           "en": "Let him have patience!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "faire",
@@ -319,7 +323,9 @@
           "fr": "Fais attention !",
           "en": "Let him be quiet!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "dire",
@@ -423,7 +429,9 @@
           "fr": "Dis la vérité !",
           "en": "Let him tell the truth!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "pouvoir",
@@ -527,7 +535,9 @@
           "fr": "—",
           "en": "No simple imperative form; use paraphrase (e.g., « Merci de pouvoir… » is not an imperative of pouvoir)."
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "aller",
@@ -631,7 +641,9 @@
           "fr": "Va te reposer !",
           "en": "Let him go rest!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "voir",
@@ -735,7 +747,9 @@
           "fr": "Vois par toi-même !",
           "en": "Let him see for himself!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "savoir",
@@ -839,7 +853,9 @@
           "fr": "Sache rester calme !",
           "en": "Let him know to remain discreet!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "vouloir",
@@ -943,7 +959,9 @@
           "fr": "Veuillez patienter !",
           "en": "Let him kindly wait!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "venir",
@@ -1047,7 +1065,9 @@
           "fr": "Viens ici !",
           "en": "Let him come now!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "devoir",
@@ -1151,7 +1171,9 @@
           "fr": "—",
           "en": "No simple imperative form; use paraphrase (e.g., « Merci de pouvoir… » is not an imperative of pouvoir)."
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "prendre",
@@ -1255,7 +1277,9 @@
           "fr": "Prends des notes !",
           "en": "Let him speak!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "trouver",
@@ -1359,7 +1383,9 @@
           "fr": "Trouve une solution !",
           "en": "Let him find a lasting solution!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "donner",
@@ -1463,7 +1489,9 @@
           "fr": "Donne un exemple !",
           "en": "Let him set an example!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "falloir",
@@ -1567,7 +1595,9 @@
           "fr": "",
           "en": ""
         }
-      }
+      },
+      "group": 2,
+      "tags": []
     },
     {
       "verb": "parler",
@@ -1671,7 +1701,9 @@
           "fr": "Parle clairement !",
           "en": "Let him speak plainly!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "mettre",
@@ -1775,7 +1807,9 @@
           "fr": "Mets ta ceinture !",
           "en": "Let him clarify his priorities!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "passer",
@@ -1879,7 +1913,9 @@
           "fr": "Passe me voir !",
           "en": "Drop by and see me!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "croire",
@@ -1983,7 +2019,9 @@
           "fr": "Crois en toi !",
           "en": "Let him believe in his abilities!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "demander",
@@ -2087,7 +2125,9 @@
           "fr": "Demande gentiment !",
           "en": "Ask nicely!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "tenir",
@@ -2191,7 +2231,9 @@
           "fr": "Tiens ta promesse !",
           "en": "Let him hold his line!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "aimer",
@@ -2295,7 +2337,9 @@
           "fr": "Aime le défi !",
           "en": "Let him enjoy the challenge!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "rester",
@@ -2399,7 +2443,9 @@
           "fr": "Reste calme !",
           "en": "Let him stay cautious!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "penser",
@@ -2503,7 +2549,9 @@
           "fr": "Pense aux détails !",
           "en": "Let him think about the consequences!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "entendre",
@@ -2607,7 +2655,9 @@
           "fr": "Entends raison !",
           "en": "Let him listen to reason!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "travailler",
@@ -2711,7 +2761,9 @@
           "fr": "Travaille intelligemment !",
           "en": "Work smart!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "répondre",
@@ -2815,7 +2867,9 @@
           "fr": "Réponds sans tarder !",
           "en": "Let him answer without delay!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "rendre",
@@ -2919,7 +2973,9 @@
           "fr": "Rends le livre !",
           "en": "Let him return what doesn’t belong to him!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "connaître",
@@ -3023,7 +3079,9 @@
           "fr": "Connais tes priorités !",
           "en": "Let him know his priorities!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "sembler",
@@ -3127,7 +3185,9 @@
           "fr": "Semble confiant !",
           "en": "Let him appear self-assured!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "arriver",
@@ -3231,7 +3291,9 @@
           "fr": "Arrive à l’heure !",
           "en": "Let him arrive prepared!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "sentir",
@@ -3335,7 +3397,9 @@
           "fr": "Sens cette différence !",
           "en": "Let him smell this perfume!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "attendre",
@@ -3439,7 +3503,9 @@
           "fr": "Attends un instant !",
           "en": "Let him wait outside!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "vivre",
@@ -3543,7 +3609,9 @@
           "fr": "Vis pleinement !",
           "en": "Let him live his passion!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "chercher",
@@ -3647,7 +3715,9 @@
           "fr": "Cherche mieux !",
           "en": "Look harder!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "comprendre",
@@ -3751,7 +3821,9 @@
           "fr": "Comprends bien l’enjeu !",
           "en": "Let him fully grasp the issue!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "porter",
@@ -3855,7 +3927,9 @@
           "fr": "Porte attention !",
           "en": "Let him handle this file!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "entrer",
@@ -3959,7 +4033,9 @@
           "fr": "Entre !",
           "en": "Let him come in!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "devenir",
@@ -4063,7 +4139,9 @@
           "fr": "Deviens autonome !",
           "en": "Let him become a role model!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "revenir",
@@ -4167,7 +4245,9 @@
           "fr": "Reviens tout de suite !",
           "en": "Let him come back right away!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "sortir",
@@ -4271,7 +4351,9 @@
           "fr": "Sors tout de suite !",
           "en": "Let him go out immediately!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "partir",
@@ -4375,7 +4457,9 @@
           "fr": "Pars maintenant !",
           "en": "Let him leave right away!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "décider",
@@ -4479,7 +4563,9 @@
           "fr": "Décide-toi !",
           "en": "Make up your mind!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "perdre",
@@ -4583,7 +4669,9 @@
           "fr": "Perds cette habitude !",
           "en": "Let him lose his illusions!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "ouvrir",
@@ -4687,7 +4775,9 @@
           "fr": "Ouvre la fenêtre !",
           "en": "Let him open the box!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "suivre",
@@ -4791,7 +4881,9 @@
           "fr": "Suis les étapes !",
           "en": "Let him follow the steps!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "gagner",
@@ -4895,7 +4987,9 @@
           "fr": "Gagne proprement !",
           "en": "Win cleanly!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "exister",
@@ -4999,7 +5093,9 @@
           "fr": "Existe pour toi-même !",
           "en": "Exist for yourself!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "refuser",
@@ -5103,7 +5199,9 @@
           "fr": "Refuse calmement.",
           "en": "Refuse calmly."
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "réussir",
@@ -5207,7 +5305,9 @@
           "fr": "Réussis ce défi !",
           "en": "Succeed at this challenge!"
         }
-      }
+      },
+      "group": 2,
+      "tags": []
     },
     {
       "verb": "changer",
@@ -5311,7 +5411,9 @@
           "fr": "Change de perspective !",
           "en": "Change your perspective!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "représenter",
@@ -5415,7 +5517,9 @@
           "fr": "Représente-nous dignement !",
           "en": "Represent us with dignity!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "assurer",
@@ -5519,7 +5623,9 @@
           "fr": "Assure la liaison !",
           "en": "Ensure the liaison!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "essayer",
@@ -5623,7 +5729,9 @@
           "fr": "Essaie encore !",
           "en": "Try again!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "empêcher",
@@ -5727,7 +5835,9 @@
           "fr": "Empêche-le d’entrer !",
           "en": "Stop him from entering!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "risquer",
@@ -5831,7 +5941,9 @@
           "fr": "Risque un peu !",
           "en": "Take a little risk!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "apprendre",
@@ -5935,7 +6047,9 @@
           "fr": "Apprends par étapes !",
           "en": "Learn step by step!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "atteindre",
@@ -6039,7 +6153,9 @@
           "fr": "Atteins tes objectifs !",
           "en": "Reach your goals!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "produire",
@@ -6143,7 +6259,9 @@
           "fr": "Produis un livrable !",
           "en": "Produce a deliverable!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "écrire",
@@ -6247,7 +6365,9 @@
           "fr": "Écris une note !",
           "en": "Let him write a note!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "tomber",
@@ -6351,7 +6471,9 @@
           "fr": "Ne tombe pas !",
           "en": "Don’t fall!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "tirer",
@@ -6455,7 +6577,9 @@
           "fr": "Tire plus fort !",
           "en": "Pull harder!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "servir",
@@ -6559,7 +6683,9 @@
           "fr": "Sers-toi !",
           "en": "Help yourself!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "fournir",
@@ -6663,7 +6789,9 @@
           "fr": "Fournis le reçu !",
           "en": "Provide the receipt!"
         }
-      }
+      },
+      "group": 2,
+      "tags": []
     },
     {
       "verb": "affirmer",
@@ -6767,7 +6895,9 @@
           "fr": "Affirme-toi avec calme !",
           "en": "Assert yourself calmly!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "offrir",
@@ -6871,7 +7001,9 @@
           "fr": "Offre-lui ton soutien !",
           "en": "Offer him your support!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "accepter",
@@ -6975,7 +7107,9 @@
           "fr": "Accepte la réalité !",
           "en": "Accept reality!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "lire",
@@ -7079,7 +7213,9 @@
           "fr": "Lis attentivement !",
           "en": "Read carefully!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "choisir",
@@ -7183,7 +7319,9 @@
           "fr": "Choisis bien !",
           "en": "Choose well!"
         }
-      }
+      },
+      "group": 2,
+      "tags": []
     },
     {
       "verb": "permettre",
@@ -7287,7 +7425,9 @@
           "fr": "Permets-leur d’entrer !",
           "en": "Allow them to enter!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "ajouter",
@@ -7391,7 +7531,9 @@
           "fr": "Ajoute une référence !",
           "en": "Add a reference!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "rappeler",
@@ -7495,7 +7637,9 @@
           "fr": "Rappelle-moi ce point !",
           "en": "Remind me of this point!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "apporter",
@@ -7599,7 +7743,9 @@
           "fr": "Apporte ton dossier !",
           "en": "Bring your file!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "utiliser",
@@ -7703,7 +7849,9 @@
           "fr": "Utilise des sources fiables !",
           "en": "Use reliable sources!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "retenir",
@@ -7807,7 +7955,9 @@
           "fr": "Retiens cette règle !",
           "en": "Remember this rule!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "manquer",
@@ -7911,7 +8061,9 @@
           "fr": "Ne manque pas ta chance !",
           "en": "Don’t miss your chance!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "créer",
@@ -8015,7 +8167,9 @@
           "fr": "Crée une maquette !",
           "en": "Create a mockup!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "obtenir",
@@ -8119,7 +8273,9 @@
           "fr": "Obtiens leur appui !",
           "en": "Get their support!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "découvrir",
@@ -8223,7 +8379,9 @@
           "fr": "Découvre le monde !",
           "en": "Discover the world!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "juger",
@@ -8327,7 +8485,9 @@
           "fr": "Ne juge pas trop vite !",
           "en": "Don’t judge too quickly!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "préparer",
@@ -8431,7 +8591,9 @@
           "fr": "Prépare-toi bien !",
           "en": "Prepare well!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "remarquer",
@@ -8535,7 +8697,9 @@
           "fr": "Remarque les signes !",
           "en": "Notice the signs!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "manger",
@@ -8639,7 +8803,9 @@
           "fr": "Mange doucement !",
           "en": "Eat slowly!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "boire",
@@ -8743,7 +8909,9 @@
           "fr": "Bois lentement !",
           "en": "Drink slowly!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "envoyer",
@@ -8847,7 +9015,9 @@
           "fr": "Envoie-le tout de suite !",
           "en": "Send it right away!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "recevoir",
@@ -8951,7 +9121,9 @@
           "fr": "Reçois ce cadeau !",
           "en": "Receive this gift!"
         }
-      }
+      },
+      "group": 2,
+      "tags": []
     },
     {
       "verb": "écouter",
@@ -9055,7 +9227,9 @@
           "fr": "Écoute d’abord !",
           "en": "Listen first!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "acheter",
@@ -9159,7 +9333,9 @@
           "fr": "Achète seulement le nécessaire !",
           "en": "Buy only what’s necessary!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "jouer",
@@ -9263,7 +9439,9 @@
           "fr": "Joue mieux !",
           "en": "Play better!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "lancer",
@@ -9367,7 +9545,9 @@
           "fr": "Lance-toi !",
           "en": "Go for it!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "montrer",
@@ -9471,7 +9651,9 @@
           "fr": "Montre l’exemple !",
           "en": "Let him show his ID!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "compter",
@@ -9575,7 +9757,9 @@
           "fr": "Compte correctement !",
           "en": "Let him count accurately!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "appeler",
@@ -9679,7 +9863,9 @@
           "fr": "Appelle demain matin !",
           "en": "Let him call the service!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "quitter",
@@ -9783,7 +9969,9 @@
           "fr": "Quitte la pièce !",
           "en": "Leave the room!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "poser",
@@ -9887,7 +10075,9 @@
           "fr": "Pose ta question !",
           "en": "Ask your question!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "retrouver",
@@ -9991,7 +10181,9 @@
           "fr": "Retrouve ton calme !",
           "en": "Let him recover his password!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "expliquer",
@@ -10095,7 +10287,9 @@
           "fr": "Explique clairement !",
           "en": "Let him explain clearly!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "considérer",
@@ -10199,7 +10393,9 @@
           "fr": "Considère cette option !",
           "en": "Consider this option!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "fermer",
@@ -10303,7 +10499,9 @@
           "fr": "Ferme la porte !",
           "en": "Close the door!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "arrêter",
@@ -10407,7 +10605,9 @@
           "fr": "Arrête immédiatement !",
           "en": "Stop immediately!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "payer",
@@ -10511,7 +10711,9 @@
           "fr": "Paie ta part !",
           "en": "Pay your share!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "élever",
@@ -10615,7 +10817,9 @@
           "fr": "Élève ta main !",
           "en": "Raise your hand!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "former",
@@ -10719,7 +10923,9 @@
           "fr": "Forme un cercle !",
           "en": "Form a circle!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "présenter",
@@ -10823,7 +11029,9 @@
           "fr": "Présente les faits !",
           "en": "Present the facts!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "proposer",
@@ -10927,7 +11135,9 @@
           "fr": "Propose une idée !",
           "en": "Suggest an idea!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "saisir",
@@ -11031,7 +11241,9 @@
           "fr": "Saisis le concept !",
           "en": "Grasp the concept!"
         }
-      }
+      },
+      "group": 2,
+      "tags": []
     },
     {
       "verb": "arranger",
@@ -11135,7 +11347,9 @@
           "fr": "Arrange les tables !",
           "en": "Arrange the tables!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "couvrir",
@@ -11239,7 +11453,9 @@
           "fr": "Couvre bien la casserole !",
           "en": "Cover the pot well!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "remettre",
@@ -11343,7 +11559,9 @@
           "fr": "Remets ça en ordre !",
           "en": "Let him put that back in order!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "lever",
@@ -11447,7 +11665,9 @@
           "fr": "Lève-toi !",
           "en": "Get up!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "remplacer",
@@ -11551,7 +11771,9 @@
           "fr": "Remplace ce module !",
           "en": "Replace this module!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "craindre",
@@ -11655,7 +11877,9 @@
           "fr": "Crains seulement l’essentiel !",
           "en": "Fear only what matters!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "valoir",
@@ -11759,7 +11983,9 @@
           "fr": "",
           "en": ""
         }
-      }
+      },
+      "group": 2,
+      "tags": []
     },
     {
       "verb": "conduire",
@@ -11863,7 +12089,9 @@
           "fr": "Conduis prudemment !",
           "en": "Drive carefully!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "battre",
@@ -11967,7 +12195,9 @@
           "fr": "Bats ton record !",
           "en": "Beat your record!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "naître",
@@ -12071,7 +12301,9 @@
           "fr": "",
           "en": ""
         }
-      }
+      },
+      "group": 2,
+      "tags": []
     },
     {
       "verb": "mourir",
@@ -12175,7 +12407,9 @@
           "fr": "Ne meurs pas !",
           "en": "Don’t die!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "rire",
@@ -12279,7 +12513,9 @@
           "fr": "Ris avec nous !",
           "en": "Laugh with us!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "sourire",
@@ -12383,7 +12619,9 @@
           "fr": "Souris un peu !",
           "en": "Smile a little!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "plaire",
@@ -12487,7 +12725,9 @@
           "fr": "Plais à ton public !",
           "en": "Please your audience!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "craquer",
@@ -12591,7 +12831,9 @@
           "fr": "Ne craque pas !",
           "en": "Don’t crack!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "convaincre",
@@ -12695,7 +12937,9 @@
           "fr": "Convaincs-les !",
           "en": "Convince them!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "vaincre",
@@ -12799,7 +13043,9 @@
           "fr": "Vaincs tes limites !",
           "en": "Overcome your limits!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "peindre",
@@ -12903,7 +13149,9 @@
           "fr": "Peins avec soin !",
           "en": "Paint carefully!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "joindre",
@@ -13007,7 +13255,9 @@
           "fr": "Joints-y ta signature !",
           "en": "Attach your signature to it!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "éteindre",
@@ -13111,7 +13361,9 @@
           "fr": "Éteins tout !",
           "en": "Turn everything off!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "paraître",
@@ -13215,7 +13467,9 @@
           "fr": "Parais sûr de toi !",
           "en": "Let him show up on time!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "apparaître",
@@ -13319,7 +13573,9 @@
           "fr": "Apparais quand on t’appelle !",
           "en": "Appear when we call you!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "disparaître",
@@ -13423,7 +13679,9 @@
           "fr": "Disparais d’ici !",
           "en": "Disappear from here!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "construire",
@@ -13527,7 +13785,9 @@
           "fr": "Construis prudemment !",
           "en": "Build carefully!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "détruire",
@@ -13631,7 +13891,9 @@
           "fr": "Détruis les copies !",
           "en": "Destroy the copies!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "traduire",
@@ -13735,7 +13997,9 @@
           "fr": "Traduis cette phrase !",
           "en": "Translate this sentence!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "réduire",
@@ -13839,7 +14103,9 @@
           "fr": "Réduis la taille !",
           "en": "Reduce the size!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "introduire",
@@ -13943,7 +14209,9 @@
           "fr": "Introduis ton code !",
           "en": "Enter your code!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "séduire",
@@ -14047,7 +14315,9 @@
           "fr": "Séduis par la qualité !",
           "en": "Win them over with quality!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "maintenir",
@@ -14151,7 +14421,9 @@
           "fr": "Maintiens la cadence !",
           "en": "Keep up the pace!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "obtenir",
@@ -14255,7 +14527,9 @@
           "fr": "Obtiens leur appui !",
           "en": "Get their support!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "prévenir",
@@ -14359,7 +14633,9 @@
           "fr": "Préviens-moi dès que possible !",
           "en": "Warn me as soon as possible!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "prévoir",
@@ -14463,7 +14739,9 @@
           "fr": "Prévois une réserve !",
           "en": "Plan a buffer!"
         }
-      }
+      },
+      "group": 2,
+      "tags": []
     },
     {
       "verb": "revoir",
@@ -14567,7 +14845,9 @@
           "fr": "Revois ton argumentaire !",
           "en": "Review your pitch!"
         }
-      }
+      },
+      "group": 2,
+      "tags": []
     },
     {
       "verb": "pourvoir",
@@ -14671,7 +14951,9 @@
           "fr": "Pourvois aux besoins !",
           "en": "Provide for the needs!"
         }
-      }
+      },
+      "group": 2,
+      "tags": []
     },
     {
       "verb": "survivre",
@@ -14775,7 +15057,9 @@
           "fr": "Survis coûte que coûte !",
           "en": "Survive at all costs!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "revivre",
@@ -14879,7 +15163,9 @@
           "fr": "Revive ce succès !",
           "en": "Relive that success!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "élire",
@@ -14983,7 +15269,9 @@
           "fr": "Élis ton représentant !",
           "en": "Elect your representative!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "redire",
@@ -15087,7 +15375,9 @@
           "fr": "Redis-le, s’il te plaît !",
           "en": "Say it again, please!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "prédire",
@@ -15191,7 +15481,9 @@
           "fr": "Prédisez avec prudence !",
           "en": "Predict with caution!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "interdire",
@@ -15295,7 +15587,9 @@
           "fr": "Interdis-le !",
           "en": "Forbid it!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "résoudre",
@@ -15399,7 +15693,9 @@
           "fr": "Résous ça tout de suite !",
           "en": "Solve it right away!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "recevoir",
@@ -15503,7 +15799,9 @@
           "fr": "Reçois ce cadeau !",
           "en": "Receive this gift!"
         }
-      }
+      },
+      "group": 2,
+      "tags": []
     },
     {
       "verb": "apercevoir",
@@ -15607,7 +15905,9 @@
           "fr": "Aperçois le détail caché !",
           "en": "Notice the hidden detail!"
         }
-      }
+      },
+      "group": 2,
+      "tags": []
     },
     {
       "verb": "concevoir",
@@ -15711,7 +16011,9 @@
           "fr": "Conçois un plan clair !",
           "en": "Design a clear plan!"
         }
-      }
+      },
+      "group": 2,
+      "tags": []
     },
     {
       "verb": "décevoir",
@@ -15815,7 +16117,9 @@
           "fr": "Ne déçois pas tes amis !",
           "en": "Don’t disappoint your friends!"
         }
-      }
+      },
+      "group": 2,
+      "tags": []
     },
     {
       "verb": "percevoir",
@@ -15919,7 +16223,9 @@
           "fr": "Perçois les détails !",
           "en": "Perceive the details!"
         }
-      }
+      },
+      "group": 2,
+      "tags": []
     },
     {
       "verb": "promouvoir",
@@ -16023,7 +16329,9 @@
           "fr": "Promouvez ces valeurs !",
           "en": "Promote these values!"
         }
-      }
+      },
+      "group": 2,
+      "tags": []
     },
     {
       "verb": "asseoir",
@@ -16127,7 +16435,9 @@
           "fr": "Assois-les par ordre alphabétique !",
           "en": "Seat them in alphabetical order!"
         }
-      }
+      },
+      "group": 2,
+      "tags": []
     },
     {
       "verb": "écrire",
@@ -16231,7 +16541,9 @@
           "fr": "Écris une note !",
           "en": "Let him write a note!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "décrire",
@@ -16335,7 +16647,9 @@
           "fr": "Décris ce que tu vois !",
           "en": "Describe what you see!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "prescrire",
@@ -16439,7 +16753,9 @@
           "fr": "Prescris ce traitement.",
           "en": "Prescribe this treatment."
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "inscrire",
@@ -16543,7 +16859,9 @@
           "fr": "Inscris-toi vite !",
           "en": "Sign up quickly!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "souscrire",
@@ -16647,7 +16965,9 @@
           "fr": "Souscris ici !",
           "en": "Subscribe here!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "conduire",
@@ -16751,7 +17071,9 @@
           "fr": "Conduis prudemment !",
           "en": "Drive carefully!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "induire",
@@ -16855,7 +17177,9 @@
           "fr": "N’induis pas en erreur !",
           "en": "Do not mislead!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "réduire",
@@ -16959,7 +17283,9 @@
           "fr": "Réduis la taille !",
           "en": "Reduce the size!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "traduire",
@@ -17063,7 +17389,9 @@
           "fr": "Traduis cette phrase !",
           "en": "Translate this sentence!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "inclure",
@@ -17167,7 +17495,9 @@
           "fr": "Inclus-les tous !",
           "en": "Include them all!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "exclure",
@@ -17271,7 +17601,9 @@
           "fr": "Exclus cette option !",
           "en": "Exclude that option!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "clore",
@@ -17375,7 +17707,9 @@
           "fr": "Clôt le dossier !",
           "en": "Close the file!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "aller",
@@ -17479,7 +17813,9 @@
           "fr": "Va te reposer !",
           "en": "Let him go rest!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "balayer",
@@ -17583,7 +17919,9 @@
           "fr": "Balaye devant la porte !",
           "en": "Sweep in front of the door!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "essuyer",
@@ -17687,7 +18025,9 @@
           "fr": "Essuie tes mains !",
           "en": "Wipe your hands!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "payer",
@@ -17791,7 +18131,9 @@
           "fr": "Paie ta part !",
           "en": "Pay your share!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "appuyer",
@@ -17895,7 +18237,9 @@
           "fr": "Appuie ici !",
           "en": "Press here!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "ennuyer",
@@ -17999,7 +18343,9 @@
           "fr": "N’ennuie personne !",
           "en": "Don’t annoy anyone!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "nettoyer",
@@ -18103,7 +18449,9 @@
           "fr": "Nettoie cela tout de suite !",
           "en": "Clean that right away!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "renvoyer",
@@ -18207,7 +18555,9 @@
           "fr": "Renvoye-le tout de suite !",
           "en": "Send it back right away!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "employer",
@@ -18311,7 +18661,9 @@
           "fr": "Emploie des mots simples !",
           "en": "Use simple words!"
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "tutoyer",
@@ -18415,7 +18767,9 @@
           "fr": "Tutoie-moi si tu veux.",
           "en": "Use 'tu' with me if you like."
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "vouvoyer",
@@ -18519,7 +18873,9 @@
           "fr": "Vouvoie les inconnus.",
           "en": "Address strangers with 'vous'."
         }
-      }
+      },
+      "group": 1,
+      "tags": []
     },
     {
       "verb": "ouvrir",
@@ -18623,7 +18979,9 @@
           "fr": "Ouvre la fenêtre !",
           "en": "Let him open the box!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "découvrir",
@@ -18727,7 +19085,9 @@
           "fr": "Découvre le monde !",
           "en": "Discover the world!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "offrir",
@@ -18831,7 +19191,9 @@
           "fr": "Offre-lui ton soutien !",
           "en": "Offer him your support!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "souffrir",
@@ -18935,7 +19297,9 @@
           "fr": "Souffre le moins possible.",
           "en": "Suffer as little as possible."
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "cueillir",
@@ -19039,7 +19403,9 @@
           "fr": "Cueille les pommes mûres !",
           "en": "Pick the ripe apples!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "accueillir",
@@ -19143,7 +19509,9 @@
           "fr": "Accueille nos invités !",
           "en": "Welcome our guests!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "recueillir",
@@ -19247,7 +19615,9 @@
           "fr": "Recueille les signatures !",
           "en": "Collect the signatures!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "fuir",
@@ -19351,7 +19721,9 @@
           "fr": "Fuis !",
           "en": "Run away!"
         }
-      }
+      },
+      "group": 2,
+      "tags": []
     },
     {
       "verb": "haïr",
@@ -19455,7 +19827,9 @@
           "fr": "Ne hais personne !",
           "en": "Hate no one!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "bouillir",
@@ -19559,7 +19933,9 @@
           "fr": "Fais bouillir l’eau !",
           "en": "Boil the water!"
         }
-      }
+      },
+      "group": 2,
+      "tags": []
     },
     {
       "verb": "courir",
@@ -19663,7 +20039,9 @@
           "fr": "Cours vite !",
           "en": "Run fast!"
         }
-      }
+      },
+      "group": 2,
+      "tags": []
     },
     {
       "verb": "mettre",
@@ -19767,7 +20145,9 @@
           "fr": "Mets ta ceinture !",
           "en": "Let him clarify his priorities!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "permettre",
@@ -19871,7 +20251,9 @@
           "fr": "Permets-leur d’entrer !",
           "en": "Allow them to enter!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "admettre",
@@ -19975,7 +20357,9 @@
           "fr": "Admets tes erreurs !",
           "en": "Admit your mistakes!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "soumettre",
@@ -20079,7 +20463,9 @@
           "fr": "Soumets ton dossier !",
           "en": "Submit your file!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "transmettre",
@@ -20183,7 +20569,9 @@
           "fr": "Transmets-lui mes salutations !",
           "en": "Pass along my regards to him!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "promettre",
@@ -20287,7 +20675,9 @@
           "fr": "Promets moins, fais plus !",
           "en": "Promise less, do more!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "omettre",
@@ -20391,7 +20781,9 @@
           "fr": "N’omets rien !",
           "en": "Omit nothing!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "abattre",
@@ -20495,7 +20887,9 @@
           "fr": "Abats les cloisons inutiles !",
           "en": "Knock down the unnecessary partitions!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "combattre",
@@ -20599,7 +20993,9 @@
           "fr": "Combats jusqu’au bout !",
           "en": "Fight to the end!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "rompre",
@@ -20703,7 +21099,9 @@
           "fr": "Romps le cercle vicieux !",
           "en": "Break the vicious circle!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "bouillir",
@@ -20807,7 +21205,9 @@
           "fr": "Fais bouillir l’eau !",
           "en": "Boil the water!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     },
     {
       "verb": "corrompre",
@@ -20911,7 +21311,9 @@
           "fr": "Ne corromps jamais !",
           "en": "Never bribe!"
         }
-      }
+      },
+      "group": 3,
+      "tags": []
     }
   ]
 }
