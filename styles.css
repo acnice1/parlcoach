@@ -338,3 +338,71 @@ button,
   cursor: pointer;
   user-select: none;
 }
+/* --- Modern switch for "Show Verb Translation" --- */
+.form-switch {
+  margin: 8px 0;
+  display: inline-block;
+}
+
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.switch input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.switch .slider {
+  --h: 22px;
+  --w: 42px;
+  --track: color-mix(in srgb, currentColor 12%, transparent);
+  --track-on: color-mix(in srgb, #4ade80 80%, transparent);
+  --knob: #fff;
+  position: relative;
+  width: var(--w);
+  height: var(--h);
+  border-radius: var(--h);
+  background: var(--track);
+  transition: background 160ms ease;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 25%, transparent);
+}
+
+.switch .slider::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: calc(var(--h) - 4px);
+  height: calc(var(--h) - 4px);
+  border-radius: 50%;
+  background: var(--knob);
+  box-shadow: 0 1px 2px rgba(0,0,0,.25);
+  transition: transform 160ms ease;
+}
+
+.switch input:checked + .slider {
+  background: var(--track-on);
+}
+.switch input:checked + .slider::after {
+  transform: translateX(calc(var(--w) - var(--h)));
+}
+
+/* Focus outline for accessibility */
+.switch input:focus-visible + .slider {
+  outline: 2px solid color-mix(in srgb, currentColor 50%, transparent);
+  outline-offset: 2px;
+}
+
+.switch .label-text {
+  opacity: 0.9;
+}

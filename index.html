@@ -80,15 +80,31 @@
     <option value="imperatif">impératif</option>
   </select>
 </label>
-<label class="inline">
- <label class="inline">
-  <input type="checkbox" v-model="drillPrefs.autoNext">Auto-advance on correct
-</label>
-<div class="toggle-translate">
-  <label>
-    <input type="checkbox" v-model="showEnglishTranslation">Show Verb Translation in English
+
+<!-- Elegant switches -->
+<div class="switch-row">
+  <label class="switch">
+    <input
+      type="checkbox"
+      v-model="drillPrefs.autoNext"
+      aria-label="Auto-advance on correct"
+    />
+    <span class="slider" aria-hidden="true"></span>
+    <span class="label-text">Auto-advance on correct</span>
+  </label>
+
+  <label class="switch">
+    <input
+      type="checkbox"
+      v-model="showEnglishTranslation"
+      aria-label="Show Verb Translation in English"
+    />
+    <span class="slider" aria-hidden="true"></span>
+    <span class="label-text">Show Verb Translation in English</span>
   </label>
 </div>
+
+
 
 
         <div class="row">
