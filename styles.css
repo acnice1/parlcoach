@@ -330,3 +330,11 @@ button,
   font-size: 1.4rem;         /* even bigger for the expected answer */
   color: #7f1d1d;            /* darker red for emphasis */
 }
+.toggle-translate {
+  margin: 8px 0;
+  font-size: 0.9em;
+}
+.toggle-translate label {
+  cursor: pointer;
+  user-select: none;
+}

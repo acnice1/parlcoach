@@ -82,9 +82,13 @@
 </label>
 <label class="inline">
  <label class="inline">
-  <input type="checkbox" v-model="drillPrefs.autoNext">
-  Auto-advance on correct
+  <input type="checkbox" v-model="drillPrefs.autoNext">Auto-advance on correct
 </label>
+<div class="toggle-translate">
+  <label>
+    <input type="checkbox" v-model="showEnglishTranslation">Show Verb Translation in English
+  </label>
+</div>
 
 
         <div class="row">
@@ -103,10 +107,12 @@
     🧠 Score: {{ drillSession.right }} / {{ drillSession.total }}
   </div>
 
+   <div v-if="showEnglishTranslation"><strong>EN:</strong> {{ drillSession.side.english || '—' }}</div>
+   
   <div class="prompt">
-    <div class="hint" v-if="drillSession.question.prompt.english">
-      {{ drillSession.question.prompt.english }}
-    </div>
+    <div class="drill-side" v-if="drillSession.side">
+</div>
+
 
     <div class="label">{{ drillSession.question.prompt.label }}</div>
 
@@ -143,11 +149,12 @@
 </div>
 
 
-    <!-- ✅ Single rule-help block (removed duplicate) -->
     <div class="rule-help"
      v-if="(drillSession.correct === false) ||
             (drillSession.correct === true && !drillPrefs.autoNext)">
   <h4 style="margin:8px 0 4px">How to form it</h4>
+    <div><strong>Ex (FR):</strong> {{ drillSession.side.fr || '—' }}</div>
+  <div><strong>Ex (EN):</strong> {{ drillSession.side.en || '—' }}</div>
   <ul style="margin:0; padding-left:18px">
     <li v-for="(ln,i) in drillSession.help?.lines" :key="i">{{ ln }}</li>
   </ul>
@@ -409,7 +416,7 @@
 <!-- Vue / Dexie from CDN -->
 <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js" defer></script>
 <script src="https://unpkg.com/dexie@4.0.8/dist/dexie.min.js" defer></script>
-<script src="app.js?v=2025-10-22-1" defer></script>
+<script src="app.js?v=2025-10-23-1" defer></script>
 
 
   <!-- LETS SAVE THIS FOR LATER

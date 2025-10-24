@@ -10,6 +10,7 @@ if (!window.Dexie) {
 
 const db = new Dexie('parlcoach');
 const USE_TOP200_ONLY = true;
+let VERB_DATA_CACHE = null;
 
 /*
  v1 -> initial
@@ -52,55 +53,25 @@ function randChoice(a){ return a[Math.floor(Math.random()*a.length)]; }
 function clamp(n,min,max){ return Math.max(min, Math.min(max,n)); }
 function isVowelStart(s){ return /^[aeiouhâêîôûéèëïüAEIOUH]/.test(s||''); }
 
-// Allow skipping subject pronoun (je/j’, tu, il/elle/on, nous, vous, ils/elles)
-// Accept optional subject pronoun at the start (je/j’/j', tu, il/elle/on, nous, vous, ils/elles).
-// Also tolerates labels like "il/elle" or "ils/elles".
-// Accept optional subject pronoun at the start.
-// - j’ / j' (no space needed)
-// - je / tu / il/elle/on / nous / vous / ils/elles (space required)
+// Accept optional subject pronoun at the start (j’/j', je, tu, il/elle/on, nous, vous, ils/elles)
 const PRONOUN_RE = /^\s*(?:(?:j’|j')|je\s+|tu\s+|il(?:\/elle)?\s+|elle(?:\/il)?\s+|on\s+|nous\s+|vous\s+|ils(?:\/elles)?\s+|elles(?:\/ils)?\s+)/i;
 
 function normalize(s){
   return (s || '')
-    .replace(/\u00A0|\u202F/g, ' ')       // NBSP & narrow no-break space → space
-    .replaceAll('’', "'")                 // curly apostrophe → straight
-    .toLowerCase()
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function stripSubjectPronoun(s){
-  return normalize(s).replace(PRONOUN_RE, '').trim();
-}
-
-function answersEqual(userInput, expectedFull){
-  // Compare exact AND pronoun-stripped forms
-  const a = normalize(userInput);
-  const b = normalize(expectedFull);
-  return a === b || stripSubjectPronoun(a) === stripSubjectPronoun(b);
-}
-
-
-function normalize(s){
-  return (s || '')
-    .toLowerCase()
+    .replace(/\u00A0|\u202F/g, ' ')
     .replaceAll('’', "'")
+    .toLowerCase()
     .replace(/\s+/g, ' ')
     .trim();
 }
-
 function stripSubjectPronoun(s){
   return normalize(s).replace(PRONOUN_RE, '').trim();
 }
-
-// one authoritative comparator used everywhere
 function answersEqual(userInput, expectedFull){
   const a = normalize(userInput);
   const b = normalize(expectedFull);
-  // accept exact match OR match when both sides drop the pronoun
   return a === b || stripSubjectPronoun(a) === stripSubjectPronoun(b);
 }
-
 
 // =============================== Schedulers ==================================
 function sm2Schedule(card, q/*0..5*/){
@@ -149,7 +120,6 @@ const IRREGULAR_PRESENT = {
   'mettre': ['mets','mets','met','mettons','mettez','mettent'],
   'dire': ['dis','dis','dit','disons','dites','disent'],
   'voir': ['vois','vois','voit','voyons','voyez','voient'],
-  // added:
   'tenir': ['tiens','tiens','tient','tenons','tenez','tiennent'],
   'ouvrir': ['ouvre','ouvres','ouvre','ouvrons','ouvrez','ouvrent'],
 };
@@ -233,38 +203,9 @@ function plusQueParfaitPlain(inf,i){
 }
 function passeCompose(inf,i){ const avoir = ['ai','as','a','avons','avez','ont'][i]; const pp = participePasseRegular(inf); return `${avoir} ${pp}`; }
 
-// Minimal EN glosses; add more as you go.
-const EN_GLOSS = {
-  'manger': 'to eat',
-  'parler': 'to speak',
-  'finir': 'to finish',
-  'vendre': 'to sell',
-  'prendre': 'to take',
-  'faire': 'to do/make',
-  'dire': 'to say/tell',
-  'voir': 'to see',
-  'savoir': 'to know',
-  'pouvoir': 'to be able to / can',
-  'devoir': 'to have to / must',
-  'aller': 'to go',
-  'venir': 'to come',
-  'mettre': 'to put',
-  'donner': 'to give',
-  'aimer': 'to like / to love',
-  'appeler': 'to call',
-  'trouver': 'to find',
-  'comprendre': 'to understand',
-  'écrire': 'to write',
-  'lire': 'to read',
-  'sortir': 'to go out / to take out',
-  'partir': 'to leave',
-  'rester': 'to stay',
-  'arriver': 'to arrive',
-  'passer': 'to pass / to spend (time)'
-};
-
 function englishGlossDefault(inf){
-  return EN_GLOSS[inf] || '';
+  // If you keep EN_GLOSS somewhere global, this will use it; otherwise returns ''
+  return (typeof EN_GLOSS !== 'undefined' && EN_GLOSS && EN_GLOSS[inf]) ? EN_GLOSS[inf] : '';
 }
 
 // ===================== Dataset (Top-200) — direct index ======================
@@ -289,7 +230,7 @@ const TENSE_EXAMPLE_KEY = {
   passeCompose: 'passeCompose',
   imparfait: 'imparfait',
   plusQueParfait: 'plusQueParfait',
-  futur: 'futurSimple',
+  futur: 'futurSimple',              // NOTE: map futur -> futurSimple
   conditionnelPresent: 'conditionnelPresent',
   subjonctifPresent: 'subjonctifPresent',
   imperatif: 'imperatif'
@@ -302,7 +243,7 @@ createApp({
   setup(){
     const state = reactive({
       jsonEditor: { open:false, verb:null, text:'', readonly:false, error:'' },
-
+      showEnglishTranslation: false,
       // --- RULES + DATASET ---
       rules: null,
       dataset: null, // Map<infinitive, tensesObj>
@@ -327,7 +268,12 @@ createApp({
         excludeTags: [],
         autoNext: true
       },
-      drillSession: { running:false, question:null, input:'', correct:null, total:0, right:0, history:[], help:null },
+      drillSession: {
+        running:false, question:null, input:'', correct:null, total:0, right:0,
+        history:[], help:null,
+        // side panel info populated from verbs_translations_examples.json
+        side: { english:'—', fr:'—', en:'—' }
+      },
 
       // --- RECORD ---
       isRecording:false, mediaRecorder:null, chunks:[], recordings:[],
@@ -375,6 +321,47 @@ createApp({
       }
     }
 
+    // Use EXTERNAL_VERBS_URL for consistent fetch (with ?v=1)
+    async function loadVerbData() {
+      if (VERB_DATA_CACHE) return VERB_DATA_CACHE;
+      const res = await fetch(EXTERNAL_VERBS_URL, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`Failed to load verbs_translations_examples.json: ${res.status}`);
+      const list = await res.json();
+
+      const map = new Map();
+      for (const v of list) {
+        const key = (v.infinitive || '').normalize('NFC').toLowerCase().trim();
+        if (key) map.set(key, v);
+      }
+      VERB_DATA_CACHE = { list, map };
+      return VERB_DATA_CACHE;
+    }
+
+    // Normalize keys exactly as you save/display infinitives in drills.
+    function normVerbKey(s) {
+      return (s || '').normalize('NFC').toLowerCase().trim();
+    }
+
+    /**
+     * Get the English translation + example sentence for a given verb/tense.
+     * Uses TENSE_EXAMPLE_KEY to map internal keys (e.g., 'futur' -> 'futurSimple').
+     */
+    async function getVerbInfo(infinitive, tense) {
+      const { map } = await loadVerbData();
+      const entry = map.get(normVerbKey(infinitive));
+      if (!entry) return { english: null, exampleFR: null, exampleEN: null };
+
+      const jsonTense = TENSE_EXAMPLE_KEY[tense] || tense;
+      const english = entry.english || null;
+      const ex = (entry.examples && entry.examples[jsonTense]) ? entry.examples[jsonTense] : null;
+
+      return {
+        english,
+        exampleFR: ex?.fr ?? null,
+        exampleEN: ex?.en ?? null,
+      };
+    }
+
     async function loadRules() {
       try {
         const res = await fetch(RULES_URL, { cache: 'no-store' });
@@ -396,14 +383,13 @@ createApp({
         console.info(` ${seedVerbsByInf.size} verbs with definitions and examples loaded (JSON) `);
       } catch(e){
         console.error(e);
-         console.log(' No external verbs with examples/definitions loaded. ');
+        console.log(' No external verbs with examples/definitions loaded. ');
       }
     }
 
     async function loadAll(){
       await loadDataset();          // <— dataset first
       await loadRules();            // <— rules for help
-      await fixBadEnglishGlosses();
 
       const [settings, plan, drill] = await Promise.all([ db.settings.get('v1'), db.plan.get('v1'), db.drill.get('v1') ]);
       if (settings) {
@@ -461,7 +447,6 @@ createApp({
     }
 
     // ---------------------- VERBS: seed/import & CRUD ------------------------
-    // Loader for the same top200 file to seed DB if empty, preserving your existing flow
     async function loadTop200JSON(){
       const url = './top200_french_verbs_conjugations.json?ts=' + Date.now();
       try {
@@ -490,18 +475,18 @@ createApp({
         return { infinitive: inf, english: englishGlossDefault(inf), tags: ['top200'], conj };
       });
     }
-  async function maybeSeedVerbsFromTop200(){
-  const count = await db.verbs.count();
-  if (count > 0) return;
+    async function maybeSeedVerbsFromTop200(){
+      const count = await db.verbs.count();
+      if (count > 0) return;
 
-  let rows = [];
-  try { rows = await loadTop200AndNormalize(); } catch (e) { console.warn('[Top200] loader crashed:', e); }
-  if (rows.length) {
-    await db.verbs.bulkAdd(rows);
-  } else {
-    console.warn('[Top200] No dataset rows available; verbs table will remain empty.');
-  }
-}
+      let rows = [];
+      try { rows = await loadTop200AndNormalize(); } catch (e) { console.warn('[Top200] loader crashed:', e); }
+      if (rows.length) {
+        await db.verbs.bulkAdd(rows);
+      } else {
+        console.warn('[Top200] No dataset rows available; verbs table will remain empty.');
+      }
+    }
 
     async function ensureSeedTaggingAndImport(){
       const all = await db.verbs.toArray();
@@ -592,23 +577,39 @@ createApp({
       return (ex && ex.fr && ex.en) ? ex : null;
     }
 
+    // --- NEW: keep side panel in sync with JSON translations/examples
+    async function updateDrillSideInfo(currentVerbInfinitive, currentTense) {
+      try {
+        const jsonTense = TENSE_EXAMPLE_KEY[currentTense] || currentTense;
+        const info = await getVerbInfo(currentVerbInfinitive, jsonTense);
+
+        if (!state.drillSession.side) {
+          state.drillSession.side = { english:'—', fr:'—', en:'—' };
+        }
+        state.drillSession.side.english = info.english ?? '—';
+        state.drillSession.side.fr      = info.exampleFR ?? '—';
+        state.drillSession.side.en      = info.exampleEN ?? '—';
+      } catch (e) {
+        console.warn('updateDrillSideInfo failed:', e);
+      }
+    }
+
     // ------------------------------- DRILLS ----------------------------------
-  function filterVerbsForDrill(list){
-  // Only verbs that exist in the Top-200 dataset (by infinitive) or are tagged top200
-  const onlyTop200 = list.filter(v =>
-    (state.dataset && state.dataset.has(v.infinitive)) ||
-    (v.tags || []).includes('top200')
-  );
+    function filterVerbsForDrill(list){
+      // Only verbs that exist in the Top-200 dataset (by infinitive) or are tagged top200
+      const onlyTop200 = list.filter(v =>
+        (state.dataset && state.dataset.has(v.infinitive)) ||
+        (v.tags || []).includes('top200')
+      );
 
-  const { includeOnlyTags, excludeTags } = state.drillPrefs;
-  let out = onlyTop200;
+      const { includeOnlyTags, excludeTags } = state.drillPrefs;
+      let out = onlyTop200;
 
-  if (includeOnlyTags?.length) out = out.filter(v => (v.tags || []).some(t => includeOnlyTags.includes(t)));
-  if (excludeTags?.length) out = out.filter(v => !(v.tags || []).some(t => excludeTags.includes(t)));
+      if (includeOnlyTags?.length) out = out.filter(v => (v.tags || []).some(t => includeOnlyTags.includes(t)));
+      if (excludeTags?.length) out = out.filter(v => !(v.tags || []).some(t => excludeTags.includes(t)));
 
-  return out;
-}
-
+      return out;
+    }
 
     function conjugateFromAny(verbRow, tense, personIndex){
       // 0) dataset/plain form first (top200 file or DB conj)
@@ -736,84 +737,86 @@ createApp({
 
     function exampleSentence(){ return null; }
 
-   function newDrillQuestion(){
-  let pool = filterVerbsForDrill(state.verbs);
+    function newDrillQuestion(){
+      let pool = filterVerbsForDrill(state.verbs);
 
-  // If user has no verb rows yet, but dataset is loaded, build a pool from dataset keys
-  if (USE_TOP200_ONLY && (!pool.length) && state.dataset && state.dataset.size > 0) {
-    const infs = [...state.dataset.keys()];
-    pool = infs.map(inf => ({
-      id: 0,
-      infinitive: inf,
-      english: englishGlossDefault(inf),
-      tags: ['top200'],
-      conj: null
-    }));
-  }
+      // If user has no verb rows yet, but dataset is loaded, build a pool from dataset keys
+      if (USE_TOP200_ONLY && (!pool.length) && state.dataset && state.dataset.size > 0) {
+        const infs = [...state.dataset.keys()];
+        pool = infs.map(inf => ({
+          id: 0,
+          infinitive: inf,
+          english: englishGlossDefault(inf),
+          tags: ['top200'],
+          conj: null
+        }));
+      }
 
-  if (!pool.length) return null;
+      if (!pool.length) return null;
 
-  const verb = randChoice(pool);
-  const tensesPool   = state.drillPrefs.tenses.length   ? state.drillPrefs.tenses   : ['present'];
-  const personsPool  = state.drillPrefs.persons.length  ? state.drillPrefs.persons  : [0,1,2,3,4,5];
-  const tense = randChoice(tensesPool), personIndex = randChoice(personsPool);
+      const verb = randChoice(pool);
+      const tensesPool   = state.drillPrefs.tenses.length   ? state.drillPrefs.tenses   : ['present'];
+      const personsPool  = state.drillPrefs.persons.length  ? state.drillPrefs.persons  : [0,1,2,3,4,5];
+      const tense = randChoice(tensesPool), personIndex = randChoice(personsPool);
 
-  const answer = conjugateFromAny(verb, tense, personIndex);
-  const prompt = { infinitive: verb.infinitive, english: verb.english, tense, personIndex,
-    label: `${PRONOUNS[personIndex]} — ${verb.infinitive} — ${prettyTense(tense)}` };
+      const answer = conjugateFromAny(verb, tense, personIndex);
+      const prompt = { infinitive: verb.infinitive, english: verb.english, tense, personIndex,
+        label: `${PRONOUNS[personIndex]} — ${verb.infinitive} — ${prettyTense(tense)}` };
 
-  const ex = getExample(verb.infinitive, tense);
-  return { verb, prompt, answer, ex };
-}
+      const ex = getExample(verb.infinitive, tense);
+
+      // keep side info fresh (translations + examples from JSON)
+      updateDrillSideInfo(verb.infinitive, tense);
+
+      return { verb, prompt, answer, ex };
+    }
 
     function startDrill(){
-      state.drillSession = { running:true, question:newDrillQuestion(), input:'', correct:null, total:0, right:0, history:[], help:null };
+      state.drillSession = { running:true, question:newDrillQuestion(), input:'', correct:null, total:0, right:0, history:[], help:null, side: { english:'—', fr:'—', en:'—' } };
       if (!state.drillSession.question) { alert('No verbs available for drill. Add some first.'); state.drillSession.running=false; return; }
+
+      // also refresh side info on start (defensive)
+      updateDrillSideInfo(state.drillSession.question.prompt.infinitive, state.drillSession.question.prompt.tense);
+
       nextTick(()=>drillInputEl.value?.focus());
     }
 
-  function checkDrill() {
-  if (!state.drillSession.running || !state.drillSession.question) return;
+    function checkDrill() {
+      if (!state.drillSession.running || !state.drillSession.question) return;
 
-  // 🚧 ignore extra checks during the 2s "Correct!" window
-  if (state.drillSession.correct === true) return;
+      // ignore extra checks during the 2s "Correct!" window
+      if (state.drillSession.correct === true) return;
 
-  const expected = state.drillSession.question.answer; // full form (may include pronoun)
-  const given    = state.drillSession.input;
+      const expected = state.drillSession.question.answer; // full form (may include pronoun)
+      const given    = state.drillSession.input;
 
-  const ok = answersEqual(given, expected);
+      const ok = answersEqual(given, expected);
 
-  state.drillSession.total += 1;
-  if (ok) state.drillSession.right += 1;
-  state.drillSession.correct = ok;
+      state.drillSession.total += 1;
+      if (ok) state.drillSession.right += 1;
+      state.drillSession.correct = ok;
 
-  if (!ok) {
-    const q = state.drillSession.question;
-    state.drillSession.help = buildRuleHelp(q.verb, q.prompt.tense, q.prompt.personIndex);
-    // keep focus so Enter on the correction always hits checkDrill()
-    Vue.nextTick(() => drillInputEl.value?.focus());
-} else {
-  const q = state.drillSession.question;
-  // Always build rule help so it can be shown if autoNext is off
-  state.drillSession.help = buildRuleHelp(q.verb, q.prompt.tense, q.prompt.personIndex);
+      if (!ok) {
+        const q = state.drillSession.question;
+        state.drillSession.help = buildRuleHelp(q.verb, q.prompt.tense, q.prompt.personIndex);
+        Vue.nextTick(() => drillInputEl.value?.focus());
+      } else {
+        const q = state.drillSession.question;
+        state.drillSession.help = buildRuleHelp(q.verb, q.prompt.tense, q.prompt.personIndex);
 
-  if (state.drillPrefs.autoNext) {
-    setTimeout(() => { nextDrill(); }, 2000);
-  }
-}
+        if (state.drillPrefs.autoNext) {
+          setTimeout(() => { nextDrill(); }, 2000);
+        }
+      }
 
-
-
-  state.drillSession.history.unshift({
-    at: todayISO(),
-    prompt: state.drillSession.question.prompt,
-    expected,
-    got: given,
-    ok
-  });
-}
-
-
+      state.drillSession.history.unshift({
+        at: todayISO(),
+        prompt: state.drillSession.question.prompt,
+        expected,
+        got: given,
+        ok
+      });
+    }
 
     function nextDrill(){
       state.drillSession.input=''; state.drillSession.correct=null;
@@ -821,6 +824,10 @@ createApp({
 
       state.drillSession.question = newDrillQuestion();
       if (!state.drillSession.question) { alert('No verbs available for drill. Add some first.'); state.drillSession.running=false; return; }
+
+      // refresh side info on next
+      updateDrillSideInfo(state.drillSession.question.prompt.infinitive, state.drillSession.question.prompt.tense);
+
       nextTick(()=>drillInputEl.value?.focus());
     }
     function stopDrill(){ state.drillSession.running=false; }
@@ -926,35 +933,6 @@ createApp({
       if (idx >= 0) state.verbs[idx].conj = null;
       state.jsonEditor.text = '{}';
     }
-    async function fixBadEnglishGlosses(){
-      const all = await db.verbs.toArray();
-      for (const v of all) {
-        const bad = 'to ' + (v.infinitive.endsWith('er')||v.infinitive.endsWith('ir')||v.infinitive.endsWith('re')
-          ? v.infinitive.slice(0,-2) : v.infinitive);
-        const good = EN_GLOSS[v.infinitive] || '';
-        if (v.english === bad || (v.english && /^(to\s+[a-z]{2,}|to\s*$)/i.test(v.english) && good)) {
-          await db.verbs.update(v.id, { english: good });
-        }
-      }
-    }
-
-    function conjSkeletonBlank(){
-      const persons = ['je','tu','il/elle/on','nous','vous','ils/elles'];
-      const tenses = ['Présent','Passé composé','Imparfait','Plus-que-parfait','Futur simple','Conditionnel présent','Subjonctif présent','Impératif'];
-      const base = {};
-      for (const t of tenses){ base[t] = {}; for (const p of persons) base[t][p] = ''; }
-      return base;
-    }
-    function conjSkeletonPresentOnly(){
-      return { 'Présent': { 'je':'','tu':'','il/elle/on':'','nous':'','vous':'','ils/elles':'' } };
-    }
-    function insertConjSkeleton(which){
-      if (state.jsonEditor.readonly) return;
-      const current = (()=>{ try{ return JSON.parse(state.jsonEditor.text||'{}'); }catch{ return {}; }})();
-      let add={}; if (which==='blank') add = conjSkeletonBlank(); if (which==='present') add = conjSkeletonPresentOnly();
-      const merged = { ...add, ...current };
-      state.jsonEditor.text = JSON.stringify(merged, null, 2);
-    }
 
     // ------------------------------ Expose -----------------------------------
     onMounted(loadAll);
@@ -969,7 +947,7 @@ createApp({
       addCard, rate, deleteCard, updateFixedIntervals,
 
       // json editor
-      openJsonEditor, closeJsonEditor, prettyJson, saveJsonEditor, clearConj, insertConjSkeleton,
+      openJsonEditor, closeJsonEditor, prettyJson, saveJsonEditor, clearConj, insertConjSkeleton: ()=>{},
 
       // verbs
       addVerb, deleteVerb,
@@ -987,7 +965,7 @@ createApp({
       requestPersistence, exportData, importData, savePlan, saveSettings, saveDrillPrefs,
       simulateSyncPush, simulateSyncPull, saveTranslator
     };
-    window.debugSeed = { ensureSeedTaggingAndImport, loadTop200JSON, loadExternalVerbs, getExample };
+    window.debugSeed = { ensureSeedTaggingAndImport, loadTop200JSON, loadExternalVerbs, getExample, updateDrillSideInfo };
     return api;
   }
 }).mount('#app');
