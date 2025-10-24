@@ -31,18 +31,7 @@
 
       <!-- LEARN -->
 <section v-if="tab==='learn'" class="panel">
-  <header class="panel-head">
-    <h2>Learn</h2>
-    <div class="actions">
-      <select v-model="settings.srsMode" @change="saveSettings" title="SRS Mode">
-        <option value="SM2">SM-2</option>
-        <option value="FIXED">Fixed</option>
-      </select>
-      <input v-if="settings.srsMode==='FIXED'" class="fixed-input"
-             v-model="fixedIntervalsText" @change="updateFixedIntervals"
-             placeholder="1,3,7,14,30" title="Days between reviews">
-    </div>
-  </header>
+
 
   <!-- Learn sub-tabs (Drills first) -->
   <nav class="subtabs">
@@ -139,6 +128,15 @@
   autocapitalize="off"
   spellcheck="false"
 />
+<div class="accent-buttons">
+  <button v-for="char in ['à','â','ç','é','è','ê','ë','î','ï','ô','ù','û','ü','œ']"
+          :key="char"
+          type="button"
+          class="accent-btn"
+          @click="drillSession.input += char">
+    {{ char }}
+  </button>
+</div>
 
 
     <div class="controls">
@@ -185,6 +183,16 @@
 
   <!-- VOCAB (unchanged) -->
   <div v-else-if="learnTab==='vocab'">
+        <div class="actions">
+      <select v-model="settings.srsMode" @change="saveSettings" title="SRS Mode">
+        <option value="SM2">SM-2</option>
+        <option value="FIXED">Fixed</option>
+      </select>
+      <input v-if="settings.srsMode==='FIXED'" class="fixed-input"
+             v-model="fixedIntervalsText" @change="updateFixedIntervals"
+             placeholder="1,3,7,14,30" title="Days between reviews">
+    </div>
+    
     <div class="add-row">
       <input v-model="newVocabFront" placeholder="Front (e.g., to guess)" />
       <input v-model="newVocabBack" placeholder="Back (e.g., deviner)" />

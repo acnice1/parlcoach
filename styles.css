@@ -409,13 +409,14 @@ button,
   opacity: 0.9;
 }
 
+/* === Prompt Label Styling === */
 .label {
   display: inline-block;
-  font-size: 1.5rem;              /* large and readable */
-  font-weight: 600;               /* bold for emphasis */
+  font-size: 1.2rem;              /* large and readable */
+  font-weight: 500;               /* bold for emphasis */
   color: #0f172a;                 /* dark navy (good contrast on light backgrounds) */
   background: #e0f2fe;            /* soft blue highlight */
-  border-left: 6px solid #2563eb; /* GC-blue accent */
+  border-left: 5px solid #2563eb; /* GC-blue accent */
   padding: 0.4rem 1.2rem; /* spacious padding */
   border-radius: 8px; /* rounded corners */
   margin: 1rem 0;
@@ -429,3 +430,30 @@ button,
   box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
+.accent-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+  justify-content: center;
+}
+
+.accent-btn {
+  background: #1e3a8a;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.3rem 0.6rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.accent-btn:hover {
+  background: #2563eb;
+  transform: scale(1.1);
+}
+
+.accent-btn:active {
+  background: #1e40af;
+}
