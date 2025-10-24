@@ -103,6 +103,31 @@ function normalizeTags(raw){
 }
 function days(n) { return n * 24 * 60 * 60 * 1000; }
 
+// --- Verb grouping & regularity helpers ---
+const IRREGULAR_SET = new Set([
+  'être','avoir','aller','faire','pouvoir','vouloir','devoir','savoir','venir','tenir',
+  'prendre','mettre','dire','voir','ouvrir','offrir','souffrir','recevoir','vivre',
+  'écrire','lire','dormir','sortir','partir','mourir','naître','connaître',
+  'croire','courir','boire','envoyer','falloir','pleuvoir','valoir'
+]);
+
+function groupOfInf(inf) {
+  if (inf.endsWith('er')) return 'er';
+  if (inf.endsWith('ir')) return 'ir';
+  if (inf.endsWith('re')) return 're';
+  return 'other';
+}
+
+function isIrregularVerbRow(v) {
+  // Tag wins if present
+  if ((v.tags || []).includes('irregular')) return true;
+  // Known irregulars set
+  if (IRREGULAR_SET.has(v.infinitive)) return true;
+  // Heuristic: verbs not ending in -er/-ir/-re are "irregular/other"
+  const g = groupOfInf(v.infinitive);
+  return g === 'other';
+}
+
 // =============================== Schedulers ==================================
 function sm2Schedule(card, q/*0..5*/){
   let ease = card.ease ?? 2.5, reps = card.reps ?? 0, interval = card.interval ?? 0;
@@ -205,7 +230,9 @@ createApp({
         persons: [0,1,2,3,4,5],
         includeOnlyTags: [],
         excludeTags: [],
-        autoNext: true
+        autoNext: true,
+        filterGroups: ['er','ir','re'],    // multi-select; default to the big three
+        regularity: 'any'                     // 'any' | 'regular' | 'irregular'
       },
       drillSession: {
         running:false, question:null, input:'', correct:null, total:0, right:0,
@@ -345,6 +372,12 @@ createApp({
       }
       if (plan) state.plan = plan;
       if (drill) state.drillPrefs = { ...state.drillPrefs, ...drill };
+
+      if (state?.drillPrefs?.filterGroups?.some(g => g && g.startsWith?.('-'))) {
+  state.drillPrefs.filterGroups = state.drillPrefs.filterGroups
+    .map(g => (typeof g === 'string' ? g.replace(/^-/, '') : g))
+    .filter(Boolean);
+}
 
       await reloadVocabByTag(); // load SRS cards (with optional tag filter)
       await maybeSeedVerbsFromTop200();
@@ -646,20 +679,40 @@ createApp({
     }
 
     // ------------------------------- DRILLS ----------------------------------
-    function filterVerbsForDrill(list){
-      const onlyTop200 = list.filter(v =>
-        (state.dataset && state.dataset.has(v.infinitive)) ||
-        (v.tags || []).includes('top200')
-      );
+ function filterVerbsForDrill(list){
+  // Keep dataset-backed/top200 verbs
+  const onlyTop200 = list.filter(v =>
+    (state.dataset && state.dataset.has(v.infinitive)) ||
+    (v.tags || []).includes('top200')
+  );
 
-      const { includeOnlyTags, excludeTags } = state.drillPrefs;
-      let out = onlyTop200;
+  const { includeOnlyTags, excludeTags, filterGroups, regularity } = state.drillPrefs;
+  let out = onlyTop200;
 
-      if (includeOnlyTags?.length) out = out.filter(v => (v.tags || []).some(t => includeOnlyTags.includes(t)));
-      if (excludeTags?.length) out = out.filter(v => !(v.tags || []).some(t => excludeTags.includes(t)));
+  // Include-only tags
+  if (includeOnlyTags?.length) {
+    out = out.filter(v => (v.tags || []).some(t => includeOnlyTags.includes(t)));
+  }
+  // Exclude tags
+  if (excludeTags?.length) {
+    out = out.filter(v => !(v.tags || []).some(t => excludeTags.includes(t)));
+  }
 
-      return out;
-    }
+  // Group filter
+  if (filterGroups?.length) {
+    out = out.filter(v => filterGroups.includes(groupOfInf(v.infinitive)));
+  }
+
+  // Regularity filter
+  if (regularity === 'regular') {
+    out = out.filter(v => !isIrregularVerbRow(v));
+  } else if (regularity === 'irregular') {
+    out = out.filter(v => isIrregularVerbRow(v));
+  }
+
+  return out;
+}
+
 
     function datasetOnlyAnswer(verbRow, tense, personIndex){
       const plain = getConjFromDatasetFirst(verbRow.infinitive, tense, personIndex);

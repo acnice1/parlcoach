@@ -457,3 +457,18 @@ button,
 .accent-btn:active {
   background: #1e40af;
 }
+/* Collapsible box header */
+details.box > summary {
+  list-style: none;
+  cursor: pointer;
+  margin: -4px 0 8px;
+}
+details.box > summary::-webkit-details-marker { display:none; }
+details.box[open] > summary h3::after,
+details.box > summary h3::after {
+  content: '▾';
+  margin-left: .4rem;
+  font-weight: 400;
+  opacity: .7;
+}
+details.box[open] > summary h3::after { content: '▴'; }
