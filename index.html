@@ -68,16 +68,6 @@
                 </select>
               </label>
 
-              <!-- Verb Groups -->
-              <label>Groups
-                <select multiple v-model="drillPrefs.filterGroups" title="Filter by verb group">
-                  <option value="er">-er</option>
-                  <option value="ir">-ir</option>
-                  <option value="re">-re</option>
-                  <option value="other">other</option>
-                </select>
-              </label>
-
               <!-- Regularity -->
               <label>Regularity
                 <select v-model="drillPrefs.regularity" title="Regular vs Irregular">
@@ -430,7 +420,7 @@
   <!-- Vue / Dexie from CDN -->
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js" defer></script>
   <script src="https://unpkg.com/dexie@4.0.8/dist/dexie.min.js" defer></script>
-  <script src="app.js?v=2025-10-24-1" defer></script>
+  <script src="app.js?v=2025-10-24-3" defer></script>
 
   <!-- Service worker (optional)
   <script>

@@ -100,7 +100,30 @@ function normalizeTags(raw){
   if (Array.isArray(raw)) return raw.map(t => normalizeStr(t)).filter(Boolean);
   if (typeof raw === 'string') return raw.split(',').map(t => t.trim()).filter(Boolean);
   return [];
+
 }
+// --- Normalize a value into an array of tags ---
+function toArr(v) {
+  return Array.isArray(v) ? v
+    : typeof v === 'string'
+      ? v.split(',').map(s => s.trim()).filter(Boolean)
+      : [];
+}
+
+// --- Make a plain, cloneable object (no Vue proxies) ---
+function toPlain(obj) {
+  // If structuredClone exists, prefer it; otherwise JSON trick.
+  try {
+    // If Vue is in scope, strip reactivity first
+    const raw = (typeof Vue !== 'undefined' && Vue.toRaw) ? Vue.toRaw(obj) : obj;
+    return typeof structuredClone === 'function'
+      ? structuredClone(raw)
+      : JSON.parse(JSON.stringify(raw));
+  } catch {
+    return JSON.parse(JSON.stringify(obj));
+  }
+}
+
 function days(n) { return n * 24 * 60 * 60 * 1000; }
 
 // --- Verb grouping & regularity helpers ---
@@ -371,13 +394,24 @@ createApp({
         state.translator = { endpoint:'', apiKey:'' };
       }
       if (plan) state.plan = plan;
-      if (drill) state.drillPrefs = { ...state.drillPrefs, ...drill };
+      if (drill) { state.drillPrefs = { ...state.drillPrefs, ...drill }; }
+      state.drillPrefs.includeOnlyTags = toArr(state.drillPrefs.includeOnlyTags);
+      state.drillPrefs.excludeTags     = toArr(state.drillPrefs.excludeTags);
+
+      // Ensure PK is present for the drill table (you read with 'v1')
+if (!state.drillPrefs.key) state.drillPrefs.key = 'v1';
+
+// Ensure array-type prefs are arrays (prevents future clone issues)
+state.drillPrefs.persons        = Array.isArray(state.drillPrefs.persons) ? state.drillPrefs.persons : [];
+state.drillPrefs.allowedTenses  = Array.isArray(state.drillPrefs.allowedTenses) ? state.drillPrefs.allowedTenses : [];
+state.drillPrefs.questionTypes  = Array.isArray(state.drillPrefs.questionTypes) ? state.drillPrefs.questionTypes : [];
+
 
       if (state?.drillPrefs?.filterGroups?.some(g => g && g.startsWith?.('-'))) {
-  state.drillPrefs.filterGroups = state.drillPrefs.filterGroups
+   state.drillPrefs.filterGroups = state.drillPrefs.filterGroups
     .map(g => (typeof g === 'string' ? g.replace(/^-/, '') : g))
     .filter(Boolean);
-}
+      }
 
       await reloadVocabByTag(); // load SRS cards (with optional tag filter)
       await maybeSeedVerbsFromTop200();
@@ -391,7 +425,46 @@ createApp({
 
     async function saveSettings(){ await db.settings.put({ ...state.settings, translator: state.translator }); }
     async function savePlan(){ await db.plan.put(state.plan); }
-    async function saveDrillPrefs(){ await db.drill.put(state.drillPrefs); }
+// Replace your current saveDrillPrefs with this:
+async function saveDrillPrefs(){
+  // 1) Get a non-reactive snapshot (strip Vue proxy if present)
+  const prefs = state.drillPrefs;
+  const base = (typeof Vue !== 'undefined' && Vue.toRaw) ? Vue.toRaw(prefs) : prefs;
+
+  // 2) Normalize and keep only plain, cloneable fields
+  const clean = {
+    // Use your table's PK (you read with db.drill.get('v1'), so keep key:'v1')
+    key: base.key || 'v1',
+
+    // Tag fields normalized to arrays (works if user typed a comma string)
+    includeOnlyTags: toArr(base.includeOnlyTags),
+    excludeTags:     toArr(base.excludeTags),
+
+    // Copy the rest of your primitive/array prefs
+    persons: Array.isArray(base.persons) ? base.persons.slice() : [],
+    allowedTenses: Array.isArray(base.allowedTenses) ? base.allowedTenses.slice() : [],
+    questionTypes: Array.isArray(base.questionTypes) ? base.questionTypes.slice() : [],
+
+    showEnglishTranslation: !!base.showEnglishTranslation,
+    showNotesOnCorrect: !!base.showNotesOnCorrect,
+    acceptAltPronouns: !!base.acceptAltPronouns,
+    acceptNoSubjectShortcut: !!base.acceptNoSubjectShortcut,
+    acceptAposVariants: !!base.acceptAposVariants,
+
+    maxQuestions: typeof base.maxQuestions === 'number'
+      ? base.maxQuestions
+      : Number(base.maxQuestions) || 10
+  };
+
+  // 3) Ensure a fully cloneable object before writing to Dexie
+  const storable = (typeof structuredClone === 'function')
+    ? structuredClone(clean)
+    : JSON.parse(JSON.stringify(clean));
+
+  await db.drill.put(storable);
+}
+
+
 
     // ----------------------------- VOCAB (SRS) -------------------------------
     function computeDue(){
@@ -444,16 +517,29 @@ createApp({
       return null;
     }
 
-    async function loadTop200AndNormalize(){
-      const data = await loadTop200JSON(); if (!data) return [];
-      const arr = Array.isArray(data?.verbs) ? data.verbs : []; if (!arr.length) return [];
-      return arr.map(v => {
-        const inf = (v.verb || '').trim();
-        const conj = v.tenses || {};
-        const english = v.english || englishGlossDefault(inf);
-        return { infinitive: inf, english, tags: ['top200'], conj };
-      });
-    }
+async function loadTop200AndNormalize() {
+  const resp = await fetch('top200_french_verbs_collated.json', { cache: 'no-store' });
+  const json = await resp.json();
+  const arr = json?.verbs || json || [];
+
+  function normalizeTags(raw) {
+    if (!raw) return [];
+    if (Array.isArray(raw)) return raw.map(t => t.trim()).filter(Boolean);
+    if (typeof raw === 'string') return raw.split(',').map(s => s.trim()).filter(Boolean);
+    return [];
+  }
+
+  return arr.map(v => {
+    const inf = (v.verb || '').trim();
+    const conj = v.tenses || {};
+    const english = v.english || englishGlossDefault(inf);
+    const incomingTags = normalizeTags(v.tags);
+    const tags = Array.from(new Set([...(incomingTags || []), 'top200']));
+    return { infinitive: inf, english, tags, conj };
+  });
+}
+
+
     async function maybeSeedVerbsFromTop200(){
       const count = await db.verbs.count();
       if (count > 0) return;
@@ -489,9 +575,10 @@ createApp({
       for (const r of rows) {
         const existing = byInf.get(r.infinitive);
         if (existing) {
-          const tags = Array.from(new Set([...(existing.tags || []), 'top200']));
-          await db.verbs.update(existing.id, { tags, conj: r.conj, english: existing.english || r.english });
-        } else {
+         const incomingTags = Array.isArray(r.tags) ? r.tags : [];
+const tags = Array.from(new Set([...(existing.tags || []), ...incomingTags, 'top200']));
+await db.verbs.update(existing.id, { tags, conj: r.conj, english: existing.english || r.english });
+ } else {
           await db.verbs.add(r);
         }
       }
