@@ -187,6 +187,18 @@ const DISPLAY_TENSE = {
 const COLLATED_URL = 'top200_french_verbs_collated.json';
 const RULES_URL = 'verb_conjugation_rules.json'; // optional (text-only help)
 
+// --- Fixed list of tag pills you want to show ---
+const TAG_PILL_OPTIONS = [
+  'Top30',
+  'auxiliary',
+  'irregular',
+  'very-common',
+  'state-of-being',
+  'vandertramp'
+  // add/remove as you like
+];
+
+
 const TENSE_DS_KEY = {
   present: 'Présent',
   imparfait: 'Imparfait',
@@ -269,6 +281,7 @@ createApp({
       // QA
       newQA:{ q:'', a:'' },
 
+      
       // PLAN
       plan:{ key:'v1', goal:'Government B', dailyMinutes:60, focus:'listening, oral, vocab', weeklySchedule:'', notes:'' },
 
@@ -283,6 +296,25 @@ createApp({
 
     const myVerbs = computed(() => state.verbs.filter(v => !(v.tags || []).includes('top200')));
     const seedVerbs = computed(() => state.verbs.filter(v => (v.tags || []).includes('top200')));
+
+    // Fixed set you control (not auto-collected)
+const tagPills = Vue.ref(TAG_PILL_OPTIONS.slice());
+
+// Toggle include
+function toggleIncludeTag(tag){
+  const curr = Array.isArray(state.drillPrefs.includeOnlyTags) ? state.drillPrefs.includeOnlyTags : [];
+  const has  = curr.includes(tag);
+  state.drillPrefs.includeOnlyTags = has ? curr.filter(t => t !== tag) : curr.concat(tag);
+  saveDrillPrefs();
+}
+
+// Toggle exclude
+function toggleExcludeTag(tag){
+  const curr = Array.isArray(state.drillPrefs.excludeTags) ? state.drillPrefs.excludeTags : [];
+  const has  = curr.includes(tag);
+  state.drillPrefs.excludeTags = has ? curr.filter(t => t !== tag) : curr.concat(tag);
+  saveDrillPrefs();
+}
 
     const scoreClass = computed(() => {
       const t = state.drillSession.total || 0;
@@ -704,6 +736,24 @@ await db.verbs.update(existing.id, { tags, conj: r.conj, english: existing.engli
       );
     }
 
+    // --- Collect all known tags from verbs ---
+const allKnownTags = computed(() => {
+  const tags = new Set();
+  state.verbs.forEach(v => (v.tags || []).forEach(t => tags.add(t)));
+  return Array.from(tags).sort((a,b)=>a.localeCompare(b));
+});
+
+// --- Toggle tags when pills clicked ---
+function toggleTag(tag){
+  const arr = state.drillPrefs.includeOnlyTags || [];
+  const idx = arr.indexOf(tag);
+  if (idx >= 0) arr.splice(idx, 1);
+  else arr.push(tag);
+  state.drillPrefs.includeOnlyTags = arr;
+  saveDrillPrefs();
+}
+
+
     // ------------------------------- DATA LOOKUPS -----------------------------
     function getConjFromDatasetFirst(inf, tenseId, personIndex){
       if (state.dataset) {
@@ -1063,6 +1113,9 @@ await db.verbs.update(existing.id, { tags, conj: r.conj, english: existing.engli
 
       // audio
       startRecording, stopRecording, deleteRecording,
+
+      // tagging
+      tagPills, toggleIncludeTag, toggleExcludeTag,
 
       // QA
       saveQA,

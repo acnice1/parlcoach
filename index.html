@@ -68,14 +68,14 @@
                 </select>
               </label>
 
-              <!-- Regularity -->
+              <!-- Regularity
               <label>Regularity
                 <select v-model="drillPrefs.regularity" title="Regular vs Irregular">
                   <option value="any">Any</option>
                   <option value="regular">Regular only</option>
                   <option value="irregular">Irregular only</option>
                 </select>
-              </label>
+              </label>  -->
 
               <!-- Switches -->
               <div class="switch-row" style="grid-column:1/-1; display:flex; gap:12px; flex-wrap:wrap">
@@ -91,6 +91,38 @@
                   <span class="label-text">Show Verb Translation in English</span>
                 </label>
               </div>
+
+
+              <!-- Tag Pills -->
+             <!-- Include Tag Pills -->
+      <div class="tag-pills">
+        <span
+          v-for="tag in tagPills"
+          :key="'inc-'+tag"
+          class="tag-pill"
+          :class="{ active: drillPrefs.includeOnlyTags?.includes(tag) }"
+          @click="toggleIncludeTag(tag)"
+          title="Include this tag in drills"
+        >
+          {{ tag }}
+        </span>
+      </div>
+
+      <!-- Exclude Tag Pills 
+      <div class="tag-pills" style="margin-top:4px;">
+        <span
+          v-for="tag in tagPills"
+          :key="'exc-'+tag"
+          class="tag-pill"
+          :class="{ active: drillPrefs.excludeTags?.includes(tag) }"
+          @click="toggleExcludeTag(tag)"
+          title="Exclude this tag from drills"
+        >
+          – {{ tag }}
+        </span>
+      </div> -->
+
+
 
               <!-- Tag filters -->
               <div class="row" style="grid-column:1/-1; display:flex; gap:8px; flex-wrap:wrap">

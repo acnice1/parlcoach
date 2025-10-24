@@ -472,3 +472,84 @@ details.box > summary h3::after {
   opacity: .7;
 }
 details.box[open] > summary h3::after { content: '▴'; }
+
+
+
+/* nicer layout + spacing */
+.tag-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;   /* or flex-start / space-between */
+  gap: 10px;
+  padding: 6px 8px;
+}
+
+/* pill look (keep or tweak) */
+.tag-pill {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background: #1e293b;
+  color: #fff;
+  font-size: 0.85rem;
+  cursor: pointer;
+  user-select: none;
+  transition: background .2s, transform .1s;
+}
+.tag-pill:hover { background:#334155; transform:scale(1.05); }
+.tag-pill.active { background:#3b82f6; color:#fff; }
+/* === WIDER LAYOUT + AIRIER DRILL SETTINGS === */
+
+/* 1) Make the main view wider on desktop */
+.view{
+  max-width: 1200px;         /* was 980px */
+}
+@media (min-width: 1440px){
+  .view{ max-width: 1400px; } /* extra-wide screens */
+}
+
+/* 2) Reduce “crowded columns” feel in Drill Settings:
+      - use bigger min cards so fewer columns render
+      - add row gaps for breathing room */
+.drill-grid{
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* was 220px */
+  gap: 14px;                                                   /* was 10px */
+}
+
+/* 3) Ensure the tag pills span full width of the grid */
+.drill-grid > .tag-pills{
+  grid-column: 1 / -1;    /* force full-row span */
+}
+
+/* 4) Make pills flow horizontally and wrap naturally */
+.tag-pills{
+  display: flex;
+  flex-wrap: wrap;        /* allow multiple rows */
+  justify-content: flex-start;
+  gap: 10px 12px;         /* row gap, column gap */
+  padding: 6px 2px;
+  width: 100%;
+}
+
+.tag-pill{
+  white-space: nowrap;    /* keep tags on one line each */
+  padding: 7px 14px;      /* slightly larger touch target */
+  border-radius: 9999px;
+}
+
+/* Optional: when you’ve got tons of tags, enable a single-line scroller instead of wrapping */
+/*
+.tag-pills{
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+*/
+
+/* 5) Give the drill card a tad more width comfort */
+.drill-card{
+  padding: 18px 20px;     /* subtle expansion */
+}
+
+/* 6) (Bugfix) If you see a stray "./*" before a comment in your CSS, delete the leading dot.
+      It breaks the rule that follows and can prevent the tag-pills row from spanning. */
