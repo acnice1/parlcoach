@@ -7512,12 +7512,12 @@
           "ils/elles": ""
         },
         "Présent": {
-          "je": "mets",
-          "tu": "mets",
-          "il/elle/on": "met",
-          "nous": "mettons",
-          "vous": "mettez",
-          "ils/elles": "mettent"
+          "je": "remets",
+          "tu": "remets",
+          "il/elle/on": "remet",
+          "nous": "remettons",
+          "vous": "remettez",
+          "ils/elles": "remettent"
         }
       }
     },
@@ -12892,7 +12892,15 @@
           "nous": "haïssons",
           "vous": "haïssez",
           "ils/elles": ""
-        }
+        },
+        "Présent": {
+        "je": "hais",
+        "tu": "hais",
+        "il/elle/on": "hait",
+        "nous": "haïssons",
+        "vous": "haïssez",
+        "ils/elles": "haïssent"
+      }
       }
     },
     {

@@ -759,6 +759,11 @@ createApp({
       const personsPool  = state.drillPrefs.persons.length  ? state.drillPrefs.persons  : [0,1,2,3,4,5];
       const tense = randChoice(tensesPool), personIndex = randChoice(personsPool);
 
+        // 🚫 Skip grammatically invalid imperative forms
+      if (tense === 'imperatif' && [0,2,5].includes(personIndex)) {
+        return newDrillQuestion(); // recursively pick another valid combo
+      }
+
       const answer = conjugateFromAny(verb, tense, personIndex);
       const prompt = { infinitive: verb.infinitive, english: verb.english, tense, personIndex,
         label: `${PRONOUNS[personIndex]} — ${verb.infinitive} — ${prettyTense(tense)}` };
