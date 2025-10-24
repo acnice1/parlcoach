@@ -1,9 +1,8 @@
-// ParlFR — app.js (CLEAN, single-collated source)
-// Local-first IndexedDB (Dexie); drills first.
+// ParlFR — app.js (INTEGRATED: Vocab Notes + SRS tags + existing drills)
+// Local-first IndexedDB (Dexie); drills are dataset-only.
 // Conjugations, examples, and English glosses are pulled ONLY from
 // top200_french_verbs_collated.json. No rule-based fallbacks for answers.
 
-// =========================== Dexie (IndexedDB) ===============================
 if (!window.Dexie) {
   alert('Dexie failed to load. Check your connection or CDN.');
   throw new Error('Dexie missing');
@@ -16,6 +15,7 @@ const USE_TOP200_ONLY = true;
  v1 -> initial
  v2 -> adds drill prefs, plan, etc.
  v3 -> add verbs.conj (top-200 integration), translator in settings
+ v4 -> ADD vocab_notes store; add *tags index to vocab for tag filtering (Option B)
 */
 db.version(3).stores({
   vocab: '++id,front,back,due,ease,reps,interval,last',
@@ -25,6 +25,28 @@ db.version(3).stores({
   settings: 'key',
   plan: 'key',
   drill: 'key'
+});
+
+db.version(4).stores({
+  // add tags index to vocab, add vocab_notes store
+  vocab: '++id,front,back,due,ease,reps,interval,last,*tags',
+  qa: '++id,createdAt',
+  audio: '++id,name,createdAt,size,storage,urlHint',
+  verbs: '++id,infinitive,english,*tags',
+  settings: 'key',
+  plan: 'key',
+  drill: 'key',
+  vocab_notes: '++id,french,english,partOfSpeech,gender,topic,*tags'
+}).upgrade(async (tx) => {
+  try {
+    const table = tx.table('vocab');
+    const rows = await table.toArray();
+    for (const r of rows) {
+      if (!Array.isArray(r.tags)) await table.update(r.id, { tags: [] });
+    }
+  } catch (e) {
+    console.warn('v4 upgrade note:', e);
+  }
 });
 
 // ============================== OPFS helpers =================================
@@ -72,6 +94,14 @@ function answersEqual(userInput, expectedFull){
   const b = normalize(expectedFull);
   return a === b || stripSubjectPronoun(a) === stripSubjectPronoun(b);
 }
+function normalizeStr(s){ return (s ?? '').toString().trim(); }
+function normalizeTags(raw){
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw.map(t => normalizeStr(t)).filter(Boolean);
+  if (typeof raw === 'string') return raw.split(',').map(t => t.trim()).filter(Boolean);
+  return [];
+}
+function days(n) { return n * 24 * 60 * 60 * 1000; }
 
 // =============================== Schedulers ==================================
 function sm2Schedule(card, q/*0..5*/){
@@ -109,7 +139,6 @@ const DISPLAY_TENSE = {
 const COLLATED_URL = 'top200_french_verbs_collated.json';
 const RULES_URL = 'verb_conjugation_rules.json'; // optional (text-only help)
 
-// (keep existing internal<->display tense maps)
 const TENSE_DS_KEY = {
   present: 'Présent',
   imparfait: 'Imparfait',
@@ -121,25 +150,21 @@ const TENSE_DS_KEY = {
   imperatif: 'Impératif'
 };
 const PERSON_LABELS = ['je','tu','il/elle/on','nous','vous','ils/elles'];
-
-// examples: internal -> JSON keys
 const TENSE_EXAMPLE_KEY = {
   present: 'present',
   passeCompose: 'passeCompose',
   imparfait: 'imparfait',
   plusQueParfait: 'plusQueParfait',
-  futur: 'futurSimple',              // NOTE: futur -> futurSimple in JSON
+  futur: 'futurSimple',              // futur -> futurSimple in JSON
   conditionnelPresent: 'conditionnelPresent',
   subjonctifPresent: 'subjonctifPresent',
   imperatif: 'imperatif'
 };
-
-// for rules help text lookups; maps internal keys to rule keys
 const TENSE_RULE_KEY = { ...TENSE_EXAMPLE_KEY };
 
 // cache for examples/translations lookups
 let VERB_DATA_CACHE = null;
-const seedVerbsByInf = new Map(); // keeps examples handy for the side panel
+const seedVerbsByInf = new Map();
 
 // Fallback English if missing in JSON
 function englishGlossDefault(inf) { return ''; }
@@ -152,21 +177,27 @@ createApp({
     const state = reactive({
       jsonEditor: { open:false, verb:null, text:'', readonly:false, error:'' },
       showEnglishTranslation: true,
-      // --- RULES + DATASET ---
-      rules: null,
-      dataset: null, // Map<infinitive, tensesObj>
 
-      // --- TABS ---
+      // RULES + DATASET
+      rules: null,
+      dataset: null,
+
+      // TABS
       tab: 'learn',
       learnTab: 'drills', // drills | vocab | myverbs | seedverbs
 
-      // --- VOCAB (SRS) ---
+      // VOCAB (SRS)
       newVocabFront:'', newVocabBack:'',
       allCards:[], dueCards:[], currentCard:null, showBack:false,
       counts:{ total:0, learned:0 },
 
-      // --- VERBS & DRILLS ---
-      verbs: [], // { id, infinitive, english, tags[], conj? }
+      // NEW: tags + notes for Option B
+      vocabTagFilter: '',       // filter SRS cards by tag
+      notes: [],                // rich notes list
+      notesTagFilter: '',       // filter notes by tag
+
+      // VERBS & DRILLS
+      verbs: [],
       newVerb: { infinitive:'', english:'', tags:'' },
       drillPrefs: {
         key: 'v1',
@@ -179,20 +210,19 @@ createApp({
       drillSession: {
         running:false, question:null, input:'', correct:null, total:0, right:0,
         history:[], help:null,
-        // side panel info populated from collated JSON
         side: { english:'—', fr:'—', en:'—' }
       },
 
-      // --- RECORD ---
+      // RECORD
       isRecording:false, mediaRecorder:null, chunks:[], recordings:[],
 
-      // --- QA ---
+      // QA
       newQA:{ q:'', a:'' },
 
-      // --- PLAN ---
+      // PLAN
       plan:{ key:'v1', goal:'Government B', dailyMinutes:60, focus:'listening, oral, vocab', weeklySchedule:'', notes:'' },
 
-      // --- SETTINGS ---
+      // SETTINGS
       settings:{ key:'v1', srsMode:'SM2', fixedIntervals:[1,3,7,14,30], translator:{ endpoint:'', apiKey:'' } },
       fixedIntervalsText:'1,3,7,14,30',
       storagePersisted:false,
@@ -255,7 +285,6 @@ createApp({
 
     function normVerbKey(s) { return (s || '').normalize('NFC').toLowerCase().trim(); }
 
-    /** English + example sentence for a given verb/tense. */
     async function getVerbInfo(infinitive, tense) {
       const { map } = await loadVerbData();
       const entry = map.get(normVerbKey(infinitive));
@@ -278,7 +307,7 @@ createApp({
         state.rules = await res.json();
       } catch (e) {
         console.warn('[rules] load failed:', e?.message || e);
-        state.rules = null; // drills continue to work without textual rules
+        state.rules = null;
       }
     }
 
@@ -303,8 +332,8 @@ createApp({
     }
 
     async function loadAll(){
-      await loadDataset();          // dataset first
-      await loadRules();            // rules for help text only (optional)
+      await loadDataset();
+      await loadRules();
 
       const [settings, plan, drill] = await Promise.all([ db.settings.get('v1'), db.plan.get('v1'), db.drill.get('v1') ]);
       if (settings) {
@@ -317,15 +346,14 @@ createApp({
       if (plan) state.plan = plan;
       if (drill) state.drillPrefs = { ...state.drillPrefs, ...drill };
 
-      state.allCards = await db.vocab.toArray();
-      computeDue();
-
+      await reloadVocabByTag(); // load SRS cards (with optional tag filter)
       await maybeSeedVerbsFromTop200();
       await ensureSeedTaggingAndImport();
       state.verbs = await db.verbs.orderBy('infinitive').toArray();
 
       await loadExternalVerbs();
       state.recordings = await loadRecordings();
+      await loadNotesByTag(); // load notes list (rich vocab content)
     }
 
     async function saveSettings(){ await db.settings.put({ ...state.settings, translator: state.translator }); }
@@ -341,12 +369,20 @@ createApp({
       state.currentCard = state.dueCards[0] || null;
       state.showBack = false;
     }
+    async function reloadVocabByTag(){
+      const rows = state.vocabTagFilter
+        ? await db.vocab.where('tags').equals(state.vocabTagFilter).toArray()
+        : await db.vocab.toArray();
+      rows.sort((a,b)=> new Date(a.due) - new Date(b.due));
+      state.allCards = rows;
+      computeDue();
+    }
     async function addCard(){
       const front = state.newVocabFront.trim(), back = state.newVocabBack.trim();
       if (!front || !back) return;
       const now = todayISO();
-      const id = await db.vocab.add({ front, back, due: now, ease: 2.5, reps: 0, interval: 0, last: now });
-      state.allCards.push({ id, front, back, due: now, ease: 2.5, reps: 0, interval: 0, last: now });
+      const id = await db.vocab.add({ front, back, due: now, ease: 2.5, reps: 0, interval: 0, last: now, tags: [] });
+      state.allCards.push({ id, front, back, due: now, ease: 2.5, reps: 0, interval: 0, last: now, tags: [] });
       state.newVocabFront=''; state.newVocabBack=''; computeDue();
     }
     async function rate(q){
@@ -438,21 +474,128 @@ createApp({
     }
     async function deleteVerb(v){ await db.verbs.delete(v.id); state.verbs = state.verbs.filter(x=>x.id!==v.id); }
 
+    // ---------------------- VOCAB NOTES + FR↔EN seeding (Option B) -----------
+    async function upsertVocabNote(entry) {
+      const note = {
+        french: normalizeStr(entry.french || entry.fr || entry.term || entry.word),
+        english: normalizeStr(entry.english || entry.en || entry.translation),
+        partOfSpeech: normalizeStr(entry.partOfSpeech || entry.pos),
+        gender: normalizeStr(entry.gender || entry.g),
+        topic: normalizeStr(entry.topic || entry.domain || entry.category),
+        tags: normalizeTags(entry.tags || entry.labels || entry.topics),
+        ipa: normalizeStr(entry.ipa || entry.IPA),
+        image: normalizeStr(entry.image || entry.imageUrl || entry.img),
+        audio: normalizeStr(entry.audio || entry.audioUrl),
+        exampleFr: normalizeStr(entry.exampleFr || entry.example?.fr || entry.examples?.fr),
+        exampleEn: normalizeStr(entry.exampleEn || entry.example?.en || entry.examples?.en),
+        frequencyRank: entry.frequencyRank ?? entry.freq ?? null,
+        variants: Array.isArray(entry.variants) ? entry.variants : [],
+      };
+
+      if (!note.french && !note.english) return null;
+
+      // Upsert by (french, english) pair
+      const existing = await db.vocab_notes
+        .where({ french: note.french, english: note.english })
+        .first();
+
+      if (existing) {
+        await db.vocab_notes.update(existing.id, note);
+        return existing.id;
+      } else {
+        return await db.vocab_notes.add(note);
+      }
+    }
+
+    async function cardExists(front, back) {
+      return !!(await db.vocab.where({ front, back }).first());
+    }
+
+    function seedCard(front, back, tags) {
+      const now = todayISO();
+      return {
+        front, back,
+        due: now,
+        ease: 2.5,
+        reps: 0,
+        interval: 0,
+        last: now,
+        tags: Array.isArray(tags) ? tags : []
+      };
+    }
+
+    async function importNotesAndSeedCards({ frToEn = true, enToFr = true } = {}) {
+      try {
+        const res = await fetch('general_vocab.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+
+        const items = Array.isArray(data) ? data
+                    : Array.isArray(data?.vocab) ? data.vocab
+                    : [];
+
+        if (!items.length) {
+          alert('No vocab items found in general_vocab.json');
+          return;
+        }
+
+        let notesUpserted = 0, cardsSeeded = 0;
+        const batchCards = [];
+
+        for (const raw of items) {
+          const id = await upsertVocabNote(raw);
+          if (!id) continue;
+          notesUpserted++;
+
+          const fr = normalizeStr(raw.french || raw.fr || raw.term || raw.word);
+          const en = normalizeStr(raw.english || raw.en || raw.translation);
+          const tags = normalizeTags(raw.tags || raw.labels || raw.topics);
+          if (!fr || !en) continue;
+
+          if (frToEn && !(await cardExists(fr, en))) {
+            batchCards.push(seedCard(fr, en, tags));
+            cardsSeeded++;
+          }
+          if (enToFr && !(await cardExists(en, fr))) {
+            batchCards.push(seedCard(en, fr, tags));
+            cardsSeeded++;
+          }
+        }
+
+        if (batchCards.length) await db.vocab.bulkAdd(batchCards);
+
+        await reloadVocabByTag();
+        await loadNotesByTag();
+
+        alert(`Imported ${notesUpserted} notes and seeded ${cardsSeeded} cards.`);
+      } catch (e) {
+        console.error(e);
+        alert('Import failed: ' + e.message);
+      }
+    }
+
+    async function loadNotesByTag() {
+      state.notes = state.notesTagFilter
+        ? await db.vocab_notes.where('tags').equals(state.notesTagFilter).toArray()
+        : await db.vocab_notes.toArray();
+      state.notes.sort((a, b) =>
+        (a.topic || '').localeCompare(b.topic || '') ||
+        (a.french || '').localeCompare(b.french || '')
+      );
+    }
+
     // ------------------------------- DATA LOOKUPS -----------------------------
-    // Prefer in-memory dataset; if not found, try DB row's conj; else null
     function getConjFromDatasetFirst(inf, tenseId, personIndex){
-      // 1) in-memory dataset from collated file
       if (state.dataset) {
         const tenses = state.dataset.get(inf);
         if (tenses) {
           const block = tenses[TENSE_DS_KEY[tenseId] || tenseId];
           if (block) {
             const form = block[PERSON_LABELS[personIndex]];
-            if (typeof form === 'string' && form.trim() !== '') return form.trim(); // plain form (no pronoun)
+            if (typeof form === 'string' && form.trim() !== '') return form.trim();
           }
         }
       }
-      // 2) DB-stored conj blob (same shape as dataset)
       const row = state.verbs.find(v => v.infinitive === inf);
       if (row && row.conj) {
         const tenseName = DISPLAY_TENSE[tenseId] || tenseId;
@@ -474,7 +617,6 @@ createApp({
     }
     function prettyTense(t){ return DISPLAY_TENSE[t] || t; }
 
-    // Prefer a user-edited verb in Dexie if you later add examples there; else seed
     function resolveVerbExamples(infinitive){
       const seed = seedVerbsByInf.get(infinitive);
       return seed?.examples || null;
@@ -487,7 +629,6 @@ createApp({
       return (ex && ex.fr && ex.en) ? ex : null;
     }
 
-    // --- keep side panel in sync with JSON translations/examples
     async function updateDrillSideInfo(currentVerbInfinitive, currentTense) {
       try {
         const jsonTense = TENSE_EXAMPLE_KEY[currentTense] || currentTense;
@@ -506,7 +647,6 @@ createApp({
 
     // ------------------------------- DRILLS ----------------------------------
     function filterVerbsForDrill(list){
-      // Only verbs that exist in the dataset (by infinitive) or are tagged top200
       const onlyTop200 = list.filter(v =>
         (state.dataset && state.dataset.has(v.infinitive)) ||
         (v.tags || []).includes('top200')
@@ -521,7 +661,6 @@ createApp({
       return out;
     }
 
-    // DATASET-ONLY answer builder
     function datasetOnlyAnswer(verbRow, tense, personIndex){
       const plain = getConjFromDatasetFirst(verbRow.infinitive, tense, personIndex);
       if (!plain) return null;
@@ -529,10 +668,8 @@ createApp({
     }
 
     function newDrillQuestion(){
-      // Build an eligible pool
       let pool = filterVerbsForDrill(state.verbs);
 
-      // If user has no verb rows yet, but dataset is loaded, build a pool from dataset keys
       if (USE_TOP200_ONLY && (!pool.length) && state.dataset && state.dataset.size > 0) {
         const infs = [...state.dataset.keys()];
         pool = infs.map(inf => ({
@@ -549,17 +686,16 @@ createApp({
       const tensesPool   = state.drillPrefs.tenses.length   ? state.drillPrefs.tenses   : ['present'];
       const personsPool  = state.drillPrefs.persons.length  ? state.drillPrefs.persons  : [0,1,2,3,4,5];
 
-      // Try a few times to find a dataset-backed combo
+      // Skip grammatically invalid imperative forms (je, il/elle/on, ils/elles)
       for (let attempts = 0; attempts < 50; attempts++) {
         const verb = randChoice(pool);
         const tense = randChoice(tensesPool);
         const personIndex = randChoice(personsPool);
 
-        // 🚫 Skip grammatically invalid imperative forms
         if (tense === 'imperatif' && [0,2,5].includes(personIndex)) continue;
 
         const answer = datasetOnlyAnswer(verb, tense, personIndex);
-        if (!answer) continue; // no dataset form for this combo; try again
+        if (!answer) continue;
 
         const prompt = {
           infinitive: verb.infinitive,
@@ -571,42 +707,32 @@ createApp({
 
         const ex = getExample(verb.infinitive, tense);
 
-        // keep side info fresh (translations + examples from JSON)
         updateDrillSideInfo(verb.infinitive, tense);
 
         return { verb, prompt, answer, ex };
       }
-      // If we fail to find any valid combo after attempts, report empty
       return null;
     }
 
     function startDrill(){
       state.drillSession = { running:true, question:newDrillQuestion(), input:'', correct:null, total:0, right:0, history:[], help:null, side: { english:'—', fr:'—', en:'—' } };
       if (!state.drillSession.question) { alert('No dataset-backed forms available for drill. Check your JSON files.'); state.drillSession.running=false; return; }
-
-      // refresh side info on start (defensive)
       updateDrillSideInfo(state.drillSession.question.prompt.infinitive, state.drillSession.question.prompt.tense);
-
       nextTick(()=>drillInputEl.value?.focus());
     }
 
     function buildRuleHelp(verbRow, tense, personIndex) {
-      // Textual guidance only — no fallbacks are used for answers.
       const R = state.rules;
       if (!R) return null;
 
       const lines = [];
-      const groupKey = (typeof inferGroup === 'function') ? inferGroup(verbRow.infinitive) : null; // guarded; inferGroup may be absent
       const tenseKey = TENSE_RULE_KEY[tense] || tense;
       const personStr = PERSON_KEY[personIndex];
 
-      // Tense-level description/explanation
       const tObj = R.tenses?.[tenseKey];
-     if (tObj?.explanation) lines.push(`<b>L'explication :</b> ${tObj.explanation}`);
- 
+      if (tObj?.explanation) lines.push(`<b>L'explication :</b> ${tObj.explanation}`);
       if (tObj?.description) lines.push(`<b>Explanation: </b> ${tObj.description}`);
 
-      // Targeted how-to, if present
       const targetedKey = `${personStr}+${verbRow.infinitive}+${tenseKey}`;
       const targeted = R.sample_lookups?.[targetedKey];
       if (targeted) {
@@ -614,16 +740,9 @@ createApp({
         if (targeted.correct_form_example) lines.push(`Example: ${targeted.correct_form_example}`);
       }
 
-      // Show dataset authoritative form (if present)
-      //  removed; same as the expected answer
-      // const dsForm = getConjFromDatasetFirst(verbRow.infinitive, tense, personIndex);
-      //if (dsForm) lines.push(`Dataset form: ${personStr} ${dsForm}`);
-
-      // Quick template (high-level reminder)
       const quick = R.quick_help_templates?.[tenseKey];
       if (quick) lines.push(quick);
 
-      // Spelling hints for -cer/-ger (orthography)
       if ((tense === 'present' || tense === 'imparfait') && R.orthography?.c_g_spelling && (verbRow.infinitive.endsWith('cer') || verbRow.infinitive.endsWith('ger'))) {
         lines.push(R.orthography.c_g_spelling);
       }
@@ -634,10 +753,9 @@ createApp({
     function checkDrill() {
       if (!state.drillSession.running || !state.drillSession.question) return;
 
-      // ignore extra checks during the 2s "Correct!" window
       if (state.drillSession.correct === true) return;
 
-      const expected = state.drillSession.question.answer; // full form (from dataset only)
+      const expected = state.drillSession.question.answer;
       const given    = state.drillSession.input;
 
       const ok = answersEqual(given, expected);
@@ -669,7 +787,6 @@ createApp({
       state.drillSession.question = newDrillQuestion();
       if (!state.drillSession.question) { alert('No dataset-backed forms available for drill. Check your JSON files.'); state.drillSession.running=false; return; }
 
-      // refresh side info on next
       updateDrillSideInfo(state.drillSession.question.prompt.infinitive, state.drillSession.question.prompt.tense);
 
       nextTick(()=>drillInputEl.value?.focus());
@@ -711,10 +828,10 @@ createApp({
     async function saveQA(){ const q=(state.newQA.q||'').trim(), a=(state.newQA.a||'').trim(); if (!q && !a) return; await db.qa.add({ q,a,createdAt:todayISO() }); state.newQA.q=''; state.newQA.a=''; alert('Saved.'); }
     async function requestPersistence(){ if (!navigator.storage?.persist){ alert('Persistence API not available.'); return; } const g=await navigator.storage.persist(); state.storagePersisted=g; if (!g) alert('Persistence not granted by the browser.'); }
     async function exportData(){
-      const [vocab, qa, audio, settings, plan, verbs, drill] = await Promise.all([
-        db.vocab.toArray(), db.qa.toArray(), db.audio.toArray(), db.settings.toArray(), db.plan.toArray(), db.verbs.toArray(), db.drill.toArray()
+      const [vocab, qa, audio, settings, plan, verbs, drill, vocab_notes] = await Promise.all([
+        db.vocab.toArray(), db.qa.toArray(), db.audio.toArray(), db.settings.toArray(), db.plan.toArray(), db.verbs.toArray(), db.drill.toArray(), db.vocab_notes?.toArray() ?? []
       ]);
-      const payload = { version:3, vocab, qa, audioMeta: audio, settings, plan, verbs, drill };
+      const payload = { version:4, vocab, qa, audioMeta: audio, settings, plan, verbs, drill, vocab_notes };
       const blob = new Blob([JSON.stringify(payload,null,2)], { type:'application/json' });
       const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`parlcoach-export-${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(url);
     }
@@ -722,8 +839,10 @@ createApp({
       const file = ev.target.files?.[0]; if (!file) return;
       const text = await file.text(); let json; try { json = JSON.parse(text); } catch { alert('Invalid JSON'); return; }
       if (!json || !json.version) { alert('Invalid export file'); return; }
-      await db.transaction('rw', db.vocab, db.qa, db.audio, db.settings, db.plan, db.verbs, db.drill, async ()=>{
+      await db.transaction('rw', db.vocab, db.qa, db.audio, db.settings, db.plan, db.verbs, db.drill, db.vocab_notes, async ()=>{
         await db.vocab.clear(); await db.qa.clear(); await db.audio.clear(); await db.settings.clear(); await db.plan.clear(); await db.verbs.clear(); await db.drill.clear();
+        if (db.vocab_notes) await db.vocab_notes.clear();
+
         if (Array.isArray(json.vocab)) await db.vocab.bulkAdd(json.vocab);
         if (Array.isArray(json.qa)) await db.qa.bulkAdd(json.qa);
         if (Array.isArray(json.audioMeta)) await db.audio.bulkAdd(json.audioMeta);
@@ -731,11 +850,12 @@ createApp({
         if (Array.isArray(json.plan)) await db.plan.bulkAdd(json.plan);
         if (Array.isArray(json.verbs)) await db.verbs.bulkAdd(json.verbs);
         if (Array.isArray(json.drill)) await db.drill.bulkAdd(json.drill);
+        if (Array.isArray(json.vocab_notes) && db.vocab_notes) await db.vocab_notes.bulkAdd(json.vocab_notes);
       });
       await loadAll(); alert('Import complete.');
     }
     async function simulateSyncPush(){ alert('Simulated: pushed local changes.'); }
-    async function simulateSyncPull(){ state.allCards = await db.vocab.toArray(); state.verbs = await db.verbs.orderBy('infinitive').toArray(); computeDue(); alert('Simulated: pulled remote changes (refreshed).'); }
+    async function simulateSyncPull(){ await reloadVocabByTag(); state.verbs = await db.verbs.orderBy('infinitive').toArray(); alert('Simulated: pulled remote changes (refreshed).'); }
     async function saveTranslator(){ state.settings.translator = { ...state.translator }; await saveSettings(); alert('Translator settings saved locally.'); }
 
     // ---------------------------- JSON Editor (verbs.conj) --------------------
@@ -781,14 +901,16 @@ createApp({
     // ------------------------------ Expose -----------------------------------
     onMounted(loadAll);
     const api = {
-      // state & derived
       ...Vue.toRefs(state), myVerbs, seedVerbs, drillInputEl, scoreClass,
 
       // utils
       toDateOnly, prettyTense,
 
       // vocab
-      addCard, rate, deleteCard, updateFixedIntervals,
+      addCard, rate, deleteCard, updateFixedIntervals, reloadVocabByTag,
+
+      // notes (Option B)
+      importNotesAndSeedCards, loadNotesByTag,
 
       // json editor
       openJsonEditor, closeJsonEditor, prettyJson, saveJsonEditor, clearConj, insertConjSkeleton: ()=>{},

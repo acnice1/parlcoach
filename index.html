@@ -36,7 +36,7 @@
   <!-- Learn sub-tabs (Drills first) -->
   <nav class="subtabs">
     <button :class="{active: learnTab==='drills'}" @click="learnTab='drills'">Drills</button>
-    <button :class="{active: learnTab==='vocab'}" @click="learnTab='vocab'">General Vocab</button>
+    <button :class="{active: learnTab==='vocab'}" @click="learnTab='vocab'">Vocab</button>
     <button :class="{active: learnTab==='myverbs'}" @click="learnTab='myverbs'">My Verbs</button>
     <button :class="{active: learnTab==='seedverbs'}" @click="learnTab='seedverbs'">Seed (Top 200)</button>
   </nav>
@@ -186,50 +186,92 @@
   </div>
 
   <!-- VOCAB (unchanged) -->
-  <div v-else-if="learnTab==='vocab'">
-        <div class="actions">
-      <select v-model="settings.srsMode" @change="saveSettings" title="SRS Mode">
-        <option value="SM2">SM-2</option>
-        <option value="FIXED">Fixed</option>
-      </select>
-      <input v-if="settings.srsMode==='FIXED'" class="fixed-input"
-             v-model="fixedIntervalsText" @change="updateFixedIntervals"
-             placeholder="1,3,7,14,30" title="Days between reviews">
-    </div>
-    
-    <div class="add-row">
-      <input v-model="newVocabFront" placeholder="Front (e.g., to guess)" />
-      <input v-model="newVocabBack" placeholder="Back (e.g., deviner)" />
-      <button @click="addCard">Add</button>
-    </div>
+<!-- VOCAB (wired with Option B) -->
+<div v-else-if="learnTab==='vocab'">
+  <!-- Top toolbar: import + tag filtering -->
+  <div class="actions" style="flex-wrap:wrap">
+    <button @click="importNotesAndSeedCards({ frToEn:true, enToFr:true })">
+      Import general_vocab → Notes + FR↔EN Cards
+    </button>
 
-    <div v-if="dueCards.length" class="card">
-      <div class="front">{{ currentCard.front }}</div>
-      <div class="back" v-if="showBack">{{ currentCard.back }}</div>
-      <div class="card-actions">
-        <button @click="showBack=true" v-if="!showBack">Show</button>
-        <template v-else>
-          <button @click="rate(0)">Again</button>
-          <button @click="rate(3)">Hard</button>
-          <button @click="rate(4)">Good</button>
-          <button @click="rate(5)">Easy</button>
-        </template>
-      </div>
-      <div class="meta">Due: {{ dueCards.length }} • Total: {{ counts.total }} • Learned: {{ counts.learned }}</div>
-    </div>
-    <p v-else class="empty">No cards due. 🎉 Add more above or come back later.</p>
+    <!-- Filter SRS cards by tag -->
+    <input class="fixed-input"
+           v-model="vocabTagFilter"
+           @input="reloadVocabByTag"
+           placeholder="Filter cards by tag (e.g., Leadership)" />
 
-    <details class="list">
-      <summary>All Cards ({{ counts.total }})</summary>
-      <div class="list-row" v-for="c in allCards" :key="c.id">
-        <span class="front">{{ c.front }}</span>
-        <span class="sep">→</span>
-        <span class="back">{{ c.back }}</span>
-        <span class="dim">due {{ toDateOnly(c.due) }}</span>
-        <button class="small" @click="deleteCard(c.id)">Delete</button>
-      </div>
-    </details>
+    <!-- Filter Notes by tag -->
+    <input class="fixed-input"
+           v-model="notesTagFilter"
+           @input="loadNotesByTag"
+           placeholder="Filter notes by tag" />
   </div>
+
+  <!-- Manual add -->
+  <div class="add-row">
+    <input v-model="newVocabFront" placeholder="Front (e.g., deviner)" />
+    <input v-model="newVocabBack" placeholder="Back (e.g., to guess)" />
+    <button @click="addCard">Add</button>
+  </div>
+
+  <!-- Due trainer -->
+  <div v-if="dueCards.length" class="card">
+    <div class="front">{{ currentCard.front }}</div>
+    <div class="back" v-if="showBack">{{ currentCard.back }}</div>
+    <div class="card-actions">
+      <button v-if="!showBack" @click="showBack=true">Show</button>
+      <template v-else>
+        <button @click="rate(0)">Again</button>
+        <button @click="rate(3)">Hard</button>
+        <button @click="rate(4)">Good</button>
+        <button @click="rate(5)">Easy</button>
+      </template>
+      <!-- show tags on the current card if present -->
+      <span v-if="currentCard?.tags?.length" class="answer">tags: {{ currentCard.tags.join(', ') }}</span>
+    </div>
+    <div class="meta">
+      Due: {{ dueCards.length }} • Total: {{ counts.total }} • Learned: {{ counts.learned }}
+    </div>
+  </div>
+  <p v-else class="empty">No cards due. 🎉 Add more above or import from <code>general_vocab.json</code>.</p>
+
+  <!-- All cards (respects vocabTagFilter) -->
+  <details class="list" open>
+    <summary>All Cards ({{ counts.total }})</summary>
+    <div class="list-row" v-for="c in allCards" :key="c.id">
+      <span class="front">{{ c.front }}</span>
+      <span class="sep">→</span>
+      <span class="back">{{ c.back }}</span>
+      <span class="dim">due {{ toDateOnly(c.due) }}</span>
+      <span class="dim" v-if="c.tags?.length">[{{ c.tags.join(', ') }}]</span>
+      <button class="small" @click="deleteCard(c.id)">Delete</button>
+    </div>
+  </details>
+
+  <!-- Notes viewer (rich content lives here) -->
+  <details class="list">
+    <summary>Notes (rich entries) — {{ notes.length }}</summary>
+    <div class="list-row" v-for="n in notes" :key="n.id">
+      <span class="front">
+        <strong>{{ n.french || '—' }}</strong>
+        <span class="dim" v-if="n.ipa"> [{{ n.ipa }}]</span>
+      </span>
+      <span class="sep">↔</span>
+      <span class="back">{{ n.english || '—' }}</span>
+      <span class="dim">
+        {{ n.partOfSpeech || '—' }}<span v-if="n.gender">, {{ n.gender }}</span>
+        <span v-if="n.topic"> • {{ n.topic }}</span>
+        <span v-if="n.tags?.length"> • tags: {{ n.tags.join(', ') }}</span>
+      </span>
+      <!-- show example, if any -->
+      <div class="dim" style="grid-column: 1 / -1" v-if="n.exampleFr || n.exampleEn">
+        <em>Ex:</em> {{ n.exampleFr || '—' }} <span v-if="n.exampleEn"> — {{ n.exampleEn }}</span>
+      </div>
+    </div>
+    <p v-if="!notes.length" class="empty">No notes yet. Click “Import general_vocab…” above.</p>
+  </details>
+</div>
+
 
   <!-- MY VERBS -->
   <div v-else-if="learnTab==='myverbs'">
