@@ -1,0 +1,3384 @@
+{
+  "version": 1,
+  "vocab": [
+    {
+      "id": null,
+      "french": "livrable",
+      "english": "deliverable",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "livrables",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Le livrable doit être validé par le client avant la mise en production.",
+        "en": "The deliverable must be approved by the client before go‑live."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "project",
+        "management"
+      ],
+      "topic": "Project Management",
+      "notes": "Féminin en usage courant.",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "échéancier",
+      "english": "schedule",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "échéanciers",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "L’échéancier sera ajusté si le périmètre évolue de façon substantielle.",
+        "en": "The schedule will be adjusted if scope changes substantially."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "project",
+        "planning"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "plan d’action",
+      "english": "action plan",
+      "partOfSpeech": "noun phrase",
+      "gender": "m",
+      "plural": "plans d’action",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Le plan d’action précise les responsabilités et les jalons critiques.",
+        "en": "The action plan specifies responsibilities and critical milestones."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "project",
+        "planning"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "jalon",
+      "english": "milestone",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "jalons",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Chaque jalon déclenche une revue de gouvernance obligatoire.",
+        "en": "Each milestone triggers a mandatory governance review."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "project",
+        "governance"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "charte de projet",
+      "english": "project charter",
+      "partOfSpeech": "noun phrase",
+      "gender": "f",
+      "plural": "chartes de projet",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Sans charte de projet approuvée, aucun financement ne sera libéré.",
+        "en": "Without an approved project charter, no funding will be released."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "project",
+        "governance"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "mandat",
+      "english": "mandate",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "mandats",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Le mandat circonscrit le périmètre et l’autorité décisionnelle de l’équipe.",
+        "en": "The mandate defines the scope and the team’s decision‑making authority."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "project",
+        "governance"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "périmètre",
+      "english": "scope",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "périmètres",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Si le périmètre s’élargit, nous renégocierons les ressources et l’échéancier.",
+        "en": "If the scope expands, we will renegotiate resources and the schedule."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "project",
+        "scope"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "risque",
+      "english": "risk",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "risques",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Tout risque élevé exige un plan d’atténuation documenté et suivi.",
+        "en": "Every high risk requires a documented and monitored mitigation plan."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "risk",
+        "management"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "incidence",
+      "english": "impact",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "incidences",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Nous avons réévalué l’incidence sur les opérations quotidiennes.",
+        "en": "We reassessed the impact on day‑to‑day operations."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "risk",
+        "impact"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "atténuation",
+      "english": "mitigation",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "atténuations",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "L’atténuation proposée réduit la probabilité sans accroître les coûts.",
+        "en": "The proposed mitigation reduces likelihood without increasing costs."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "risk",
+        "management"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "dépendance",
+      "english": "dependency",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "dépendances",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Cette dépendance envers un fournisseur unique accroît la vulnérabilité.",
+        "en": "This reliance on a single vendor increases vulnerability."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "project",
+        "risk"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "ressources",
+      "english": "resources",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "ressources",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Les ressources techniques seront réaffectées pour respecter l’échéance.",
+        "en": "Technical resources will be reassigned to meet the deadline."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "staffing",
+        "capacity"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "budget",
+      "english": "budget",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "budgets",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Le budget prévisionnel intègre une marge de contingence de 10 %.",
+        "en": "The projected budget includes a 10% contingency."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "finance",
+        "project"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "estimation",
+      "english": "estimate",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "estimations",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "L’estimation a été révisée pour refléter les nouvelles hypothèses.",
+        "en": "The estimate was revised to reflect the new assumptions."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "planning",
+        "finance"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "arbitrage",
+      "english": "trade‑off",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "arbitrages",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Un arbitrage clair entre qualité et délais doit être assumé.",
+        "en": "A clear trade‑off between quality and timelines must be owned."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "decision",
+        "governance"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "feuille de route",
+      "english": "roadmap",
+      "partOfSpeech": "noun phrase",
+      "gender": "f",
+      "plural": "feuilles de route",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "La feuille de route aligne les versions majeures sur les besoins métiers.",
+        "en": "The roadmap aligns major releases with business needs."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "planning",
+        "strategy"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "gouvernance",
+      "english": "governance",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "gouvernances",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "La gouvernance garantit une reddition de comptes cohérente.",
+        "en": "Governance ensures consistent accountability."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "governance"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "tableau de bord",
+      "english": "dashboard",
+      "partOfSpeech": "noun phrase",
+      "gender": "m",
+      "plural": "tableaux de bord",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Le tableau de bord expose les indicateurs en quasi temps réel.",
+        "en": "The dashboard shows indicators in near real time."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "metrics",
+        "reporting"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "indicateur de rendement",
+      "english": "performance indicator",
+      "partOfSpeech": "noun phrase",
+      "gender": "m",
+      "plural": "indicateurs de rendement",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Tout indicateur de rendement doit être mesurable et explicite.",
+        "en": "Every performance indicator must be measurable and explicit."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "metrics",
+        "performance"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "bailleur de fonds",
+      "english": "funder",
+      "partOfSpeech": "noun phrase",
+      "gender": "m",
+      "plural": "bailleurs de fonds",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Le bailleur de fonds exige une analyse coûts‑bénéfices actualisée.",
+        "en": "The funder requires an updated cost‑benefit analysis."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "stakeholder"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "partie prenante",
+      "english": "stakeholder",
+      "partOfSpeech": "noun phrase",
+      "gender": "f",
+      "plural": "parties prenantes",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Les parties prenantes seront consultées avant toute décision structurante.",
+        "en": "Stakeholders will be consulted before any structuring decision."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "stakeholder",
+        "consultation"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "analyse d’écart",
+      "english": "gap analysis",
+      "partOfSpeech": "noun phrase",
+      "gender": "f",
+      "plural": "analyses d’écart",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "L’analyse d’écart met en évidence les capacités à renforcer.",
+        "en": "The gap analysis highlights capabilities to strengthen."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "analysis",
+        "planning"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "chemin critique",
+      "english": "critical path",
+      "partOfSpeech": "noun phrase",
+      "gender": "m",
+      "plural": "chemins critiques",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Le chemin critique se resserre si ce livrable glisse d’une semaine.",
+        "en": "The critical path tightens if this deliverable slips by a week."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "planning",
+        "scheduling"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "charge de travail",
+      "english": "workload",
+      "partOfSpeech": "noun phrase",
+      "gender": "f",
+      "plural": "charges de travail",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "La charge de travail sera nivelée pour éviter l’épuisement.",
+        "en": "Workload will be leveled to avoid burnout."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "capacity",
+        "hr"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "capacité",
+      "english": "capacity",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "capacités",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "La capacité actuelle ne permet pas d’absorber un surcroît durable.",
+        "en": "Current capacity cannot absorb a sustained increase."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "capacity",
+        "planning"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "priorisation",
+      "english": "prioritization",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "priorisations",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "La priorisation s’appuie sur la valeur, le risque et l’urgence.",
+        "en": "Prioritization relies on value, risk, and urgency."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "planning",
+        "decision"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "justification",
+      "english": "business case",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "justifications",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "La justification documente les bénéfices attendus et les options écartées.",
+        "en": "The business case documents expected benefits and discarded options."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "planning",
+        "finance"
+      ],
+      "topic": "Project Management",
+      "notes": "Peut être rendu par « analyse de rentabilité ».",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "étude d’impact",
+      "english": "impact assessment",
+      "partOfSpeech": "noun phrase",
+      "gender": "f",
+      "plural": "études d’impact",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "L’étude d’impact traite aussi des effets sur l’accessibilité.",
+        "en": "The impact assessment also addresses accessibility effects."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "analysis",
+        "risk"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "approbation",
+      "english": "approval",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "approbations",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Aucune dépense ne sera engagée sans approbation écrite.",
+        "en": "No expense will be incurred without written approval."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "governance",
+        "finance"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "mise en œuvre",
+      "english": "implementation",
+      "partOfSpeech": "noun phrase",
+      "gender": "f",
+      "plural": "mises en œuvre",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "La mise en œuvre se fera par vagues pour limiter le risque opérationnel.",
+        "en": "Implementation will occur in waves to limit operational risk."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "delivery",
+        "project"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "déploiement",
+      "english": "deployment",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "déploiements",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Le déploiement sera inversé si un incident majeur survient.",
+        "en": "Deployment will be rolled back if a major incident occurs."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "delivery",
+        "ops"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "transition",
+      "english": "transition",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "transitions",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "La transition prévoit un chevauchement des équipes pendant deux semaines.",
+        "en": "The transition provides a two‑week overlap of teams."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "change",
+        "delivery"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "soutien",
+      "english": "support",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "soutiens",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Un soutien de niveau 2 sera assuré pendant la période de stabilisation.",
+        "en": "Level‑2 support will be provided during stabilization."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "ops",
+        "support"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "leçon apprise",
+      "english": "lesson learned",
+      "partOfSpeech": "noun phrase",
+      "gender": "f",
+      "plural": "leçons apprises",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Chaque leçon apprise doit se traduire en action concrète au cycle suivant.",
+        "en": "Each lesson learned must translate into concrete action in the next cycle."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "continuous-improvement"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "post-mortem",
+      "english": "postmortem",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "post-mortems",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Un post‑mortem formel analysera les causes racines et les écarts de contrôle.",
+        "en": "A formal postmortem will analyze root causes and control gaps."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "continuous-improvement",
+        "governance"
+      ],
+      "topic": "Project Management",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "ministère",
+      "english": "ministry",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "ministères",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Le ministère publiera une directive pour clarifier l’interprétation.",
+        "en": "The ministry will issue a directive to clarify the interpretation."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "government",
+        "policy"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "organisme",
+      "english": "agency",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "organismes",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "L’organisme central coordonne la consultation interministérielle.",
+        "en": "The central agency coordinates the inter‑ministerial consultation."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "government"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "réglementation",
+      "english": "regulation",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "réglementations",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "La nouvelle réglementation impose des exigences de transparence accrues.",
+        "en": "The new regulation imposes heightened transparency requirements."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "policy",
+        "compliance"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "directive",
+      "english": "directive",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "directives",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "La directive s’applique à l’ensemble de l’administration publique.",
+        "en": "The directive applies to the entire public service."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "policy"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "cadre",
+      "english": "framework",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "cadres",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Le cadre proposé harmonise les pratiques entre les organisations.",
+        "en": "The proposed framework harmonizes practices across organizations."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "policy",
+        "governance"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "politique publique",
+      "english": "public policy",
+      "partOfSpeech": "noun phrase",
+      "gender": "f",
+      "plural": "politiques publiques",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "La politique publique cible des résultats mesurables et équitables.",
+        "en": "The public policy targets measurable and equitable outcomes."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "policy"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "consultation",
+      "english": "consultation",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "consultations",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Une consultation authentique exige du temps et un retour motivé.",
+        "en": "Genuine consultation requires time and reasoned feedback."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "stakeholder",
+        "engagement"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "mémoire",
+      "english": "position paper",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "mémoires",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Le mémoire synthétise les options et leurs risques associés.",
+        "en": "The position paper summarizes options and associated risks."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "policy",
+        "analysis"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "rapport",
+      "english": "report",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "rapports",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Le rapport annuel présente les résultats et les écarts résiduels.",
+        "en": "The annual report presents results and residual gaps."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "reporting"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "mandat ministériel",
+      "english": "ministerial mandate",
+      "partOfSpeech": "noun phrase",
+      "gender": "m",
+      "plural": "mandats ministériels",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Le mandat ministériel oriente les priorités pour le prochain exercice.",
+        "en": "The ministerial mandate guides priorities for the next fiscal year."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "government"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "appel d’offres",
+      "english": "request for proposals",
+      "partOfSpeech": "noun phrase",
+      "gender": "m",
+      "plural": "appels d’offres",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "L’appel d’offres exige des critères d’accessibilité conformes aux normes.",
+        "en": "The RFP requires accessibility criteria that meet standards."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "procurement"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "marché public",
+      "english": "public procurement",
+      "partOfSpeech": "noun phrase",
+      "gender": "m",
+      "plural": "marchés publics",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Le marché public sera attribué selon une évaluation transparente.",
+        "en": "The public procurement will be awarded through transparent evaluation."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "procurement"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "conformité",
+      "english": "compliance",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "conformités",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "La conformité réglementaire sera vérifiée par audit interne.",
+        "en": "Regulatory compliance will be verified by internal audit."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "compliance",
+        "audit"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "reddition de comptes",
+      "english": "accountability",
+      "partOfSpeech": "noun phrase",
+      "gender": "f",
+      "plural": "redditions de comptes",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "La reddition de comptes exige des indicateurs clairs et accessibles.",
+        "en": "Accountability requires clear and accessible indicators."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "governance"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "transparence",
+      "english": "transparency",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "transparences",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "La transparence renforce la confiance du public envers l’État.",
+        "en": "Transparency strengthens public trust in the state."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "governance",
+        "ethics"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "équité",
+      "english": "equity",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "équités",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "L’équité d’accès est intégrée à tous les critères d’évaluation.",
+        "en": "Equitable access is embedded in all assessment criteria."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "ethics",
+        "policy"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "bilinguisme",
+      "english": "bilingualism",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "bilinguismes",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Le bilinguisme opérationnel demeure une exigence pour ces postes.",
+        "en": "Operational bilingualism remains a requirement for these positions."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "hr",
+        "policy"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "accessibilité",
+      "english": "accessibility",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "accessibilités",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "L’accessibilité numérique sera testée par des personnes handicapées.",
+        "en": "Digital accessibility will be tested by persons with disabilities."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "policy",
+        "inclusion"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "renseignements personnels",
+      "english": "personal information",
+      "partOfSpeech": "noun phrase",
+      "gender": "m",
+      "plural": "renseignements personnels",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "La collecte de renseignements personnels doit être minimisée et justifiée.",
+        "en": "The collection of personal information must be minimized and justified."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "privacy",
+        "compliance"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "évaluation",
+      "english": "evaluation",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "évaluations",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "L’évaluation indépendante documente l’efficacité et la pertinence.",
+        "en": "Independent evaluation documents effectiveness and relevance."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "evaluation",
+        "policy"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "vérification",
+      "english": "audit",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "vérifications",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "La vérification confirme la maîtrise des contrôles clés.",
+        "en": "The audit confirms the effectiveness of key controls."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "audit",
+        "governance"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "audit interne",
+      "english": "internal audit",
+      "partOfSpeech": "noun phrase",
+      "gender": "m",
+      "plural": "audits internes",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "L’audit interne signale un défaut de séparation des tâches.",
+        "en": "Internal audit flags a lack of separation of duties."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "audit",
+        "controls"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "comité",
+      "english": "committee",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "comités",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Le comité tranche en dernier ressort en cas de désaccord persistant.",
+        "en": "The committee makes the final decision if disagreement persists."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "governance"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "secrétariat",
+      "english": "secretariat",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "secrétariats",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Le secrétariat assure la logistique et le suivi des décisions.",
+        "en": "The secretariat provides logistics and decision follow‑up."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "governance"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "réunion",
+      "english": "meeting",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "réunions",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Cette réunion vise à résoudre les blocages inter‑équipes sans délai.",
+        "en": "This meeting aims to resolve inter‑team blockers without delay."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "meetings",
+        "collaboration"
+      ],
+      "topic": "Meetings & Communication",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "ordre du jour",
+      "english": "agenda",
+      "partOfSpeech": "noun phrase",
+      "gender": "m",
+      "plural": "ordres du jour",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "L’ordre du jour limite les digressions et recentre la discussion.",
+        "en": "The agenda curbs digressions and refocuses the discussion."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "meetings"
+      ],
+      "topic": "Meetings & Communication",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "compte rendu",
+      "english": "meeting notes",
+      "partOfSpeech": "noun phrase",
+      "gender": "m",
+      "plural": "comptes rendus",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Le compte rendu attribue clairement chaque action et son échéance.",
+        "en": "The minutes clearly assign each action and its deadline."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "meetings",
+        "documentation"
+      ],
+      "topic": "Meetings & Communication",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "procès-verbal",
+      "english": "minutes",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "procès-verbaux",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Le procès‑verbal sera entériné à la séance suivante.",
+        "en": "The minutes will be ratified at the next session."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "meetings",
+        "governance"
+      ],
+      "topic": "Meetings & Communication",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "rétroaction",
+      "english": "feedback",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "rétroactions",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Une rétroaction précise et respectueuse accélère l’amélioration continue.",
+        "en": "Precise, respectful feedback accelerates continuous improvement."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "communication",
+        "performance"
+      ],
+      "topic": "Meetings & Communication",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "animation",
+      "english": "facilitation",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "animations",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "L’animation structurée prévient les prises de parole monopolistiques.",
+        "en": "Structured facilitation prevents monopolizing the floor."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "meetings",
+        "facilitation"
+      ],
+      "topic": "Meetings & Communication",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "modérateur",
+      "english": "moderator",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "modérateurs",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Le modérateur impose des tours de table pour rééquilibrer les échanges.",
+        "en": "The moderator imposes speaking rounds to rebalance the exchange."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "meetings"
+      ],
+      "topic": "Meetings & Communication",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "tour de table",
+      "english": "round‑table",
+      "partOfSpeech": "noun phrase",
+      "gender": "m",
+      "plural": "tours de table",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Un tour de table rapide permet d’aligner les attentes dès l’ouverture.",
+        "en": "A quick round‑table aligns expectations from the outset."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "meetings",
+        "facilitation"
+      ],
+      "topic": "Meetings & Communication",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "clarification",
+      "english": "clarification",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "clarifications",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Toute clarification demandée doit être consignée pour suivi.",
+        "en": "Any requested clarification must be recorded for follow‑up."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "communication"
+      ],
+      "topic": "Meetings & Communication",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "consensus",
+      "english": "consensus",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "consensus",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Faute de consensus, nous documenterons un dissentiment motivé.",
+        "en": "Failing consensus, we will document a reasoned dissent."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "decision",
+        "governance"
+      ],
+      "topic": "Meetings & Communication",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "dissensus",
+      "english": "dissent",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "dissensus",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Le dissensus signalé ne bloque pas l’exécution si le risque est maîtrisé.",
+        "en": "The recorded dissent does not block execution if risk is controlled."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "decision",
+        "governance"
+      ],
+      "topic": "Meetings & Communication",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "prise de parole",
+      "english": "speaking turn",
+      "partOfSpeech": "noun phrase",
+      "gender": "f",
+      "plural": "prises de parole",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "La prise de parole est limitée à trois minutes pour chacun.",
+        "en": "Speaking turns are limited to three minutes per person."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "meetings"
+      ],
+      "topic": "Meetings & Communication",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "temps de parole",
+      "english": "speaking time",
+      "partOfSpeech": "noun phrase",
+      "gender": "m",
+      "plural": "temps de parole",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Le temps de parole sera strictement géré pour respecter l’horaire.",
+        "en": "Speaking time will be strictly managed to respect the schedule."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "meetings"
+      ],
+      "topic": "Meetings & Communication",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "synthèse",
+      "english": "synthesis",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "synthèses",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Une synthèse claire en fin de séance réduit les malentendus.",
+        "en": "A clear synthesis at the end reduces misunderstandings."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "communication"
+      ],
+      "topic": "Meetings & Communication",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "décision",
+      "english": "decision",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "décisions",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "La décision précise le responsable, l’échéance et les critères de succès.",
+        "en": "The decision specifies the owner, deadline, and success criteria."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "decision",
+        "governance"
+      ],
+      "topic": "Meetings & Communication",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "point de suivi",
+      "english": "follow‑up item",
+      "partOfSpeech": "noun phrase",
+      "gender": "m",
+      "plural": "points de suivi",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Chaque point de suivi doit être fermé ou replanifié avec justification.",
+        "en": "Each follow‑up item must be closed or rescheduled with justification."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "meetings",
+        "tracking"
+      ],
+      "topic": "Meetings & Communication",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "action assignée",
+      "english": "assigned action",
+      "partOfSpeech": "noun phrase",
+      "gender": "f",
+      "plural": "actions assignées",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Toute action assignée sans échéance risque de tomber en friche.",
+        "en": "Any assigned action without a deadline risks being neglected."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "meetings",
+        "tracking"
+      ],
+      "topic": "Meetings & Communication",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "échéance",
+      "english": "deadline",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "échéances",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "L’échéance est ferme sauf incident dûment documenté.",
+        "en": "The deadline is firm unless a duly documented incident occurs."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "planning",
+        "tracking"
+      ],
+      "topic": "Meetings & Communication",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "convocation",
+      "english": "meeting notice",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "convocations",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "La convocation précise l’objectif, la durée et le public attendu.",
+        "en": "The meeting notice specifies the objective, duration, and audience."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "meetings"
+      ],
+      "topic": "Meetings & Communication",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "quorum",
+      "english": "quorum",
+      "partOfSpeech": "noun",
+      "gender": "m",
+      "plural": "quorums",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Sans quorum, aucune décision ne pourra être entérinée.",
+        "en": "Without a quorum, no decision can be ratified."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "governance",
+        "meetings"
+      ],
+      "topic": "Meetings & Communication",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "faire le point",
+      "english": "to take stock / review progress",
+      "partOfSpeech": "verb phrase",
+      "gender": "",
+      "plural": "",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Dans l’incertitude, nous faisons le point chaque semaine pour ajuster finement.",
+        "en": "In uncertainty, we take stock weekly to adjust precisely."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "leadership",
+        "process"
+      ],
+      "topic": "Leadership & Expressions",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "rendre des comptes",
+      "english": "to be accountable",
+      "partOfSpeech": "verb phrase",
+      "gender": "",
+      "plural": "",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Tout gestionnaire doit rendre des comptes sur les résultats et la qualité.",
+        "en": "Every manager must be accountable for results and quality."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "leadership",
+        "governance"
+      ],
+      "topic": "Leadership & Expressions",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "tenir compte de",
+      "english": "to take into account",
+      "partOfSpeech": "verb phrase",
+      "gender": "",
+      "plural": "",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "La stratégie tient compte des contraintes opérationnelles et budgétaires.",
+        "en": "The strategy takes operational and budget constraints into account."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "decision",
+        "analysis"
+      ],
+      "topic": "Leadership & Expressions",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "aller de l’avant",
+      "english": "to move forward",
+      "partOfSpeech": "verb phrase",
+      "gender": "",
+      "plural": "",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Nous allons de l’avant dès que le risque résiduel devient acceptable.",
+        "en": "We move forward as soon as residual risk becomes acceptable."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "leadership"
+      ],
+      "topic": "Leadership & Expressions",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "faire preuve de",
+      "english": "to demonstrate / show",
+      "partOfSpeech": "verb phrase",
+      "gender": "",
+      "plural": "",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "L’équipe a fait preuve de résilience malgré des priorités changeantes.",
+        "en": "The team demonstrated resilience despite shifting priorities."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "leadership",
+        "culture"
+      ],
+      "topic": "Leadership & Expressions",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "avoir du recul",
+      "english": "to step back / keep perspective",
+      "partOfSpeech": "verb phrase",
+      "gender": "",
+      "plural": "",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Prenons du recul afin d’éviter une réaction strictement tactique.",
+        "en": "Let’s step back to avoid a purely tactical reaction."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "leadership",
+        "judgment"
+      ],
+      "topic": "Leadership & Expressions",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "trancher",
+      "english": "to make the call",
+      "partOfSpeech": "verb",
+      "gender": "",
+      "plural": "",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Faute de consensus, il faut trancher et documenter la décision.",
+        "en": "In the absence of consensus, someone must make the call and document it."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "decision",
+        "governance"
+      ],
+      "topic": "Leadership & Expressions",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "déléguer",
+      "english": "to delegate",
+      "partOfSpeech": "verb",
+      "gender": "",
+      "plural": "",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Déléguer n’exonère pas de la responsabilité, mais accélère l’exécution.",
+        "en": "Delegating does not absolve responsibility, but it accelerates execution."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "leadership",
+        "hr"
+      ],
+      "topic": "Leadership & Expressions",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "responsabiliser",
+      "english": "to empower / hold accountable",
+      "partOfSpeech": "verb",
+      "gender": "",
+      "plural": "",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Nous responsabilisons les équipes en clarifiant les attentes et les marges de manœuvre.",
+        "en": "We empower teams by clarifying expectations and room for maneuver."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "leadership",
+        "culture"
+      ],
+      "topic": "Leadership & Expressions",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "cadrer une discussion",
+      "english": "to frame a discussion",
+      "partOfSpeech": "verb phrase",
+      "gender": "",
+      "plural": "",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Je cadre la discussion pour éviter les débats hors périmètre.",
+        "en": "I frame the discussion to avoid out‑of‑scope debates."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "communication",
+        "meetings"
+      ],
+      "topic": "Leadership & Expressions",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "gérer les attentes",
+      "english": "to manage expectations",
+      "partOfSpeech": "verb phrase",
+      "gender": "",
+      "plural": "",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Nous gérons les attentes en exposant les risques et les compromis.",
+        "en": "We manage expectations by exposing risks and trade‑offs."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "leadership",
+        "communication"
+      ],
+      "topic": "Leadership & Expressions",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "désamorcer un conflit",
+      "english": "to defuse a conflict",
+      "partOfSpeech": "verb phrase",
+      "gender": "",
+      "plural": "",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Elle a désamorcé le conflit en recentrant sur les objectifs communs.",
+        "en": "She defused the conflict by refocusing on shared objectives."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "leadership",
+        "team-dynamics"
+      ],
+      "topic": "Leadership & Expressions",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "faire adhérer",
+      "english": "to secure buy‑in",
+      "partOfSpeech": "verb phrase",
+      "gender": "",
+      "plural": "",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "On fait adhérer en reliant la solution aux bénéfices concrets.",
+        "en": "You secure buy‑in by linking the solution to concrete benefits."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "change",
+        "leadership"
+      ],
+      "topic": "Leadership & Expressions",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "mobiliser l’équipe",
+      "english": "to mobilize the team",
+      "partOfSpeech": "verb phrase",
+      "gender": "",
+      "plural": "",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Il mobilise l’équipe en donnant du sens et de la visibilité.",
+        "en": "He mobilizes the team by providing meaning and visibility."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "leadership",
+        "motivation"
+      ],
+      "topic": "Leadership & Expressions",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "fixer le cap",
+      "english": "to set the course",
+      "partOfSpeech": "verb phrase",
+      "gender": "",
+      "plural": "",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "La direction fixe le cap, puis délègue l’exécution aux experts.",
+        "en": "Leadership sets the course, then delegates execution to experts."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "leadership",
+        "strategy"
+      ],
+      "topic": "Leadership & Expressions",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "recadrer",
+      "english": "to reframe / reset expectations",
+      "partOfSpeech": "verb",
+      "gender": "",
+      "plural": "",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Je recadre lorsque la solution s’éloigne des besoins réels.",
+        "en": "I reframe when the solution drifts from real needs."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "leadership",
+        "communication"
+      ],
+      "topic": "Leadership & Expressions",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "faire monter en compétence",
+      "english": "to upskill",
+      "partOfSpeech": "verb phrase",
+      "gender": "",
+      "plural": "",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Nous faisons monter en compétence par du mentorat ciblé.",
+        "en": "We upskill through targeted mentoring."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "hr",
+        "learning"
+      ],
+      "topic": "Leadership & Expressions",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "accompagner le changement",
+      "english": "to support change",
+      "partOfSpeech": "verb phrase",
+      "gender": "",
+      "plural": "",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Accompagner le changement suppose écoute active et preuves rapides.",
+        "en": "Supporting change requires active listening and quick wins."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "change",
+        "leadership"
+      ],
+      "topic": "Leadership & Expressions",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "arbitrer entre priorités",
+      "english": "to balance priorities",
+      "partOfSpeech": "verb phrase",
+      "gender": "",
+      "plural": "",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "Nous arbitrons entre priorités en fonction de la valeur livrée.",
+        "en": "We balance priorities based on delivered value."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "planning",
+        "decision"
+      ],
+      "topic": "Leadership & Expressions",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "escalader un enjeu",
+      "english": "to escalate an issue",
+      "partOfSpeech": "verb phrase",
+      "gender": "",
+      "plural": "",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "J’escalade un enjeu lorsque les risques dépassent mon niveau d’autorité.",
+        "en": "I escalate an issue when risks exceed my level of authority."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "risk",
+        "governance"
+      ],
+      "topic": "Leadership & Expressions",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    },
+    {
+      "id": null,
+      "french": "dotation",
+      "english": "staffing",
+      "partOfSpeech": "noun",
+      "gender": "f",
+      "plural": "dotations",
+      "variants": [],
+      "frequencyRank": null,
+      "ipa": "",
+      "example": {
+        "fr": "La dotation respecte les politiques de mérite et d’équité en emploi.",
+        "en": "Staffing complies with merit and employment equity policies."
+      },
+      "synonyms": [],
+      "antonyms": [],
+      "tags": [
+        "hr",
+        "government"
+      ],
+      "topic": "Government & Policy",
+      "notes": "",
+      "audio": {
+        "url": "",
+        "source": ""
+      },
+      "image": "",
+      "createdAt": "2025-10-24T11:50:40Z",
+      "ease": 2.5,
+      "interval": 1,
+      "due": "",
+      "reps": 0,
+      "last": ""
+    }
+  ]
+}
