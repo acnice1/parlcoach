@@ -113,7 +113,14 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "Top30",
+        "auxiliary",
+        "existence",
+        "irregular",
+        "state-of-being",
+        "very-common"
+      ]
     },
     {
       "verb": "avoir",
@@ -219,7 +226,13 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "Top30",
+        "auxiliary",
+        "irregular",
+        "possession",
+        "very-common"
+      ]
     },
     {
       "verb": "faire",
@@ -325,7 +338,14 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "Top30",
+        "causative",
+        "creation",
+        "do-make",
+        "irregular",
+        "very-common"
+      ]
     },
     {
       "verb": "dire",
@@ -431,7 +451,12 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "Top30",
+        "communication",
+        "irregular",
+        "speech"
+      ]
     },
     {
       "verb": "pouvoir",
@@ -537,7 +562,13 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "Top30",
+        "ability",
+        "existence",
+        "irregular",
+        "modal-like"
+      ]
     },
     {
       "verb": "aller",
@@ -643,7 +674,12 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "etre-auxiliary",
+        "movement",
+        "vandertramp"
+      ],
+      "auxiliary": "être"
     },
     {
       "verb": "voir",
@@ -749,7 +785,11 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "Top30",
+        "irregular",
+        "perception"
+      ]
     },
     {
       "verb": "savoir",
@@ -855,7 +895,14 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "Top30",
+        "ability-know-how",
+        "cognition",
+        "irregular",
+        "knowledge",
+        "mental"
+      ]
     },
     {
       "verb": "vouloir",
@@ -961,7 +1008,12 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "Top30",
+        "desire",
+        "irregular",
+        "modal-like"
+      ]
     },
     {
       "verb": "venir",
@@ -1067,7 +1119,15 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "Top30",
+        "etre-auxiliary",
+        "family-of-venir",
+        "irregular",
+        "movement",
+        "vandertramp"
+      ],
+      "auxiliary": "être"
     },
     {
       "verb": "devoir",
@@ -1173,7 +1233,13 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "Top30",
+        "irregular",
+        "modal-like",
+        "obligation",
+        "possession"
+      ]
     },
     {
       "verb": "prendre",
@@ -1279,7 +1345,12 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "Top30",
+        "action",
+        "family-of-prendre",
+        "irregular"
+      ]
     },
     {
       "verb": "trouver",
@@ -1385,7 +1456,11 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "Top30",
+        "discovery",
+        "regular-er"
+      ]
     },
     {
       "verb": "donner",
@@ -1491,7 +1566,11 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "Top30",
+        "regular-er",
+        "transfer"
+      ]
     },
     {
       "verb": "falloir",
@@ -1597,7 +1676,14 @@
         }
       },
       "group": 2,
-      "tags": []
+      "tags": [
+        "Top30",
+        "existence",
+        "impersonal",
+        "modal-like",
+        "obligation",
+        "regular-ir"
+      ]
     },
     {
       "verb": "parler",
@@ -1703,7 +1789,11 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "Top30",
+        "communication",
+        "regular-er"
+      ]
     },
     {
       "verb": "mettre",
@@ -1809,7 +1899,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "family-of-mettre"
+      ]
     },
     {
       "verb": "passer",
@@ -1915,7 +2007,18 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "dual-auxiliary",
+        "etre-auxiliary",
+        "movement",
+        "regular-er",
+        "temporal",
+        "vandertramp"
+      ],
+      "auxiliary": "être",
+      "notes": [
+        "Takes être for intransitive motion; takes avoir when used transitively (e.g., 'Il a monté les valises')."
+      ]
     },
     {
       "verb": "croire",
@@ -2021,7 +2124,14 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "Top30",
+        "belief",
+        "cognition",
+        "existence",
+        "irregular",
+        "mental"
+      ]
     },
     {
       "verb": "demander",
@@ -2127,7 +2237,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "communication",
+        "regular-er"
+      ]
     },
     {
       "verb": "tenir",
@@ -2233,7 +2346,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "possession"
+      ]
     },
     {
       "verb": "aimer",
@@ -2339,7 +2454,11 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "Top30",
+        "emotion",
+        "regular-er"
+      ]
     },
     {
       "verb": "rester",
@@ -2445,7 +2564,16 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "etre-auxiliary",
+        "existence",
+        "movement",
+        "regular-er",
+        "state-change",
+        "temporal",
+        "vandertramp"
+      ],
+      "auxiliary": "être"
     },
     {
       "verb": "penser",
@@ -2551,7 +2679,12 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "Top30",
+        "cognition",
+        "mental",
+        "regular-er"
+      ]
     },
     {
       "verb": "entendre",
@@ -2657,7 +2790,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "perception"
+      ]
     },
     {
       "verb": "travailler",
@@ -2763,7 +2898,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er",
+        "social"
+      ]
     },
     {
       "verb": "répondre",
@@ -2869,7 +3007,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "communication"
+      ]
     },
     {
       "verb": "rendre",
@@ -2975,7 +3115,11 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "causative",
+        "creation",
+        "transfer"
+      ]
     },
     {
       "verb": "connaître",
@@ -3081,7 +3225,11 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "cognition",
+        "existence",
+        "mental"
+      ]
     },
     {
       "verb": "sembler",
@@ -3187,7 +3335,11 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "existence",
+        "perception",
+        "regular-er"
+      ]
     },
     {
       "verb": "arriver",
@@ -3293,7 +3445,13 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "etre-auxiliary",
+        "movement",
+        "regular-er",
+        "vandertramp"
+      ],
+      "auxiliary": "être"
     },
     {
       "verb": "sentir",
@@ -3399,7 +3557,10 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "emotion-state",
+        "perception"
+      ]
     },
     {
       "verb": "attendre",
@@ -3505,7 +3666,12 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "Top30",
+        "regular-re",
+        "temporal",
+        "time"
+      ]
     },
     {
       "verb": "vivre",
@@ -3611,7 +3777,11 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "Top30",
+        "existence",
+        "irregular"
+      ]
     },
     {
       "verb": "chercher",
@@ -3717,7 +3887,12 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "Top30",
+        "perception",
+        "regular-er",
+        "search"
+      ]
     },
     {
       "verb": "comprendre",
@@ -3823,7 +3998,14 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "Top30",
+        "cognition",
+        "family-of-prendre",
+        "irregular",
+        "mental",
+        "understanding"
+      ]
     },
     {
       "verb": "porter",
@@ -3929,7 +4111,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "entrer",
@@ -4035,7 +4219,13 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "etre-auxiliary",
+        "movement",
+        "regular-er",
+        "vandertramp"
+      ],
+      "auxiliary": "être"
     },
     {
       "verb": "devenir",
@@ -4141,7 +4331,15 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "etre-auxiliary",
+        "existence",
+        "family-of-venir",
+        "movement",
+        "state-change",
+        "vandertramp"
+      ],
+      "auxiliary": "être"
     },
     {
       "verb": "revenir",
@@ -4247,7 +4445,14 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "etre-auxiliary",
+        "family-of-venir",
+        "movement",
+        "transfer",
+        "vandertramp"
+      ],
+      "auxiliary": "être"
     },
     {
       "verb": "sortir",
@@ -4353,7 +4558,18 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "Top30",
+        "dual-auxiliary",
+        "etre-auxiliary",
+        "irregular",
+        "movement",
+        "vandertramp"
+      ],
+      "auxiliary": "être",
+      "notes": [
+        "Takes être for intransitive motion; takes avoir when used transitively (e.g., 'Il a monté les valises')."
+      ]
     },
     {
       "verb": "partir",
@@ -4459,7 +4675,12 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "etre-auxiliary",
+        "movement",
+        "vandertramp"
+      ],
+      "auxiliary": "être"
     },
     {
       "verb": "décider",
@@ -4565,7 +4786,11 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "cognition",
+        "mental",
+        "regular-er"
+      ]
     },
     {
       "verb": "perdre",
@@ -4671,7 +4896,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "ouvrir",
@@ -4777,7 +5004,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "suivre",
@@ -4883,7 +5112,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "gagner",
@@ -4989,7 +5220,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "exister",
@@ -5095,7 +5328,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "existence",
+        "regular-er"
+      ]
     },
     {
       "verb": "refuser",
@@ -5201,7 +5437,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "réussir",
@@ -5307,7 +5545,9 @@
         }
       },
       "group": 2,
-      "tags": []
+      "tags": [
+        "regular-ir"
+      ]
     },
     {
       "verb": "changer",
@@ -5413,7 +5653,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "représenter",
@@ -5519,7 +5761,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "communication",
+        "regular-er"
+      ]
     },
     {
       "verb": "assurer",
@@ -5625,7 +5870,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "essayer",
@@ -5731,7 +5978,12 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "Top30",
+        "attempt",
+        "orthographic-change",
+        "regular-er"
+      ]
     },
     {
       "verb": "empêcher",
@@ -5837,7 +6089,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "risquer",
@@ -5943,7 +6197,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "apprendre",
@@ -6049,7 +6305,14 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "Top30",
+        "cognition",
+        "family-of-prendre",
+        "irregular",
+        "learning",
+        "mental"
+      ]
     },
     {
       "verb": "atteindre",
@@ -6155,7 +6418,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "produire",
@@ -6261,7 +6526,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "creation"
+      ]
     },
     {
       "verb": "écrire",
@@ -6367,7 +6634,10 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "communication",
+        "creation"
+      ]
     },
     {
       "verb": "tomber",
@@ -6473,7 +6743,14 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "etre-auxiliary",
+        "movement",
+        "regular-er",
+        "state-change",
+        "vandertramp"
+      ],
+      "auxiliary": "être"
     },
     {
       "verb": "tirer",
@@ -6579,7 +6856,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "creation",
+        "regular-er"
+      ]
     },
     {
       "verb": "servir",
@@ -6685,7 +6965,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "existence"
+      ]
     },
     {
       "verb": "fournir",
@@ -6791,7 +7073,10 @@
         }
       },
       "group": 2,
-      "tags": []
+      "tags": [
+        "regular-ir",
+        "transfer"
+      ]
     },
     {
       "verb": "affirmer",
@@ -6897,7 +7182,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "offrir",
@@ -7003,7 +7290,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "transfer"
+      ]
     },
     {
       "verb": "accepter",
@@ -7109,7 +7398,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "lire",
@@ -7215,7 +7506,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "choisir",
@@ -7321,7 +7614,9 @@
         }
       },
       "group": 2,
-      "tags": []
+      "tags": [
+        "regular-ir"
+      ]
     },
     {
       "verb": "permettre",
@@ -7427,7 +7722,10 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "causative",
+        "family-of-mettre"
+      ]
     },
     {
       "verb": "ajouter",
@@ -7533,7 +7831,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "rappeler",
@@ -7639,7 +7939,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "communication",
+        "regular-er"
+      ]
     },
     {
       "verb": "apporter",
@@ -7745,7 +8048,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er",
+        "transfer"
+      ]
     },
     {
       "verb": "utiliser",
@@ -7851,7 +8157,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "retenir",
@@ -7957,7 +8265,12 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "cognition",
+        "existence",
+        "mental",
+        "possession"
+      ]
     },
     {
       "verb": "manquer",
@@ -8063,7 +8376,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "créer",
@@ -8169,7 +8484,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "creation",
+        "regular-er"
+      ]
     },
     {
       "verb": "obtenir",
@@ -8275,7 +8593,10 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "possession",
+        "transfer"
+      ]
     },
     {
       "verb": "découvrir",
@@ -8381,7 +8702,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "juger",
@@ -8487,7 +8810,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "préparer",
@@ -8593,7 +8918,11 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "creation",
+        "regular-er",
+        "transfer"
+      ]
     },
     {
       "verb": "remarquer",
@@ -8699,7 +9028,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "perception",
+        "regular-er"
+      ]
     },
     {
       "verb": "manger",
@@ -8805,7 +9137,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "boire",
@@ -8911,7 +9245,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "envoyer",
@@ -9017,7 +9353,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er",
+        "transfer"
+      ]
     },
     {
       "verb": "recevoir",
@@ -9123,7 +9462,10 @@
         }
       },
       "group": 2,
-      "tags": []
+      "tags": [
+        "regular-ir",
+        "transfer"
+      ]
     },
     {
       "verb": "écouter",
@@ -9229,7 +9571,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "perception",
+        "regular-er"
+      ]
     },
     {
       "verb": "acheter",
@@ -9335,7 +9680,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er",
+        "transfer"
+      ]
     },
     {
       "verb": "jouer",
@@ -9441,7 +9789,11 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "Top30",
+        "activity",
+        "regular-er"
+      ]
     },
     {
       "verb": "lancer",
@@ -9547,7 +9899,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "montrer",
@@ -9653,7 +10007,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "perception",
+        "regular-er"
+      ]
     },
     {
       "verb": "compter",
@@ -9759,7 +10116,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "appeler",
@@ -9865,7 +10224,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "communication",
+        "regular-er"
+      ]
     },
     {
       "verb": "quitter",
@@ -9971,7 +10333,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "movement",
+        "regular-er"
+      ]
     },
     {
       "verb": "poser",
@@ -10077,7 +10442,11 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "communication",
+        "possession",
+        "regular-er"
+      ]
     },
     {
       "verb": "retrouver",
@@ -10183,7 +10552,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er",
+        "social"
+      ]
     },
     {
       "verb": "expliquer",
@@ -10289,7 +10661,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "communication",
+        "regular-er"
+      ]
     },
     {
       "verb": "considérer",
@@ -10395,7 +10770,11 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "cognition",
+        "mental",
+        "regular-er"
+      ]
     },
     {
       "verb": "fermer",
@@ -10501,7 +10880,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "arrêter",
@@ -10607,7 +10988,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "payer",
@@ -10713,7 +11096,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er",
+        "transfer"
+      ]
     },
     {
       "verb": "élever",
@@ -10819,7 +11205,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er",
+        "transfer"
+      ]
     },
     {
       "verb": "former",
@@ -10925,7 +11314,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "présenter",
@@ -11031,7 +11422,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "communication",
+        "regular-er"
+      ]
     },
     {
       "verb": "proposer",
@@ -11137,7 +11531,11 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "communication",
+        "regular-er",
+        "transfer"
+      ]
     },
     {
       "verb": "saisir",
@@ -11243,7 +11641,10 @@
         }
       },
       "group": 2,
-      "tags": []
+      "tags": [
+        "movement",
+        "regular-ir"
+      ]
     },
     {
       "verb": "arranger",
@@ -11349,7 +11750,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "couvrir",
@@ -11455,7 +11858,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "remettre",
@@ -11561,7 +11966,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "family-of-mettre"
+      ]
     },
     {
       "verb": "lever",
@@ -11667,7 +12074,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er",
+        "transfer"
+      ]
     },
     {
       "verb": "remplacer",
@@ -11773,7 +12183,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "craindre",
@@ -11879,7 +12291,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "emotion"
+      ]
     },
     {
       "verb": "valoir",
@@ -11985,7 +12399,10 @@
         }
       },
       "group": 2,
-      "tags": []
+      "tags": [
+        "existence",
+        "regular-ir"
+      ]
     },
     {
       "verb": "conduire",
@@ -12091,7 +12508,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "social"
+      ]
     },
     {
       "verb": "battre",
@@ -12197,7 +12616,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "existence"
+      ]
     },
     {
       "verb": "naître",
@@ -12303,7 +12724,14 @@
         }
       },
       "group": 2,
-      "tags": []
+      "tags": [
+        "etre-auxiliary",
+        "existence",
+        "regular-ir",
+        "state-change",
+        "vandertramp"
+      ],
+      "auxiliary": "être"
     },
     {
       "verb": "mourir",
@@ -12409,7 +12837,12 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "etre-auxiliary",
+        "state-change",
+        "vandertramp"
+      ],
+      "auxiliary": "être"
     },
     {
       "verb": "rire",
@@ -12515,7 +12948,11 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "Top30",
+        "emotion",
+        "irregular"
+      ]
     },
     {
       "verb": "sourire",
@@ -12621,7 +13058,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "plaire",
@@ -12727,7 +13166,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "emotion"
+      ]
     },
     {
       "verb": "craquer",
@@ -12833,7 +13274,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er",
+        "transfer"
+      ]
     },
     {
       "verb": "convaincre",
@@ -12939,7 +13383,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "vaincre",
@@ -13045,7 +13491,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "movement"
+      ]
     },
     {
       "verb": "peindre",
@@ -13151,7 +13599,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "joindre",
@@ -13257,7 +13707,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "éteindre",
@@ -13363,7 +13815,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "paraître",
@@ -13469,7 +13923,10 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "existence",
+        "perception"
+      ]
     },
     {
       "verb": "apparaître",
@@ -13575,7 +14032,10 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "existence",
+        "perception"
+      ]
     },
     {
       "verb": "disparaître",
@@ -13681,7 +14141,10 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "existence",
+        "perception"
+      ]
     },
     {
       "verb": "construire",
@@ -13787,7 +14250,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "creation"
+      ]
     },
     {
       "verb": "détruire",
@@ -13893,7 +14358,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "traduire",
@@ -13999,7 +14466,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "réduire",
@@ -14105,7 +14574,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "possession"
+      ]
     },
     {
       "verb": "introduire",
@@ -14211,7 +14682,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "transfer"
+      ]
     },
     {
       "verb": "séduire",
@@ -14317,7 +14790,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "maintenir",
@@ -14423,7 +14898,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "possession"
+      ]
     },
     {
       "verb": "obtenir",
@@ -14529,7 +15006,10 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "possession",
+        "transfer"
+      ]
     },
     {
       "verb": "prévenir",
@@ -14635,7 +15115,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "communication"
+      ]
     },
     {
       "verb": "prévoir",
@@ -14741,7 +15223,12 @@
         }
       },
       "group": 2,
-      "tags": []
+      "tags": [
+        "cognition",
+        "mental",
+        "perception",
+        "regular-ir"
+      ]
     },
     {
       "verb": "revoir",
@@ -14847,7 +15334,10 @@
         }
       },
       "group": 2,
-      "tags": []
+      "tags": [
+        "perception",
+        "regular-ir"
+      ]
     },
     {
       "verb": "pourvoir",
@@ -14953,7 +15443,10 @@
         }
       },
       "group": 2,
-      "tags": []
+      "tags": [
+        "regular-ir",
+        "transfer"
+      ]
     },
     {
       "verb": "survivre",
@@ -15059,7 +15552,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "revivre",
@@ -15165,7 +15660,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "existence"
+      ]
     },
     {
       "verb": "élire",
@@ -15271,7 +15768,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "redire",
@@ -15377,7 +15876,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "communication"
+      ]
     },
     {
       "verb": "prédire",
@@ -15483,7 +15984,11 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "cognition",
+        "communication",
+        "mental"
+      ]
     },
     {
       "verb": "interdire",
@@ -15589,7 +16094,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "résoudre",
@@ -15695,7 +16202,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "recevoir",
@@ -15801,7 +16310,10 @@
         }
       },
       "group": 2,
-      "tags": []
+      "tags": [
+        "regular-ir",
+        "transfer"
+      ]
     },
     {
       "verb": "apercevoir",
@@ -15907,7 +16419,10 @@
         }
       },
       "group": 2,
-      "tags": []
+      "tags": [
+        "perception",
+        "regular-ir"
+      ]
     },
     {
       "verb": "concevoir",
@@ -16013,7 +16528,10 @@
         }
       },
       "group": 2,
-      "tags": []
+      "tags": [
+        "creation",
+        "regular-ir"
+      ]
     },
     {
       "verb": "décevoir",
@@ -16119,7 +16637,9 @@
         }
       },
       "group": 2,
-      "tags": []
+      "tags": [
+        "regular-ir"
+      ]
     },
     {
       "verb": "percevoir",
@@ -16225,7 +16745,9 @@
         }
       },
       "group": 2,
-      "tags": []
+      "tags": [
+        "regular-ir"
+      ]
     },
     {
       "verb": "promouvoir",
@@ -16331,7 +16853,9 @@
         }
       },
       "group": 2,
-      "tags": []
+      "tags": [
+        "regular-ir"
+      ]
     },
     {
       "verb": "asseoir",
@@ -16437,7 +16961,10 @@
         }
       },
       "group": 2,
-      "tags": []
+      "tags": [
+        "possession",
+        "regular-ir"
+      ]
     },
     {
       "verb": "écrire",
@@ -16543,7 +17070,10 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "communication",
+        "creation"
+      ]
     },
     {
       "verb": "décrire",
@@ -16649,7 +17179,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "existence"
+      ]
     },
     {
       "verb": "prescrire",
@@ -16755,7 +17287,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "existence"
+      ]
     },
     {
       "verb": "inscrire",
@@ -16861,7 +17395,11 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "communication",
+        "creation",
+        "possession"
+      ]
     },
     {
       "verb": "souscrire",
@@ -16967,7 +17505,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "existence"
+      ]
     },
     {
       "verb": "conduire",
@@ -17073,7 +17613,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "social"
+      ]
     },
     {
       "verb": "induire",
@@ -17179,7 +17721,10 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "causative",
+        "social"
+      ]
     },
     {
       "verb": "réduire",
@@ -17285,7 +17830,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "possession"
+      ]
     },
     {
       "verb": "traduire",
@@ -17391,7 +17938,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "inclure",
@@ -17497,7 +18046,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "possession"
+      ]
     },
     {
       "verb": "exclure",
@@ -17603,7 +18154,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "clore",
@@ -17709,7 +18262,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "aller",
@@ -17815,7 +18370,15 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "Top30",
+        "etre-auxiliary",
+        "irregular",
+        "movement",
+        "vandertramp",
+        "very-common"
+      ],
+      "auxiliary": "être"
     },
     {
       "verb": "balayer",
@@ -17921,7 +18484,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "essuyer",
@@ -18027,7 +18592,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "movement",
+        "regular-er"
+      ]
     },
     {
       "verb": "payer",
@@ -18133,7 +18701,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er",
+        "transfer"
+      ]
     },
     {
       "verb": "appuyer",
@@ -18239,7 +18810,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "ennuyer",
@@ -18345,7 +18918,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "nettoyer",
@@ -18451,7 +19026,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "renvoyer",
@@ -18557,7 +19134,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er",
+        "transfer"
+      ]
     },
     {
       "verb": "employer",
@@ -18663,7 +19243,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er",
+        "social"
+      ]
     },
     {
       "verb": "tutoyer",
@@ -18769,7 +19352,10 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "communication",
+        "regular-er"
+      ]
     },
     {
       "verb": "vouvoyer",
@@ -18875,7 +19461,9 @@
         }
       },
       "group": 1,
-      "tags": []
+      "tags": [
+        "regular-er"
+      ]
     },
     {
       "verb": "ouvrir",
@@ -18981,7 +19569,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "découvrir",
@@ -19087,7 +19677,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "offrir",
@@ -19193,7 +19785,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "transfer"
+      ]
     },
     {
       "verb": "souffrir",
@@ -19299,7 +19893,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "cueillir",
@@ -19405,7 +20001,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "accueillir",
@@ -19511,7 +20109,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "movement"
+      ]
     },
     {
       "verb": "recueillir",
@@ -19617,7 +20217,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "fuir",
@@ -19723,7 +20325,9 @@
         }
       },
       "group": 2,
-      "tags": []
+      "tags": [
+        "regular-ir"
+      ]
     },
     {
       "verb": "haïr",
@@ -19829,7 +20433,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "emotion"
+      ]
     },
     {
       "verb": "bouillir",
@@ -19935,7 +20541,9 @@
         }
       },
       "group": 2,
-      "tags": []
+      "tags": [
+        "regular-ir"
+      ]
     },
     {
       "verb": "courir",
@@ -20041,7 +20649,9 @@
         }
       },
       "group": 2,
-      "tags": []
+      "tags": [
+        "regular-ir"
+      ]
     },
     {
       "verb": "mettre",
@@ -20147,7 +20757,12 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "Top30",
+        "family-of-mettre",
+        "irregular",
+        "placement"
+      ]
     },
     {
       "verb": "permettre",
@@ -20253,7 +20868,10 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "causative",
+        "family-of-mettre"
+      ]
     },
     {
       "verb": "admettre",
@@ -20359,7 +20977,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "family-of-mettre"
+      ]
     },
     {
       "verb": "soumettre",
@@ -20465,7 +21085,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "family-of-mettre"
+      ]
     },
     {
       "verb": "transmettre",
@@ -20571,7 +21193,10 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "family-of-mettre",
+        "movement"
+      ]
     },
     {
       "verb": "promettre",
@@ -20677,7 +21302,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "family-of-mettre"
+      ]
     },
     {
       "verb": "omettre",
@@ -20783,7 +21410,10 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "family-of-mettre",
+        "movement"
+      ]
     },
     {
       "verb": "abattre",
@@ -20889,7 +21519,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "possession"
+      ]
     },
     {
       "verb": "combattre",
@@ -20995,7 +21627,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "rompre",
@@ -21101,7 +21735,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "bouillir",
@@ -21207,7 +21843,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "action"
+      ]
     },
     {
       "verb": "corrompre",
@@ -21313,7 +21951,9 @@
         }
       },
       "group": 3,
-      "tags": []
+      "tags": [
+        "existence"
+      ]
     }
   ]
 }
