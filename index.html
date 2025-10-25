@@ -16,6 +16,7 @@
       <h1>ParlCoach</h1>
       <small class="tag">ParlFR</small>
     </header>
+<profile-widget :state="state" :methods="methods"></profile-widget>
 
     <!-- Main Tabs -->
     <nav class="tabs">
@@ -462,7 +463,11 @@
   <!-- Vue / Dexie from CDN -->
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js" defer></script>
   <script src="https://unpkg.com/dexie@4.0.8/dist/dexie.min.js" defer></script>
-  <script src="app.js?v=2025-10-24-3" defer></script>
+  
+<!-- <script src="app.js?v=2025-10-24-3" defer></script>index.html (only the script area changes) -->
+<!-- Keep the rest of your file identical -->
+
+<script type="module" src="./app.js?v=2025-10-25-1"></script>
 
   <!-- Service worker (optional)
   <script>
