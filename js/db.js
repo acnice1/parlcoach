@@ -55,6 +55,15 @@ export function initDexie(){
     }
   });
 
+  db.version(5).stores({
+  // your existing tables...
+  // e.g. settings: 'key', plan: 'key', drill: 'key', vocab: '++id', verbs: '++id',
+  recordings: '++id, name, createdAt' // meta only; audio kept in OPFS
+}).upgrade(tx => {
+  // no migration needed for new table; keep as a placeholder
+  return;
+});
+
   return db;
 }
 

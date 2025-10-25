@@ -56,16 +56,39 @@ const vueApp = createApp({
         regularity: 'any'
       },
       drillSession: { running:false, question:null, input:'', correct:null, total:0, right:0, history:[], help:null, side:{ english:'—', fr:'—', en:'—' } },
+      // recorder state
 
       isRecording:false, mediaRecorder:null, chunks:[], recordings:[],
       newQA:{ q:'', a:'' },
 
+      speech: {
+        lang: 'fr-FR',          // pick 'en-US' for English
+        isOn: false,
+        interim: '',
+        final: '',
+        appendToQA: true        // when final text arrives, append to newQA.a
+      },
+      _recog: null,              // internal SpeechRecognition instance (not persisted)
+
+      
+      // plan + settings
       plan:{ key:'v1', goal:'Government B', dailyMinutes:60, focus:'listening, oral, vocab', weeklySchedule:'', notes:'' },
       settings:{ key:'v1', srsMode:'SM2', fixedIntervals:[1,3,7,14,30], translator:{ endpoint:'', apiKey:'' } },
       fixedIntervalsText:'1,3,7,14,30',
       storagePersisted:false,
       translator:{ endpoint:'', apiKey:'' },
     });
+
+    // put near your speech state
+state.speech = state.speech || { lang:'fr-FR', isOn:false, interim:'', final:'', appendToQA:true, supported:false, why:'' };
+
+function detectSpeechSupport(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const secure = location.protocol === 'https:' || location.hostname === 'localhost';
+  state.speech.supported = !!SR && secure;
+  state.speech.why = !secure ? 'Needs HTTPS or localhost.' : (!SR ? 'SpeechRecognition not available in this browser.' : '');
+}
+detectSpeechSupport(); // call once in setup / before UI renders
 
     // Holds examples from the collated JSON (verb → examples)
     state.exampleMap = new Map();
@@ -291,6 +314,7 @@ function clearExcludeTags(){
       state.verbs = await db.verbs.orderBy('infinitive').toArray();
 
       // (recordings/notes loaders go here if you use them)
+      await loadRecordingsFromDB();
     }
 
 
@@ -456,7 +480,193 @@ function attachExamplesAndRules(q) {
 }
 
 
+function getRecognizer(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return null;
+  const r = new SR();
+  r.continuous = true;
+  r.interimResults = true;
+  r.lang = state.speech.lang || 'fr-FR';
+  return r;
+}
 
+function startTranscription(){
+  if (state.speech.isOn) return;
+  const r = getRecognizer();
+  if (!r) {
+    alert('SpeechRecognition not supported in this browser. Try Chrome/Edge on https://');
+    return;
+  }
+  state.speech.interim = '';
+  state.speech.final = '';
+  state.speech.isOn = true;
+  state._recog = r;
+
+  r.onresult = (evt) => {
+    let interim = '';
+    let final = state.speech.final || '';
+    for (let i = evt.resultIndex; i < evt.results.length; i++) {
+      const res = evt.results[i];
+      const txt = res[0].transcript || '';
+      if (res.isFinal) final += (final && !final.endsWith(' ') ? ' ' : '') + txt.trim();
+      else interim += txt;
+    }
+    state.speech.interim = interim.trim();
+    state.speech.final = final.trim();
+
+    // append to QA answer as final fragments arrive
+    if (state.speech.appendToQA && final) {
+      // only append the delta since last time
+      const cur = (state.newQA.a || '').trim();
+      const want = final;
+      if (!cur || !want.startsWith(cur)) {
+        // simple fallback: set to full final
+        state.newQA.a = want;
+      } else {
+        // nothing to do; already in there
+      }
+    }
+  };
+
+  r.onerror = (e) => {
+    console.warn('[Speech] error', e);
+    stopTranscription(); // gracefully stop
+  };
+
+  r.onend = () => {
+    // Some browsers auto-stop after silence; if user still wants it on, restart
+    if (state.speech.isOn && state._recog) {
+      try { state._recog.start(); } catch { /* no-op */ }
+    }
+  };
+
+  try { r.start(); } catch (e) {
+    console.warn('[Speech] start failed', e);
+    state.speech.isOn = false;
+    state._recog = null;
+  }
+}
+
+function stopTranscription(){
+  state.speech.isOn = false;
+  try { state._recog && state._recog.stop(); } catch {}
+  state._recog = null;
+}
+
+function clearTranscript(){
+  state.speech.interim = '';
+  state.speech.final = '';
+}
+
+function setSpeechLang(lang){
+  state.speech.lang = lang;
+  // if currently listening, restart in the new language
+  if (state.speech.isOn) {
+    stopTranscription();
+    startTranscription();
+  }
+}
+
+// ---- OPFS polyfill helpers (use native Origin Private File System) ----
+async function opfsWrite(path, blob){
+  const root = await navigator.storage.getDirectory(); // requires https or localhost
+  const parts = path.split('/').filter(Boolean);
+  let dir = root;
+  for (let i = 0; i < parts.length - 1; i++) {
+    dir = await dir.getDirectoryHandle(parts[i], { create: true });
+  }
+  const name = parts[parts.length - 1];
+  const fh = await dir.getFileHandle(name, { create: true });
+  const ws = await fh.createWritable();
+  await ws.write(blob);
+  await ws.close();
+}
+
+async function opfsRead(path){
+  const root = await navigator.storage.getDirectory();
+  const parts = path.split('/').filter(Boolean);
+  let dir = root;
+  for (let i = 0; i < parts.length - 1; i++) {
+    dir = await dir.getDirectoryHandle(parts[i]); // throws if missing
+  }
+  const name = parts[parts.length - 1];
+  const fh = await dir.getFileHandle(name);
+  const file = await fh.getFile();
+  return new Blob([await file.arrayBuffer()], { type: file.type || 'application/octet-stream' });
+}
+
+async function opfsRemove(path){
+  const root = await navigator.storage.getDirectory();
+  const parts = path.split('/').filter(Boolean);
+  let dir = root;
+  for (let i = 0; i < parts.length - 1; i++) {
+    dir = await dir.getDirectoryHandle(parts[i]);
+  }
+  const name = parts[parts.length - 1];
+  await dir.removeEntry(name);
+}
+
+async function persistRecording({ blob, name, mime, transcript, question, answer }) {
+  const dir = 'recordings';
+  const path = `${dir}/${name}`;
+
+  // OPFS write (uses your helper or the polyfill)
+  try {
+    if (opfs?.writeFile) await opfs.writeFile(path, blob);
+    else await opfsWrite(path, blob);
+  } catch (e) {
+    console.warn('[OPFS] write fail, storing metadata only:', e);
+  }
+
+  const rec = {
+    name,
+    size: blob.size,
+    path,
+    mime: mime || 'audio/webm',
+    createdAt: new Date().toISOString(),
+    transcript: transcript || '',
+    // NEW: snapshot the current QA
+    question: (question || '').trim(),
+    answer: (answer || '').trim()
+  };
+  const id = await db.recordings.add(rec);
+  return { id, ...rec };
+}
+
+async function loadRecordingsFromDB(){
+  const rows = await db.recordings.orderBy('createdAt').reverse().toArray();
+  const hydrated = [];
+  for (const r of rows) {
+    try {
+      const blob = opfs?.readFile ? await opfs.readFile(r.path) : await opfsRead(r.path);
+      const url = URL.createObjectURL(blob);
+      hydrated.push({ ...r, url });
+    } catch (e) {
+      console.warn('[OPFS] read fail for', r.path, e);
+      hydrated.push({ ...r, url: '' });
+    }
+  }
+  state.recordings = hydrated;
+}
+
+async function reallyDeleteRecording(r){
+  try { if (r?.url) URL.revokeObjectURL(r.url); } catch {}
+  try {
+    if (r?.path) {
+      if (opfs?.removeFile) await opfs.removeFile(r.path);
+      else await opfsRemove(r.path);
+    }
+  } catch (e) {
+    console.warn('[OPFS] remove fail', e);
+  }
+  try {
+    const row = await db.recordings.where('name').equals(r.name).first();
+    if (row?.id != null) await db.recordings.delete(row.id);
+  } catch (e) {
+    console.warn('[DB] delete fail', e);
+  }
+  state.recordings = state.recordings.filter(x => x.name !== r.name);
+}
 
 
     const methods = {
@@ -492,10 +702,129 @@ function attachExamplesAndRules(q) {
       },
 
       // recordings/QA (place your original bodies here)
-      startRecording(){ /* unchanged body from your current app.js */ },
-      stopRecording(){ /* unchanged body from your current app.js */ },
-      saveQA(){ /* unchanged */ },
-      deleteRecording(r){ /* unchanged */ },
+      // --- Recorder methods (paste into methods = { ... } ) ---
+      startTranscription,
+      stopTranscription,
+      clearTranscript,
+      setSpeechLang,
+
+async startRecording(){
+  if (state.isRecording) return;
+  try {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      alert('Recording not supported in this browser.');
+      return;
+    }
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const mime = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+      ? 'audio/webm;codecs=opus'
+      : (MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : '');
+
+    const mr = new MediaRecorder(stream, mime ? { mimeType: mime } : {});
+    state.mediaRecorder = mr;
+    state.chunks = [];
+    state.isRecording = true;
+
+    // (optional) auto-start live transcription
+    methods.startTranscription?.();
+
+    mr.ondataavailable = (e) => {
+      if (e.data && e.data.size > 0) state.chunks.push(e.data);
+    };
+
+    mr.onerror = (e) => {
+      console.error('[Recorder] error', e);
+      alert('Recorder error: ' + (e.error?.message || e.message || e.name));
+      try { mr.stop(); } catch {}
+    };
+
+    mr.onstop = async () => {
+      try {
+        // ✅ Build blob ONLY here
+        const blob = new Blob(state.chunks, { type: mime || 'audio/webm' });
+        const ts = new Date();
+        const name = `rec-${ts.toISOString().replace(/[:.]/g, '-')}.webm`;
+
+        // snapshot final transcript + current QA
+        const transcript = state.speech?.final || '';
+        const question   = state.newQA?.q || '';
+        const answer     = state.newQA?.a || '';
+
+        // persist to OPFS + Dexie
+        const saved = await persistRecording({
+          blob,
+          name,
+          mime: mime || 'audio/webm',
+          transcript,
+          question,
+          answer
+        });
+
+        // hydrate URL for immediate playback
+        const url = URL.createObjectURL(blob);
+        state.recordings.unshift({ ...saved, url });
+
+      } catch (err) {
+        console.error('[Recorder] assemble/persist error', err);
+      } finally {
+        // cleanup
+        state.chunks = [];
+        state.isRecording = false;
+        try { stream.getTracks().forEach(t => t.stop()); } catch {}
+        state.mediaRecorder = null;
+        methods.stopTranscription?.();
+      }
+    };
+
+    mr.start();
+  } catch (err) {
+    console.error('[Recorder] start failed', err);
+    alert('Microphone permission was denied or unavailable.');
+    state.isRecording = false;
+  }
+},
+
+stopRecording(){
+  try {
+    // ❌ Do not reference `blob` here
+    if (state.mediaRecorder?.state === 'recording') {
+      state.mediaRecorder.stop(); // onstop will build the Blob
+    } else {
+      state.isRecording = false;
+      methods.stopTranscription?.();
+    }
+  } catch (e) {
+    console.error('[Recorder] stop error', e);
+    state.isRecording = false;
+    methods.stopTranscription?.();
+  }
+},
+
+
+deleteRecording(r){
+  reallyDeleteRecording(r);
+},
+
+
+deleteRecording(r){
+  try {
+    if (!r) return;
+    // Revoke object URL to free memory
+    if (r.url) URL.revokeObjectURL(r.url);
+    state.recordings = state.recordings.filter(x => x.id !== r.id);
+  } catch (e) {
+    console.error('[Recorder] delete error', e);
+  }
+},
+
+saveQA(){
+  const q = (state.newQA.q || '').trim();
+  const a = (state.newQA.a || '').trim();
+  if (!q && !a) return;
+  // If you have a notes table, persist here; for now, just clear inputs.
+  state.newQA = { q: '', a: '' };
+},
+
 
       // ------------------- DRILL FLOW -------------------
       startDrill(){

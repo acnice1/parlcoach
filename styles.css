@@ -18,9 +18,10 @@ body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:
 .view{max-width:980px;margin:16px auto;padding:0 12px}
 
 .panel{background:var(--card);border:1px solid #1f2937;border-radius:var(--br);box-shadow:var(--shadow);padding:16px}
-.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+/*.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+*/
 .panel h2{margin:0;font-size:18px}
-.actions{display:flex;gap:8px}
+/*.actions{display:flex;gap:8px} */
 .fixed-input{width:180px}
 
 .add-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin:12px 0}
@@ -473,8 +474,6 @@ details.box > summary h3::after {
 }
 details.box[open] > summary h3::after { content: '▴'; }
 
-
-
 /* nicer layout + spacing */
 .tag-pills {
   display: flex;
@@ -553,3 +552,28 @@ details.box[open] > summary h3::after { content: '▴'; }
 
 /* 6) (Bugfix) If you see a stray "./*" before a comment in your CSS, delete the leading dot.
       It breaks the rule that follows and can prevent the tag-pills row from spanning. */
+/* Recorder header should never be hidden */
+.recorder-panel .rec-actions-bar {
+  display: flex !important;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Keep header above textareas so it can't be covered */
+.recorder-head {
+  position: relative;
+  z-index: 5;
+  background: inherit; /* or your panel bg */
+}
+
+/* Ensure the Q/A block doesn’t overlap the header */
+.recorder-panel .qa {
+  margin-top: 12px;         /* add space below header */
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+}
+
+/* (Optional) quick visual debug you can remove later */
+.recorder-panel .rec-actions-bar button { outline: 0; }

@@ -307,35 +307,9 @@
       </section>
 
       <!-- RECORD -->
-      <section v-if="tab==='record'" class="panel">
-        <header class="panel-head">
-          <h2>Record & Save</h2>
-          <div class="actions">
-            <button :disabled="isRecording" @click="startRecording">🎙️ Start</button>
-            <button :disabled="!isRecording" @click="stopRecording">⏹ Stop</button>
-          </div>
-        </header>
-
-        <div class="qa">
-          <input v-model="newQA.q" placeholder="Question (EN/FR)" />
-          <textarea v-model="newQA.a" placeholder="Your answer / Notes"></textarea>
-          <button @click="saveQA">Save Q/A</button>
-        </div>
-
-        <h3>My Recordings</h3>
-        <div v-if="recordings.length===0" class="empty">No recordings yet.</div>
-        <div class="recording" v-for="r in recordings" :key="r.id">
-          <audio :src="r.url" controls></audio>
-          <div class="rec-meta">
-            <span>{{ r.name }}</span>
-            <span class="dim">({{ (r.size/1024).toFixed(1) }} KB)</span>
-          </div>
-          <div class="rec-actions">
-            <a :href="r.url" :download="r.name">Download</a>
-            <button class="danger small" @click="deleteRecording(r)">Delete</button>
-          </div>
-        </div>
-      </section>
+<section v-if="state.tab==='record'" class="panel">
+  <recorder-panel :state="state" :methods="methods"></recorder-panel>
+</section>
 
       <!-- PLAN -->
       <section v-if="tab==='plan'" class="panel">
