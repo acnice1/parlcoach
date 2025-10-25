@@ -577,3 +577,114 @@ details.box[open] > summary h3::after { content: '▴'; }
 
 /* (Optional) quick visual debug you can remove later */
 .recorder-panel .rec-actions-bar button { outline: 0; }
+
+/* --- Recorder Delete Button Fix --- */
+.rec-actions .danger {
+  background: linear-gradient(135deg, #ef4444, #b91c1c); /* red gradient */
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.rec-actions .danger:hover {
+  background: linear-gradient(135deg, #dc2626, #991b1b);
+  transform: scale(1.05);
+}
+
+.rec-actions .danger:active {
+  background: linear-gradient(135deg, #991b1b, #7f1d1d);
+  transform: scale(1.0);
+}
+
+.rec-actions .small {
+  font-size: 0.9rem;
+  padding: 6px 10px;
+}
+/* --- Recorder Action Buttons: Download + Delete --- */
+.rec-actions a,
+.rec-actions button {
+  display: inline-block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 6px 14px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+/* Download button – cool blue to match theme */
+.rec-actions a {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: #fff;
+  border: none;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+}
+.rec-actions a:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
+  transform: scale(1.05);
+}
+.rec-actions a:active {
+  transform: scale(1.0);
+}
+
+/* Delete button – vivid red */
+.rec-actions .danger {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  color: #fff;
+  border: none;
+  box-shadow: 0 2px 6px rgba(185, 28, 28, 0.25);
+}
+.rec-actions .danger:hover {
+  background: linear-gradient(135deg, #dc2626, #991b1b);
+  transform: scale(1.05);
+}
+.rec-actions .danger:active {
+  background: linear-gradient(135deg, #991b1b, #7f1d1d);
+  transform: scale(1.0);
+}
+/* --- Force dark dropdown appearance for language selector --- */
+select[title="Transcription language"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: #f8fafc;
+  border: 1px solid #243041;
+  border-radius: 8px;
+  padding: 8px 36px 8px 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  transition: all 0.25s ease;
+}
+
+select[title="Transcription language"]:hover {
+  background: linear-gradient(135deg, #1e293b, #162033);
+  border-color: #3b82f6;
+}
+
+select[title="Transcription language"]:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59,130,246,0.35);
+}
+
+/* Force dark dropdown list (works in most Chromium browsers) */
+select[title="Transcription language"] option {
+  background-color: #0f172a;
+  color: #f8fafc;
+  padding: 6px 8px;
+}
+
+/* Highlight on hover within dropdown (limited cross-browser) */
+select[title="Transcription language"] option:hover {
+  background-color: #1e293b;
+  color: #60a5fa;
+}
+.view { overflow-anchor: none; }

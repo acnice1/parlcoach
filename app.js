@@ -22,6 +22,7 @@ const vueApp = createApp({
       // STATE OBJECT
       // global profile + stats
 
+      
       profileName: '',
       globalStats: { right: 0, total: 0, since: new Date().toISOString().slice(0,10) },
       todayStats:  { right: 0, total: 0, date:  new Date().toISOString().slice(0,10) },
@@ -79,8 +80,19 @@ const vueApp = createApp({
       translator:{ endpoint:'', apiKey:'' },
     });
 
+    // ---- Scroll lock helpers ----
+function getScroll(){ return { x: window.scrollX, y: window.scrollY }; }
+function restoreScroll(pos){ window.scrollTo(pos.x, pos.y); }
+async function withScrollLock(run){
+  const pos = getScroll();
+  await run();               // your existing logic
+  await Vue.nextTick();      // wait for DOM update
+  restoreScroll(pos);        // put viewport back exactly
+}
+
     // put near your speech state
 state.speech = state.speech || { lang:'fr-FR', isOn:false, interim:'', final:'', appendToQA:true, supported:false, why:'' };
+
 
 function detectSpeechSupport(){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -610,7 +622,6 @@ async function persistRecording({ blob, name, mime, transcript, question, answer
   const dir = 'recordings';
   const path = `${dir}/${name}`;
 
-  // OPFS write (uses your helper or the polyfill)
   try {
     if (opfs?.writeFile) await opfs.writeFile(path, blob);
     else await opfsWrite(path, blob);
@@ -625,8 +636,7 @@ async function persistRecording({ blob, name, mime, transcript, question, answer
     mime: mime || 'audio/webm',
     createdAt: new Date().toISOString(),
     transcript: transcript || '',
-    // NEW: snapshot the current QA
-    question: (question || '').trim(),
+    question: (question || '').trim(),   // <-- NEW
     answer: (answer || '').trim()
   };
   const id = await db.recordings.add(rec);
@@ -666,6 +676,15 @@ async function reallyDeleteRecording(r){
     console.warn('[DB] delete fail', e);
   }
   state.recordings = state.recordings.filter(x => x.name !== r.name);
+}
+
+function getScroll() { return { x: window.scrollX, y: window.scrollY }; }
+function restoreScroll(pos) { window.scrollTo(pos.x, pos.y); }
+async function withScrollLock(run) {
+  const pos = getScroll();
+  await run();               // run your existing logic
+  await Vue.nextTick();      // wait for DOM to update
+  restoreScroll(pos);        // put viewport back exactly
 }
 
 
@@ -857,6 +876,7 @@ saveQA(){
       },
 
       checkDrill(){
+        
         const sess = state.drillSession;
         if (!sess.running || !sess.question) return;
 
@@ -906,24 +926,34 @@ resetTodayStats(){
 },
 
 
-      nextDrill(){
-        const q = buildQuestion();
-        if (!q) {
-          state.drillSession.running = false;
-          alert('No more questions available with current filters.');
-          return;
+  nextDrill() {
+    return withScrollLock(async () => {
+      // ⬇️ your original next-drill body
+      const q = buildQuestion();
+      if (!q) {
+        state.drillSession.running = false;
+        alert('No more questions available with current filters.');
+        return;
+      }
+      state.drillSession.question = {
+        prompt: { label: q.label },
+        answer: q.answer,
+        meta: {
+          infinitive: q.verb.infinitive,
+          english: q.verb.english || '',
+          person: q.personLabel,
+          tense: q.tenseLabel
         }
-        state.drillSession.question = {
-          prompt: { label: q.label },
-          answer: q.answer,
-          meta: { infinitive: q.verb.infinitive, english: q.verb.english || '', person: q.personLabel, tense: q.tenseLabel }
-        };
-        state.drillSession.side.english = q.verb.english || '';
-        attachExamplesAndRules(q);
+      };
+      state.drillSession.side.english = q.verb.english || '';
+      attachExamplesAndRules(q);
 
-        state.drillSession.input = '';
-        state.drillSession.correct = null;
-      },
+      // reset input/flags
+      state.drillSession.input = '';
+      state.drillSession.correct = null;
+    });
+  },
+
 
       stopDrill(){
         state.drillSession.running = false;

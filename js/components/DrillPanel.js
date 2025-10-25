@@ -4,6 +4,11 @@ const DrillPanel = {
   props: ['state','methods'],
  setup(props){
   const inputRef = Vue.ref(null);
+  Vue.watch(() => props.state.drillSession.question, async () => {
+    await Vue.nextTick();
+    inputRef.value?.focus({ preventScroll: true });
+  });
+
   const scoreCls = Vue.computed(() => {
     const t = props.state.drillSession.total || 0;
     const r = props.state.drillSession.right || 0;
@@ -178,19 +183,24 @@ const DrillPanel = {
           Expected: <strong>{{ state.drillSession.question.answer }}</strong>
         </div>
 
-        <div class="rule-help"
-             v-if="(state.drillSession.correct === false) ||
-                    (state.drillSession.correct === true && !state.drillPrefs.autoNext)">
-          <h4 style="margin:8px 0 4px">Examples</h4>
-          <div><strong>FR:</strong> {{ state.drillSession.side.fr || '—' }}</div>
-          <div><strong>EN:</strong> {{ state.drillSession.side.en || '—' }}</div>
 
-          <h4 style="margin:8px 0 4px">How to form it</h4>
-          <ul style="margin:0; padding-left:18px">
-            <li v-for="(ln,i) in state.drillSession.help?.lines" :key="i" v-html="ln"></li>
-          </ul>
-        </div>
-      </div>
+        <!-- Help wrapper reserves previous height to stop page jump -->
+<div :style="{ minHeight: (helpMin || 0) + 'px' }">
+  <div class="rule-help"
+       ref="helpRef"
+       v-if="(state.drillSession.correct === false) ||
+              (state.drillSession.correct === true && !state.drillPrefs.autoNext)">
+    <h4 style="margin:8px 0 4px">Examples</h4>
+    <div><strong>FR:</strong> {{ state.drillSession.side.fr || '—' }}</div>
+    <div><strong>EN:</strong> {{ state.drillSession.side.en || '—' }}</div>
+
+    <h4 style="margin:8px 0 4px">How to form it</h4>
+    <ul style="margin:0; padding-left:18px">
+      <li v-for="(ln,i) in state.drillSession.help?.lines" :key="i" v-html="ln"></li>
+    </ul>
+  </div>
+</div>
+
     </div>
 
     <div v-else class="box empty">
