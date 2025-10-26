@@ -618,13 +618,15 @@ async function opfsRemove(path){
   await dir.removeEntry(name);
 }
 
+// ---- SAVE: audio + metadata (keeps Dexie PK id) ----
 async function persistRecording({ blob, name, mime, transcript, question, answer }) {
   const dir = 'recordings';
   const path = `${dir}/${name}`;
 
+  // Write audio file to OPFS (use your helper if available; else fallback)
   try {
     if (opfs?.writeFile) await opfs.writeFile(path, blob);
-    else await opfsWrite(path, blob);
+    else await opfsWrite(path, blob); // your earlier polyfill
   } catch (e) {
     console.warn('[OPFS] write fail, storing metadata only:', e);
   }
@@ -635,14 +637,17 @@ async function persistRecording({ blob, name, mime, transcript, question, answer
     path,
     mime: mime || 'audio/webm',
     createdAt: new Date().toISOString(),
-    transcript: transcript || '',
-    question: (question || '').trim(),   // <-- NEW
+    transcript: (transcript || '').trim(),
+    question: (question || '').trim(),   // NEW: snapshot question
     answer: (answer || '').trim()
   };
-  const id = await db.recordings.add(rec);
+
+  const id = await db.recordings.add(rec); // <-- Dexie PK
   return { id, ...rec };
 }
 
+
+// ---- LOAD: rehydrate all recordings (keep id) ----
 async function loadRecordingsFromDB(){
   const rows = await db.recordings.orderBy('createdAt').reverse().toArray();
   const hydrated = [];
@@ -650,7 +655,7 @@ async function loadRecordingsFromDB(){
     try {
       const blob = opfs?.readFile ? await opfs.readFile(r.path) : await opfsRead(r.path);
       const url = URL.createObjectURL(blob);
-      hydrated.push({ ...r, url });
+      hydrated.push({ ...r, url }); // <-- keep r.id
     } catch (e) {
       console.warn('[OPFS] read fail for', r.path, e);
       hydrated.push({ ...r, url: '' });
@@ -659,6 +664,7 @@ async function loadRecordingsFromDB(){
   state.recordings = hydrated;
 }
 
+/*
 async function reallyDeleteRecording(r){
   try { if (r?.url) URL.revokeObjectURL(r.url); } catch {}
   try {
@@ -677,7 +683,9 @@ async function reallyDeleteRecording(r){
   }
   state.recordings = state.recordings.filter(x => x.name !== r.name);
 }
+*/
 
+// ---- Scroll lock helpers ----
 function getScroll() { return { x: window.scrollX, y: window.scrollY }; }
 function restoreScroll(pos) { window.scrollTo(pos.x, pos.y); }
 async function withScrollLock(run) {
@@ -685,6 +693,34 @@ async function withScrollLock(run) {
   await run();               // run your existing logic
   await Vue.nextTick();      // wait for DOM to update
   restoreScroll(pos);        // put viewport back exactly
+}
+
+// ---- Find recording's PK id robustly (works even without indexes) ----
+async function findRecordingId(r){
+  if (r?.id != null) return r.id;
+
+  // Try fast paths (work if you indexed these)
+  try {
+    if (r?.path && db.recordings.where) {
+      const row = await db.recordings.where('path').equals(r.path).first();
+      if (row?.id != null) return row.id;
+    }
+  } catch {} // ignore if 'path' isn't indexed
+
+  try {
+    if (r?.name && db.recordings.where) {
+      const row = await db.recordings.where('name').equals(r.name).first();
+      if (row?.id != null) return row.id;
+    }
+  } catch {} // ignore if 'name' isn't indexed
+
+  // Guaranteed fallback: scan (works even with no indexes)
+  const rows = await db.recordings.toArray();
+  const hit = rows.find(x =>
+    (r?.path && x.path === r.path) ||
+    (r?.name && x.name === r.name)
+  );
+  return hit?.id ?? null;
 }
 
 
@@ -757,43 +793,46 @@ async startRecording(){
       try { mr.stop(); } catch {}
     };
 
-    mr.onstop = async () => {
-      try {
-        // ✅ Build blob ONLY here
-        const blob = new Blob(state.chunks, { type: mime || 'audio/webm' });
-        const ts = new Date();
-        const name = `rec-${ts.toISOString().replace(/[:.]/g, '-')}.webm`;
+  mr.onstop = async () => {
+  try {
+    const blob = new Blob(state.chunks, { type: mime || 'audio/webm' });
+    const ts = new Date();
+    const uuid = (crypto?.randomUUID?.() || Math.random().toString(36).slice(2));
+    const name = `rec-${ts.toISOString().replace(/[:.]/g, '-')}-${uuid}.webm`;
 
-        // snapshot final transcript + current QA
-        const transcript = state.speech?.final || '';
-        const question   = state.newQA?.q || '';
-        const answer     = state.newQA?.a || '';
+    // snapshot data
+    const transcript = state.speech?.final || '';
+    const question   = state.newQA?.q || '';
+    const answer     = state.newQA?.a || '';
 
-        // persist to OPFS + Dexie
-        const saved = await persistRecording({
-          blob,
-          name,
-          mime: mime || 'audio/webm',
-          transcript,
-          question,
-          answer
-        });
+    // persist to OPFS + Dexie  (returns { id, ... })
+    const saved = await persistRecording({
+      blob,
+      name,
+      mime: mime || 'audio/webm',
+      transcript,
+      question,
+      answer
+    });
 
-        // hydrate URL for immediate playback
-        const url = URL.createObjectURL(blob);
-        state.recordings.unshift({ ...saved, url });
+    // hydrate a URL for immediate playback; KEEP the id for deletion later
+    const url = URL.createObjectURL(blob);
+    state.recordings.unshift({ ...saved, url });
 
-      } catch (err) {
-        console.error('[Recorder] assemble/persist error', err);
-      } finally {
-        // cleanup
-        state.chunks = [];
-        state.isRecording = false;
-        try { stream.getTracks().forEach(t => t.stop()); } catch {}
-        state.mediaRecorder = null;
-        methods.stopTranscription?.();
-      }
-    };
+    // (optional) clear inputs
+    // state.newQA = { q: '', a: '' };
+
+  } catch (err) {
+    console.error('[Recorder] assemble/persist error', err);
+  } finally {
+    state.chunks = [];
+    state.isRecording = false;
+    try { stream.getTracks().forEach(t => t.stop()); } catch {}
+    state.mediaRecorder = null;
+    methods.stopTranscription?.();
+  }
+};
+
 
     mr.start();
   } catch (err) {
@@ -819,22 +858,42 @@ stopRecording(){
   }
 },
 
+deleteRecording: async (r) => {
+  if (!r) return;
 
-deleteRecording(r){
-  reallyDeleteRecording(r);
-},
+  // 1) Revoke current ObjectURL (memory)
+  try { if (r.url) URL.revokeObjectURL(r.url); } catch {}
 
-
-deleteRecording(r){
+  // 2) Remove the OPFS file (ignore errors; DB delete will still remove metadata)
   try {
-    if (!r) return;
-    // Revoke object URL to free memory
-    if (r.url) URL.revokeObjectURL(r.url);
-    state.recordings = state.recordings.filter(x => x.id !== r.id);
+    if (r.path) {
+      if (opfs?.removeFile) await opfs.removeFile(r.path);
+      else await opfsRemove(r.path);
+    }
   } catch (e) {
-    console.error('[Recorder] delete error', e);
+    console.warn('[OPFS] remove failed:', e);
   }
+
+  // 3) Resolve Dexie PK id robustly and delete
+  try {
+    const id = await findRecordingId(r);
+    if (id != null) {
+      await db.recordings.delete(id);
+    } else if (r.path || r.name) {
+      // ultimate fallback: filter-delete (rare)
+      const rows = await db.recordings.toArray();
+      const victim = rows.find(x => (r.path && x.path === r.path) || (r.name && x.name === r.name));
+      if (victim?.id != null) await db.recordings.delete(victim.id);
+    }
+  } catch (e) {
+    console.warn('[Dexie] delete failed:', e);
+  }
+
+  // 4) Refresh the UI from source of truth (DB)
+  await loadRecordingsFromDB();
 },
+
+
 
 saveQA(){
   const q = (state.newQA.q || '').trim();

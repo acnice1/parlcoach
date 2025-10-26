@@ -15,7 +15,12 @@ export default {
 
     <span class="sep" style="width:1px;height:20px;background:#ddd;"></span>
 
-    <select v-model="state.speech.lang" @change="methods.setSpeechLang(state.speech.lang)" title="Transcription language">
+
+    <select v-model="state.speech.lang" 
+        @change="methods.setSpeechLang(state.speech.lang)" 
+        title="Transcription language">
+        class="lang-select"
+    > 
       <option value="fr-FR">fr-FR</option>
       <option value="en-US">en-US</option>
       <option value="en-GB">en-GB</option>
@@ -88,11 +93,11 @@ export default {
     <div v-if="r.answer"><strong>A:</strong> <span>{{ r.answer }}</span></div>
   </div>
 
-  <div class="rec-actions" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap">
-    <a :href="r.url" :download="r.name">Download</a>
-    <!-- Ensure Delete button is present and visible -->
-    <button class="danger small" @click="methods.deleteRecording(r)">Delete</button>
-  </div>
+<div class="rec-actions" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap">
+  <a :href="r.url" :download="r.name">Download</a>
+  <button class="danger small" @click="methods.deleteRecording(r)">Delete</button>
+</div>
+
 </div>
 
   `

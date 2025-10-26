@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "category": "Leadership et prise de décision",
+    "prompt": "Parlez-moi d’une situation où vous avez dû défendre une décision impopulaire au travail.",
+    "followUps": [
+      "Quelles étaient les réactions de vos collègues?",
+      "Qu’avez-vous appris de cette expérience?",
+      "Si c’était à refaire, agiriez-vous différemment? Pourquoi?"
+    ],
+    "sampleAnswer": "Il y a quelques années, j’ai dû imposer une nouvelle méthode de suivi des projets qui exigeait plus de rigueur administrative. Plusieurs collègues étaient réticents, mais j’ai pris le temps d’expliquer les avantages à long terme. Finalement, le système a permis de réduire les erreurs et d’améliorer la transparence. Cela m’a appris qu’une décision impopulaire peut être acceptée si elle est accompagnée d’une communication claire et d’une écoute active.",
+    "tags": ["leadership", "communication", "decision-making", "management"]
+  },
+  {
+    "id": 2,
+    "category": "Planification stratégique et établissement des priorités",
+    "prompt": "Comment décidez-vous quelles priorités méritent votre attention lorsque tout semble urgent?",
+    "followUps": [
+      "Quels critères utilisez-vous pour établir vos priorités?",
+      "Comment gérez-vous la pression de vos supérieurs dans ce contexte?",
+      "Pensez-vous qu’une approche différente fonctionnerait mieux dans le secteur privé?"
+    ],
+    "sampleAnswer": "Je distingue ce qui est urgent de ce qui est important, en me basant sur l’impact et le risque pour l’organisation. Je consulte mes partenaires clés pour valider les priorités stratégiques. Par exemple, lors d’une crise technique, j’ai reporté certaines tâches pour stabiliser le système. Cette approche pragmatique permet de gérer la pression tout en maintenant une vision à long terme.",
+    "tags": ["prioritization", "strategy", "organization", "productivity"]
+  },
+  {
+    "id": 3,
+    "category": "Gestion et motivation d’équipe",
+    "prompt": "Que feriez-vous pour motiver une équipe démobilisée?",
+    "followUps": [
+      "Comment sauriez-vous qu’une équipe est démobilisée?",
+      "Quels outils ou stratégies utilisez-vous pour renforcer l’engagement?",
+      "Croyez-vous que le télétravail influence la motivation des employés?"
+    ],
+    "sampleAnswer": "Je commencerais par identifier les causes de la démobilisation — manque de reconnaissance, surcharge, ou flou des objectifs. J’impliquerais ensuite l’équipe dans la recherche de solutions et je valoriserais les réussites. Par exemple, des rencontres hebdomadaires de reconnaissance ont considérablement amélioré le moral. La motivation se construit dans un climat de respect et de confiance.",
+    "tags": ["motivation", "leadership", "teamwork", "engagement"]
+  },
+  {
+    "id": 4,
+    "category": "Gestion du changement organisationnel",
+    "prompt": "Décrivez les principales étapes d’un changement organisationnel réussi.",
+    "followUps": [
+      "Quels obstacles peuvent freiner le changement?",
+      "Comment communiquez-vous la vision du changement à votre équipe?",
+      "Les gestionnaires publics sont-ils formés adéquatement pour diriger le changement?"
+    ],
+    "sampleAnswer": "Un changement réussi repose sur la communication, la participation et le suivi. Il faut expliquer le pourquoi, impliquer les employés, et ajuster en fonction des résultats. Dans un projet de modernisation, j’ai créé un groupe pilote pour tester les nouveautés avant le déploiement. Le changement ne se fait pas contre les employés, mais avec eux.",
+    "tags": ["change-management", "communication", "collaboration", "innovation"]
+  },
+  {
+    "id": 5,
+    "category": "Confiance du public et transparence",
+    "prompt": "Comment peut-on renforcer la confiance du public envers les institutions gouvernementales?",
+    "followUps": [
+      "Quels exemples récents illustrent une perte de confiance du public?",
+      "Quel rôle joue la transparence dans la confiance citoyenne?",
+      "Comment les nouvelles technologies peuvent-elles contribuer ou nuire à cette confiance?"
+    ],
+    "sampleAnswer": "La confiance repose sur la transparence, la cohérence et la réactivité. Les citoyens doivent comprendre comment et pourquoi les décisions sont prises. Publier des données ouvertes et reconnaître les erreurs renforce la crédibilité. À l’inverse, l’opacité mine la confiance. Pendant la pandémie, la communication claire de certaines données a renforcé la légitimité des institutions.",
+    "tags": ["trust", "transparency", "communication", "ethics", "public-service"]
+  },
+  {
+    "id": 6,
+    "category": "Évaluation des politiques et des programmes",
+    "prompt": "Comment évalueriez-vous l’efficacité d’un nouveau programme gouvernemental?",
+    "followUps": [
+      "Quels indicateurs ou données utiliseriez-vous?",
+      "Pourquoi est-il parfois difficile d’évaluer un programme?",
+      "Les évaluations devraient-elles être menées à l’interne ou par des experts externes?"
+    ],
+    "sampleAnswer": "J’utiliserais une approche fondée sur les résultats, avec des indicateurs quantitatifs et qualitatifs. Il faut définir les objectifs dès le départ et recueillir la rétroaction des bénéficiaires. Lors d’un projet pilote, nous avons ajusté les critères après avoir observé un écart entre la théorie et la pratique. L’évaluation doit servir à améliorer, pas à justifier.",
+    "tags": ["evaluation", "policy", "measurement", "results-based-management"]
+  },
+  {
+    "id": 7,
+    "category": "Éthique et valeurs professionnelles",
+    "prompt": "Comment gérez-vous les situations où vos valeurs personnelles entrent en conflit avec les exigences de votre poste?",
+    "followUps": [
+      "Pouvez-vous donner un exemple concret?",
+      "Comment trouvez-vous un équilibre entre loyauté institutionnelle et intégrité personnelle?",
+      "Pensez-vous que la fonction publique protège suffisamment les employés dans ce type de dilemme?"
+    ],
+    "sampleAnswer": "Je cherche à concilier mes valeurs et mes obligations professionnelles en privilégiant le dialogue. Si je suis en désaccord, j’exprime mon point de vue de façon factuelle et respectueuse. J’ai déjà soulevé des préoccupations éthiques dans un projet de collecte de données; après discussion, une solution respectueuse de la vie privée a été adoptée. La loyauté ne doit jamais signifier la complaisance.",
+    "tags": ["ethics", "integrity", "values", "public-service", "decision-making"]
+  },
+  {
+    "id": 8,
+    "category": "Innovation et technologies",
+    "prompt": "Comment le gouvernement devrait-il s’adapter aux progrès rapides de l’intelligence artificielle?",
+    "followUps": [
+      "Quels sont les principaux risques associés à l’IA dans le secteur public?",
+      "Comment l’IA pourrait-elle améliorer les services aux citoyens?",
+      "Croyez-vous que la réglementation peut suivre le rythme de l’innovation?"
+    ],
+    "sampleAnswer": "L’intelligence artificielle offre de grandes possibilités, mais pose aussi des défis éthiques et réglementaires. Le gouvernement doit équilibrer innovation et protection des droits. Il faut établir des cadres transparents pour l’utilisation des algorithmes et former les employés afin d’assurer une adoption responsable. L’innovation ne doit pas se faire au détriment de la confiance publique.",
+    "tags": ["AI", "innovation", "technology", "ethics", "digital-government"]
+  },
+  {
+    "id": 9,
+    "category": "Environnement et développement durable",
+    "prompt": "Quels défis le Canada doit-il relever pour atteindre ses objectifs environnementaux?",
+    "followUps": [
+      "Quels secteurs sont les plus touchés par ces défis?",
+      "Quelles politiques vous semblent les plus efficaces pour réduire les émissions?",
+      "Les citoyens sont-ils prêts à changer leurs habitudes pour atteindre ces objectifs?"
+    ],
+    "sampleAnswer": "Le principal défi est d’équilibrer croissance économique et transition écologique. Certaines industries dépendent encore des énergies fossiles. Cependant, les investissements verts, les innovations technologiques et les politiques d’achat durable sont des leviers prometteurs. Le succès dépendra aussi de la volonté citoyenne et de la coopération entre les gouvernements.",
+    "tags": ["environment", "climate-change", "sustainability", "policy"]
+  },
+  {
+    "id": 10,
+    "category": "Diversité et inclusion",
+    "prompt": "Que pensez-vous du rôle du gouvernement dans la promotion de la diversité et de l’inclusion au travail?",
+    "followUps": [
+      "Quelles mesures existent déjà dans votre organisation?",
+      "Quels obstacles demeurent selon vous?",
+      "Pensez-vous que les quotas sont une bonne solution?"
+    ],
+    "sampleAnswer": "Le gouvernement doit être un modèle d’équité et d’inclusion. La diversité ne se limite pas à la représentation, mais implique un environnement où chacun se sent respecté. Dans mon équipe, nous avons instauré des discussions sur les biais inconscients, ce qui a amélioré la cohésion. Il reste des défis, mais la diversité demeure une richesse à valoriser.",
+    "tags": ["diversity", "inclusion", "equity", "leadership", "culture"]
+  }
+]
