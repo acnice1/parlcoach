@@ -22,8 +22,8 @@ const VocabPanel = {
     <button @click="methods.nextVocabCard()" :disabled="!state.vocab.deck.length">Next</button>
 
     <div class="vocab-card" v-if="methods.currentVocabCard()">
-      <div class="fr">{{ methods.currentVocabCard().fr }}</div>
-      <div class="en" v-if="state.showEnglishTranslation">{{ methods.currentVocabCard().en }}</div>
+    <div class="fr">{{ methods.renderFr ? methods.renderFr(methods.currentVocabCard()) : (methods.currentVocabCard().fr) }}</div>
+    <div class="en" v-if="state.showEnglishTranslation">{{ methods.currentVocabCard().en }}</div>
     </div>
     <span v-if="state.vocab.deck.length">{{ state.vocab.deckPtr + 1 }} / {{ state.vocab.deck.length }}</span>
 

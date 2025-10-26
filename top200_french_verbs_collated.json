@@ -12840,7 +12840,8 @@
       "tags": [
         "etre-auxiliary",
         "state-change",
-        "vandertramp"
+        "vandertramp",
+        "irregular"
       ],
       "auxiliary": "être"
     },
@@ -16311,8 +16312,9 @@
       },
       "group": 2,
       "tags": [
-        "regular-ir",
-        "transfer"
+        "irregular",
+        "transfer",
+        "communication"
       ]
     },
     {
@@ -16746,7 +16748,8 @@
       },
       "group": 2,
       "tags": [
-        "regular-ir"
+        "irregular",
+        "perception"
       ]
     },
     {
@@ -16854,7 +16857,8 @@
       },
       "group": 2,
       "tags": [
-        "regular-ir"
+        "irregular",
+        "-oir"
       ]
     },
     {
@@ -16963,7 +16967,8 @@
       "group": 2,
       "tags": [
         "possession",
-        "regular-ir"
+        "irregular",
+        "-oir"
       ]
     },
     {
@@ -20434,7 +20439,8 @@
       },
       "group": 3,
       "tags": [
-        "emotion"
+        "emotion",
+        "irregular"
       ]
     },
     {

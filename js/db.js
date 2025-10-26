@@ -11,7 +11,10 @@ export const TAG_PILL_OPTIONS = [
   'irregular',
   'very-common',
   'state-of-being',
-  'vandertramp'
+  'vandertramp',
+  'regular-er',
+  'regular-ir',
+  'regular-re'
 ];
 export const USE_TOP200_ONLY = true;
 

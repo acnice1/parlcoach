@@ -1,281 +1,325 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ParlCoach</title>
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="icons/icon-192.png" sizes="192x192">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <meta name="theme-color" content="#0f172a">
-  <link rel="stylesheet" href="styles.css?v=2025-10-24-1">
-</head>
-<body>
-  <div id="app">
-    <header class="app-header">
-      <h1>ParlCoach</h1>
-      <small class="tag">ParlFR</small>
-    </header>
-<profile-widget :state="state" :methods="methods"></profile-widget>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ParlCoach</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/icon-192.png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <meta name="theme-color" content="#0f172a" />
+    <link rel="stylesheet" href="styles.css?v=2025-10-24-1" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="app-header">
+        <h1>ParlCoach</h1>
+        <small class="tag">ParlFR</small>
+      </header>
 
-    <!-- Main Tabs -->
-    <nav class="tabs">
-      <button :class="{active: tab==='learn'}" @click="tab='learn'">Learn</button>
-      <button :class="{active: tab==='record'}" @click="tab='record'">Record</button>
-      <button :class="{active: tab==='plan'}" @click="tab='plan'">Plan</button>
-      <button :class="{active: tab==='settings'}" @click="tab='settings'">Settings</button>
-    </nav>
+      <profile-widget :state="state" :methods="methods"></profile-widget>
 
-    <main class="view">
-      <!-- LEARN -->
-      <section v-if="tab==='learn'" class="panel">
-        <!-- Learn sub-tabs -->
-        <nav class="subtabs">
-          <button :class="{active: learnTab==='drills'}" @click="learnTab='drills'">Drills</button>
-          <button :class="{active: learnTab==='vocab'}" @click="learnTab='vocab'">Vocab</button>
-          <button :class="{active: learnTab==='myverbs'}" @click="learnTab='myverbs'">My Verbs</button>
-          <button :class="{active: learnTab==='seedverbs'}" @click="learnTab='seedverbs'">Seed (Top 200)</button>
-        </nav>
+      <!-- Main Tabs -->
+      <nav class="tabs">
+        <button :class="{active: tab==='learn'}" @click="tab='learn'">Learn</button>
+        <button :class="{active: tab==='record'}" @click="tab='record'">Record</button>
+        <button :class="{active: tab==='plan'}" @click="tab='plan'">Plan</button>
+        <!-- <button :class="{active: tab==='settings'}" @click="tab='settings'">Settings</button> -->
+        <button :class="{active: tab==='data'}" @click="tab='data'">Data</button>
+      </nav>
 
-        <!-- ==================== DRILLS ==================== -->
-        <div v-if="learnTab==='drills'">
-          <details class="box" open>
-            <summary><h3 style="display:inline">Drill Settings</h3></summary>
+      <main class="view">
+        <!-- ==================== LEARN ==================== -->
+        <section v-if="tab==='learn'" class="panel">
+          <!-- Learn sub-tabs -->
+          <nav class="subtabs">
+            <button :class="{active: learnTab==='drills'}" @click="learnTab='drills'">Drills</button>
+            <button :class="{active: learnTab==='vocab'}"  @click="learnTab='vocab'">Vocab</button>
+            <button :class="{active: learnTab==='myverbs'}" @click="learnTab='myverbs'">My Verbs</button>
+            <button :class="{active: learnTab==='seedverbs'}" @click="learnTab='seedverbs'">Seed (Top 200)</button>
+          </nav>
 
-            <div class="drill-grid" style="margin-top:8px">
-              <!-- Persons -->
-              <label>Pronoms
-                <select multiple v-model="drillPrefs.persons">
-                  <option :value="0">je</option>
-                  <option :value="1">tu</option>
-                  <option :value="2">il/elle</option>
-                  <option :value="3">nous</option>
-                  <option :value="4">vous</option>
-                  <option :value="5">ils/elles</option>
-                </select>
-              </label>
+          <!-- ==================== DRILLS ==================== -->
+          <div v-if="learnTab==='drills'">
+            <details class="box" open>
+              <summary><h3 style="display:inline">Drill Settings</h3></summary>
 
-              <!-- Tenses -->
-              <label>Tenses
-                <select multiple v-model="drillPrefs.tenses">
-                  <option value="present">présent</option>
-                  <option value="passeCompose">passé composé</option>
-                  <option value="imparfait">imparfait</option>
-                  <option value="plusQueParfait">plus-que-parfait</option>
-                  <option value="futur">futur simple</option>
-                  <option value="conditionnelPresent">conditionnel présent</option>
-                  <option value="subjonctifPresent">subjonctif présent</option>
-                  <option value="imperatif">impératif</option>
-                </select>
-              </label>
-
-              <!-- Regularity
-              <label>Regularity
-                <select v-model="drillPrefs.regularity" title="Regular vs Irregular">
-                  <option value="any">Any</option>
-                  <option value="regular">Regular only</option>
-                  <option value="irregular">Irregular only</option>
-                </select>
-              </label>  -->
-
-              <!-- Switches -->
-              <div class="switch-row" style="grid-column:1/-1; display:flex; gap:12px; flex-wrap:wrap">
-                <label class="switch">
-                  <input type="checkbox" v-model="drillPrefs.autoNext" aria-label="Auto-advance on correct" />
-                  <span class="slider" aria-hidden="true"></span>
-                  <span class="label-text">Auto-advance on correct</span>
+              <div class="drill-grid" style="margin-top:8px">
+                <!-- Persons -->
+                <label>Pronoms
+                  <select multiple v-model="drillPrefs.persons">
+                    <option :value="0">je</option>
+                    <option :value="1">tu</option>
+                    <option :value="2">il/elle</option>
+                    <option :value="3">nous</option>
+                    <option :value="4">vous</option>
+                    <option :value="5">ils/elles</option>
+                  </select>
                 </label>
 
-                <label class="switch">
-                  <input type="checkbox" v-model="showEnglishTranslation" aria-label="Show Verb Translation in English" />
-                  <span class="slider" aria-hidden="true"></span>
-                  <span class="label-text">Show Verb Translation in English</span>
+                <!-- Tenses -->
+                <label>Tenses
+                  <select multiple v-model="drillPrefs.tenses">
+                    <option value="present">présent</option>
+                    <option value="passeCompose">passé composé</option>
+                    <option value="imparfait">imparfait</option>
+                    <option value="plusQueParfait">plus-que-parfait</option>
+                    <option value="futur">futur simple</option>
+                    <option value="conditionnelPresent">conditionnel présent</option>
+                    <option value="subjonctifPresent">subjonctif présent</option>
+                    <option value="imperatif">impératif</option>
+                  </select>
                 </label>
+
+                <!-- Switches -->
+                <div class="switch-row" style="grid-column:1/-1;display:flex;gap:12px;flex-wrap:wrap">
+                  <label class="switch">
+                    <input type="checkbox" v-model="drillPrefs.autoNext" aria-label="Auto-advance on correct" />
+                    <span class="slider" aria-hidden="true"></span>
+                    <span class="label-text">Auto-advance on correct</span>
+                  </label>
+
+                  <label class="switch">
+                    <input type="checkbox" v-model="showEnglishTranslation" aria-label="Show Verb Translation in English" />
+                    <span class="slider" aria-hidden="true"></span>
+                    <span class="label-text">Show Verb Translation in English</span>
+                  </label>
+                </div>
+
+                <!-- Include Tag Pills -->
+                <div class="tag-pills">
+                  <span
+                    v-for="tag in tagPills"
+                    :key="'inc-'+tag"
+                    class="tag-pill"
+                    :class="{ active: drillPrefs.includeOnlyTags?.includes(tag) }"
+                    @click="toggleIncludeTag(tag)"
+                    title="Include this tag in drills"
+                  >{{ tag }}</span>
+                </div>
+
+                <!-- Text tag filters + Start -->
+                <div class="row" style="grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap">
+                  <input
+                    class="fixed-input"
+                    v-model="drillPrefs.includeOnlyTags"
+                    @change="saveDrillPrefs"
+                    placeholder="Include-only tags (comma-sep)"
+                    @blur="drillPrefs.includeOnlyTags = (''+drillPrefs.includeOnlyTags).split(',').map(s=>s.trim()).filter(Boolean)"
+                  />
+                  <input
+                    class="fixed-input"
+                    v-model="drillPrefs.excludeTags"
+                    @change="saveDrillPrefs"
+                    placeholder="Exclude tags (comma-sep)"
+                    @blur="drillPrefs.excludeTags = (''+drillPrefs.excludeTags).split(',').map(s=>s.trim()).filter(Boolean)"
+                  />
+                  <button class="start-drills-btn" @click="startDrill()">▶ Start Drills</button>
+                  <span class="dim" v-if="verbs.length===0">Add verbs first (My Verbs or Seed).</span>
+                </div>
               </div>
+            </details>
 
+            <!-- Active Drill Card -->
+            <div v-if="drillSession.running && drillSession.question" class="box card drill-card">
+              <div :class="['score-display', scoreClass]">🧠 Score: {{ drillSession.right }} / {{ drillSession.total }}</div>
 
-              <!-- Tag Pills -->
-             <!-- Include Tag Pills -->
-      <div class="tag-pills">
-        <span
-          v-for="tag in tagPills"
-          :key="'inc-'+tag"
-          class="tag-pill"
-          :class="{ active: drillPrefs.includeOnlyTags?.includes(tag) }"
-          @click="toggleIncludeTag(tag)"
-          title="Include this tag in drills"
-        >
-          {{ tag }}
-        </span>
-      </div>
+              <div class="prompt" v-if="drillSession.side">
+                <div class="drill-side">
+                  <div v-if="showEnglishTranslation"><strong>EN:</strong> {{ drillSession.side.english || '—' }}</div>
+                </div>
 
-      <!-- Exclude Tag Pills 
-      <div class="tag-pills" style="margin-top:4px;">
-        <span
-          v-for="tag in tagPills"
-          :key="'exc-'+tag"
-          class="tag-pill"
-          :class="{ active: drillPrefs.excludeTags?.includes(tag) }"
-          @click="toggleExcludeTag(tag)"
-          title="Exclude this tag from drills"
-        >
-          – {{ tag }}
-        </span>
-      </div> -->
+                <div class="label">{{ drillSession.question.prompt.label }}</div>
 
+                <input
+                  ref="drillInputEl"
+                  v-model="drillSession.input"
+                  @keyup.enter.prevent.stop="checkDrill"
+                  placeholder="Type it exactly (e.g., j’ai parlé ou parlé)"
+                  class="drill-input"
+                  autocomplete="off"
+                  autocapitalize="off"
+                  spellcheck="false"
+                />
 
+                <div class="accent-buttons">
+                  <button
+                    v-for="char in ['à','â','ç','é','è','ê','ë','î','ï','ô','ù','û','ü','œ']"
+                    :key="char"
+                    type="button"
+                    class="accent-btn"
+                    @click="drillSession.input += char"
+                  >{{ char }}</button>
+                </div>
 
-              <!-- Tag filters -->
-              <div class="row" style="grid-column:1/-1; display:flex; gap:8px; flex-wrap:wrap">
-                <input class="fixed-input" v-model="drillPrefs.includeOnlyTags"
-                       @change="saveDrillPrefs"
-                       placeholder="Include-only tags (comma-sep)"
-                       @blur="drillPrefs.includeOnlyTags = (''+drillPrefs.includeOnlyTags).split(',').map(s=>s.trim()).filter(Boolean)" />
-                <input class="fixed-input" v-model="drillPrefs.excludeTags"
-                       @change="saveDrillPrefs"
-                       placeholder="Exclude tags (comma-sep)"
-                       @blur="drillPrefs.excludeTags = (''+drillPrefs.excludeTags).split(',').map(s=>s.trim()).filter(Boolean)" />
-                <button class="start-drills-btn" @click="startDrill()">▶ Start Drills</button>
-                <span class="dim" v-if="verbs.length===0">Add verbs first (My Verbs or Seed).</span>
+                <div class="controls">
+                  <button @click="checkDrill" title="Enter">Check</button>
+                  <button @click="nextDrill"  title="N">Next</button>
+                  <button @click="stopDrill"  title="Esc">Stop</button>
+                </div>
+
+                <div v-if="drillSession.correct === true" class="feedback correct">
+                  ✅ Correct<span v-if="drillPrefs.autoNext">! Next question loading...</span>
+                </div>
+
+                <div v-else-if="drillSession.correct === false" class="feedback wrong">
+                  Expected: <strong>{{ drillSession.question.answer }}</strong>
+                </div>
+
+                <div class="rule-help" v-if="(drillSession.correct === false) || (drillSession.correct === true && !drillPrefs.autoNext)">
+                  <h4 style="margin:8px 0 4px">Examples</h4>
+                  <div><strong>FR:</strong> {{ drillSession.side.fr || '—' }}</div>
+                  <div><strong>EN:</strong> {{ drillSession.side.en || '—' }}</div>
+
+                  <h4 style="margin:8px 0 4px">How to form it</h4>
+                  <ul style="margin:0; padding-left:18px">
+                    <li v-for="(ln,i) in drillSession.help?.lines" :key="i" v-html="ln"></li>
+                  </ul>
+                </div>
               </div>
             </div>
-          </details>
 
-          <!-- Active Drill Card -->
-          <div v-if="drillSession.running && drillSession.question" class="box card drill-card">
-            <div :class="['score-display', scoreClass]">
-              🧠 Score: {{ drillSession.right }} / {{ drillSession.total }}
+            <!-- Empty State -->
+            <div v-else class="box empty">
+              <p>Choose persons/tenses and click <strong>Start Drill</strong>.</p>
+            </div>
+          </div>
+
+          <!-- ==================== VOCAB ==================== -->
+          <div v-else-if="learnTab==='vocab'">
+            <!-- Show/Hide tags toggle -->
+            <div class="row" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:10px;">
+              <label class="switch">
+                <input type="checkbox" v-model="ui.showVocabTags" aria-label="Show tags on cards" />
+                <span class="slider" aria-hidden="true"></span>
+                <span class="label-text">Show tags on cards</span>
+              </label>
             </div>
 
-           <!-- <div v-if="showEnglishTranslation"><strong>EN:</strong> {{ drillSession.side.english || '—' }}</div> -->
+            <!-- Topic pills -->
+            <div class="tag-pills">
+              <strong class="dim" style="margin-right:6px;">Topic:</strong>
+              <span
+                v-for="t in state.vocabPills.topic"
+                :key="'vtopic-'+t"
+                class="tag-pill"
+                :class="{ active: state.vocabFilters.topic.includes(t) }"
+                @click="toggleVocabPill('topic', t)"
+                title="Filter by topic"
+              >{{ t }}</span>
+              <span class="tag-pill muted" @click="clearVocabPills('topic')">Clear</span>
+            </div>
 
-            <div class="prompt" v-if="drillSession.side">
+            <!-- Tags pills -->
+            <div class="tag-pills" style="margin-top:6px;">
+              <strong class="dim" style="margin-right:6px;">Tags:</strong>
+              <span
+                v-for="tg in state.vocabPills.tags"
+                :key="'vtags-'+tg"
+                class="tag-pill"
+                :class="{ active: state.vocabFilters.tags.includes(tg) }"
+                @click="toggleVocabPill('tags', tg)"
+                title="Filter by tag"
+              >{{ tg }}</span>
+              <span class="tag-pill muted" @click="clearVocabPills('tags')">Clear</span>
+            </div>
 
-              <div class="drill-side">
-                
-                <div v-if="showEnglishTranslation"><strong>EN:</strong> {{ drillSession.side.english || '—' }}</div>
+            <!-- Part of Speech pills -->
+            <div class="tag-pills" style="margin-top:6px;">
+              <strong class="dim" style="margin-right:6px;">Part of Speech:</strong>
+              <span
+                v-for="p in state.vocabPills.pos"
+                :key="'vpos-'+p"
+                class="tag-pill"
+                :class="{ active: state.vocabFilters.pos.includes(p) }"
+                @click="toggleVocabPill('pos', p)"
+                title="Filter by part of speech"
+              >{{ p }}</span>
+              <span class="tag-pill muted" @click="clearVocabPills('pos')">Clear</span>
+
+              <!-- Clear all at far right -->
+              <span class="tag-pill" style="margin-left:auto;" @click="clearAllVocabPills()">Clear all</span>
+            </div>
+
+            <!-- Quick add row -->
+            <div class="add-row">
+              <input v-model="newVocabFront" placeholder="Front (e.g., deviner)" />
+              <input v-model="newVocabBack"  placeholder="Back (e.g., to guess)" />
+              <button @click="addCard">Add</button>
+            </div>
+
+            <div class="button-group">
+              <button @click="reshuffleVocabDeck()" :disabled="!vocab.deck.length">Reshuffle</button>
+              <button @click="nextVocabCard()"      :disabled="!vocab.deck.length">Next</button>
+            </div>
+
+            <div class="vocab-card" v-if="currentVocabCard()">
+              <div class="fr">{{ renderFr(currentVocabCard()) }}</div>
+              <div class="en" v-if="showEnglishTranslation">{{ currentVocabCard().en }}</div>
+            </div>
+            <span v-if="vocab.deck.length">{{ vocab.deckPtr + 1 }} / {{ vocab.deck.length }}</span>
+
+            <div v-if="dueCards.length" class="card">
+              <div class="front">{{ currentCard.front }}</div>
+              <div class="back" v-if="showBack">{{ currentCard.back }}</div>
+              <div class="card-actions">
+                <button v-if="!showBack" @click="showBack=true">Show</button>
+                <template v-else>
+                  <button @click="rate(0)">Again</button>
+                  <button @click="rate(3)">Hard</button>
+                  <button @click="rate(4)">Good</button>
+                  <button @click="rate(5)">Easy</button>
+                </template>
+                <span v-if="ui.showVocabTags && currentCard?.tags?.length" class="answer">
+                  tags: {{ currentCard.tags.join(', ') }}
+                </span>
+              </div>
+              <div class="meta">
+                Due: {{ dueCards.length }} • Total: {{ counts.total }} • Learned: {{ counts.learned }}
+              </div>
+            </div>
+
+            <p v-else class="empty">
+              No cards due. 🎉 Add more above or go to the <strong>Data</strong> page to import.
+            </p>
+          </div>
+
+          <!-- ==================== MY VERBS ==================== -->
+          <div v-else-if="learnTab==='myverbs'">
+            <div class="verbs-grid">
+              <div class="box">
+                <h3>Add Verbs</h3>
+                <div class="row">
+                  <input v-model="newVerb.infinitive" placeholder="infinitive (e.g., parler)" />
+                  <input v-model="newVerb.english"    placeholder="english (e.g., to speak)" />
+                </div>
+                <div class="row">
+                  <input v-model="newVerb.tags" placeholder="tags (comma-separated)" />
+                </div>
+                <button @click="addVerb">Add Verb</button>
               </div>
 
-              <div class="label">{{ drillSession.question.prompt.label }}</div>
-
-              <input ref="drillInputEl"
-                     v-model="drillSession.input"
-                     @keyup.enter.prevent.stop="checkDrill"
-                     placeholder="Type it exactly (e.g., j’ai parlé ou parlé)"
-                     class="drill-input"
-                     autocomplete="off"
-                     autocapitalize="off"
-                     spellcheck="false" />
-
-              <div class="accent-buttons">
-                <button v-for="char in ['à','â','ç','é','è','ê','ë','î','ï','ô','ù','û','ü','œ']"
-                        :key="char"
-                        type="button"
-                        class="accent-btn"
-                        @click="drillSession.input += char">
-                  {{ char }}
-                </button>
-              </div>
-
-              <div class="controls">
-                <button @click="checkDrill" title="Enter">Check</button>
-                <button @click="nextDrill" title="N">Next</button>
-                <button @click="stopDrill" title="Esc">Stop</button>
-              </div>
-
-              <div v-if="drillSession.correct === true" class="feedback correct">
-                ✅ Correct<span v-if="drillPrefs.autoNext">! Next question loading...</span>
-              </div>
-
-              <div v-else-if="drillSession.correct === false" class="feedback wrong">
-                Expected: <strong>{{ drillSession.question.answer }}</strong>
-              </div>
-
-              <div class="rule-help"
-                   v-if="(drillSession.correct === false) ||
-                          (drillSession.correct === true && !drillPrefs.autoNext)">
-                <h4 style="margin:8px 0 4px">Examples</h4>
-                <div><strong>FR:</strong> {{ drillSession.side.fr || '—' }}</div>
-                <div><strong>EN:</strong> {{ drillSession.side.en || '—' }}</div>
-
-                <h4 style="margin:8px 0 4px">How to form it</h4>
-                <ul style="margin:0; padding-left:18px">
-                  <li v-for="(ln,i) in drillSession.help?.lines" :key="i" v-html="ln"></li>
-                </ul>
+              <div class="box">
+                <h3>My Verbs ({{ myVerbs.length }})</h3>
+                <div class="list-row" v-for="v in myVerbs" :key="v.id">
+                  <span class="front">{{ v.infinitive }}</span>
+                  <span class="sep">→</span>
+                  <span class="back">{{ v.english || '—' }}</span>
+                  <span class="dim">{{ (v.tags && v.tags.length) ? v.tags.join(', ') : '—' }}</span>
+                  <button class="small" @click="openJsonEditor(v, false)">JSON</button>
+                  <button class="small" @click="deleteVerb(v)">Delete</button>
+                </div>
+                <p v-if="myVerbs.length===0" class="dim">No custom verbs yet. Add some above.</p>
               </div>
             </div>
           </div>
 
-          <!-- Empty State -->
-          <div v-else class="box empty">
-            <p>Choose persons/tenses and click <strong>Start Drill</strong>.</p>
-          </div>
-        </div>
-
-        <!-- ==================== VOCAB ==================== -->
-        <div v-else-if="learnTab==='vocab'">
-          <div class="actions" style="flex-wrap:wrap">
-            <button @click="importNotesAndSeedCards({ frToEn:true, enToFr:true })">
-              Import general_vocab → Notes + FR↔EN Cards
-            </button>
-            <input class="fixed-input" v-model="vocabTagFilter" @input="reloadVocabByTag" placeholder="Filter cards by tag" />
-            <input class="fixed-input" v-model="notesTagFilter" @input="loadNotesByTag" placeholder="Filter notes by tag" />
-          </div>
-
-          <div class="add-row">
-            <input v-model="newVocabFront" placeholder="Front (e.g., deviner)" />
-            <input v-model="newVocabBack" placeholder="Back (e.g., to guess)" />
-            <button @click="addCard">Add</button>
-          </div>
-
-          <button @click="reshuffleVocabDeck()" :disabled="!vocab.deck.length">Reshuffle</button>
-<button @click="nextVocabCard()" :disabled="!vocab.deck.length">Next</button>
-
-<div class="vocab-card" v-if="currentVocabCard()">
-  <div class="fr">{{ currentVocabCard().fr }}</div>
-  <div class="en" v-if="showEnglishTranslation">{{ currentVocabCard().en }}</div>
-</div>
-<span v-if="vocab.deck.length">{{ vocab.deckPtr + 1 }} / {{ vocab.deck.length }}</span>
-
-
-          <div v-if="dueCards.length" class="card">
-            <div class="front">{{ currentCard.front }}</div>
-            <div class="back" v-if="showBack">{{ currentCard.back }}</div>
-            <div class="card-actions">
-              <button v-if="!showBack" @click="showBack=true">Show</button>
-              <template v-else>
-                <button @click="rate(0)">Again</button>
-                <button @click="rate(3)">Hard</button>
-                <button @click="rate(4)">Good</button>
-                <button @click="rate(5)">Easy</button>
-              </template>
-              <span v-if="currentCard?.tags?.length" class="answer">tags: {{ currentCard.tags.join(', ') }}</span>
-            </div>
-            <div class="meta">
-              Due: {{ dueCards.length }} • Total: {{ counts.total }} • Learned: {{ counts.learned }}
-            </div>
-          </div>
-          <p v-else class="empty">No cards due. 🎉 Add more above or import from <code>general_vocab.json</code>.</p>
-        </div>
-
-        <!-- ==================== MY VERBS ==================== -->
-        <div v-else-if="learnTab==='myverbs'">
-          <div class="verbs-grid">
+          <!-- ==================== SEED VERBS ==================== -->
+          <div v-else-if="learnTab==='seedverbs'">
             <div class="box">
-              <h3>Add Verbs</h3>
-              <div class="row">
-                <input v-model="newVerb.infinitive" placeholder="infinitive (e.g., parler)">
-                <input v-model="newVerb.english" placeholder="english (e.g., to speak)">
-              </div>
-              <div class="row">
-                <input v-model="newVerb.tags" placeholder="tags (comma-separated)">
-              </div>
-              <button @click="addVerb">Add Verb</button>
-            </div>
-
-            <div class="box">
-              <h3>My Verbs ({{ myVerbs.length }})</h3>
-              <div class="list-row" v-for="v in myVerbs" :key="v.id">
+              <h3>Top 200 (Seed) — {{ seedVerbs.length }}</h3>
+              <p class="dim">Preloaded verbs with full conjugations.</p>
+              <div class="list-row" v-for="v in seedVerbs" :key="v.id">
                 <span class="front">{{ v.infinitive }}</span>
                 <span class="sep">→</span>
                 <span class="back">{{ v.english || '—' }}</span>
@@ -283,171 +327,171 @@
                 <button class="small" @click="openJsonEditor(v, false)">JSON</button>
                 <button class="small" @click="deleteVerb(v)">Delete</button>
               </div>
-              <p v-if="myVerbs.length===0" class="dim">No custom verbs yet. Add some above.</p>
+              <p v-if="seedVerbs.length===0" class="dim">No seed verbs present.</p>
             </div>
           </div>
-        </div>
+        </section>
 
-        <!-- ==================== SEED VERBS ==================== -->
-        <div v-else-if="learnTab==='seedverbs'">
-          <div class="box">
-            <h3>Top 200 (Seed) — {{ seedVerbs.length }}</h3>
-            <p class="dim">Preloaded verbs with full conjugations.</p>
-            <div class="list-row" v-for="v in seedVerbs" :key="v.id">
-              <span class="front">{{ v.infinitive }}</span>
-              <span class="sep">→</span>
-              <span class="back">{{ v.english || '—' }}</span>
-              <span class="dim">{{ (v.tags && v.tags.length) ? v.tags.join(', ') : '—' }}</span>
-              <button class="small" @click="openJsonEditor(v, false)">JSON</button>
-              <button class="small" @click="deleteVerb(v)">Delete</button>
+        <!-- ==================== RECORD ==================== -->
+        <section v-if="tab==='record'" class="panel">
+          <recorder-panel :state="state" :methods="methods"></recorder-panel>
+        </section>
+
+        <!-- ==================== DATA (top-level) ==================== -->
+        <section v-if="tab==='data'" class="panel">
+          <h2 style="margin-bottom:10px">Data loaders & tools</h2>
+
+          <div class="box" style="padding:12px">
+            <h3>Vocabulary import</h3>
+            <div class="actions" style="flex-wrap:wrap; margin-top:6px">
+              <button @click="importNotesAndSeedCards({ frToEn:true, enToFr:true })">
+                Import general_vocab → Notes + FR↔EN Cards
+              </button>
+              <input class="fixed-input" v-model="notesTagFilter" @input="loadNotesByTag" placeholder="Filter notes by tag" />
             </div>
-            <p v-if="seedVerbs.length===0" class="dim">No seed verbs present.</p>
+            <p class="dim" style="margin-top:8px">All imports and utilities have been moved here to save space in Learn pages.</p>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <!-- RECORD -->
-<section v-if="state.tab==='record'" class="panel">
-  <recorder-panel :state="state" :methods="methods"></recorder-panel>
-</section>
+        <!-- ==================== PLAN ==================== -->
+        <section v-if="tab==='plan'" class="panel">
+          <header class="panel-head"><h2>French Learning Plan</h2></header>
 
-      <!-- PLAN -->
-      <section v-if="tab==='plan'" class="panel">
-        <header class="panel-head">
-          <h2>French Learning Plan</h2>
-        </header>
-        <div class="plan-grid">
-          <label>Level Goal
-            <select v-model="plan.goal" @change="savePlan">
-              <option>Government B</option>
-              <option>Government C</option>
-              <option>DELF B1</option>
-              <option>DELF B2</option>
-              <option>Custom</option>
-            </select>
-          </label>
-          <label>Daily Minutes
-            <input type="number" min="10" step="5" v-model.number="plan.dailyMinutes" @change="savePlan">
-          </label>
-          <label>Focus (comma-sep)
-            <input v-model="plan.focus" @change="savePlan" placeholder="listening, oral, vocab, grammar">
-          </label>
-        </div>
+          <div class="plan-grid">
+            <label>Level Goal
+              <select v-model="plan.goal" @change="savePlan">
+                <option>Government B</option>
+                <option>Government C</option>
+                <option>DELF B1</option>
+                <option>DELF B2</option>
+                <option>Custom</option>
+              </select>
+            </label>
+            <label>Daily Minutes
+              <input type="number" min="10" step="5" v-model.number="plan.dailyMinutes" @change="savePlan" />
+            </label>
+            <label>Focus (comma-sep)
+              <input v-model="plan.focus" @change="savePlan" placeholder="listening, oral, vocab, grammar" />
+            </label>
+          </div>
 
-        <h3>Weekly Schedule</h3>
-        <textarea class="plan-text" v-model="plan.weeklySchedule" @change="savePlan"
-          placeholder="- Mon: 30m listening + 20m SRS
+          <h3>Weekly Schedule</h3>
+          <textarea
+            class="plan-text"
+            v-model="plan.weeklySchedule"
+            @change="savePlan"
+            placeholder="- Mon: 30m listening + 20m SRS
 - Tue: 30m oral drills + 20m vocab
 - Wed: mock interview 30m
 - Thu: grammar 30m + SRS 20m
 - Fri: conversation 45m
 - Sat: review 30m
-- Sun: rest / light SRS"></textarea>
+- Sun: rest / light SRS"
+          ></textarea>
 
-        <h3>Notes</h3>
-        <textarea class="plan-text" v-model="plan.notes" @change="savePlan"
-          placeholder="Personal constraints, upcoming exam date, target topics, etc."></textarea>
-      </section>
+          <h3>Notes</h3>
+          <textarea
+            class="plan-text"
+            v-model="plan.notes"
+            @change="savePlan"
+            placeholder="Personal constraints, upcoming exam date, target topics, etc."
+          ></textarea>
+        </section>
 
-      <!-- SETTINGS -->
-      <section v-if="tab==='settings'" class="panel">
-        <header class="panel-head">
-          <h2>Settings</h2>
-        </header>
-        <div class="set-grid">
-          <div>
-            <h4>Storage</h4>
-            <p class="dim">Audio: OPFS with IndexedDB fallback</p>
-            <button @click="requestPersistence">Request Persistent Storage</button>
-            <div class="dim">Persistent? {{ storagePersisted ? 'Yes' : 'No' }}</div>
+        <!-- ==================== SETTINGS (optional; nav hidden) ==================== -->
+        <section v-if="tab==='settings'" class="panel">
+          <header class="panel-head"><h2>Settings</h2></header>
+          <div class="set-grid">
+            <div>
+              <h4>Storage</h4>
+              <p class="dim">Audio: OPFS with IndexedDB fallback</p>
+              <button @click="requestPersistence">Request Persistent Storage</button>
+              <div class="dim">Persistent? {{ storagePersisted ? 'Yes' : 'No' }}</div>
+            </div>
+
+            <div>
+              <h4>Export / Import</h4>
+              <button @click="exportData">Export JSON</button>
+              <input type="file" accept="application/json" @change="importData" />
+            </div>
+
+            <div>
+              <h4>Sync</h4>
+              <p class="dim">No provider configured. You can wire a custom API later.</p>
+              <button @click="simulateSyncPush">Simulate Push</button>
+              <button @click="simulateSyncPull">Simulate Pull</button>
+            </div>
+
+            <div>
+              <h4>Translator (optional)</h4>
+              <label>Endpoint (LibreTranslate-style)</label>
+              <input v-model="translator.endpoint" placeholder="https://…/translate" />
+              <label>API Key (stored locally)</label>
+              <input v-model="translator.apiKey" placeholder="optional key" />
+              <button @click="saveTranslator">Save Translator Settings</button>
+              <p class="dim">If empty, a local fallback will try simple guesses only.</p>
+            </div>
           </div>
+        </section>
 
-          <div>
-            <h4>Export / Import</h4>
-            <button @click="exportData">Export JSON</button>
-            <input type="file" accept="application/json" @change="importData">
-          </div>
+        <!-- JSON Editor Modal -->
+        <div v-if="jsonEditor.open" class="modal-overlay" @click.self="closeJsonEditor">
+          <div class="modal">
+            <header class="modal-head">
+              <h3>Edit JSON — {{ jsonEditor.verb?.infinitive }}</h3>
+              <button class="small" @click="closeJsonEditor">✕</button>
+            </header>
 
-          <div>
-            <h4>Sync</h4>
-            <p class="dim">No provider configured. You can wire a custom API later.</p>
-            <button @click="simulateSyncPush">Simulate Push</button>
-            <button @click="simulateSyncPull">Simulate Pull</button>
-          </div>
+            <div class="modal-row">
+              <label>Mode
+                <select v-model="jsonEditor.readonly">
+                  <option :value="false">Editable</option>
+                  <option :value="true">Read-only</option>
+                </select>
+              </label>
+              <label class="grow">Helper
+                <select @change="insertConjSkeleton($event.target.value); $event.target.selectedIndex=0">
+                  <option selected disabled>Insert skeleton…</option>
+                  <option value="blank">Blank template (all tenses)</option>
+                  <option value="present">Présent only</option>
+                </select>
+              </label>
+            </div>
 
-          <div>
-            <h4>Translator (optional)</h4>
-            <label>Endpoint (LibreTranslate-style)</label>
-            <input v-model="translator.endpoint" placeholder="https://…/translate">
-            <label>API Key (stored locally)</label>
-            <input v-model="translator.apiKey" placeholder="optional key">
-            <button @click="saveTranslator">Save Translator Settings</button>
-            <p class="dim">If empty, a local fallback will try simple guesses only.</p>
+            <textarea class="json-area" v-model="jsonEditor.text" :readonly="jsonEditor.readonly"></textarea>
+
+            <div class="modal-actions">
+              <button @click="prettyJson" :disabled="jsonEditor.readonly">Pretty</button>
+              <button @click="saveJsonEditor" :disabled="jsonEditor.readonly">Save</button>
+              <button class="danger" @click="clearConj" :disabled="jsonEditor.readonly">Clear conj</button>
+              <span class="err" v-if="jsonEditor.error">{{ jsonEditor.error }}</span>
+            </div>
+
+            <details class="dim" style="margin-top:8px">
+              <summary>What shape should this JSON be?</summary>
+              <p>
+                Use keys like <code>Présent</code>, <code>Passé composé</code>, etc., and inside each, provide person keys
+                <code>je</code>, <code>tu</code>, <code>il/elle/on</code>, <code>nous</code>, <code>vous</code>, <code>ils/elles</code>.
+                The drill loader maps internal IDs to these display keys.
+              </p>
+            </details>
           </div>
         </div>
-      </section>
+      </main>
+    </div>
 
-      <!-- JSON Editor Modal -->
-      <div v-if="jsonEditor.open" class="modal-overlay" @click.self="closeJsonEditor">
-        <div class="modal">
-          <header class="modal-head">
-            <h3>Edit JSON — {{ jsonEditor.verb?.infinitive }}</h3>
-            <button class="small" @click="closeJsonEditor">✕</button>
-          </header>
+    <!-- Vue / Dexie from CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js" defer></script>
+    <script src="https://unpkg.com/dexie@4.0.8/dist/dexie.min.js" defer></script>
 
-          <div class="modal-row">
-            <label>Mode
-              <select v-model="jsonEditor.readonly">
-                <option :value="false">Editable</option>
-                <option :value="true">Read-only</option>
-              </select>
-            </label>
-            <label class="grow">Helper
-              <select @change="insertConjSkeleton($event.target.value); $event.target.selectedIndex=0">
-                <option selected disabled>Insert skeleton…</option>
-                <option value="blank">Blank template (all tenses)</option>
-                <option value="present">Présent only</option>
-              </select>
-            </label>
-          </div>
+    <!-- App -->
+    <script type="module" src="./app.js?v=2025-10-25-3"></script>
 
-          <textarea class="json-area" v-model="jsonEditor.text" :readonly="jsonEditor.readonly"></textarea>
-
-          <div class="modal-actions">
-            <button @click="prettyJson" :disabled="jsonEditor.readonly">Pretty</button>
-            <button @click="saveJsonEditor" :disabled="jsonEditor.readonly">Save</button>
-            <button class="danger" @click="clearConj" :disabled="jsonEditor.readonly">Clear conj</button>
-            <span class="err" v-if="jsonEditor.error">{{ jsonEditor.error }}</span>
-          </div>
-
-          <details class="dim" style="margin-top:8px">
-            <summary>What shape should this JSON be?</summary>
-            <p>
-              Use keys like <code>Présent</code>, <code>Passé composé</code>, etc., and inside each,
-              provide person keys <code>je</code>, <code>tu</code>, <code>il/elle/on</code>, <code>nous</code>,
-              <code>vous</code>, <code>ils/elles</code>. The drill loader maps internal IDs to these display keys.
-            </p>
-          </details>
-        </div>
-      </div>
-
-    </main>
-  </div>
-
-  <!-- Vue / Dexie from CDN -->
-  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js" defer></script>
-  <script src="https://unpkg.com/dexie@4.0.8/dist/dexie.min.js" defer></script>
-  
-<!-- <script src="app.js?v=2025-10-24-3" defer></script>index.html (only the script area changes) -->
-<!-- Keep the rest of your file identical -->
-
-<script type="module" src="./app.js?v=2025-10-25-3"></script>
-
-  <!-- Service worker (optional)
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./service-worker.js');
-    }
-  </script> -->
-</body>
+    <!-- Service worker (optional)
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./service-worker.js');
+      }
+    </script> -->
+  </body>
 </html>
