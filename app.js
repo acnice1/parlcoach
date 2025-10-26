@@ -30,7 +30,13 @@ function debounce(fn, ms = 300) {
 }
 
 const vueApp = createApp({
-  components: { DrillPanel, VocabPanel, RecorderPanel, ProfileWidget, DataPanel },
+  components: {
+    DrillPanel,
+    VocabPanel,
+    RecorderPanel,
+    ProfileWidget,
+    DataPanel,
+  },
 
   setup() {
     // ------------------------- STATE -------------------------
@@ -67,6 +73,9 @@ const vueApp = createApp({
       rules: null,
       dataset: null,
 
+      //  VOCAB
+      // Mode: 'review' (JSON) vs 'flashcards' (SRS)
+      vocabMode: "review",
       // Vocab filters (distinct from Drills) — NO gender here
       vocabFilters: { topic: [], tags: [], pos: [] },
       vocabPills: { topic: [], tags: [], pos: [] },
@@ -78,6 +87,15 @@ const vueApp = createApp({
         prefs: { randomize: true, withoutReplacement: true },
       },
 
+      flashcards: {
+        allCards: [],
+        dueCards: [],
+        currentCard: null,
+        showBack: false,
+        counts: { total: 0, learned: 0 },
+        vocabTagFilter: "", // keep your tag filter, but scoped to SRS
+      },
+
       // Top-level tabs
       tab: "learn",
       learnTab: "drills",
@@ -87,11 +105,6 @@ const vueApp = createApp({
       newVocabBack: "",
 
       // SRS queue (for classic card pane)
-      allCards: [],
-      dueCards: [],
-      currentCard: null,
-      showBack: false,
-      counts: { total: 0, learned: 0 },
 
       vocabTagFilter: "",
       notes: [],
@@ -763,20 +776,19 @@ const vueApp = createApp({
         console.error("Error loading general_vocab.json:", err);
       }
 
-      // Prefer DB only if it actually has cards; otherwise keep the JSON deck we just built.
-      const _vocabCount = await db.vocab.count();
-      if (_vocabCount > 0) {
-        await Vocab.reloadVocabByTag(db, state);
-        Vocab.buildVocabDeck(state);
-        // ⬇️ Rebuild pills & re-apply filters after DB load
-        buildVocabPillsFromData(state.vocab.cards || []);
-        applyVocabPillFilter();
-      } else {
-        // Keep the JSON-loaded cards; deck already built above.
-        Vocab.buildVocabDeck(state);
-        // JSON path already built pills earlier; we still ensure filters apply
-        applyVocabPillFilter();
-      }
+     const _vocabCount = await db.vocab.count();
+if (_vocabCount > 0) {
+  // Populate SRS-only subtree; do not touch Review cards here
+  await Vocab.reloadVocabByTag(db, state.flashcards);
+
+  // Review deck (JSON) is already built above; just keep filters/pills in sync
+  buildVocabPillsFromData(state.vocab.cards || []);
+  applyVocabPillFilter();
+} else {
+  // Keep the JSON-loaded cards; deck already built above.
+  Vocab.buildVocabDeck(state);
+  applyVocabPillFilter();
+}
 
       // Apply current Vocab pill filters to deck
       applyVocabPillFilter();
@@ -797,28 +809,28 @@ const vueApp = createApp({
         state.vocabPills.pos = Array.from(pos).sort();
       }
 
-
       watch(
-  () => state.vocab.cards,
-  (cards) => {
-    // defensive: cards may be replaced wholesale
-    if (!Array.isArray(cards)) return;
-    // Rebuild pills + keep filtering in sync
-    // If buildVocabPillsFromData is inside loadAll's scope, inline here:
-    const topic = new Set(), tags = new Set(), pos = new Set();
-    for (const c of cards) {
-      if (c?.topic) topic.add(c.topic);
-      if (Array.isArray(c?.tags)) c.tags.forEach(t => t && tags.add(t));
-      if (c?.partOfSpeech) pos.add(c.partOfSpeech);
-    }
-    state.vocabPills.topic = Array.from(topic).sort();
-    state.vocabPills.tags  = Array.from(tags).sort();
-    state.vocabPills.pos   = Array.from(pos).sort();
-    applyVocabPillFilter();
-  },
-  { deep: true }
-);
-
+        () => state.vocab.cards,
+        (cards) => {
+          // defensive: cards may be replaced wholesale
+          if (!Array.isArray(cards)) return;
+          // Rebuild pills + keep filtering in sync
+          // If buildVocabPillsFromData is inside loadAll's scope, inline here:
+          const topic = new Set(),
+            tags = new Set(),
+            pos = new Set();
+          for (const c of cards) {
+            if (c?.topic) topic.add(c.topic);
+            if (Array.isArray(c?.tags)) c.tags.forEach((t) => t && tags.add(t));
+            if (c?.partOfSpeech) pos.add(c.partOfSpeech);
+          }
+          state.vocabPills.topic = Array.from(topic).sort();
+          state.vocabPills.tags = Array.from(tags).sort();
+          state.vocabPills.pos = Array.from(pos).sort();
+          applyVocabPillFilter();
+        },
+        { deep: true }
+      );
 
       // Verbs (seeders optional)
       if (typeof Verb.maybeSeedVerbsFromTop200 === "function") {
@@ -1023,7 +1035,11 @@ const vueApp = createApp({
         partOfSpeech: (c.partOfSpeech ?? c.pos ?? "").trim(),
         gender: (c.gender ?? "").trim(),
         topic: (c.topic ?? "").trim(),
-        tags: Array.isArray(c.tags) ? c.tags.slice().filter(Boolean) : (c.tags ? [String(c.tags)] : []),
+        tags: Array.isArray(c.tags)
+          ? c.tags.slice().filter(Boolean)
+          : c.tags
+          ? [String(c.tags)]
+          : [],
         article: (c.article ?? "").trim(),
         plural: c.plural ?? "",
         example: c.example ?? null,
@@ -1034,20 +1050,22 @@ const vueApp = createApp({
     }
     function unionTags(a = [], b = []) {
       const s = new Set();
-      (Array.isArray(a) ? a : []).forEach(t => t && s.add(String(t)));
-      (Array.isArray(b) ? b : []).forEach(t => t && s.add(String(t)));
+      (Array.isArray(a) ? a : []).forEach((t) => t && s.add(String(t)));
+      (Array.isArray(b) ? b : []).forEach((t) => t && s.add(String(t)));
       return Array.from(s);
     }
     function rebuildVocabPillsFromCards(cards = []) {
-      const topic = new Set(), tags = new Set(), pos = new Set();
+      const topic = new Set(),
+        tags = new Set(),
+        pos = new Set();
       for (const c of cards) {
         if (c?.topic) topic.add(c.topic);
-        if (Array.isArray(c?.tags)) c.tags.forEach(t => t && tags.add(t));
+        if (Array.isArray(c?.tags)) c.tags.forEach((t) => t && tags.add(t));
         if (c?.partOfSpeech) pos.add(c.partOfSpeech);
       }
       state.vocabPills.topic = Array.from(topic).sort();
-      state.vocabPills.tags  = Array.from(tags).sort();
-      state.vocabPills.pos   = Array.from(pos).sort();
+      state.vocabPills.tags = Array.from(tags).sort();
+      state.vocabPills.pos = Array.from(pos).sort();
     }
 
     // -------------------- Methods --------------------
@@ -1077,8 +1095,8 @@ const vueApp = createApp({
     }
 
     async function rate(q) {
-      if (!state.currentCard) return;
-      const c = state.currentCard;
+if (!state.flashcards.currentCard) return;
+const c = state.flashcards.currentCard;
       const upd =
         state.settings.srsMode === "SM2"
           ? sm2Schedule(c, q)
@@ -1088,8 +1106,8 @@ const vueApp = createApp({
               q
             );
       Object.assign(c, upd);
-      await db.vocab.update(c.id, upd);
-      Vocab.computeDue(state);
+await db.vocab.update(c.id, upd);
+Vocab.computeDue(state.flashcards);
     }
 
     function getScroll() {
@@ -1107,9 +1125,10 @@ const vueApp = createApp({
 
     const methods = {
       // vocab
-      reloadVocabByTag: () => Vocab.reloadVocabByTag(db, state),
-      addCard: () => Vocab.addCard(db, state),
-      deleteCard: (id) => Vocab.deleteCard(db, id, state),
+      reloadVocabByTag: () => Vocab.reloadVocabByTag(db, state.flashcards),
+      addCard:          () => Vocab.addCard(db, state.flashcards),
+      deleteCard:       (id) => Vocab.deleteCard(db, id, state.flashcards),
+
       reshuffleVocabDeck: () => Vocab.reshuffleVocabDeck(state),
       nextVocabCard: () => Vocab.nextVocabCard(state),
       currentVocabCard: () => state.vocab.deck[state.vocab.deckPtr] || null,
@@ -1439,8 +1458,11 @@ const vueApp = createApp({
       // Notes/Data import — MERGE-SAFE upsert of vocab (keeps Topics/Tags/PoS; dedupes)
       importNotesAndSeedCards: async (
         opts = { frToEn: true, enToFr: true }
+        
       ) => {
         try {
+        const nowISO = new Date().toISOString().slice(0, 10);
+
           const resp = await fetch("general_vocab.json?v=" + Date.now());
           if (!resp.ok) {
             alert("Failed to fetch general_vocab.json: " + resp.status);
@@ -1458,12 +1480,19 @@ const vueApp = createApp({
           }
 
           // Normalize incoming
-          const incoming = arr.map(normalizeVocabItem).filter(x => x.fr && x.en);
+          const incoming = arr
+            .map(normalizeVocabItem)
+            .filter((x) => x.fr && x.en);
 
           // Snapshot existing by (fr,en) for upsert
           const existingRows = await db.vocab.toArray();
-          const keyOf = (fr, en) => (fr || "").toLowerCase().trim() + "␟" + (en || "").toLowerCase().trim();
-          const existingByKey = new Map(existingRows.map(r => [keyOf(r.fr || r.front, r.en || r.back), r]));
+          const keyOf = (fr, en) =>
+            (fr || "").toLowerCase().trim() +
+            "␟" +
+            (en || "").toLowerCase().trim();
+          const existingByKey = new Map(
+            existingRows.map((r) => [keyOf(r.fr || r.front, r.en || r.back), r])
+          );
 
           const toAdd = [];
           const toUpdate = [];
@@ -1474,17 +1503,15 @@ const vueApp = createApp({
             const ex = existingByKey.get(k);
 
             // optional notes upsert if exposed
-            if (typeof Vocab.upsertNote === "function") {
-              try {
-                await Vocab.upsertNote(db, {
-                  french: inc.fr,
-                  english: inc.en,
-                  tags: inc.tags,
-                  topic: inc.topic,
-                  pos: inc.partOfSpeech,
-                });
-              } catch {}
-            }
+if (typeof Vocab.upsertVocabNote === "function") {
+  await Vocab.upsertVocabNote(db, {
+    french: inc.fr,
+    english: inc.en,
+    tags: inc.tags,
+    topic: inc.topic,
+    pos: inc.partOfSpeech,
+  });
+}
 
             // SRS card directions (using your current behaviour)
             const wantFRtoEN = opts.frToEn !== false;
@@ -1494,8 +1521,11 @@ const vueApp = createApp({
               // First-time (fr,en) → create FR→EN card now; EN→FR handled below
               if (wantFRtoEN) {
                 toAdd.push({
-                  front: inc.fr, back: inc.en,
-                  fr: inc.fr,    en: inc.en,
+                  front: inc.fr,
+                  back: inc.en,
+                  due: nowISO, ease: 2.5, reps: 0, interval: 0, last: nowISO,
+                  fr: inc.fr,
+                  en: inc.en,
                   partOfSpeech: inc.partOfSpeech,
                   gender: inc.gender,
                   topic: inc.topic,
@@ -1512,23 +1542,31 @@ const vueApp = createApp({
             } else {
               // Merge metadata: don't wipe existing; fill blanks; union tags
               const patch = {};
-              const keep = (v) => v !== undefined && v !== null && String(v).trim() !== "";
+              const keep = (v) =>
+                v !== undefined && v !== null && String(v).trim() !== "";
 
-              if (!keep(ex.topic)        && keep(inc.topic))        patch.topic = inc.topic;
-              if (!keep(ex.partOfSpeech) && keep(inc.partOfSpeech)) patch.partOfSpeech = inc.partOfSpeech;
-              if (!keep(ex.gender)       && keep(inc.gender))       patch.gender = inc.gender;
-              if (!keep(ex.article)      && keep(inc.article))      patch.article = inc.article;
+              if (!keep(ex.topic) && keep(inc.topic)) patch.topic = inc.topic;
+              if (!keep(ex.partOfSpeech) && keep(inc.partOfSpeech))
+                patch.partOfSpeech = inc.partOfSpeech;
+              if (!keep(ex.gender) && keep(inc.gender))
+                patch.gender = inc.gender;
+              if (!keep(ex.article) && keep(inc.article))
+                patch.article = inc.article;
 
               const mergedTags = unionTags(ex.tags, inc.tags);
-              if (JSON.stringify(mergedTags) !== JSON.stringify(ex.tags || [])) {
+              if (
+                JSON.stringify(mergedTags) !== JSON.stringify(ex.tags || [])
+              ) {
                 patch.tags = mergedTags;
               }
 
-              if (!keep(ex.plural)  && keep(inc.plural))  patch.plural = inc.plural;
-              if (!keep(ex.example) && keep(inc.example)) patch.example = inc.example;
-              if (!keep(ex.notes)   && keep(inc.notes))   patch.notes = inc.notes;
-              if (!keep(ex.audio)   && keep(inc.audio))   patch.audio = inc.audio;
-              if (!keep(ex.image)   && keep(inc.image))   patch.image = inc.image;
+              if (!keep(ex.plural) && keep(inc.plural))
+                patch.plural = inc.plural;
+              if (!keep(ex.example) && keep(inc.example))
+                patch.example = inc.example;
+              if (!keep(ex.notes) && keep(inc.notes)) patch.notes = inc.notes;
+              if (!keep(ex.audio) && keep(inc.audio)) patch.audio = inc.audio;
+              if (!keep(ex.image) && keep(inc.image)) patch.image = inc.image;
 
               if (Object.keys(patch).length) {
                 toUpdate.push({ id: ex.id, patch });
@@ -1538,12 +1576,16 @@ const vueApp = createApp({
             // Ensure EN→FR card also exists (only if requested)
             if (wantENtoFR) {
               const existsEF = existingRows.find(
-                (r) => (r.front || r.fr) === inc.en && (r.back || r.en) === inc.fr
+                (r) =>
+                  (r.front || r.fr) === inc.en && (r.back || r.en) === inc.fr
               );
               if (!existsEF) {
                 toAdd.push({
-                  front: inc.en, back: inc.fr,
-                  fr: inc.en,    en: inc.fr,
+                  front: inc.en,
+                  back: inc.fr,
+                  due: nowISO, ease: 2.5, reps: 0, interval: 0, last: nowISO,
+                  fr: inc.en,
+                  en: inc.fr,
                   partOfSpeech: inc.partOfSpeech,
                   gender: inc.gender,
                   topic: inc.topic,
@@ -1562,22 +1604,42 @@ const vueApp = createApp({
 
           // Persist
           if (toAdd.length) {
-            try { await db.vocab.bulkAdd(toAdd); }
-            catch {
-              for (const row of toAdd) { try { await db.vocab.add(row); } catch {} }
+            try {
+              await db.vocab.bulkAdd(toAdd);
+            } catch {
+              for (const row of toAdd) {
+                try {
+                  await db.vocab.add(row);
+                } catch {}
+              }
             }
           }
           for (const u of toUpdate) {
-            try { await db.vocab.update(u.id, u.patch); } catch {}
+            try {
+              await db.vocab.update(u.id, u.patch);
+            } catch {}
           }
+// Repair any existing rows missing scheduling fields (one-time safety net)
+{
+  const rows = await db.vocab.toArray();
+  const patch = { due: nowISO, ease: 2.5, reps: 0, interval: 0, last: nowISO };
+  for (const r of rows) {
+    if (!r.due || Number.isNaN(new Date(r.due).getTime())) {
+      try { await db.vocab.update(r.id, patch); } catch {}
+    }
+  }
+}
 
           // Refresh UI: pull from DB, rebuild deck & pills, reapply filters
-          await Vocab.reloadVocabByTag(db, state);
-          Vocab.buildVocabDeck(state);
-          rebuildVocabPillsFromCards(state.vocab.cards || []);
-          applyVocabPillFilter();
+await Vocab.reloadVocabByTag(db, state.flashcards);
+// Keep Review (JSON) as-is; if you want to rebuild its deck, do it explicitly:
+Vocab.buildVocabDeck(state);
+rebuildVocabPillsFromCards(state.vocab.cards || []);
+applyVocabPillFilter();
 
-          alert(`Imported ${incoming.length} entries; added ${addedSrs} new SRS cards (both directions, deduped; metadata merged).`);
+          alert(
+            `Imported ${incoming.length} entries; added ${addedSrs} new SRS cards (both directions, deduped; metadata merged).`
+          );
 
           // Optional: take user to Learn → Vocab
           state.tab = "learn";

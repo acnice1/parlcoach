@@ -10,25 +10,23 @@ export function computeDue(state){
   state.showBack = false;
 }
 
-export async function reloadVocabByTag(db, state) {
-  const rows = state.vocabTagFilter
-    ? await db.vocab.where('tags').equals(state.vocabTagFilter).toArray()
+export async function reloadVocabByTag(db, flash) {
+  const rows = flash.vocabTagFilter
+    ? await db.vocab.where('tags').equals(flash.vocabTagFilter).toArray()
     : await db.vocab.toArray();
-  rows.sort((a,b)=> new Date(a.due) - new Date(b.due));
-  state.allCards = rows;
-  computeDue(state);
 
-  // feed deck source from SRS cards
-  state.vocab.cards = state.allCards.map(c => ({
-    fr: c.front,
-    en: c.back,
-    tags: Array.isArray(c.tags) ? c.tags : []
-  }));
-  buildVocabDeck(state);
+  rows.sort((a, b) => new Date(a.due) - new Date(b.due));
+
+  // Populate SRS-only subtree
+  flash.allCards = rows;
+  computeDue(flash);
+
+  // IMPORTANT: do NOT touch any Review fields (no state.vocab.* writes here)
 }
 
 export function buildVocabDeck(state) {
-  const src = Array.isArray(state.vocab.cards) ? [...state.vocab.cards] : [];
+const src = Array.isArray(state.vocab.cards) ? [...state.vocab.cards] : [];
+
   if (state.vocab.prefs.randomize) shuffleInPlace(src);
   state.vocab.deck = src;
   state.vocab.deckPtr = 0;
