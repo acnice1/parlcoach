@@ -4,6 +4,7 @@ import DrillPanel from "./js/components/DrillPanel.js?v=1";
 import VocabPanel from "./js/components/VocabPanel.js?v=1";
 import RecorderPanel from "./js/components/RecorderPanel.js?v=1";
 import ProfileWidget from "./js/components/ProfileWidget.js?v=1";
+import DataPanel from "./js/components/DataPanel.js?v=2";
 
 import { initDexie, opfs, TAG_PILL_OPTIONS } from "./js/db.js?v=1";
 import {
@@ -29,15 +30,23 @@ function debounce(fn, ms = 300) {
 }
 
 const vueApp = createApp({
-  components: { DrillPanel, VocabPanel, RecorderPanel, ProfileWidget },
+  components: { DrillPanel, VocabPanel, RecorderPanel, ProfileWidget, DataPanel },
 
   setup() {
     // ------------------------- STATE -------------------------
     const state = reactive({
       // Profile + stats
       profileName: "",
-      globalStats: { right: 0, total: 0, since: new Date().toISOString().slice(0, 10) },
-      todayStats:  { right: 0, total: 0, date:  new Date().toISOString().slice(0, 10) },
+      globalStats: {
+        right: 0,
+        total: 0,
+        since: new Date().toISOString().slice(0, 10),
+      },
+      todayStats: {
+        right: 0,
+        total: 0,
+        date: new Date().toISOString().slice(0, 10),
+      },
 
       // UI flags (persisted)
       ui: {
@@ -45,7 +54,13 @@ const vueApp = createApp({
       },
 
       exampleMap: new Map(),
-      jsonEditor: { open: false, verb: null, text: "", readonly: false, error: "" },
+      jsonEditor: {
+        open: false,
+        verb: null,
+        text: "",
+        readonly: false,
+        error: "",
+      },
       showEnglishTranslation: true,
 
       // Data
@@ -54,9 +69,14 @@ const vueApp = createApp({
 
       // Vocab filters (distinct from Drills) — NO gender here
       vocabFilters: { topic: [], tags: [], pos: [] },
-      vocabPills:   { topic: [], tags: [], pos: [] },
+      vocabPills: { topic: [], tags: [], pos: [] },
 
-      vocab: { cards: [], deck: [], deckPtr: 0, prefs: { randomize: true, withoutReplacement: true } },
+      vocab: {
+        cards: [],
+        deck: [],
+        deckPtr: 0,
+        prefs: { randomize: true, withoutReplacement: true },
+      },
 
       // Top-level tabs
       tab: "learn",
@@ -64,7 +84,7 @@ const vueApp = createApp({
 
       // Vocab quick add
       newVocabFront: "",
-      newVocabBack:  "",
+      newVocabBack: "",
 
       // SRS queue (for classic card pane)
       allCards: [],
@@ -85,8 +105,14 @@ const vueApp = createApp({
       drillPrefs: {
         key: "v1",
         tenses: [
-          "present", "passeCompose", "imparfait", "plusQueParfait",
-          "futur", "conditionnelPresent", "subjonctifPresent", "imperatif",
+          "present",
+          "passeCompose",
+          "imparfait",
+          "plusQueParfait",
+          "futur",
+          "conditionnelPresent",
+          "subjonctifPresent",
+          "imperatif",
         ],
         persons: [0, 1, 2, 3, 4, 5],
         includeOnlyTags: [],
@@ -109,7 +135,12 @@ const vueApp = createApp({
 
       // Recorder / Interview bank
       questionBank: [],
-      qFilters: { category: "", tag: "", showSample: true, insertSampleOnPick: false },
+      qFilters: {
+        category: "",
+        tag: "",
+        showSample: true,
+        insertSampleOnPick: false,
+      },
       _showPaste: false,
       _pasteText: "",
       _pasteErr: "",
@@ -132,7 +163,14 @@ const vueApp = createApp({
       _recog: null,
 
       // Plan & Settings
-      plan: { key: "v1", goal: "Government B", dailyMinutes: 60, focus: "listening, oral, vocab", weeklySchedule: "", notes: "" },
+      plan: {
+        key: "v1",
+        goal: "Government B",
+        dailyMinutes: 60,
+        focus: "listening, oral, vocab",
+        weeklySchedule: "",
+        notes: "",
+      },
       settings: {
         key: "v1",
         srsMode: "SM2",
@@ -155,11 +193,14 @@ const vueApp = createApp({
     // Speech support
     function detectSpeechSupport() {
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      const secure = location.protocol === "https:" || location.hostname === "localhost";
+      const secure =
+        location.protocol === "https:" || location.hostname === "localhost";
       state.speech.supported = !!SR && secure;
-      state.speech.why = !secure ? "Needs HTTPS or localhost."
-                        : !SR     ? "SpeechRecognition not available in this browser."
-                        : "";
+      state.speech.why = !secure
+        ? "Needs HTTPS or localhost."
+        : !SR
+        ? "SpeechRecognition not available in this browser."
+        : "";
     }
     detectSpeechSupport();
 
@@ -175,7 +216,8 @@ const vueApp = createApp({
       if (!allowed.includes(group)) return;
       const arr = state.vocabFilters[group] || [];
       const i = arr.indexOf(value);
-      if (i === -1) arr.push(value); else arr.splice(i, 1);
+      if (i === -1) arr.push(value);
+      else arr.splice(i, 1);
       state.vocabFilters[group] = [...arr];
       applyVocabPillFilter();
     }
@@ -187,8 +229,8 @@ const vueApp = createApp({
     }
     function clearAllVocabPills() {
       state.vocabFilters.topic = [];
-      state.vocabFilters.tags  = [];
-      state.vocabFilters.pos   = [];
+      state.vocabFilters.tags = [];
+      state.vocabFilters.pos = [];
       applyVocabPillFilter();
     }
     function applyVocabPillFilter() {
@@ -217,11 +259,7 @@ const vueApp = createApp({
     // Render FR w/ article for nouns
     function renderFr(card) {
       // 1) Pull the French surface form from any known field shape
-      const w =
-        (card?.fr ??
-         card?.front ??
-         card?.french ??
-         "").trim();
+      const w = (card?.fr ?? card?.front ?? card?.french ?? "").trim();
 
       if (!w) return w;
 
@@ -230,11 +268,15 @@ const vueApp = createApp({
 
       // 3) Decide if it's a noun:
       //    - explicit flags from common schemas: partOfSpeech / pos / tags
-      const posStr = String(card?.partOfSpeech || card?.pos || "").toLowerCase();
-      const tagsArr = Array.isArray(card?.tags) ? card.tags.map(t => String(t).toLowerCase()) : [];
+      const posStr = String(
+        card?.partOfSpeech || card?.pos || ""
+      ).toLowerCase();
+      const tagsArr = Array.isArray(card?.tags)
+        ? card.tags.map((t) => String(t).toLowerCase())
+        : [];
       const isNoun =
         posStr.includes("noun") ||
-        tagsArr.some(t => t.startsWith("noun")) ||
+        tagsArr.some((t) => t.startsWith("noun")) ||
         // If gender exists, it’s almost certainly a noun in this dataset
         (card?.gender && String(card.gender).trim() !== "");
 
@@ -243,10 +285,11 @@ const vueApp = createApp({
       // 4) Work out the article
       //    - prefer explicit article if given
       //    - otherwise use gender or elision for vowels / mute h
-      const startsWithVowelOrMuteH = /^[aeiouâêîôûéèëïüœ]/i.test(w) || /^h/i.test(w);
+      const startsWithVowelOrMuteH =
+        /^[aeiouâêîôûéèëïüœ]/i.test(w) || /^h/i.test(w);
 
       let article = String(card?.article || "").toLowerCase();
-      let gender  = String(card?.gender  || "").toLowerCase(); // 'm' | 'f'
+      let gender = String(card?.gender || "").toLowerCase(); // 'm' | 'f'
 
       if (!article) {
         if (startsWithVowelOrMuteH) {
@@ -286,28 +329,46 @@ const vueApp = createApp({
       subjonctifPresent: "Subjonctif présent",
       imperatif: "Impératif",
     };
-    const PERSON_LABELS = ["je", "tu", "il/elle/on", "nous", "vous", "ils/elles"];
+    const PERSON_LABELS = [
+      "je",
+      "tu",
+      "il/elle/on",
+      "nous",
+      "vous",
+      "ils/elles",
+    ];
 
     function buildQuestion() {
       if (!state.dataset || !(state.dataset instanceof Map)) return null;
 
       let pool = state.verbs.slice();
-      const inc = Array.isArray(state.drillPrefs.includeOnlyTags) ? state.drillPrefs.includeOnlyTags.filter(Boolean) : [];
-      const exc = Array.isArray(state.drillPrefs.excludeTags) ? state.drillPrefs.excludeTags.filter(Boolean) : [];
+      const inc = Array.isArray(state.drillPrefs.includeOnlyTags)
+        ? state.drillPrefs.includeOnlyTags.filter(Boolean)
+        : [];
+      const exc = Array.isArray(state.drillPrefs.excludeTags)
+        ? state.drillPrefs.excludeTags.filter(Boolean)
+        : [];
 
-      if (inc.length) pool = pool.filter((v) => (v.tags || []).some((t) => inc.includes(t)));
-      if (exc.length) pool = pool.filter((v) => !(v.tags || []).some((t) => exc.includes(t)));
+      if (inc.length)
+        pool = pool.filter((v) => (v.tags || []).some((t) => inc.includes(t)));
+      if (exc.length)
+        pool = pool.filter((v) => !(v.tags || []).some((t) => exc.includes(t)));
       if (!pool.length) return null;
 
       const verb = pool[Math.floor(Math.random() * pool.length)];
-      const inf  = verb.infinitive;
+      const inf = verb.infinitive;
 
-      const allowedTenses = (state.drillPrefs.tenses || []).filter((k) => TENSE_LABEL[k]);
+      const allowedTenses = (state.drillPrefs.tenses || []).filter(
+        (k) => TENSE_LABEL[k]
+      );
       if (!allowedTenses.length) return null;
-      const tenseKey   = allowedTenses[Math.floor(Math.random() * allowedTenses.length)];
+      const tenseKey =
+        allowedTenses[Math.floor(Math.random() * allowedTenses.length)];
       const tenseLabel = TENSE_LABEL[tenseKey];
 
-      let persons = Array.isArray(state.drillPrefs.persons) ? state.drillPrefs.persons.slice() : [0, 1, 2, 3, 4, 5];
+      let persons = Array.isArray(state.drillPrefs.persons)
+        ? state.drillPrefs.persons.slice()
+        : [0, 1, 2, 3, 4, 5];
       if (tenseKey === "imperatif") {
         persons = persons.filter((p) => p === 1 || p === 3 || p === 4);
         if (!persons.length) persons = [1, 3, 4];
@@ -342,7 +403,9 @@ const vueApp = createApp({
       if (state.speech.isOn) return;
       const r = getRecognizer();
       if (!r) {
-        alert("SpeechRecognition not supported in this browser. Try Chrome/Edge on https://");
+        alert(
+          "SpeechRecognition not supported in this browser. Try Chrome/Edge on https://"
+        );
         return;
       }
       state.speech.interim = "";
@@ -356,7 +419,8 @@ const vueApp = createApp({
         for (let i = evt.resultIndex; i < evt.results.length; i++) {
           const res = evt.results[i];
           const txt = res[0].transcript || "";
-          if (res.isFinal) final += (final && !final.endsWith(" ") ? " " : "") + txt.trim();
+          if (res.isFinal)
+            final += (final && !final.endsWith(" ") ? " " : "") + txt.trim();
           else interim += txt;
         }
         state.speech.interim = interim.trim();
@@ -370,25 +434,42 @@ const vueApp = createApp({
           }
         }
       };
-      r.onerror = () => { stopTranscription(); };
+      r.onerror = () => {
+        stopTranscription();
+      };
       r.onend = () => {
         if (state.speech.isOn && state._recog) {
-          try { state._recog.start(); } catch {}
+          try {
+            state._recog.start();
+          } catch {}
         }
       };
-      try { r.start(); } catch { state.speech.isOn = false; state._recog = null; }
+      try {
+        r.start();
+      } catch {
+        state.speech.isOn = false;
+        state._recog = null;
+      }
     }
 
     function stopTranscription() {
       state.speech.isOn = false;
-      try { state._recog && state._recog.stop(); } catch {}
+      try {
+        state._recog && state._recog.stop();
+      } catch {}
       state._recog = null;
     }
 
-    function clearTranscript() { state.speech.interim = ""; state.speech.final = ""; }
+    function clearTranscript() {
+      state.speech.interim = "";
+      state.speech.final = "";
+    }
     function setSpeechLang(lang) {
       state.speech.lang = lang;
-      if (state.speech.isOn) { stopTranscription(); startTranscription(); }
+      if (state.speech.isOn) {
+        stopTranscription();
+        startTranscription();
+      }
     }
 
     // -------------------- OPFS helpers --------------------
@@ -396,7 +477,8 @@ const vueApp = createApp({
       const root = await navigator.storage.getDirectory();
       const parts = path.split("/").filter(Boolean);
       let dir = root;
-      for (let i = 0; i < parts.length - 1; i++) dir = await dir.getDirectoryHandle(parts[i], { create: true });
+      for (let i = 0; i < parts.length - 1; i++)
+        dir = await dir.getDirectoryHandle(parts[i], { create: true });
       const name = parts[parts.length - 1];
       const fh = await dir.getFileHandle(name, { create: true });
       const ws = await fh.createWritable();
@@ -407,23 +489,34 @@ const vueApp = createApp({
       const root = await navigator.storage.getDirectory();
       const parts = path.split("/").filter(Boolean);
       let dir = root;
-      for (let i = 0; i < parts.length - 1; i++) dir = await dir.getDirectoryHandle(parts[i]);
+      for (let i = 0; i < parts.length - 1; i++)
+        dir = await dir.getDirectoryHandle(parts[i]);
       const name = parts[parts.length - 1];
       const fh = await dir.getFileHandle(name);
       const file = await fh.getFile();
-      return new Blob([await file.arrayBuffer()], { type: file.type || "application/octet-stream" });
+      return new Blob([await file.arrayBuffer()], {
+        type: file.type || "application/octet-stream",
+      });
     }
     async function opfsRemove(path) {
       const root = await navigator.storage.getDirectory();
       const parts = path.split("/").filter(Boolean);
       let dir = root;
-      for (let i = 0; i < parts.length - 1; i++) dir = await dir.getDirectoryHandle(parts[i]);
+      for (let i = 0; i < parts.length - 1; i++)
+        dir = await dir.getDirectoryHandle(parts[i]);
       const name = parts[parts.length - 1];
       await dir.removeEntry(name);
     }
 
     // -------------------- Recordings persistence --------------------
-    async function persistRecording({ blob, name, mime, transcript, question, answer }) {
+    async function persistRecording({
+      blob,
+      name,
+      mime,
+      transcript,
+      question,
+      answer,
+    }) {
       const dir = "recordings";
       const path = `${dir}/${name}`;
       try {
@@ -433,7 +526,10 @@ const vueApp = createApp({
         console.warn("[OPFS] write fail, storing metadata only:", e);
       }
       const rec = {
-        name, size: blob.size, path, mime: mime || "audio/webm",
+        name,
+        size: blob.size,
+        path,
+        mime: mime || "audio/webm",
         createdAt: new Date().toISOString(),
         transcript: (transcript || "").trim(),
         question: (question || "").trim(),
@@ -448,7 +544,9 @@ const vueApp = createApp({
       const hydrated = [];
       for (const r of rows) {
         try {
-          const blob = opfs?.readFile ? await opfs.readFile(r.path) : await opfsRead(r.path);
+          const blob = opfs?.readFile
+            ? await opfs.readFile(r.path)
+            : await opfsRead(r.path);
           const url = URL.createObjectURL(blob);
           hydrated.push({ ...r, url });
         } catch (e) {
@@ -474,7 +572,9 @@ const vueApp = createApp({
         }
       } catch {}
       const rows = await db.recordings.toArray();
-      const hit = rows.find((x) => (r?.path && x.path === r.path) || (r?.name && x.name === r.name));
+      const hit = rows.find(
+        (x) => (r?.path && x.path === r.path) || (r?.name && x.name === r.name)
+      );
       return hit?.id ?? null;
     }
 
@@ -512,10 +612,17 @@ const vueApp = createApp({
 
     // Persist UI changes quickly (only the UI subtree)
     const saveUI = debounce(async () => {
-      await saveSettingsMerged({ ui: { showVocabTags: !!state.ui.showVocabTags } });
+      await saveSettingsMerged({
+        ui: { showVocabTags: !!state.ui.showVocabTags },
+      });
     }, 200);
 
-    watch(() => state.ui.showVocabTags, () => { saveUI(); });
+    watch(
+      () => state.ui.showVocabTags,
+      () => {
+        saveUI();
+      }
+    );
 
     function bumpGlobal(isRight) {
       state.globalStats.total += 1;
@@ -530,7 +637,7 @@ const vueApp = createApp({
     // -------------------- Load-all bootstrap --------------------
     async function loadAll() {
       state.dataset = await loadDataset();
-      state.rules   = await loadRules();
+      state.rules = await loadRules();
 
       // -------------------- Examples loading --------------------
       // External examples (optional)
@@ -538,7 +645,9 @@ const vueApp = createApp({
         try {
           const { map } = await Verb.loadExternalVerbs();
           if (map && map.size) state.exampleMap = map;
-        } catch (e) { console.warn("[examples] loadExternalVerbs failed:", e); }
+        } catch (e) {
+          console.warn("[examples] loadExternalVerbs failed:", e);
+        }
       }
 
       const [settings, plan, drill] = await Promise.all([
@@ -550,7 +659,9 @@ const vueApp = createApp({
       // Settings → state
       if (settings) {
         state.settings = settings;
-        state.fixedIntervalsText = (settings.fixedIntervals || [1,3,7,14,30]).join(",");
+        state.fixedIntervalsText = (
+          settings.fixedIntervals || [1, 3, 7, 14, 30]
+        ).join(",");
         state.translator = settings.translator || { endpoint: "", apiKey: "" };
 
         // Hydrate persisted UI toggles
@@ -559,17 +670,21 @@ const vueApp = createApp({
         }
         // Hydrate profile/stats
         if (settings.profileName) state.profileName = settings.profileName;
-        if (settings.globalStats) state.globalStats = { ...state.globalStats, ...settings.globalStats };
-        if (settings.todayStats)  state.todayStats  = { ...state.todayStats,  ...settings.todayStats  };
+        if (settings.globalStats)
+          state.globalStats = { ...state.globalStats, ...settings.globalStats };
+        if (settings.todayStats)
+          state.todayStats = { ...state.todayStats, ...settings.todayStats };
       } else {
         state.translator = { endpoint: "", apiKey: "" };
       }
 
-      if (plan)  state.plan  = plan;
+      if (plan) state.plan = plan;
       if (drill) state.drillPrefs = { ...state.drillPrefs, ...drill };
 
-      state.drillPrefs.includeOnlyTags = toArr(state.drillPrefs.includeOnlyTags);
-      state.drillPrefs.excludeTags     = toArr(state.drillPrefs.excludeTags);
+      state.drillPrefs.includeOnlyTags = toArr(
+        state.drillPrefs.includeOnlyTags
+      );
+      state.drillPrefs.excludeTags = toArr(state.drillPrefs.excludeTags);
       if (!state.drillPrefs.key) state.drillPrefs.key = "v1";
 
       // roll todayStats if date changed
@@ -587,10 +702,16 @@ const vueApp = createApp({
           const raw = await resp.json();
 
           // Accept either an array or an object with a `vocab` array
-          const arr = Array.isArray(raw) ? raw : Array.isArray(raw?.vocab) ? raw.vocab : null;
+          const arr = Array.isArray(raw)
+            ? raw
+            : Array.isArray(raw?.vocab)
+            ? raw.vocab
+            : null;
 
           if (!arr) {
-            console.warn("general_vocab.json did not contain an array or a {vocab: []} shape.");
+            console.warn(
+              "general_vocab.json did not contain an array or a {vocab: []} shape."
+            );
           } else {
             // Normalize into our in-memory card shape
             state.vocab.cards = arr.map((c, i) => ({
@@ -598,10 +719,14 @@ const vueApp = createApp({
               fr: (c.french ?? c.front ?? "").trim(),
               en: (c.english ?? c.back ?? "").trim(),
               partOfSpeech: (c.partOfSpeech ?? c.pos ?? "").trim(),
-              gender: (c.gender ?? "").trim(),       // 'm' | 'f' | '' for non-nouns
+              gender: (c.gender ?? "").trim(), // 'm' | 'f' | '' for non-nouns
               topic: (c.topic ?? "").trim(),
-              tags: Array.isArray(c.tags) ? c.tags.slice() : (c.tags ? [c.tags] : []),
-              article: (c.article ?? "").trim(),     // optional explicit article
+              tags: Array.isArray(c.tags)
+                ? c.tags.slice()
+                : c.tags
+                ? [c.tags]
+                : [],
+              article: (c.article ?? "").trim(), // optional explicit article
               // keep extra fields around if you need them elsewhere:
               plural: c.plural ?? "",
               example: c.example ?? null,
@@ -629,7 +754,9 @@ const vueApp = createApp({
             Vocab.buildVocabDeck(state);
             applyVocabPillFilter();
 
-            console.log(`[Vocab] Loaded ${state.vocab.cards.length} cards from general_vocab.json`);
+            console.log(
+              `[Vocab] Loaded ${state.vocab.cards.length} cards from general_vocab.json`
+            );
           }
         }
       } catch (err) {
@@ -641,9 +768,14 @@ const vueApp = createApp({
       if (_vocabCount > 0) {
         await Vocab.reloadVocabByTag(db, state);
         Vocab.buildVocabDeck(state);
+        // ⬇️ Rebuild pills & re-apply filters after DB load
+        buildVocabPillsFromData(state.vocab.cards || []);
+        applyVocabPillFilter();
       } else {
         // Keep the JSON-loaded cards; deck already built above.
         Vocab.buildVocabDeck(state);
+        // JSON path already built pills earlier; we still ensure filters apply
+        applyVocabPillFilter();
       }
 
       // Apply current Vocab pill filters to deck
@@ -653,17 +785,40 @@ const vueApp = createApp({
       buildVocabPillsFromData(state.vocab.cards || []);
       function buildVocabPillsFromData(cards = []) {
         const topic = new Set();
-        const tags  = new Set();
-        const pos   = new Set();
+        const tags = new Set();
+        const pos = new Set();
         for (const c of cards) {
           if (c?.topic) topic.add(c.topic);
           if (Array.isArray(c?.tags)) c.tags.forEach((t) => t && tags.add(t));
           if (c?.partOfSpeech) pos.add(c.partOfSpeech);
         }
         state.vocabPills.topic = Array.from(topic).sort();
-        state.vocabPills.tags  = Array.from(tags).sort();
-        state.vocabPills.pos   = Array.from(pos).sort();
+        state.vocabPills.tags = Array.from(tags).sort();
+        state.vocabPills.pos = Array.from(pos).sort();
       }
+
+
+      watch(
+  () => state.vocab.cards,
+  (cards) => {
+    // defensive: cards may be replaced wholesale
+    if (!Array.isArray(cards)) return;
+    // Rebuild pills + keep filtering in sync
+    // If buildVocabPillsFromData is inside loadAll's scope, inline here:
+    const topic = new Set(), tags = new Set(), pos = new Set();
+    for (const c of cards) {
+      if (c?.topic) topic.add(c.topic);
+      if (Array.isArray(c?.tags)) c.tags.forEach(t => t && tags.add(t));
+      if (c?.partOfSpeech) pos.add(c.partOfSpeech);
+    }
+    state.vocabPills.topic = Array.from(topic).sort();
+    state.vocabPills.tags  = Array.from(tags).sort();
+    state.vocabPills.pos   = Array.from(pos).sort();
+    applyVocabPillFilter();
+  },
+  { deep: true }
+);
+
 
       // Verbs (seeders optional)
       if (typeof Verb.maybeSeedVerbsFromTop200 === "function") {
@@ -678,7 +833,11 @@ const vueApp = createApp({
       await loadRecordingsFromDB();
 
       // Interview questions (settings or fallback file)
-      if (settings?.questionBank && Array.isArray(settings.questionBank) && settings.questionBank.length) {
+      if (
+        settings?.questionBank &&
+        Array.isArray(settings.questionBank) &&
+        settings.questionBank.length
+      ) {
         state.questionBank = settings.questionBank;
       } else {
         try {
@@ -688,11 +847,21 @@ const vueApp = createApp({
             if (Array.isArray(arr) && arr.length) {
               state.questionBank = arr;
               const existing = (await db.settings.get("v1")) || { key: "v1" };
-              await db.settings.put({ ...existing, questionBank: arr, key: "v1" });
-              console.log(`Loaded default interview_questions.json (${arr.length} entries).`);
+              await db.settings.put({
+                ...existing,
+                questionBank: arr,
+                key: "v1",
+              });
+              console.log(
+                `Loaded default interview_questions.json (${arr.length} entries).`
+              );
             }
           } else {
-            console.warn("Could not load interview_questions.json (HTTP " + resp.status + ")");
+            console.warn(
+              "Could not load interview_questions.json (HTTP " +
+                resp.status +
+                ")"
+            );
           }
         } catch (err) {
           console.warn("Failed to fetch interview_questions.json", err);
@@ -734,7 +903,9 @@ const vueApp = createApp({
           entry?.examples?.[camel] ??
           entry?.examples?.[display] ??
           entry?.examples?.default ??
-          (entry?.examples && (entry.examples.fr || entry.examples.en) ? entry.examples : null);
+          (entry?.examples && (entry.examples.fr || entry.examples.en)
+            ? entry.examples
+            : null);
 
         if (ex) {
           if (ex.fr) state.drillSession.side.fr = ex.fr;
@@ -743,7 +914,9 @@ const vueApp = createApp({
           state.drillSession.side.fr ??= "—";
           state.drillSession.side.en ??= "—";
         }
-      } catch (e) { console.warn("[examples] attach failed:", e); }
+      } catch (e) {
+        console.warn("[examples] attach failed:", e);
+      }
 
       // Rules (from rules.json)
       const R = state.rules;
@@ -754,8 +927,18 @@ const vueApp = createApp({
         if (obj[camel]) return obj[camel];
         if (obj[display]) return obj[display];
         for (const k of Object.keys(obj)) {
-          if ((k || "").localeCompare(camel, undefined, { sensitivity: "accent" }) === 0) return obj[k];
-          if ((k || "").localeCompare(display, undefined, { sensitivity: "accent" }) === 0) return obj[k];
+          if (
+            (k || "").localeCompare(camel, undefined, {
+              sensitivity: "accent",
+            }) === 0
+          )
+            return obj[k];
+          if (
+            (k || "").localeCompare(display, undefined, {
+              sensitivity: "accent",
+            }) === 0
+          )
+            return obj[k];
         }
         return null;
       };
@@ -765,83 +948,156 @@ const vueApp = createApp({
 
       const lines = [];
       if (typeof block.explanation === "string" && block.explanation.trim()) {
-        lines.push(`<strong>L’explication :</strong> ${block.explanation.trim()}`);
+        lines.push(
+          `<strong>L’explication :</strong> ${block.explanation.trim()}`
+        );
       }
       if (typeof block.description === "string" && block.description.trim()) {
         lines.push(`<strong>Explanation:</strong> ${block.description.trim()}`);
       }
 
       const fmtEndings = (end) => {
-        try { return Object.entries(end).map(([p,e]) => `<code>${p}</code>: <code>${e}</code>`).join(", "); }
-        catch { return null; }
+        try {
+          return Object.entries(end)
+            .map(([p, e]) => `<code>${p}</code>: <code>${e}</code>`)
+            .join(", ");
+        } catch {
+          return null;
+        }
       };
 
       const pushGroupFormation = (grpKey, grpObj) => {
         if (!grpObj || typeof grpObj !== "object") return;
-        if (grpObj.stem && String(grpObj.stem).trim()) lines.push(`${grpKey}: Stem — ${grpObj.stem}`);
+        if (grpObj.stem && String(grpObj.stem).trim())
+          lines.push(`${grpKey}: Stem — ${grpObj.stem}`);
         if (grpObj.endings) {
           const s = fmtEndings(grpObj.endings);
           if (s) lines.push(`${grpKey}: Endings — ${s}`);
         }
-        if (grpObj.special && String(grpObj.special).trim()) lines.push(grpObj.special);
+        if (grpObj.special && String(grpObj.special).trim())
+          lines.push(grpObj.special);
       };
 
       if (block.formation && typeof block.formation === "object") {
         const F = block.formation;
-        if (F.auxiliary && String(F.auxiliary).trim()) lines.push(`Auxiliary — ${F.auxiliary}`);
-        if (F.participle && String(F.participle).trim()) lines.push(`Participle — ${F.participle}`);
+        if (F.auxiliary && String(F.auxiliary).trim())
+          lines.push(`Auxiliary — ${F.auxiliary}`);
+        if (F.participle && String(F.participle).trim())
+          lines.push(`Participle — ${F.participle}`);
         if (groupKey && F[groupKey]) pushGroupFormation(groupKey, F[groupKey]);
       }
 
-      if (block.stem_rule && String(block.stem_rule).trim()) lines.push(block.stem_rule.trim());
+      if (block.stem_rule && String(block.stem_rule).trim())
+        lines.push(block.stem_rule.trim());
       if (block.endings && typeof block.endings === "object") {
-        const s = fmtEndings(block.endings); if (s) lines.push(`Endings — ${s}`);
+        const s = fmtEndings(block.endings);
+        if (s) lines.push(`Endings — ${s}`);
       }
 
-      if (block.agreement && String(block.agreement).trim()) lines.push(block.agreement.trim());
+      if (block.agreement && String(block.agreement).trim())
+        lines.push(block.agreement.trim());
       if (block.auxiliary_rules && typeof block.auxiliary_rules === "object") {
         const ar = block.auxiliary_rules;
-        if (ar.default && String(ar.default).trim())   lines.push(`Auxiliary (default) — ${ar.default.trim()}`);
-        if (ar.reflexive && String(ar.reflexive).trim()) lines.push(`Reflexive — ${ar.reflexive.trim()}`);
+        if (ar.default && String(ar.default).trim())
+          lines.push(`Auxiliary (default) — ${ar.default.trim()}`);
+        if (ar.reflexive && String(ar.reflexive).trim())
+          lines.push(`Reflexive — ${ar.reflexive.trim()}`);
       }
 
       if (Array.isArray(block.notes)) {
-        for (const n of block.notes) { const t = (n ?? "").toString().trim(); if (t) lines.push(t); }
+        for (const n of block.notes) {
+          const t = (n ?? "").toString().trim();
+          if (t) lines.push(t);
+        }
       }
       state.drillSession.help = lines.length ? { lines } : null;
+    }
+
+    // -------------------- Import helpers (merge-safe upsert for vocab) --------------------
+    function normalizeVocabItem(c) {
+      const fr = (c.french ?? c.front ?? "").trim();
+      const en = (c.english ?? c.back ?? "").trim();
+      return {
+        fr,
+        en,
+        partOfSpeech: (c.partOfSpeech ?? c.pos ?? "").trim(),
+        gender: (c.gender ?? "").trim(),
+        topic: (c.topic ?? "").trim(),
+        tags: Array.isArray(c.tags) ? c.tags.slice().filter(Boolean) : (c.tags ? [String(c.tags)] : []),
+        article: (c.article ?? "").trim(),
+        plural: c.plural ?? "",
+        example: c.example ?? null,
+        notes: c.notes ?? "",
+        audio: c.audio ?? null,
+        image: c.image ?? "",
+      };
+    }
+    function unionTags(a = [], b = []) {
+      const s = new Set();
+      (Array.isArray(a) ? a : []).forEach(t => t && s.add(String(t)));
+      (Array.isArray(b) ? b : []).forEach(t => t && s.add(String(t)));
+      return Array.from(s);
+    }
+    function rebuildVocabPillsFromCards(cards = []) {
+      const topic = new Set(), tags = new Set(), pos = new Set();
+      for (const c of cards) {
+        if (c?.topic) topic.add(c.topic);
+        if (Array.isArray(c?.tags)) c.tags.forEach(t => t && tags.add(t));
+        if (c?.partOfSpeech) pos.add(c.partOfSpeech);
+      }
+      state.vocabPills.topic = Array.from(topic).sort();
+      state.vocabPills.tags  = Array.from(tags).sort();
+      state.vocabPills.pos   = Array.from(pos).sort();
     }
 
     // -------------------- Methods --------------------
     function toggleIncludeTag(tag) {
       const arr = state.drillPrefs.includeOnlyTags ?? [];
       const i = arr.indexOf(tag);
-      if (i === -1) arr.push(tag); else arr.splice(i, 1);
+      if (i === -1) arr.push(tag);
+      else arr.splice(i, 1);
       state.drillPrefs.includeOnlyTags = [...arr];
       methods.saveDrillPrefs();
     }
-    function clearIncludeTags() { state.drillPrefs.includeOnlyTags = []; methods.saveDrillPrefs(); }
+    function clearIncludeTags() {
+      state.drillPrefs.includeOnlyTags = [];
+      methods.saveDrillPrefs();
+    }
     function toggleExcludeTag(tag) {
       const arr = state.drillPrefs.excludeTags ?? [];
       const i = arr.indexOf(tag);
-      if (i === -1) arr.push(tag); else arr.splice(i, 1);
+      if (i === -1) arr.push(tag);
+      else arr.splice(i, 1);
       state.drillPrefs.excludeTags = [...arr];
       methods.saveDrillPrefs();
     }
-    function clearExcludeTags() { state.drillPrefs.excludeTags = []; methods.saveDrillPrefs(); }
+    function clearExcludeTags() {
+      state.drillPrefs.excludeTags = [];
+      methods.saveDrillPrefs();
+    }
 
     async function rate(q) {
       if (!state.currentCard) return;
       const c = state.currentCard;
-      const upd = state.settings.srsMode === "SM2"
-        ? sm2Schedule(c, q)
-        : fixedSchedule(c, state.settings.fixedIntervals || [1,3,7,14,30], q);
+      const upd =
+        state.settings.srsMode === "SM2"
+          ? sm2Schedule(c, q)
+          : fixedSchedule(
+              c,
+              state.settings.fixedIntervals || [1, 3, 7, 14, 30],
+              q
+            );
       Object.assign(c, upd);
       await db.vocab.update(c.id, upd);
       Vocab.computeDue(state);
     }
 
-    function getScroll() { return { x: window.scrollX, y: window.scrollY }; }
-    function restoreScroll(pos) { window.scrollTo(pos.x, pos.y); }
+    function getScroll() {
+      return { x: window.scrollX, y: window.scrollY };
+    }
+    function restoreScroll(pos) {
+      window.scrollTo(pos.x, pos.y);
+    }
     async function withScrollLock(run) {
       const pos = getScroll();
       await run();
@@ -889,12 +1145,15 @@ const vueApp = createApp({
 
       // Question bank
       qbCategories() {
-        const s = new Set(); for (const q of state.questionBank) if (q?.category) s.add(q.category);
-        return Array.from(s).sort((a,b) => a.localeCompare(b));
+        const s = new Set();
+        for (const q of state.questionBank) if (q?.category) s.add(q.category);
+        return Array.from(s).sort((a, b) => a.localeCompare(b));
       },
       qbTags() {
-        const s = new Set(); for (const q of state.questionBank) for (const t of q.tags || []) s.add(t);
-        return Array.from(s).sort((a,b) => a.localeCompare(b));
+        const s = new Set();
+        for (const q of state.questionBank)
+          for (const t of q.tags || []) s.add(t);
+        return Array.from(s).sort((a, b) => a.localeCompare(b));
       },
       qbFiltered() {
         const { category, tag } = state.qFilters;
@@ -912,16 +1171,23 @@ const vueApp = createApp({
           state.questionBank = arr;
           const existing = (await db.settings.get("v1")) || { key: "v1" };
           await db.settings.put({ ...existing, questionBank: arr, key: "v1" });
-          state._showPaste = false; state._pasteText = "";
-        } catch (e) { state._pasteErr = e.message || "Invalid JSON"; }
+          state._showPaste = false;
+          state._pasteText = "";
+        } catch (e) {
+          state._pasteErr = e.message || "Invalid JSON";
+        }
       },
       async importQuestionBankFromFile(evt) {
-        const f = evt?.target?.files?.[0]; if (!f) return;
+        const f = evt?.target?.files?.[0];
+        if (!f) return;
         try {
           const txt = await f.text();
           await methods.importQuestionBankFromText(txt);
-        } catch (e) { alert("Failed to read file: " + (e.message || e)); }
-        finally { evt.target.value = ""; }
+        } catch (e) {
+          alert("Failed to read file: " + (e.message || e));
+        } finally {
+          evt.target.value = "";
+        }
       },
       async clearQuestionBank() {
         state.questionBank = [];
@@ -931,8 +1197,10 @@ const vueApp = createApp({
       },
       pickQuestion(q) {
         if (!q) return;
-        const fu = Array.isArray(q.followUps) && q.followUps.length
-          ? "\n" + q.followUps.map((x) => "— " + x).join("\n") : "";
+        const fu =
+          Array.isArray(q.followUps) && q.followUps.length
+            ? "\n" + q.followUps.map((x) => "— " + x).join("\n")
+            : "";
         state.newQA.q = `${q.prompt}${fu}`;
         if (state.qFilters.insertSampleOnPick && q.sampleAnswer) {
           state.newQA.a = q.sampleAnswer;
@@ -950,13 +1218,17 @@ const vueApp = createApp({
         if (state.isRecording) return;
         try {
           if (!navigator.mediaDevices?.getUserMedia) {
-            alert("Recording not supported in this browser."); return;
+            alert("Recording not supported in this browser.");
+            return;
           }
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          const stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+          });
           const mime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
             ? "audio/webm;codecs=opus"
             : MediaRecorder.isTypeSupported("audio/webm")
-              ? "audio/webm" : "";
+            ? "audio/webm"
+            : "";
           const mr = new MediaRecorder(stream, mime ? { mimeType: mime } : {});
           state.mediaRecorder = mr;
           state.chunks = [];
@@ -964,24 +1236,42 @@ const vueApp = createApp({
 
           methods.startTranscription?.();
 
-          mr.ondataavailable = (e) => { if (e.data && e.data.size > 0) state.chunks.push(e.data); };
+          mr.ondataavailable = (e) => {
+            if (e.data && e.data.size > 0) state.chunks.push(e.data);
+          };
           mr.onerror = (e) => {
             console.error("[Recorder] error", e);
-            alert("Recorder error: " + (e.error?.message || e.message || e.name));
-            try { mr.stop(); } catch {}
+            alert(
+              "Recorder error: " + (e.error?.message || e.message || e.name)
+            );
+            try {
+              mr.stop();
+            } catch {}
           };
           mr.onstop = async () => {
             try {
-              const blob = new Blob(state.chunks, { type: mime || "audio/webm" });
+              const blob = new Blob(state.chunks, {
+                type: mime || "audio/webm",
+              });
               const ts = new Date();
-              const uuid = crypto?.randomUUID?.() || Math.random().toString(36).slice(2);
-              const name = `rec-${ts.toISOString().replace(/[:.]/g, "-")}-${uuid}.webm`;
+              const uuid =
+                crypto?.randomUUID?.() || Math.random().toString(36).slice(2);
+              const name = `rec-${ts
+                .toISOString()
+                .replace(/[:.]/g, "-")}-${uuid}.webm`;
 
               const transcript = state.speech?.final || "";
               const question = state.newQA?.q || "";
-              const answer   = state.newQA?.a || "";
+              const answer = state.newQA?.a || "";
 
-              const saved = await persistRecording({ blob, name, mime: mime || "audio/webm", transcript, question, answer });
+              const saved = await persistRecording({
+                blob,
+                name,
+                mime: mime || "audio/webm",
+                transcript,
+                question,
+                answer,
+              });
               const url = URL.createObjectURL(blob);
               state.recordings.unshift({ ...saved, url });
             } catch (err) {
@@ -989,7 +1279,9 @@ const vueApp = createApp({
             } finally {
               state.chunks = [];
               state.isRecording = false;
-              try { stream.getTracks().forEach((t) => t.stop()); } catch {}
+              try {
+                stream.getTracks().forEach((t) => t.stop());
+              } catch {}
               state.mediaRecorder = null;
               methods.stopTranscription?.();
             }
@@ -1019,19 +1311,31 @@ const vueApp = createApp({
 
       deleteRecording: async (r) => {
         if (!r) return;
-        try { if (r.url) URL.revokeObjectURL(r.url); } catch {}
         try {
-          if (r.path) { if (opfs?.removeFile) await opfs.removeFile(r.path); else await opfsRemove(r.path); }
-        } catch (e) { console.warn("[OPFS] remove failed:", e); }
+          if (r.url) URL.revokeObjectURL(r.url);
+        } catch {}
+        try {
+          if (r.path) {
+            if (opfs?.removeFile) await opfs.removeFile(r.path);
+            else await opfsRemove(r.path);
+          }
+        } catch (e) {
+          console.warn("[OPFS] remove failed:", e);
+        }
         try {
           const id = await findRecordingId(r);
           if (id != null) await db.recordings.delete(id);
           else if (r.path || r.name) {
             const rows = await db.recordings.toArray();
-            const victim = rows.find((x) => (r.path && x.path === r.path) || (r.name && x.name === r.name));
+            const victim = rows.find(
+              (x) =>
+                (r.path && x.path === r.path) || (r.name && x.name === r.name)
+            );
             if (victim?.id != null) await db.recordings.delete(victim.id);
           }
-        } catch (e) { console.warn("[Dexie] delete failed:", e); }
+        } catch (e) {
+          console.warn("[Dexie] delete failed:", e);
+        }
         await loadRecordingsFromDB();
       },
 
@@ -1057,13 +1361,20 @@ const vueApp = createApp({
         const q = buildQuestion();
         if (!q) {
           state.drillSession.running = false;
-          alert("No drillable items. Add verbs or adjust filters/tenses/persons.");
+          alert(
+            "No drillable items. Add verbs or adjust filters/tenses/persons."
+          );
           return;
         }
         state.drillSession.question = {
           prompt: { label: q.label },
           answer: q.answer,
-          meta: { infinitive: q.verb.infinitive, english: q.verb.english || "", person: q.personLabel, tense: q.tenseLabel },
+          meta: {
+            infinitive: q.verb.infinitive,
+            english: q.verb.english || "",
+            person: q.personLabel,
+            tense: q.tenseLabel,
+          },
         };
         state.drillSession.side.english = q.verb.english || "";
         attachExamplesAndRules(q);
@@ -1086,7 +1397,9 @@ const vueApp = createApp({
         });
 
         if (isRight && state.drillPrefs.autoNext) {
-          setTimeout(() => { methods.nextDrill(); }, 350);
+          setTimeout(() => {
+            methods.nextDrill();
+          }, 350);
         }
       },
 
@@ -1101,7 +1414,12 @@ const vueApp = createApp({
           state.drillSession.question = {
             prompt: { label: q.label },
             answer: q.answer,
-            meta: { infinitive: q.verb.infinitive, english: q.verb.english || "", person: q.personLabel, tense: q.tenseLabel },
+            meta: {
+              infinitive: q.verb.infinitive,
+              english: q.verb.english || "",
+              person: q.personLabel,
+              tense: q.tenseLabel,
+            },
           };
           state.drillSession.side.english = q.verb.english || "";
           attachExamplesAndRules(q);
@@ -1118,8 +1436,10 @@ const vueApp = createApp({
         state.drillSession.correct = null;
       },
 
-      // Notes/Data import — loads general_vocab.json and seeds FR↔EN cards into DB (with de-dupe)
-      importNotesAndSeedCards: async (opts = { frToEn: true, enToFr: true }) => {
+      // Notes/Data import — MERGE-SAFE upsert of vocab (keeps Topics/Tags/PoS; dedupes)
+      importNotesAndSeedCards: async (
+        opts = { frToEn: true, enToFr: true }
+      ) => {
         try {
           const resp = await fetch("general_vocab.json?v=" + Date.now());
           if (!resp.ok) {
@@ -1127,66 +1447,137 @@ const vueApp = createApp({
             return;
           }
           const raw = await resp.json();
-          const arr = Array.isArray(raw) ? raw : (Array.isArray(raw?.vocab) ? raw.vocab : []);
+          const arr = Array.isArray(raw)
+            ? raw
+            : Array.isArray(raw?.vocab)
+            ? raw.vocab
+            : [];
           if (!arr.length) {
             alert("general_vocab.json has no entries.");
             return;
           }
 
-          let added = 0;
-          for (const it of arr) {
-            const fr = (it.french ?? it.front ?? "").trim();
-            const en = (it.english ?? it.back ?? "").trim();
-            const tags = Array.isArray(it.tags) ? it.tags.slice()
-                      : it.tags ? [String(it.tags)] : [];
-            if (!fr || !en) continue;
+          // Normalize incoming
+          const incoming = arr.map(normalizeVocabItem).filter(x => x.fr && x.en);
+
+          // Snapshot existing by (fr,en) for upsert
+          const existingRows = await db.vocab.toArray();
+          const keyOf = (fr, en) => (fr || "").toLowerCase().trim() + "␟" + (en || "").toLowerCase().trim();
+          const existingByKey = new Map(existingRows.map(r => [keyOf(r.fr || r.front, r.en || r.back), r]));
+
+          const toAdd = [];
+          const toUpdate = [];
+          let addedSrs = 0;
+
+          for (const inc of incoming) {
+            const k = keyOf(inc.fr, inc.en);
+            const ex = existingByKey.get(k);
 
             // optional notes upsert if exposed
             if (typeof Vocab.upsertNote === "function") {
               try {
                 await Vocab.upsertNote(db, {
-                  french: fr,
-                  english: en,
-                  tags,
-                  topic: it.topic ?? "",
-                  pos: it.partOfSpeech ?? it.pos ?? ""
+                  french: inc.fr,
+                  english: inc.en,
+                  tags: inc.tags,
+                  topic: inc.topic,
+                  pos: inc.partOfSpeech,
                 });
               } catch {}
             }
 
-            // -------- FR→EN --------
-            if (opts.frToEn !== false) {
-              const existsFE = await db.vocab
-                .where("front").equals(fr)
-                .and(x => (x.back || "") === en)
-                .first();
-              if (!existsFE) {
-                state.newVocabFront = fr;
-                state.newVocabBack  = en;
-                try { await Vocab.addCard(db, state, { front: fr, back: en, tags }); added++; } catch {}
+            // SRS card directions (using your current behaviour)
+            const wantFRtoEN = opts.frToEn !== false;
+            const wantENtoFR = opts.enToFr !== false;
+
+            if (!ex) {
+              // First-time (fr,en) → create FR→EN card now; EN→FR handled below
+              if (wantFRtoEN) {
+                toAdd.push({
+                  front: inc.fr, back: inc.en,
+                  fr: inc.fr,    en: inc.en,
+                  partOfSpeech: inc.partOfSpeech,
+                  gender: inc.gender,
+                  topic: inc.topic,
+                  tags: inc.tags,
+                  article: inc.article,
+                  plural: inc.plural,
+                  example: inc.example,
+                  notes: inc.notes,
+                  audio: inc.audio,
+                  image: inc.image,
+                });
+                addedSrs++;
+              }
+            } else {
+              // Merge metadata: don't wipe existing; fill blanks; union tags
+              const patch = {};
+              const keep = (v) => v !== undefined && v !== null && String(v).trim() !== "";
+
+              if (!keep(ex.topic)        && keep(inc.topic))        patch.topic = inc.topic;
+              if (!keep(ex.partOfSpeech) && keep(inc.partOfSpeech)) patch.partOfSpeech = inc.partOfSpeech;
+              if (!keep(ex.gender)       && keep(inc.gender))       patch.gender = inc.gender;
+              if (!keep(ex.article)      && keep(inc.article))      patch.article = inc.article;
+
+              const mergedTags = unionTags(ex.tags, inc.tags);
+              if (JSON.stringify(mergedTags) !== JSON.stringify(ex.tags || [])) {
+                patch.tags = mergedTags;
+              }
+
+              if (!keep(ex.plural)  && keep(inc.plural))  patch.plural = inc.plural;
+              if (!keep(ex.example) && keep(inc.example)) patch.example = inc.example;
+              if (!keep(ex.notes)   && keep(inc.notes))   patch.notes = inc.notes;
+              if (!keep(ex.audio)   && keep(inc.audio))   patch.audio = inc.audio;
+              if (!keep(ex.image)   && keep(inc.image))   patch.image = inc.image;
+
+              if (Object.keys(patch).length) {
+                toUpdate.push({ id: ex.id, patch });
               }
             }
 
-            // -------- EN→FR --------
-            if (opts.enToFr !== false) {
-              const existsEF = await db.vocab
-                .where("front").equals(en)
-                .and(x => (x.back || "") === fr)
-                .first();
+            // Ensure EN→FR card also exists (only if requested)
+            if (wantENtoFR) {
+              const existsEF = existingRows.find(
+                (r) => (r.front || r.fr) === inc.en && (r.back || r.en) === inc.fr
+              );
               if (!existsEF) {
-                state.newVocabFront = en;
-                state.newVocabBack  = fr;
-                try { await Vocab.addCard(db, state, { front: en, back: fr, tags }); added++; } catch {}
+                toAdd.push({
+                  front: inc.en, back: inc.fr,
+                  fr: inc.en,    en: inc.fr,
+                  partOfSpeech: inc.partOfSpeech,
+                  gender: inc.gender,
+                  topic: inc.topic,
+                  tags: inc.tags,
+                  article: inc.article,
+                  plural: inc.plural,
+                  example: inc.example,
+                  notes: inc.notes,
+                  audio: inc.audio,
+                  image: inc.image,
+                });
+                addedSrs++;
               }
             }
           }
 
-          // Refresh UI from DB and rebuild deck + pills
+          // Persist
+          if (toAdd.length) {
+            try { await db.vocab.bulkAdd(toAdd); }
+            catch {
+              for (const row of toAdd) { try { await db.vocab.add(row); } catch {} }
+            }
+          }
+          for (const u of toUpdate) {
+            try { await db.vocab.update(u.id, u.patch); } catch {}
+          }
+
+          // Refresh UI: pull from DB, rebuild deck & pills, reapply filters
           await Vocab.reloadVocabByTag(db, state);
           Vocab.buildVocabDeck(state);
+          rebuildVocabPillsFromCards(state.vocab.cards || []);
           applyVocabPillFilter();
 
-          alert(`Imported ${arr.length} entries; added ${added} new SRS cards (both directions, deduped).`);
+          alert(`Imported ${incoming.length} entries; added ${addedSrs} new SRS cards (both directions, deduped; metadata merged).`);
 
           // Optional: take user to Learn → Vocab
           state.tab = "learn";
@@ -1196,30 +1587,57 @@ const vueApp = createApp({
           alert("Import failed: " + (e.message || e));
         } finally {
           state.newVocabFront = "";
-          state.newVocabBack  = "";
+          state.newVocabBack = "";
         }
       },
 
       // Settings/Plan saves
-      saveSettings: () => db.settings.put({ ...state.settings, translator: state.translator, key: "v1" }),
-      savePlan:     () => db.plan.put(state.plan),
+      saveSettings: () =>
+        db.settings.put({
+          ...state.settings,
+          translator: state.translator,
+          key: "v1",
+        }),
+      savePlan: () => db.plan.put(state.plan),
       promptProfileName() {
         const val = prompt("Display name:", state.profileName || "");
-        if (val !== null) { state.profileName = val.trim(); saveGlobalToSettingsDebounced(); }
+        if (val !== null) {
+          state.profileName = val.trim();
+          saveGlobalToSettingsDebounced();
+        }
       },
       exportGlobalStats() {
-        const blob = new Blob([JSON.stringify({
-          profileName: state.profileName,
-          globalStats: state.globalStats,
-          todayStats: state.todayStats,
-        }, null, 2)], { type: "application/json" });
+        const blob = new Blob(
+          [
+            JSON.stringify(
+              {
+                profileName: state.profileName,
+                globalStats: state.globalStats,
+                todayStats: state.todayStats,
+              },
+              null,
+              2
+            ),
+          ],
+          { type: "application/json" }
+        );
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
-        a.href = url; a.download = `drill-stats-${new Date().toISOString().slice(0,10)}.json`;
-        document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+        a.href = url;
+        a.download = `drill-stats-${new Date()
+          .toISOString()
+          .slice(0, 10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
       },
       resetTodayStats() {
-        state.todayStats = { right: 0, total: 0, date: new Date().toISOString().slice(0,10) };
+        state.todayStats = {
+          right: 0,
+          total: 0,
+          date: new Date().toISOString().slice(0, 10),
+        };
         saveGlobalToSettingsDebounced();
       },
 
