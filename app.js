@@ -216,23 +216,52 @@ const vueApp = createApp({
 
     // Render FR w/ article for nouns
     function renderFr(card) {
-      const w = (card?.fr ?? card?.front ?? "").trim();
-      if (!w) return w;
-      if (/^(l['’]\s*|le\s+|la\s+)/i.test(w)) return w; // already has article
+      // 1) Pull the French surface form from any known field shape
+      const w =
+        (card?.fr ??
+         card?.front ??
+         card?.french ??
+         "").trim();
 
-      const isNoun = card?.pos === "noun" || (card?.tags || []).some((t) => /^noun\b/i.test(t));
+      if (!w) return w;
+
+      // 2) If the string already contains an article, keep it as-is
+      if (/^(l['’]\s*|le\s+|la\s+)/i.test(w)) return w;
+
+      // 3) Decide if it's a noun:
+      //    - explicit flags from common schemas: partOfSpeech / pos / tags
+      const posStr = String(card?.partOfSpeech || card?.pos || "").toLowerCase();
+      const tagsArr = Array.isArray(card?.tags) ? card.tags.map(t => String(t).toLowerCase()) : [];
+      const isNoun =
+        posStr.includes("noun") ||
+        tagsArr.some(t => t.startsWith("noun")) ||
+        // If gender exists, it’s almost certainly a noun in this dataset
+        (card?.gender && String(card.gender).trim() !== "");
+
       if (!isNoun) return w;
 
+      // 4) Work out the article
+      //    - prefer explicit article if given
+      //    - otherwise use gender or elision for vowels / mute h
       const startsWithVowelOrMuteH = /^[aeiouâêîôûéèëïüœ]/i.test(w) || /^h/i.test(w);
-      let gender  = (card?.gender  || "").toLowerCase(); // 'm'|'f'
-      let article = (card?.article || "").toLowerCase(); // 'le'|'la'|"l'"
+
+      let article = String(card?.article || "").toLowerCase();
+      let gender  = String(card?.gender  || "").toLowerCase(); // 'm' | 'f'
 
       if (!article) {
-        if (startsWithVowelOrMuteH) article = "l'";
-        else if (gender === "f" || (card?.tags || []).includes("f")) article = "la";
-        else if (gender === "m" || (card?.tags || []).includes("m")) article = "le";
-        else return w; // unknown -> do not guess
+        if (startsWithVowelOrMuteH) {
+          article = "l'";
+        } else if (gender === "f" || tagsArr.includes("f")) {
+          article = "la";
+        } else if (gender === "m" || tagsArr.includes("m")) {
+          article = "le";
+        } else {
+          // Unknown gender and no elision → leave bare word rather than guessing
+          return w;
+        }
       }
+
+      // 5) Normalize elided form
       if (article === "l'") {
         const bare = w.replace(/^l['’]\s*/i, "").trim();
         return `l'${bare}`;
@@ -503,6 +532,7 @@ const vueApp = createApp({
       state.dataset = await loadDataset();
       state.rules   = await loadRules();
 
+      // -------------------- Examples loading --------------------
       // External examples (optional)
       if (typeof Verb.loadExternalVerbs === "function") {
         try {
@@ -548,9 +578,73 @@ const vueApp = createApp({
         state.todayStats = { right: 0, total: 0, date: today };
       }
 
-      // Vocab from DB
-      await Vocab.reloadVocabByTag(db, state);
-      Vocab.buildVocabDeck(state);
+      // --- AUTOLOAD GENERAL VOCAB (array or { vocab: [...] }) ---
+      try {
+        const resp = await fetch("general_vocab.json?v=" + Date.now());
+        if (!resp.ok) {
+          console.warn("Failed to fetch general_vocab.json:", resp.status);
+        } else {
+          const raw = await resp.json();
+
+          // Accept either an array or an object with a `vocab` array
+          const arr = Array.isArray(raw) ? raw : Array.isArray(raw?.vocab) ? raw.vocab : null;
+
+          if (!arr) {
+            console.warn("general_vocab.json did not contain an array or a {vocab: []} shape.");
+          } else {
+            // Normalize into our in-memory card shape
+            state.vocab.cards = arr.map((c, i) => ({
+              id: c.id ?? i + 1,
+              fr: (c.french ?? c.front ?? "").trim(),
+              en: (c.english ?? c.back ?? "").trim(),
+              partOfSpeech: (c.partOfSpeech ?? c.pos ?? "").trim(),
+              gender: (c.gender ?? "").trim(),       // 'm' | 'f' | '' for non-nouns
+              topic: (c.topic ?? "").trim(),
+              tags: Array.isArray(c.tags) ? c.tags.slice() : (c.tags ? [c.tags] : []),
+              article: (c.article ?? "").trim(),     // optional explicit article
+              // keep extra fields around if you need them elsewhere:
+              plural: c.plural ?? "",
+              example: c.example ?? null,
+              notes: c.notes ?? "",
+              audio: c.audio ?? null,
+              image: c.image ?? "",
+            }));
+
+            // Build pills from data
+            const topics = new Set();
+            const tags = new Set();
+            const pos = new Set();
+
+            for (const c of state.vocab.cards) {
+              if (c.topic) topics.add(c.topic);
+              if (c.partOfSpeech) pos.add(c.partOfSpeech);
+              for (const t of c.tags || []) if (t) tags.add(t);
+            }
+
+            state.vocabPills.topic = [...topics].sort();
+            state.vocabPills.tags = [...tags].sort();
+            state.vocabPills.pos = [...pos].sort();
+
+            // Rebuild deck and apply current pill filters so UI is ready immediately
+            Vocab.buildVocabDeck(state);
+            applyVocabPillFilter();
+
+            console.log(`[Vocab] Loaded ${state.vocab.cards.length} cards from general_vocab.json`);
+          }
+        }
+      } catch (err) {
+        console.error("Error loading general_vocab.json:", err);
+      }
+
+      // Prefer DB only if it actually has cards; otherwise keep the JSON deck we just built.
+      const _vocabCount = await db.vocab.count();
+      if (_vocabCount > 0) {
+        await Vocab.reloadVocabByTag(db, state);
+        Vocab.buildVocabDeck(state);
+      } else {
+        // Keep the JSON-loaded cards; deck already built above.
+        Vocab.buildVocabDeck(state);
+      }
 
       // Apply current Vocab pill filters to deck
       applyVocabPillFilter();
@@ -1024,8 +1118,87 @@ const vueApp = createApp({
         state.drillSession.correct = null;
       },
 
-      // Notes/Data import (placeholder)
-      importNotesAndSeedCards(/*opts*/) { /* wire your existing data loader here */ },
+      // Notes/Data import — loads general_vocab.json and seeds FR↔EN cards into DB (with de-dupe)
+      importNotesAndSeedCards: async (opts = { frToEn: true, enToFr: true }) => {
+        try {
+          const resp = await fetch("general_vocab.json?v=" + Date.now());
+          if (!resp.ok) {
+            alert("Failed to fetch general_vocab.json: " + resp.status);
+            return;
+          }
+          const raw = await resp.json();
+          const arr = Array.isArray(raw) ? raw : (Array.isArray(raw?.vocab) ? raw.vocab : []);
+          if (!arr.length) {
+            alert("general_vocab.json has no entries.");
+            return;
+          }
+
+          let added = 0;
+          for (const it of arr) {
+            const fr = (it.french ?? it.front ?? "").trim();
+            const en = (it.english ?? it.back ?? "").trim();
+            const tags = Array.isArray(it.tags) ? it.tags.slice()
+                      : it.tags ? [String(it.tags)] : [];
+            if (!fr || !en) continue;
+
+            // optional notes upsert if exposed
+            if (typeof Vocab.upsertNote === "function") {
+              try {
+                await Vocab.upsertNote(db, {
+                  french: fr,
+                  english: en,
+                  tags,
+                  topic: it.topic ?? "",
+                  pos: it.partOfSpeech ?? it.pos ?? ""
+                });
+              } catch {}
+            }
+
+            // -------- FR→EN --------
+            if (opts.frToEn !== false) {
+              const existsFE = await db.vocab
+                .where("front").equals(fr)
+                .and(x => (x.back || "") === en)
+                .first();
+              if (!existsFE) {
+                state.newVocabFront = fr;
+                state.newVocabBack  = en;
+                try { await Vocab.addCard(db, state, { front: fr, back: en, tags }); added++; } catch {}
+              }
+            }
+
+            // -------- EN→FR --------
+            if (opts.enToFr !== false) {
+              const existsEF = await db.vocab
+                .where("front").equals(en)
+                .and(x => (x.back || "") === fr)
+                .first();
+              if (!existsEF) {
+                state.newVocabFront = en;
+                state.newVocabBack  = fr;
+                try { await Vocab.addCard(db, state, { front: en, back: fr, tags }); added++; } catch {}
+              }
+            }
+          }
+
+          // Refresh UI from DB and rebuild deck + pills
+          await Vocab.reloadVocabByTag(db, state);
+          Vocab.buildVocabDeck(state);
+          applyVocabPillFilter();
+
+          alert(`Imported ${arr.length} entries; added ${added} new SRS cards (both directions, deduped).`);
+
+          // Optional: take user to Learn → Vocab
+          state.tab = "learn";
+          state.learnTab = "vocab";
+        } catch (e) {
+          console.error(e);
+          alert("Import failed: " + (e.message || e));
+        } finally {
+          state.newVocabFront = "";
+          state.newVocabBack  = "";
+        }
+      },
 
       // Settings/Plan saves
       saveSettings: () => db.settings.put({ ...state.settings, translator: state.translator, key: "v1" }),
