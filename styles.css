@@ -688,3 +688,75 @@ select[title="Transcription language"] option:hover {
   color: #60a5fa;
 }
 .view { overflow-anchor: none; }
+/* --- Question Bank (Record page) --- */
+.qb .qb-import-row {
+  display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin:8px 0;
+}
+.qb .qb-paste { margin:8px 0; }
+.qb-filters {
+  display:flex; gap:12px; flex-wrap:wrap; margin:8px 0;
+}
+.qb-filters select {
+  padding:8px; border:1px solid #243041; background:#0f172a; color:#e2e8f0; border-radius:10px;
+}
+.qb-grid {
+  display:grid; gap:10px; grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
+}
+.qb-item {
+  padding:12px; border:1px solid #243041; border-radius:12px; background:#0e1726; display:grid; gap:6px;
+}
+.qb-head { display:flex; justify-content:space-between; gap:8px; align-items:center; }
+.qb-cat { font-size:12px; color:#9ca3af; }
+.qb-tags { display:flex; gap:6px; flex-wrap:wrap; }
+.qb-pill {
+  font-size:11px; padding:2px 8px; border-radius:999px; border:1px solid #1f2937; background:#162033;
+}
+.qb-prompt { font-weight:600; line-height:1.35; }
+.qb-followups { margin:4px 0 0; padding-left:18px; }
+.qb-sample { margin-top:4px; }
+.qb-actions { margin-top:6px; display:flex; justify-content:flex-end; }
+.qb-file input[type=file] { display:none; }
+.qb-file { padding:6px 10px; border:1px solid #1f2937; background:#162033; color:#e2e8f0; border-radius:10px; cursor:pointer; }
+
+/* Q/A textareas: same look for Question and Answer */
+.qa .qa-text {
+  width: 100%;
+  min-height: 120px;      /* gives a larger default box */
+  padding: 10px 12px;
+  border: 1px solid #243041;
+  background: #0e1726;
+  color: #e2e8f0;
+  border-radius: 10px;
+  line-height: 1.4;
+  resize: vertical;        /* allow user to drag taller if desired */
+  white-space: pre-wrap;   /* wrap long lines and keep newlines */
+  word-break: break-word;  /* prevent overflow on very long tokens */
+  box-sizing: border-box;
+}
+
+/* Optional: nicer placeholder color in dark mode */
+.qa .qa-text::placeholder {
+  color: #94a3b8;
+  opacity: 0.8;
+}
+/* --- Question Picker summary arrow --- */
+.qb-summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.qb-arrow {
+  display: inline-block;
+  transition: transform 0.25s ease;
+  transform: rotate(0deg);
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.qb-arrow.open {
+  transform: rotate(90deg);
+  color: #e2e8f0;
+}

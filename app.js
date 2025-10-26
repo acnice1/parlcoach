@@ -57,7 +57,20 @@ const vueApp = createApp({
         regularity: 'any'
       },
       drillSession: { running:false, question:null, input:'', correct:null, total:0, right:0, history:[], help:null, side:{ english:'—', fr:'—', en:'—' } },
+
       // recorder state
+      // Question bank + picker filters
+      questionBank: [],            // array of {id, category, prompt, followUps, sampleAnswer, tags}
+      qFilters: {
+        category: '',
+        tag: '',
+        showSample: true,          // toggle sample-answer visibility in list
+        insertSampleOnPick: false  // auto-insert sample into Answer on pick
+      },
+      _showPaste: false,           // UI local flags for paste modal
+      _pasteText: '',
+      _pasteErr: '',
+
 
       isRecording:false, mediaRecorder:null, chunks:[], recordings:[],
       newQA:{ q:'', a:'' },
@@ -79,6 +92,13 @@ const vueApp = createApp({
       storagePersisted:false,
       translator:{ endpoint:'', apiKey:'' },
     });
+
+    function autosizeTextarea(e) {
+  const el = e && e.target;
+  if (!el) return;
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+};
 
     // ---- Scroll lock helpers ----
 function getScroll(){ return { x: window.scrollX, y: window.scrollY }; }
@@ -234,7 +254,81 @@ function bumpGlobal(isRight){
     //    
     // ---------- methods (thin wrappers around modules) ----------
    
-   function toggleIncludeTag(tag){
+
+    // --- Question Bank helpers ---
+function qbCategories() {
+  const s = new Set();
+  for (const q of state.questionBank) if (q?.category) s.add(q.category);
+  return Array.from(s).sort((a,b)=>a.localeCompare(b));
+}
+function qbTags() {
+  const s = new Set();
+  for (const q of state.questionBank) for (const t of (q.tags||[])) s.add(t);
+  return Array.from(s).sort((a,b)=>a.localeCompare(b));
+}
+function qbFiltered() {
+  const { category, tag } = state.qFilters;
+  return (state.questionBank || []).filter(q => {
+    const okC = !category || q.category === category;
+    const okT = !tag || (q.tags || []).includes(tag);
+    return okC && okT;
+  });
+}
+async function saveQuestionBankToSettings() {
+  const existing = (await db.settings.get('v1')) || { key:'v1' };
+  // keep only serializable subset
+  const slim = (state.questionBank || []).map(q => ({
+    id: q.id, category: q.category, prompt: q.prompt,
+    followUps: Array.isArray(q.followUps)? q.followUps : [],
+    sampleAnswer: q.sampleAnswer, tags: Array.isArray(q.tags)? q.tags : []
+  }));
+  await db.settings.put({ ...existing, questionBank: slim });
+}
+async function importQuestionBankFromText(text) {
+  state._pasteErr = '';
+  try {
+    const arr = JSON.parse(text);
+    if (!Array.isArray(arr)) throw new Error('Root is not an array');
+    state.questionBank = arr;
+    await saveQuestionBankToSettings();
+    state._showPaste = false;
+    state._pasteText = '';
+  } catch (e) {
+    state._pasteErr = e.message || 'Invalid JSON';
+  }
+}
+async function importQuestionBankFromFile(evt) {
+  const f = evt?.target?.files?.[0];
+  if (!f) return;
+  try {
+    const txt = await f.text();
+    await importQuestionBankFromText(txt);
+  } catch (e) {
+    alert('Failed to read file: ' + (e.message || e));
+  } finally {
+    evt.target.value = '';
+  }
+}
+async function clearQuestionBank() {
+  state.questionBank = [];
+  const existing = (await db.settings.get('v1')) || { key:'v1' };
+  delete existing.questionBank;
+  await db.settings.put(existing);
+}
+function pickQuestion(q) {
+  if (!q) return;
+  // Build “Question” with prompt + follow-ups
+  const fu = Array.isArray(q.followUps) && q.followUps.length
+    ? '\n' + q.followUps.map(x=>'— ' + x).join('\n')
+    : '';
+  state.newQA.q = `${q.prompt}${fu}`;
+  if (state.qFilters.insertSampleOnPick && q.sampleAnswer) {
+    state.newQA.a = q.sampleAnswer;
+  }
+}
+
+
+  function toggleIncludeTag(tag){
   const arr = state.drillPrefs.includeOnlyTags ?? [];
   const i = arr.indexOf(tag);
   if (i === -1) arr.push(tag);
@@ -325,8 +419,35 @@ function clearExcludeTags(){
       }
       state.verbs = await db.verbs.orderBy('infinitive').toArray();
 
-      // (recordings/notes loaders go here if you use them)
+      // (recordings /notes loaders)
+      const resp = await fetch('interview_questions.json?v=' + Date.now());
+
       await loadRecordingsFromDB();
+
+if (settings?.questionBank && Array.isArray(settings.questionBank) && settings.questionBank.length) {
+  state.questionBank = settings.questionBank;
+} else {
+  // Fallback: auto-load default interview questions JSON
+  try {
+    const resp = await fetch('interview_questions.json');
+    if (resp.ok) {
+      const arr = await resp.json();
+      if (Array.isArray(arr) && arr.length) {
+        state.questionBank = arr;
+        // persist to settings for next time
+        const existing = (await db.settings.get('v1')) || { key: 'v1' };
+        await db.settings.put({ ...existing, questionBank: arr });
+        console.log(`Loaded default interview_questions.json (${arr.length} entries).`);
+      }
+    } else {
+      console.warn('Could not load interview_questions.json (HTTP ' + resp.status + ')');
+    }
+  } catch (err) {
+    console.warn('Failed to fetch interview_questions.json', err);
+  }
+}
+
+
     }
 
 
@@ -757,25 +878,35 @@ async function findRecordingId(r){
       },
 
       // recordings/QA (place your original bodies here)
+      importQuestionBankFromText,
+      importQuestionBankFromFile,
+      clearQuestionBank,
+      qbCategories, qbTags, qbFiltered,
+      pickQuestion,
+
       // --- Recorder methods (paste into methods = { ... } ) ---
       startTranscription,
       stopTranscription,
       clearTranscript,
       setSpeechLang,
 
-async startRecording(){
-  if (state.isRecording) return;
-  try {
-    if (!navigator.mediaDevices?.getUserMedia) {
-      alert('Recording not supported in this browser.');
-      return;
-    }
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const mime = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
-      ? 'audio/webm;codecs=opus'
-      : (MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : '');
 
-    const mr = new MediaRecorder(stream, mime ? { mimeType: mime } : {});
+    autosizeTextarea,
+      
+      // --- Recording methods ---
+    async startRecording(){
+    if (state.isRecording) return;
+    try {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        alert('Recording not supported in this browser.');
+        return;
+      }
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mime = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+        ? 'audio/webm;codecs=opus'
+        : (MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : '');
+
+      const mr = new MediaRecorder(stream, mime ? { mimeType: mime } : {});
     state.mediaRecorder = mr;
     state.chunks = [];
     state.isRecording = true;
@@ -892,7 +1023,6 @@ deleteRecording: async (r) => {
   // 4) Refresh the UI from source of truth (DB)
   await loadRecordingsFromDB();
 },
-
 
 
 saveQA(){
