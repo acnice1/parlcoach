@@ -876,3 +876,333 @@ details.filters h3 {
     border-color: #1f2937;
   }
 }
+/* =============================== Focus Ring =============================== */
+/* Apply this class to any interactive element that needs visible keyboard focus */
+.focus-ring {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Optional variant for inset focus (useful on dark panels) */
+.focus-ring--inset {
+  box-shadow: 0 0 0 2px var(--focus) inset;
+}
+
+/* Transition-friendly version (fade-in ring) */
+.focus-ring--animated {
+  transition: outline-color .12s ease, box-shadow .12s ease;
+}
+/* =========================== Enhanced Hover Feedback ============================ */
+
+/* =========================== Enhanced Hover Feedback ============================ */
+
+/* Primary buttons & start/save actions */
+.btn:hover,
+.start-drills-btn:hover,
+.save-btn:hover,
+.save-settings-btn:hover {
+  background: linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--accent) 60%, var(--primary)));
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 40%, transparent),
+              0 4px 20px rgba(0,0,0,.35);
+}
+
+/* Danger buttons */
+.btn-danger:hover,
+.rec-actions .danger:hover {
+  background: linear-gradient(135deg, var(--danger), color-mix(in srgb, var(--danger-2) 30%, var(--accent)));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--danger) 40%, transparent),
+              0 4px 20px rgba(0,0,0,.35);
+  transform: translateY(-2px);
+}
+
+/* Tabs */
+.tabs button:hover {
+  color: #fff;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 15%, var(--bg-2)), var(--panel));
+  border-color: color-mix(in srgb, var(--primary) 45%, var(--border));
+}
+
+/* Pills and tag pills */
+.pill:hover,
+.tag-pill:hover {
+  background: color-mix(in srgb, var(--accent) 25%, var(--bg-2));
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+  color: #fff;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+/* Generic clickable chips, icon buttons, or cards */
+.icon-btn:hover,
+.card:hover,
+.qb-file:hover {
+  background: color-mix(in srgb, var(--primary) 15%, var(--bg-2));
+  border-color: color-mix(in srgb, var(--primary) 35%, var(--border));
+  box-shadow: 0 2px 14px rgba(0,0,0,.45);
+}
+
+/* Switch toggle track on hover */
+.switch:hover .slider {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+  background: color-mix(in srgb, var(--accent) 20%, var(--bg-2));
+}
+
+/* Table rows hover */
+.table tr:hover td {
+  background: color-mix(in srgb, var(--primary) 12%, var(--panel));
+}
+
+/* Accent glow for hovered links */
+a:hover, button.link:hover {
+  color: var(--accent);
+  text-shadow: 0 0 6px color-mix(in srgb, var(--accent) 50%, transparent);
+  transition: color .12s ease, text-shadow .12s ease;
+}
+/* ===================== Enhanced Hover: Sub-tabs & Record Panel ===================== */
+
+/* Sub-tabs like “Verb Drills” / “Vocab” */
+.subtabs button:hover {
+  color: #fff;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--primary) 18%, var(--bg-2)),
+    var(--panel)
+  );
+  border-color: color-mix(in srgb, var(--primary) 50%, var(--border));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent),
+              0 4px 18px rgba(0,0,0,.35);
+  transform: translateY(-2px);
+}
+
+/* Record panel action buttons (non-danger) */
+.rec-actions button:hover,
+.card-actions button:hover,
+.actions button:hover {
+  background: color-mix(in srgb, var(--primary) 15%, var(--bg-2));
+  border-color: color-mix(in srgb, var(--primary) 40%, var(--border));
+  color: #fff;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 30%, transparent),
+              0 4px 18px rgba(0,0,0,.35);
+  transform: translateY(-2px);
+}
+
+/* Keep destructive buttons punchy */
+.rec-actions .danger:hover {
+  background: linear-gradient(135deg, var(--danger), color-mix(in srgb, var(--danger-2) 30%, var(--accent)));
+  border-color: color-mix(in srgb, var(--danger) 50%, var(--border));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--danger) 35%, transparent),
+              0 4px 20px rgba(0,0,0,.38);
+  transform: translateY(-2px);
+}
+
+/* Hover feedback for file-chip & icon buttons near record panel */
+.qb-file:hover,
+.icon-btn:hover {
+  background: color-mix(in srgb, var(--primary) 15%, var(--bg-2));
+  border-color: color-mix(in srgb, var(--primary) 35%, var(--border));
+  color: #fff;
+  box-shadow: 0 2px 14px rgba(0,0,0,.45);
+}
+
+/* Sub-tab “active + hover”: keep strong highlight */
+.subtabs button.active:hover {
+  background: color-mix(in srgb, var(--accent) 25%, #17263a);
+  border-color: color-mix(in srgb, var(--accent) 45%, #1f3a52);
+  color: #fff;
+}
+/* =========================== Hover Timing Tuning ============================ */
+/* Slows down hover transitions for a smoother feel */
+
+:where(
+  .btn,
+  .btn-primary,
+  .btn-danger,
+  .start-drills-btn,
+  .save-btn,
+  .save-settings-btn,
+  .tabs button,
+  .subtabs button,
+  .pill,
+  .tag-pill,
+  .rec-actions button,
+  .card-actions button,
+  .icon-btn,
+  .qb-file
+) {
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.25s ease,
+    color 0.3s ease;
+}
+
+/* Optionally: slightly longer for tabs/pills to emphasize state change */
+.tabs button,
+.subtabs button,
+.pill,
+.tag-pill {
+  transition-duration: 0.4s;
+}
+/* ====================== Vocabulary Drill Input/Output Hover Timing ====================== */
+
+/* Smooth down transitions on vocab drill boxes */
+:where(
+  .vocab-card,
+  .drill-side,
+  .answer-box,
+  .question-box,
+  .panel.vocab-panel
+) {
+  transition:
+    background-color 0.45s ease,
+    border-color 0.45s ease,
+    box-shadow 0.45s ease,
+    transform 0.35s ease;
+}
+
+/* On hover: keep the strong highlight, but fade in/out slowly */
+:where(
+  .vocab-card:hover,
+  .drill-side:hover,
+  .answer-box:hover,
+  .question-box:hover
+) {
+  background: color-mix(in srgb, var(--accent) 12%, var(--bg-2));
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent),
+              0 4px 22px rgba(0,0,0,.35);
+  transform: translateY(-1px);
+}
+
+/* Optional: make focus effect slower and smoother too */
+:where(
+  .vocab-card:focus-within,
+  .drill-side:focus-within,
+  .answer-box:focus-within,
+  .question-box:focus-within
+) {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  transition: outline-color 0.45s ease, box-shadow 0.45s ease;
+}
+/* ====================== Vocabulary Panel — Enhanced Text Emphasis ====================== */
+
+/* Container styles: give breathing room */
+.vocab-panel {
+  padding: 18px 20px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, var(--panel), var(--bg-2));
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+}
+
+/* French phrase — hero element */
+.vocab-fr {
+  display: block;
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem);   /* scales responsively */
+  font-weight: 700;
+  color: var(--accent);
+  text-shadow: 0 1px 6px rgba(34,211,238,.3);
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+  line-height: 1.25;
+}
+
+/* English translation — secondary but still prominent */
+.vocab-en {
+  display: block;
+  font-size: clamp(1.7rem, 3.0vw, 2.4rem);
+  font-weight: 700;
+  color: color-mix(in srgb, var(--ink) 15%, rgb(7, 105, 124));
+  text-shadow: 0 1px 4px rgba(0,0,0,.25);
+  margin-top: 8px;
+  opacity: 1.15;
+}
+
+/* Optional: subtle divider between the two */
+.vocab-divider {
+  width: 40px;
+  height: 3px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--accent) 60%, var(--primary));
+  margin: 10px 0;
+}
+
+/* Example sentences area */
+.vocab-example {
+  font-size: 1rem;
+  color: var(--ink-muted);
+  line-height: 1.5;
+  margin-top: 12px;
+}
+
+/* Slight zoom on hover (or when active) */
+.vocab-panel:hover .vocab-fr,
+.vocab-panel:hover .vocab-en {
+  transform: scale(1.03);
+  transition: transform 0.35s ease, text-shadow 0.45s ease;
+  text-shadow: 0 2px 12px rgba(34,211,238,.4);
+}
+/* ====== Card grid ====== */
+.card-grid, .card-grid .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  align-items: stretch;
+}
+
+/* ====== Generic card look ====== */
+.vc-card {
+  background: var(--card-bg, #0b1220);
+  border: 1px solid var(--card-border, #1f2937);
+  border-radius: 14px;
+  padding: 14px 14px 12px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+  display: flex;
+  flex-direction: column;
+  min-height: 120px;
+}
+
+.vc-card-h {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.vc-card-f {
+  margin-top: 10px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1;
+  border-radius: 999px;
+  padding: 6px 10px;
+  border: 1px solid var(--pill-border, #324357);
+  background: var(--pill-bg, #0f172a);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.pill.subtle {
+  opacity: 0.8;
+  text-transform: none;
+}
+
+.vc-card-body {
+  font-size: 16px;
+  line-height: 1.4;
+  flex: 1 1 auto;
+  position: relative;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+.vc-card-body.big {
+  font-size: 22px;
+  line-height: 1.3;
+}
+
