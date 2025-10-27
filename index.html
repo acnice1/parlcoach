@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="styles.css?v=2025-10-24-1" />
   </head>
   <body>
-    <div id="app">
+    <div id="app" v-cloak>
       <header class="app-header">
         <h1>ParlCoach</h1>
         <small class="tag">ParlFR</small>
@@ -53,7 +53,7 @@
             >
               Vocab
             </button>
-            <button
+           <!-- <button
               :class="{active: learnTab==='myverbs'}"
               @click="learnTab='myverbs'"
             >
@@ -64,7 +64,7 @@
               @click="learnTab='seedverbs'"
             >
               Seed (Top 200)
-            </button>
+            </button> -->
           </nav>
 
           <!-- ==================== DRILLS ==================== -->
