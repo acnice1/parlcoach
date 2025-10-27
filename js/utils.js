@@ -6,7 +6,8 @@ export function clamp(n,min,max){ return Math.max(min, Math.min(max,n)); }
 export function isVowelStart(s){ return /^[aeiouhâêîôûéèëïüAEIOUH]/.test(s||''); }
 
 // Accept optional subject pronoun at the start
-export const PRONOUN_RE = /^\s*(?:(?:j’|j')|je\s+|tu\s+|il(?:\/elle)?\s+|elle(?:\/il)?\s+|on\s+|nous\s+|vous\s+|ils(?:\/elles)?\s+|elles(?:\/ils)?\s+)/i;
+// Leading "que / qu’ / qu'" OR leading subject pronoun (je/j', tu, il/elle/on, nous, vous, ils/elles)
+export const LEAD_TOKEN_RE = /^\s*(?:que\b|qu['’]|(?:j’|j'|je|tu|il|elle|on|nous|vous|ils|elles)\b)\s*/iu;
 
 // crypto-safe random for shuffles
 export function rand01() {
@@ -35,7 +36,18 @@ export function normalize(s){
     .replace(/\s+/g, ' ')
     .trim();
 }
-export function stripSubjectPronoun(s){ return normalize(s).replace(PRONOUN_RE, '').trim(); }
+
+export function stripSubjectPronoun(s){
+  let t = normalize(s);
+  let prev;
+  do {
+    prev = t;
+    // strip one leading token each pass: "que/qu’/qu'" OR a subject pronoun
+    t = t.replace(LEAD_TOKEN_RE, '').trim();
+  } while (t !== prev);
+  return t;
+}
+
 export function answersEqual(userInput, expectedFull){
   const a = normalize(userInput);
   const b = normalize(expectedFull);
