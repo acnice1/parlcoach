@@ -54,6 +54,16 @@ const vueApp = createApp({
         date: new Date().toISOString().slice(0, 10),
       },
 
+      //  Data import/export
+      csv: { rows: [], headers: [] },
+      //
+      wordPicker: {
+        items: [], // normalized { fr, en, article, tags? }
+        selected: {}, // { idx: true/false } – reactive checkbox map
+        listName: "", // name to save as
+        savedLists: [], // [{ name, count }]
+      },
+
       // UI flags (persisted)
       ui: {
         showVocabTags: false, // <— persisted toggle
@@ -706,6 +716,20 @@ const vueApp = createApp({
         state.todayStats = { right: 0, total: 0, date: today };
       }
 
+      //
+      // hydration
+      const vocabLists =
+        settings?.vocabLists && typeof settings.vocabLists === "object"
+          ? settings.vocabLists
+          : {};
+
+      state.wordPicker.savedLists = Object.keys(vocabLists)
+        .sort((a, b) => a.localeCompare(b))
+        .map((name) => ({
+          name,
+          count: Array.isArray(vocabLists[name]) ? vocabLists[name].length : 0,
+        }));
+
       // --- AUTOLOAD GENERAL VOCAB (array or { vocab: [...] }) ---
       try {
         const resp = await fetch("general_vocab.json?v=" + Date.now());
@@ -776,19 +800,19 @@ const vueApp = createApp({
         console.error("Error loading general_vocab.json:", err);
       }
 
-     const _vocabCount = await db.vocab.count();
-if (_vocabCount > 0) {
-  // Populate SRS-only subtree; do not touch Review cards here
-  await Vocab.reloadVocabByTag(db, state.flashcards);
+      const _vocabCount = await db.vocab.count();
+      if (_vocabCount > 0) {
+        // Populate SRS-only subtree; do not touch Review cards here
+        await Vocab.reloadVocabByTag(db, state.flashcards);
 
-  // Review deck (JSON) is already built above; just keep filters/pills in sync
-  buildVocabPillsFromData(state.vocab.cards || []);
-  applyVocabPillFilter();
-} else {
-  // Keep the JSON-loaded cards; deck already built above.
-  Vocab.buildVocabDeck(state);
-  applyVocabPillFilter();
-}
+        // Review deck (JSON) is already built above; just keep filters/pills in sync
+        buildVocabPillsFromData(state.vocab.cards || []);
+        applyVocabPillFilter();
+      } else {
+        // Keep the JSON-loaded cards; deck already built above.
+        Vocab.buildVocabDeck(state);
+        applyVocabPillFilter();
+      }
 
       // Apply current Vocab pill filters to deck
       applyVocabPillFilter();
@@ -1095,8 +1119,8 @@ if (_vocabCount > 0) {
     }
 
     async function rate(q) {
-if (!state.flashcards.currentCard) return;
-const c = state.flashcards.currentCard;
+      if (!state.flashcards.currentCard) return;
+      const c = state.flashcards.currentCard;
       const upd =
         state.settings.srsMode === "SM2"
           ? sm2Schedule(c, q)
@@ -1106,8 +1130,8 @@ const c = state.flashcards.currentCard;
               q
             );
       Object.assign(c, upd);
-await db.vocab.update(c.id, upd);
-Vocab.computeDue(state.flashcards);
+      await db.vocab.update(c.id, upd);
+      Vocab.computeDue(state.flashcards);
     }
 
     function getScroll() {
@@ -1126,8 +1150,8 @@ Vocab.computeDue(state.flashcards);
     const methods = {
       // vocab
       reloadVocabByTag: () => Vocab.reloadVocabByTag(db, state.flashcards),
-      addCard:          () => Vocab.addCard(db, state.flashcards),
-      deleteCard:       (id) => Vocab.deleteCard(db, id, state.flashcards),
+      addCard: () => Vocab.addCard(db, state.flashcards),
+      deleteCard: (id) => Vocab.deleteCard(db, id, state.flashcards),
 
       reshuffleVocabDeck: () => Vocab.reshuffleVocabDeck(state),
       nextVocabCard: () => Vocab.nextVocabCard(state),
@@ -1458,10 +1482,9 @@ Vocab.computeDue(state.flashcards);
       // Notes/Data import — MERGE-SAFE upsert of vocab (keeps Topics/Tags/PoS; dedupes)
       importNotesAndSeedCards: async (
         opts = { frToEn: true, enToFr: true }
-        
       ) => {
         try {
-        const nowISO = new Date().toISOString().slice(0, 10);
+          const nowISO = new Date().toISOString().slice(0, 10);
 
           const resp = await fetch("general_vocab.json?v=" + Date.now());
           if (!resp.ok) {
@@ -1503,15 +1526,15 @@ Vocab.computeDue(state.flashcards);
             const ex = existingByKey.get(k);
 
             // optional notes upsert if exposed
-if (typeof Vocab.upsertVocabNote === "function") {
-  await Vocab.upsertVocabNote(db, {
-    french: inc.fr,
-    english: inc.en,
-    tags: inc.tags,
-    topic: inc.topic,
-    pos: inc.partOfSpeech,
-  });
-}
+            if (typeof Vocab.upsertVocabNote === "function") {
+              await Vocab.upsertVocabNote(db, {
+                french: inc.fr,
+                english: inc.en,
+                tags: inc.tags,
+                topic: inc.topic,
+                pos: inc.partOfSpeech,
+              });
+            }
 
             // SRS card directions (using your current behaviour)
             const wantFRtoEN = opts.frToEn !== false;
@@ -1523,7 +1546,11 @@ if (typeof Vocab.upsertVocabNote === "function") {
                 toAdd.push({
                   front: inc.fr,
                   back: inc.en,
-                  due: nowISO, ease: 2.5, reps: 0, interval: 0, last: nowISO,
+                  due: nowISO,
+                  ease: 2.5,
+                  reps: 0,
+                  interval: 0,
+                  last: nowISO,
                   fr: inc.fr,
                   en: inc.en,
                   partOfSpeech: inc.partOfSpeech,
@@ -1583,7 +1610,11 @@ if (typeof Vocab.upsertVocabNote === "function") {
                 toAdd.push({
                   front: inc.en,
                   back: inc.fr,
-                  due: nowISO, ease: 2.5, reps: 0, interval: 0, last: nowISO,
+                  due: nowISO,
+                  ease: 2.5,
+                  reps: 0,
+                  interval: 0,
+                  last: nowISO,
                   fr: inc.en,
                   en: inc.fr,
                   partOfSpeech: inc.partOfSpeech,
@@ -1619,23 +1650,31 @@ if (typeof Vocab.upsertVocabNote === "function") {
               await db.vocab.update(u.id, u.patch);
             } catch {}
           }
-// Repair any existing rows missing scheduling fields (one-time safety net)
-{
-  const rows = await db.vocab.toArray();
-  const patch = { due: nowISO, ease: 2.5, reps: 0, interval: 0, last: nowISO };
-  for (const r of rows) {
-    if (!r.due || Number.isNaN(new Date(r.due).getTime())) {
-      try { await db.vocab.update(r.id, patch); } catch {}
-    }
-  }
-}
+          // Repair any existing rows missing scheduling fields (one-time safety net)
+          {
+            const rows = await db.vocab.toArray();
+            const patch = {
+              due: nowISO,
+              ease: 2.5,
+              reps: 0,
+              interval: 0,
+              last: nowISO,
+            };
+            for (const r of rows) {
+              if (!r.due || Number.isNaN(new Date(r.due).getTime())) {
+                try {
+                  await db.vocab.update(r.id, patch);
+                } catch {}
+              }
+            }
+          }
 
           // Refresh UI: pull from DB, rebuild deck & pills, reapply filters
-await Vocab.reloadVocabByTag(db, state.flashcards);
-// Keep Review (JSON) as-is; if you want to rebuild its deck, do it explicitly:
-Vocab.buildVocabDeck(state);
-rebuildVocabPillsFromCards(state.vocab.cards || []);
-applyVocabPillFilter();
+          await Vocab.reloadVocabByTag(db, state.flashcards);
+          // Keep Review (JSON) as-is; if you want to rebuild its deck, do it explicitly:
+          Vocab.buildVocabDeck(state);
+          rebuildVocabPillsFromCards(state.vocab.cards || []);
+          applyVocabPillFilter();
 
           alert(
             `Imported ${incoming.length} entries; added ${addedSrs} new SRS cards (both directions, deduped; metadata merged).`
@@ -1694,6 +1733,7 @@ applyVocabPillFilter();
         a.remove();
         URL.revokeObjectURL(url);
       },
+
       resetTodayStats() {
         state.todayStats = {
           right: 0,
@@ -1707,6 +1747,198 @@ applyVocabPillFilter();
       loadAll,
     };
 
+    // === CSV & Word Picker helpers ===
+    function parseCsv(text) {
+      // Tiny CSV parser that respects simple quoted fields
+      const lines = text.split(/\r?\n/).filter((l) => l.trim() !== "");
+      if (!lines.length) return { headers: [], rows: [] };
+      const split = (line) => {
+        const out = [];
+        let cur = "",
+          inQ = false;
+        for (let i = 0; i < line.length; i++) {
+          const ch = line[i],
+            nxt = line[i + 1];
+          if (ch === '"' && inQ && nxt === '"') {
+            cur += '"';
+            i++;
+            continue;
+          }
+          if (ch === '"') {
+            inQ = !inQ;
+            continue;
+          }
+          if (ch === "," && !inQ) {
+            out.push(cur);
+            cur = "";
+            continue;
+          }
+          cur += ch;
+        }
+        out.push(cur);
+        return out.map((s) => s.trim());
+      };
+      const headers = split(lines[0]).map((h) => h.toLowerCase());
+      const rows = lines.slice(1).map((l) => {
+        const cols = split(l);
+        const obj = {};
+        headers.forEach((h, i) => (obj[h] = cols[i] ?? ""));
+        return obj;
+      });
+      return { headers, rows };
+    }
+
+    function normalizeCsvRow(obj) {
+      // Accept header variants
+      const get = (keys) => {
+        for (const k of keys) {
+          if (obj[k] != null && String(obj[k]).trim() !== "")
+            return String(obj[k]).trim();
+        }
+        return "";
+      };
+      const en = get(["en", "english", "back"]);
+      const fr = get(["fr", "french", "front"]);
+      const article = get(["article", "art"]);
+      const tagsRaw = get(["tags", "label", "labels"]);
+      const tags = tagsRaw
+        ? tagsRaw
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : [];
+      return fr || en ? { fr, en, article, tags } : null;
+    }
+
+    async function saveVocabListsToSettings(updater) {
+      const existing = (await db.settings.get("v1")) || { key: "v1" };
+      const current =
+        existing.vocabLists && typeof existing.vocabLists === "object"
+          ? existing.vocabLists
+          : {};
+      const next = updater(current);
+      await db.settings.put({ ...existing, vocabLists: next, key: "v1" });
+      // refresh local summary
+      state.wordPicker.savedLists = Object.keys(next)
+        .sort((a, b) => a.localeCompare(b))
+        .map((name) => ({
+          name,
+          count: Array.isArray(next[name]) ? next[name].length : 0,
+        }));
+    }
+
+    async function importVocabCsv(evt) {
+      const f = evt?.target?.files?.[0];
+      if (!f) return;
+      try {
+        const txt = await f.text();
+        const { headers, rows } = parseCsv(txt);
+        const items = rows.map(normalizeCsvRow).filter(Boolean);
+
+        state.csv.headers = headers;
+        state.csv.rows = rows;
+
+        state.wordPicker.items = items;
+        state.wordPicker.selected = {};
+        items.forEach((_, i) => (state.wordPicker.selected[i] = true)); // preselect all
+        state.wordPicker.listName = `${new Date()
+          .toISOString()
+          .slice(0, 10)} list`;
+        alert(`CSV loaded: ${items.length} rows normalized.`);
+      } catch (e) {
+        alert("Failed to read CSV: " + (e.message || e));
+      } finally {
+        if (evt?.target) evt.target.value = "";
+      }
+    }
+
+    function togglePickAll(flag) {
+      const sel = {};
+      state.wordPicker.items.forEach((_, i) => (sel[i] = !!flag));
+      state.wordPicker.selected = sel;
+    }
+
+    async function savePickedAsList() {
+      const name = (state.wordPicker.listName || "").trim();
+      if (!name) {
+        alert("Please enter a list name.");
+        return;
+      }
+      const picked = state.wordPicker.items
+        .filter((_, i) => !!state.wordPicker.selected[i])
+        .map((it) => ({
+          fr: it.fr,
+          en: it.en,
+          article: it.article,
+          tags: it.tags || [],
+        }));
+      if (!picked.length) {
+        alert("No words selected.");
+        return;
+      }
+
+      await saveVocabListsToSettings((curr) => ({ ...curr, [name]: picked }));
+      alert(`Saved list "${name}" with ${picked.length} items.`);
+    }
+
+    async function loadListIntoSrs(name) {
+      const settings = (await db.settings.get("v1")) || { key: "v1" };
+      const list = settings?.vocabLists?.[name];
+      if (!Array.isArray(list) || !list.length) {
+        alert("List not found or empty.");
+        return;
+      }
+
+      const nowISO = new Date().toISOString().slice(0, 10);
+
+      // Dedup by {front,back}. We’ll check existing DB rows first.
+      const existing = await db.vocab.toArray();
+      const keyOf = (front, back) =>
+        (front || "").toLowerCase().trim() +
+        "␟" +
+        (back || "").toLowerCase().trim();
+      const have = new Set(
+        existing.map((r) => keyOf(r.front || r.fr, r.back || r.en))
+      );
+
+      const toAdd = [];
+      for (const it of list) {
+        const fr = (it.fr || "").trim(),
+          en = (it.en || "").trim();
+        if (!fr || !en) continue;
+        const k = keyOf(fr, en);
+        if (have.has(k)) continue;
+        toAdd.push({
+          front: fr,
+          back: en,
+          fr,
+          en,
+          article: it.article || "",
+          tags: Array.isArray(it.tags) ? it.tags : [],
+          due: nowISO,
+          ease: 2.5,
+          reps: 0,
+          interval: 0,
+          last: nowISO,
+        });
+        have.add(k);
+      }
+
+      if (toAdd.length) {
+        try {
+          await db.vocab.bulkAdd(toAdd);
+        } catch {
+          for (const r of toAdd) {
+            try {
+              await db.vocab.add(r);
+            } catch {}
+          }
+        }
+      }
+      await Vocab.reloadVocabByTag(db, state.flashcards);
+      alert(`Loaded "${name}" into SRS: ${toAdd.length} new card(s).`);
+    }
+
     // -------------------- Boot --------------------
     methods.loadAll();
 
@@ -1718,11 +1950,17 @@ applyVocabPillFilter();
       state,
       methods,
       tagPills,
+      // Flashcards
       renderFr,
       toggleVocabPill,
       clearVocabPills,
       clearAllVocabPills,
       applyVocabPillFilter,
+      // CSV & Word Picker
+      importVocabCsv,
+      togglePickAll,
+      savePickedAsList,
+      loadListIntoSrs,
     };
   },
 });
