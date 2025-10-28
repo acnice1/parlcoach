@@ -1572,74 +1572,36 @@
         "transfer"
       ]
     },
-    {
-      "verb": "falloir",
-      "tenses": {
-        "Passé composé": {
-          "je": "ai fallu",
-          "tu": "as fallu",
-          "il/elle/on": "a fallu",
-          "nous": "avons fallu",
-          "vous": "avez fallu",
-          "ils/elles": "ont fallu"
-        },
-        "Imparfait": {
-          "je": null,
-          "tu": null,
-          "il/elle/on": "fallait",
-          "nous": null,
-          "vous": null,
-          "ils/elles": null
-        },
-        "Plus-que-parfait": {
-          "je": "avais fallu",
-          "tu": "avais fallu",
-          "il/elle/on": "avait fallu",
-          "nous": "avions fallu",
-          "vous": "aviez fallu",
-          "ils/elles": "avaient fallu"
-        },
-        "Futur simple": {
-          "je": null,
-          "tu": null,
-          "il/elle/on": "faudra",
-          "nous": null,
-          "vous": null,
-          "ils/elles": null
-        },
-        "Conditionnel présent": {
-          "je": null,
-          "tu": null,
-          "il/elle/on": "faudrait",
-          "nous": null,
-          "vous": null,
-          "ils/elles": null
-        },
-        "Subjonctif présent": {
-          "je": null,
-          "tu": null,
-          "il/elle/on": "faille",
-          "nous": null,
-          "vous": null,
-          "ils/elles": null
-        },
-        "Impératif": {
-          "je": "",
-          "tu": "",
-          "il/elle/on": "",
-          "nous": "",
-          "vous": "",
-          "ils/elles": ""
-        },
-        "Présent": {
-          "je": "fallois",
-          "tu": "fallois",
-          "il/elle/on": "falloit",
-          "nous": "falloissons",
-          "vous": "falloissez",
-          "ils/elles": "falloissent"
-        }
-      },
+    
+{
+  "verb": "falloir",
+  "tags": ["Top200"],
+  "tenses": {
+    "Présent": {
+      "il/elle/on": "faut"
+    },
+    "Imparfait": {
+      "il/elle/on": "fallait"
+    },
+    "Futur simple": {
+      "il/elle/on": "faudra"
+    },
+    "Conditionnel présent": {
+      "il/elle/on": "faudrait"
+    },
+    "Subjonctif présent": {
+      "il/elle/on": "faille"
+    },
+    "Passé composé": {
+      "il/elle/on": "a fallu"
+    },
+    "Plus-que-parfait": {
+      "il/elle/on": "avait fallu"
+    },
+    "Impératif": {}
+  }
+,
+
       "english": "to be necessary; must (impersonal)",
       "examples": {
         "present": {
@@ -3181,12 +3143,12 @@
           "ils/elles": ""
         },
         "Présent": {
-          "je": "connaîts",
-          "tu": "connaîts",
+          "je": "connais",
+          "tu": "connais",
           "il/elle/on": "connaît",
-          "nous": "connaîtons",
-          "vous": "connaîtez",
-          "ils/elles": "connaîtent"
+          "nous": "connaîssons",
+          "vous": "connaîssez",
+          "ils/elles": "connaîssent"
         }
       },
       "english": "to know; to be familiar with",
