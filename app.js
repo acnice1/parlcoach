@@ -56,7 +56,7 @@ const vueApp = Vue.createApp({
 
       //  Data import/export
       csv: { rows: [], headers: [], meta: null },
-wordPicker: { items: [], selected: {}, listName: "", savedLists: [] },
+wordPicker: { items: [], selected: {}, listName: "", savedLists: [], activeList: "" },
 notesTagFilter: "",
 
       // UI flags (persisted)
@@ -1689,6 +1689,113 @@ notesTagFilter: "",
         }
       },
 
+      // === Load a saved list into the Review deck (non-SRS) ===
+async loadListIntoReview(listName) {
+  try {
+    // Pull vocabLists from settings
+    const settingsRec = (await db.settings.get("v1")) || { key: "v1" };
+    const lists = settingsRec.vocabLists || {};
+    const arr = Array.isArray(lists[listName]) ? lists[listName] : [];
+
+    if (!arr.length) {
+      // If no list or name empty, fall back to default (keep built-in JSON)
+      state.wordPicker.activeList = "";
+      // Rebuild deck from whatever JSON is already in state.vocab.cards
+      Vocab.buildVocabDeck(state);
+      methods.applyVocabPillFilter?.();
+      return;
+    }
+
+    // Normalize to Review card shape (fr/en/pos/gender/article/tags/topic)
+    const cards = arr.map((c, i) => ({
+      id: i + 1,
+      fr: (c.fr || c.french || "").trim(),
+      en: (c.en || c.english || "").trim(),
+      partOfSpeech: (c.partOfSpeech || c.pos || "").trim(),
+      gender: (c.gender || "").trim(),
+      topic: (c.topic || "").trim(),
+      tags: Array.isArray(c.tags) ? c.tags.slice() : (c.tags ? [c.tags] : []),
+      article: (c.article || "").trim(),
+      plural: c.plural || "",
+      example: c.example || null,
+      notes: c.notes || "",
+      audio: c.audio || null,
+      image: c.image || ""
+    }));
+
+    // Swap in Review source and rebuild deck
+    state.vocab.cards = cards;
+    Vocab.buildVocabDeck(state);
+    methods.applyVocabPillFilter?.();
+    state.wordPicker.activeList = listName;
+  } catch (e) {
+    console.error("[Review] loadListIntoReview failed:", e);
+    alert("Could not load list into Review.");
+  }
+},
+
+// === Load a saved list into SRS (Dexie-backed) ===
+async loadListIntoSrs(listName) {
+  try {
+    const settingsRec = (await db.settings.get("v1")) || { key: "v1" };
+    const lists = settingsRec.vocabLists || {};
+    const arr = Array.isArray(lists[listName]) ? lists[listName] : [];
+
+    if (!arr.length) {
+      alert("That list is empty or not found.");
+      return;
+    }
+
+    const nowISO = new Date().toISOString();
+
+    // Helper: upsert by (front/back) to avoid dupes
+    async function upsert(front, back, tags = []) {
+      const existing = await db.vocab
+        .where("front")
+        .equals(front)
+        .and((r) => r.back === back)
+        .first();
+      if (existing) {
+        // Don't change scheduling; just union tags if present
+        const mergedTags = Array.from(
+          new Set([...(existing.tags || []), ...tags].filter(Boolean))
+        );
+        await db.vocab.update(existing.id, { tags: mergedTags });
+        return existing.id;
+      } else {
+        const row = {
+          front,
+          back,
+          due: nowISO,
+          ease: 2.5,
+          reps: 0,
+          interval: 0,
+          last: nowISO,
+          tags: Array.isArray(tags) ? tags.filter(Boolean) : []
+        };
+        return await db.vocab.add(row);
+      }
+    }
+
+    // Upsert all words from the list
+    for (const c of arr) {
+      const fr = (c.fr || c.french || "").trim();
+      const en = (c.en || c.english || "").trim();
+      if (!fr || !en) continue;
+      const tags = Array.isArray(c.tags) ? c.tags : (c.tags ? [c.tags] : []);
+      await upsert(fr, en, tags);
+    }
+
+    // Reload SRS queue from DB
+    await Vocab.reloadVocabByTag(db, state.flashcards); // keeps SRS subtree only
+    // Recompute due already happens inside reloadVocabByTag; currentCard is set.  :contentReference[oaicite:6]{index=6}
+    alert(`Loaded "${listName}" into SRS.`);
+  } catch (e) {
+    console.error("[SRS] loadListIntoSrs failed:", e);
+    alert("Could not load list into SRS.");
+  }
+},
+
       // Settings/Plan saves
       saveSettings: () =>
         db.settings.put({
@@ -1888,24 +1995,36 @@ async function importVocabCsv(evt){
       state.wordPicker.selected = sel;
     }
 
-    async function savePickedAsList() {
-      const name = (state.wordPicker.listName || "").trim();
-      if (!name) {
-        alert("Please enter a list name.");
-        return;
-      }
-      const picked = state.wordPicker.items
-  .filter((_, i) => !!state.wordPicker.selected[i])
-  .map(toPlainWord);
+  async function savePickedAsList(allowedIdx) {
+  const name = (state.wordPicker.listName || "").trim();
+  if (!name) {
+    alert("Please enter a list name.");
+    return;
+  }
 
-      if (!picked.length) {
-        alert("No words selected.");
-        return;
-      }
+  // Build an allowlist Set if provided
+  const allow = Array.isArray(allowedIdx) && allowedIdx.length
+    ? new Set(allowedIdx)
+    : null;
 
-      await saveVocabListsToSettings((curr) => ({ ...curr, [name]: picked }));
-      alert(`Saved list "${name}" with ${picked.length} items.`);
-    }
+  const picked = state.wordPicker.items
+    .filter((_, i) => {
+      const isSelected = !!state.wordPicker.selected[i];
+      if (!isSelected) return false;
+      // If allowlist present, keep only items that are visible (filtered)
+      return allow ? allow.has(i) : true;
+    })
+    .map(toPlainWord);
+
+  if (!picked.length) {
+    alert("No words selected (check your filter and selections).");
+    return;
+  }
+
+  await saveVocabListsToSettings((curr) => ({ ...curr, [name]: picked }));
+  alert(`Saved list "${name}" with ${picked.length} items.`);
+}
+
 
     // === Load a saved sub-list straight into Review (non-SRS) ===
 async function loadListIntoReview(name){

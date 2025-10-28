@@ -3954,12 +3954,12 @@
           "ils/elles": ""
         },
         "Présent": {
-          "je": "prends",
-          "tu": "prends",
-          "il/elle/on": "prend",
-          "nous": "prenons",
-          "vous": "prenez",
-          "ils/elles": "prennent"
+          "je": "comprends",
+          "tu": "comprends",
+          "il/elle/on": "comprend",
+          "nous": "comprenons",
+          "vous": "comprenez",
+          "ils/elles": "comprennent"
         }
       },
       "english": "to understand",
