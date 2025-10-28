@@ -4,7 +4,7 @@ import DrillPanel from "./js/components/DrillPanel.js?v=1";
 import VocabPanel from "./js/components/VocabPanel.js?v=1";
 import RecorderPanel from "./js/components/RecorderPanel.js?v=1";
 import ProfileWidget from "./js/components/ProfileWidget.js?v=1";
-import DataPanel from "./js/components/DataPanel.js?v=2";
+import DataPanel from "./js/components/DataPanel.js?v=4";
 
 import { initDexie, opfs, TAG_PILL_OPTIONS } from "./js/db.js?v=1";
 import {
@@ -29,7 +29,7 @@ function debounce(fn, ms = 300) {
   };
 }
 
-const vueApp = createApp({
+const vueApp = Vue.createApp({
   components: {
     DrillPanel,
     VocabPanel,
@@ -55,14 +55,9 @@ const vueApp = createApp({
       },
 
       //  Data import/export
-      csv: { rows: [], headers: [] },
-      //
-      wordPicker: {
-        items: [], // normalized { fr, en, article, tags? }
-        selected: {}, // { idx: true/false } – reactive checkbox map
-        listName: "", // name to save as
-        savedLists: [], // [{ name, count }]
-      },
+      csv: { rows: [], headers: [], meta: null },
+wordPicker: { items: [], selected: {}, listName: "", savedLists: [] },
+notesTagFilter: "",
 
       // UI flags (persisted)
       ui: {
@@ -494,6 +489,8 @@ const vueApp = createApp({
         startTranscription();
       }
     }
+
+    //
 
     // -------------------- OPFS helpers --------------------
     async function opfsWrite(path, blob) {
@@ -1743,114 +1740,147 @@ const vueApp = createApp({
         saveGlobalToSettingsDebounced();
       },
 
+
+      importVocabCsv,
+togglePickAll,
+savePickedAsList,
+loadListIntoSrs,
+loadListIntoReview,
+
+      // END METHODS
+
       // Load-all
       loadAll,
     };
 
-    // === CSV & Word Picker helpers ===
-    function parseCsv(text) {
-      // Tiny CSV parser that respects simple quoted fields
-      const lines = text.split(/\r?\n/).filter((l) => l.trim() !== "");
-      if (!lines.length) return { headers: [], rows: [] };
-      const split = (line) => {
-        const out = [];
-        let cur = "",
-          inQ = false;
-        for (let i = 0; i < line.length; i++) {
-          const ch = line[i],
-            nxt = line[i + 1];
-          if (ch === '"' && inQ && nxt === '"') {
-            cur += '"';
-            i++;
-            continue;
-          }
-          if (ch === '"') {
-            inQ = !inQ;
-            continue;
-          }
-          if (ch === "," && !inQ) {
-            out.push(cur);
-            cur = "";
-            continue;
-          }
-          cur += ch;
-        }
-        out.push(cur);
-        return out.map((s) => s.trim());
-      };
-      const headers = split(lines[0]).map((h) => h.toLowerCase());
-      const rows = lines.slice(1).map((l) => {
-        const cols = split(l);
-        const obj = {};
-        headers.forEach((h, i) => (obj[h] = cols[i] ?? ""));
-        return obj;
-      });
-      return { headers, rows };
+    //    
+    // Auto-detect delimiter: comma, semicolon, or tab
+function detectDelimiter(line) {
+  const candidates = [',',';','\t'];
+  let best = ',', bestCount = 0;
+  for (const d of candidates) {
+    // count split parts ignoring empty trailing fields
+    const count = line.split(d).length;
+    if (count > bestCount) { best = d; bestCount = count; }
+  }
+  return best;
+}
+
+//    
+function toPlainWord(it){
+  const tags =
+    Array.isArray(it.tags) ? it.tags.slice()
+  : (it.tags && typeof it.tags[Symbol.iterator] === 'function') ? [...it.tags]
+  : (typeof it.tags === 'string') ? it.tags.split(/[,;|]/).map(s=>s.trim()).filter(Boolean)
+  : [];
+  return {
+    fr: String(it.fr || '').trim(),
+    en: String(it.en || '').trim(),
+    article: String(it.article || '').trim(),
+    tags: tags.map(t => String(t)),
+  };
+}
+
+//    
+function parseCsv(text) {
+  // strip BOM
+  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+  const linesRaw = text.split(/\r?\n/);
+  const lines = linesRaw.filter(l => l.trim() !== '');
+  if (!lines.length) return { headers: [], rows: [], delimiter: ',' };
+
+  const delimiter = detectDelimiter(lines[0]);
+
+  const split = (line) => {
+    const out = [];
+    let cur = '', inQ = false;
+    for (let i=0; i<line.length; i++){
+      const ch = line[i], nxt = line[i+1];
+      if (ch === '"' && inQ && nxt === '"') { cur += '"'; i++; continue; }
+      if (ch === '"') { inQ = !inQ; continue; }
+      if (ch === delimiter && !inQ) { out.push(cur); cur=''; continue; }
+      cur += ch;
+    }
+    out.push(cur);
+    return out.map(s => s.trim());
+  };
+
+  const headers = split(lines[0]).map(h => h.toLowerCase());
+  const rows = lines.slice(1).map(l => {
+    const cols = split(l);
+    const obj = {};
+    headers.forEach((h,i)=> obj[h] = (cols[i] ?? '').trim());
+    return obj;
+  });
+
+  return { headers, rows, delimiter };
+}
+
+function normalizeCsvRow(obj){
+  // Allow many header variants
+  const get = (alts)=> {
+    for (const k of alts) {
+      if (k in obj && String(obj[k]).trim() !== '') return String(obj[k]).trim();
+    }
+    return '';
+  };
+  const en = get(['en','english','back','ang','anglais']);
+  const fr = get(['fr','french','front','fra','français','francais']);
+  const article = get(['article','art','det','déterminant','determinant']);
+  const tagsRaw = get(['tags','tag','labels','label','categorie','cat']);
+  const tags = tagsRaw ? tagsRaw.split(/[,;|]/).map(s=>s.trim()).filter(Boolean) : [];
+  return (fr || en) ? { fr, en, article, tags } : null;
+}
+
+async function importVocabCsv(evt){
+  console.log('[CSV]', { file: evt?.target?.files?.[0]?.name });
+  const f = evt?.target?.files?.[0];
+  if (!f) return;
+  try {
+    const txt = await f.text();
+    const parsed = parseCsv(txt);
+    const items = parsed.rows.map(normalizeCsvRow).filter(Boolean);
+
+    state.csv.headers = parsed.headers;
+    state.csv.rows = parsed.rows;
+    state.csv.meta = { delimiter: parsed.delimiter, total: parsed.rows.length, normalized: items.length };
+
+    state.wordPicker.items = items;
+    state.wordPicker.selected = {};
+    items.forEach((_,i)=> state.wordPicker.selected[i] = true);
+    if (!state.wordPicker.listName) {
+      state.wordPicker.listName = new Date().toISOString().slice(0,10) + ' list';
     }
 
-    function normalizeCsvRow(obj) {
-      // Accept header variants
-      const get = (keys) => {
-        for (const k of keys) {
-          if (obj[k] != null && String(obj[k]).trim() !== "")
-            return String(obj[k]).trim();
-        }
-        return "";
-      };
-      const en = get(["en", "english", "back"]);
-      const fr = get(["fr", "french", "front"]);
-      const article = get(["article", "art"]);
-      const tagsRaw = get(["tags", "label", "labels"]);
-      const tags = tagsRaw
-        ? tagsRaw
-            .split(",")
-            .map((s) => s.trim())
-            .filter(Boolean)
-        : [];
-      return fr || en ? { fr, en, article, tags } : null;
+    if (!items.length) {
+      alert(
+        `CSV loaded but 0 usable rows.\n\n` +
+        `Detected delimiter: "${parsed.delimiter}"\n` +
+        `Headers: [${parsed.headers.join(', ')}]\n\n` +
+        `Expected headers include EN/FR/article (case-insensitive). ` +
+        `You can also use english/french/front/back or det/déterminant.`
+      );
+    } else {
+      alert(`CSV loaded: ${items.length} row(s) normalized (of ${parsed.rows.length} raw).`);
     }
+  } catch (e) {
+    alert('Failed to read CSV: ' + (e.message || e));
+  } finally {
+    if (evt?.target) evt.target.value = '';
+  }
+}
 
-    async function saveVocabListsToSettings(updater) {
-      const existing = (await db.settings.get("v1")) || { key: "v1" };
-      const current =
-        existing.vocabLists && typeof existing.vocabLists === "object"
-          ? existing.vocabLists
-          : {};
-      const next = updater(current);
-      await db.settings.put({ ...existing, vocabLists: next, key: "v1" });
-      // refresh local summary
-      state.wordPicker.savedLists = Object.keys(next)
-        .sort((a, b) => a.localeCompare(b))
-        .map((name) => ({
-          name,
-          count: Array.isArray(next[name]) ? next[name].length : 0,
-        }));
-    }
 
-    async function importVocabCsv(evt) {
-      const f = evt?.target?.files?.[0];
-      if (!f) return;
-      try {
-        const txt = await f.text();
-        const { headers, rows } = parseCsv(txt);
-        const items = rows.map(normalizeCsvRow).filter(Boolean);
-
-        state.csv.headers = headers;
-        state.csv.rows = rows;
-
-        state.wordPicker.items = items;
-        state.wordPicker.selected = {};
-        items.forEach((_, i) => (state.wordPicker.selected[i] = true)); // preselect all
-        state.wordPicker.listName = `${new Date()
-          .toISOString()
-          .slice(0, 10)} list`;
-        alert(`CSV loaded: ${items.length} rows normalized.`);
-      } catch (e) {
-        alert("Failed to read CSV: " + (e.message || e));
-      } finally {
-        if (evt?.target) evt.target.value = "";
-      }
-    }
+   async function saveVocabListsToSettings(updater) {
+  const existing = (await db.settings.get("v1")) || { key: "v1" };
+  const current = (existing.vocabLists && typeof existing.vocabLists === "object") ? existing.vocabLists : {};
+  const nextRaw = updater(current);
+  const next = JSON.parse(JSON.stringify(nextRaw)); // ensure plain JSON
+  await db.settings.put({ ...existing, vocabLists: next, key: "v1" });
+  state.wordPicker.savedLists = Object.keys(next)
+    .sort((a, b) => a.localeCompare(b))
+    .map((name) => ({ name, count: Array.isArray(next[name]) ? next[name].length : 0 }));
+}
 
     function togglePickAll(flag) {
       const sel = {};
@@ -1865,13 +1895,9 @@ const vueApp = createApp({
         return;
       }
       const picked = state.wordPicker.items
-        .filter((_, i) => !!state.wordPicker.selected[i])
-        .map((it) => ({
-          fr: it.fr,
-          en: it.en,
-          article: it.article,
-          tags: it.tags || [],
-        }));
+  .filter((_, i) => !!state.wordPicker.selected[i])
+  .map(toPlainWord);
+
       if (!picked.length) {
         alert("No words selected.");
         return;
@@ -1880,6 +1906,46 @@ const vueApp = createApp({
       await saveVocabListsToSettings((curr) => ({ ...curr, [name]: picked }));
       alert(`Saved list "${name}" with ${picked.length} items.`);
     }
+
+    // === Load a saved sub-list straight into Review (non-SRS) ===
+async function loadListIntoReview(name){
+  const settings = (await db.settings.get('v1')) || { key: 'v1' };
+  const list = settings?.vocabLists?.[name];
+  if (!Array.isArray(list) || !list.length) {
+    alert('List not found or empty.');
+    return;
+  }
+
+
+
+  // Normalize to your Review card shape
+  const cards = list
+    .map((it, i) => ({
+      id: null,
+      fr: (it.fr || '').trim(),
+      en: (it.en || '').trim(),
+      article: (it.article || '').trim(),
+      tags: Array.isArray(it.tags) ? it.tags : [],
+      source: `list:${name}`
+    }))
+    .filter(c => c.fr && c.en); // keep only valid pairs
+
+  // Replace the Review source set and rebuild the deck
+  state.vocab.cards = cards;
+  // If your app has prefs like randomize/withoutReplacement, buildVocabDeck() already handles them
+  if (typeof buildVocabDeck === 'function') {
+    buildVocabDeck();
+  } else {
+    // Minimal fallback (shouldn't be needed if buildVocabDeck exists)
+    state.vocab.deck = [...state.vocab.cards];
+    state.vocab.deckPtr = 0;
+  }
+
+  // Make it easy to start using immediately
+  state.tab = 'learn';
+  alert(`Loaded "${name}" into Review (${cards.length} cards). Open Learn → Vocab.`);
+}
+
 
     async function loadListIntoSrs(name) {
       const settings = (await db.settings.get("v1")) || { key: "v1" };
@@ -1957,10 +2023,11 @@ const vueApp = createApp({
       clearAllVocabPills,
       applyVocabPillFilter,
       // CSV & Word Picker
-      importVocabCsv,
-      togglePickAll,
-      savePickedAsList,
-      loadListIntoSrs,
+ importVocabCsv,
+  togglePickAll,
+  savePickedAsList,
+  loadListIntoSrs,
+  loadListIntoReview,
     };
   },
 });

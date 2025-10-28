@@ -364,9 +364,13 @@
         </section>
 
         <!-- ==================== DATA (top-level) ==================== -->
-        <section v-if="tab==='data'" class="panel">
-          <data-panel :state="state" :methods="methods"></data-panel>
-        </section>
+        <!-- Data tab panel -->
+<section v-if="tab==='data'" class="tab-panel">
+  <data-panel :state="state" :methods="methods"></data-panel>
+</section>
+
+
+
 
         <!-- ==================== PLAN ==================== -->
         <section v-if="tab==='plan'" class="panel">
