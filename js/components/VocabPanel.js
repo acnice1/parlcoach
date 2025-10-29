@@ -102,6 +102,18 @@ const VocabPanel = {
   <div class="vocab-card" v-if="methods.currentVocabCard()">
     <div class="fr">{{ methods.renderFr ? methods.renderFr(methods.currentVocabCard()) : (methods.currentVocabCard().fr) }}</div>
     <div class="en" v-if="state.showEnglishTranslation">{{ methods.currentVocabCard().en }}</div>
+            <div class="examples">
+          <div v-if="methods.currentVocabCard()?.example?.fr">
+            <strong>Ex (FR):</strong> {{ methods.currentVocabCard().example.fr }}
+          </div>
+          <div v-if="state.showEnglishTranslation && methods.currentVocabCard()?.example?.en">
+            <strong>Ex (EN):</strong> {{ methods.currentVocabCard().example.en }}
+          </div>
+          <div class="dim" v-if="methods.currentVocabCard()?.example" style="margin-top:6px;">
+  <strong>Ex:</strong> {{ methods.currentVocabCard().example }}
+</div>
+        </div>
+
     <div class="dim" v-if="state.ui.showVocabTags && methods.currentVocabCard()?.tags?.length" style="margin-top:6px;">
       tags: {{ methods.currentVocabCard().tags.join(', ') }}
     </div>
