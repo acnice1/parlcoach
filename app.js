@@ -21,6 +21,14 @@ import { answersEqual, toArr } from "./js/utils.js?v=1";
 const db = initDexie();
 const { createApp, reactive, ref, watch, toRefs, nextTick } = Vue;
 
+
+/* // Debounce utility
+function debounce(fn, ms = 300){
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
+  */
+ 
 function debounce(fn, ms = 300) {
   let t;
   return (...args) => {
@@ -1690,49 +1698,49 @@ notesTagFilter: "",
       },
 
       // === Load a saved list into the Review deck (non-SRS) ===
-async loadListIntoReview(listName) {
+async deleteSavedList(listName) {
   try {
-    // Pull vocabLists from settings
-    const settingsRec = (await db.settings.get("v1")) || { key: "v1" };
-    const lists = settingsRec.vocabLists || {};
-    const arr = Array.isArray(lists[listName]) ? lists[listName] : [];
+    if (!listName) return;
+    if (!confirm(`Delete the list "${listName}"? This cannot be undone.`)) return;
 
-    if (!arr.length) {
-      // If no list or name empty, fall back to default (keep built-in JSON)
-      state.wordPicker.activeList = "";
-      // Rebuild deck from whatever JSON is already in state.vocab.cards
-      Vocab.buildVocabDeck(state);
-      methods.applyVocabPillFilter?.();
+    const settingsRec = (await db.settings.get("v1")) || { key: "v1" };
+    const lists = { ...(settingsRec.vocabLists || {}) };
+
+    if (!(listName in lists)) {
+      alert("List not found.");
       return;
     }
 
-    // Normalize to Review card shape (fr/en/pos/gender/article/tags/topic)
-    const cards = arr.map((c, i) => ({
-      id: i + 1,
-      fr: (c.fr || c.french || "").trim(),
-      en: (c.en || c.english || "").trim(),
-      partOfSpeech: (c.partOfSpeech || c.pos || "").trim(),
-      gender: (c.gender || "").trim(),
-      topic: (c.topic || "").trim(),
-      tags: Array.isArray(c.tags) ? c.tags.slice() : (c.tags ? [c.tags] : []),
-      article: (c.article || "").trim(),
-      plural: c.plural || "",
-      example: c.example || null,
-      notes: c.notes || "",
-      audio: c.audio || null,
-      image: c.image || ""
-    }));
+    // Remove and persist
+    delete lists[listName];
+    await db.settings.put({ ...settingsRec, vocabLists: lists, key: "v1" });
 
-    // Swap in Review source and rebuild deck
-    state.vocab.cards = cards;
-    Vocab.buildVocabDeck(state);
-    methods.applyVocabPillFilter?.();
-    state.wordPicker.activeList = listName;
+    // Refresh savedLists in UI
+    state.wordPicker.savedLists = Object.keys(lists)
+      .sort((a, b) => a.localeCompare(b))
+      .map((name) => ({
+        name,
+        count: Array.isArray(lists[name]) ? lists[name].length : 0,
+      }));
+
+    // If that list was active in the Review picker, revert to Default (built-in)
+    if (state.wordPicker.activeList === listName) {
+      state.wordPicker.activeList = "";
+      try {
+        // Use existing loader to swap Review back to built-in JSON deck
+        await methods.loadListIntoReview("");
+      } catch (e) {
+        console.warn("[Lists] fallback to default review deck failed:", e);
+      }
+    }
+
+    console.log(`[Lists] Deleted "${listName}"`);
   } catch (e) {
-    console.error("[Review] loadListIntoReview failed:", e);
-    alert("Could not load list into Review.");
+    console.error("[Lists] deleteSavedList failed:", e);
+    alert("Could not delete that list.");
   }
 },
+
 
 // === Load a saved list into SRS (Dexie-backed) ===
 async loadListIntoSrs(listName) {
@@ -1923,21 +1931,30 @@ function parseCsv(text) {
   return { headers, rows, delimiter };
 }
 
-function normalizeCsvRow(obj){
-  // Allow many header variants
+
+function normalizeCsvRow(o){
+  // Helper to read with aliases
   const get = (alts)=> {
     for (const k of alts) {
-      if (k in obj && String(obj[k]).trim() !== '') return String(obj[k]).trim();
+      if (k in o && String(o[k]).trim() !== '') return String(o[k]).trim();
     }
     return '';
   };
-  const en = get(['en','english','back','ang','anglais']);
-  const fr = get(['fr','french','front','fra','français','francais']);
+
+  // Primary expected headers: FR, Article, EN, Example, TAGS
+  const fr      = get(['fr','french','front','fra','français','francais']);
   const article = get(['article','art','det','déterminant','determinant']);
-  const tagsRaw = get(['tags','tag','labels','label','categorie','cat']);
+  const en      = get(['en','english','back','ang','anglais']);
+  const example = get(['example','exemple','ex','sample','sentence']);
+  const tagsRaw = get(['tags','tag','labels','label','categorie','cat','categories']);
+
   const tags = tagsRaw ? tagsRaw.split(/[,;|]/).map(s=>s.trim()).filter(Boolean) : [];
-  return (fr || en) ? { fr, en, article, tags } : null;
+
+  // Require at least FR or EN to keep a row
+  return (fr || en) ? { fr, en, article, example, tags } : null;
 }
+
+
 
 async function importVocabCsv(evt){
   console.log('[CSV]', { file: evt?.target?.files?.[0]?.name });
@@ -1995,33 +2012,31 @@ async function importVocabCsv(evt){
       state.wordPicker.selected = sel;
     }
 
-  async function savePickedAsList(allowedIdx) {
-  const name = (state.wordPicker.listName || "").trim();
-  if (!name) {
-    alert("Please enter a list name.");
-    return;
+async function savePickedAsList(pickedIdxArr){
+  const name = (state.wordPicker.listName || '').trim();
+  if (!name) { alert('Please enter a list name.'); return; }
+
+  // If indices were provided, use them; otherwise fall back to checkboxes
+  let indices;
+  if (Array.isArray(pickedIdxArr) && pickedIdxArr.length) {
+    indices = pickedIdxArr;
+  } else {
+    indices = Object.entries(state.wordPicker.selected)
+      .filter(([,v]) => !!v)
+      .map(([k]) => Number(k));
   }
 
-  // Build an allowlist Set if provided
-  const allow = Array.isArray(allowedIdx) && allowedIdx.length
-    ? new Set(allowedIdx)
-    : null;
+  const picked = indices
+    .map(i => state.wordPicker.items[i])
+    .filter(Boolean)
+    .map(it => ({
+      fr: it.fr, en: it.en, article: it.article,
+      example: it.example || '', tags: it.tags || []
+    }));
 
-  const picked = state.wordPicker.items
-    .filter((_, i) => {
-      const isSelected = !!state.wordPicker.selected[i];
-      if (!isSelected) return false;
-      // If allowlist present, keep only items that are visible (filtered)
-      return allow ? allow.has(i) : true;
-    })
-    .map(toPlainWord);
+  if (!picked.length){ alert('No words selected.'); return; }
 
-  if (!picked.length) {
-    alert("No words selected (check your filter and selections).");
-    return;
-  }
-
-  await saveVocabListsToSettings((curr) => ({ ...curr, [name]: picked }));
+  await saveVocabListsToSettings(curr => ({ ...curr, [name]: picked }));
   alert(`Saved list "${name}" with ${picked.length} items.`);
 }
 
@@ -2030,99 +2045,62 @@ async function importVocabCsv(evt){
 async function loadListIntoReview(name){
   const settings = (await db.settings.get('v1')) || { key: 'v1' };
   const list = settings?.vocabLists?.[name];
-  if (!Array.isArray(list) || !list.length) {
-    alert('List not found or empty.');
-    return;
-  }
+  if (!Array.isArray(list) || !list.length) { alert('List not found or empty.'); return; }
 
+  const cards = list.map(it => ({
+    id: null,
+    fr: (it.fr || '').trim(),
+    en: (it.en || '').trim(),
+    article: (it.article || '').trim(),
+    example: (it.example || '').trim(),
+    tags: Array.isArray(it.tags) ? it.tags : [],
+    source: 'list:' + name
+  })).filter(c => c.fr && c.en);
 
-
-  // Normalize to your Review card shape
-  const cards = list
-    .map((it, i) => ({
-      id: null,
-      fr: (it.fr || '').trim(),
-      en: (it.en || '').trim(),
-      article: (it.article || '').trim(),
-      tags: Array.isArray(it.tags) ? it.tags : [],
-      source: `list:${name}`
-    }))
-    .filter(c => c.fr && c.en); // keep only valid pairs
-
-  // Replace the Review source set and rebuild the deck
   state.vocab.cards = cards;
-  // If your app has prefs like randomize/withoutReplacement, buildVocabDeck() already handles them
-  if (typeof buildVocabDeck === 'function') {
-    buildVocabDeck();
-  } else {
-    // Minimal fallback (shouldn't be needed if buildVocabDeck exists)
-    state.vocab.deck = [...state.vocab.cards];
-    state.vocab.deckPtr = 0;
-  }
+  if (typeof buildVocabDeck === 'function') buildVocabDeck();
+  else { state.vocab.deck = [...state.vocab.cards]; state.vocab.deckPtr = 0; }
 
-  // Make it easy to start using immediately
   state.tab = 'learn';
-  alert(`Loaded "${name}" into Review (${cards.length} cards). Open Learn → Vocab.`);
+  alert(`Loaded "${name}" into Review (${cards.length} cards).`);
 }
 
 
-    async function loadListIntoSrs(name) {
-      const settings = (await db.settings.get("v1")) || { key: "v1" };
-      const list = settings?.vocabLists?.[name];
-      if (!Array.isArray(list) || !list.length) {
-        alert("List not found or empty.");
-        return;
-      }
 
-      const nowISO = new Date().toISOString().slice(0, 10);
+async function loadListIntoSrs(name){
+  const settings = (await db.settings.get('v1')) || { key: 'v1' };
+  const list = settings?.vocabLists?.[name];
+  if (!Array.isArray(list) || !list.length) { alert('List not found or empty.'); return; }
 
-      // Dedup by {front,back}. We’ll check existing DB rows first.
-      const existing = await db.vocab.toArray();
-      const keyOf = (front, back) =>
-        (front || "").toLowerCase().trim() +
-        "␟" +
-        (back || "").toLowerCase().trim();
-      const have = new Set(
-        existing.map((r) => keyOf(r.front || r.fr, r.back || r.en))
-      );
+  const nowISO = new Date().toISOString();
+  const existing = await db.vocab.toArray();
+  const keyOf = (front, back) => (front||'').toLowerCase().trim() + '␟' + (back||'').toLowerCase().trim();
+  const have = new Set(existing.map(r => keyOf(r.front || r.fr, r.back || r.en)));
 
-      const toAdd = [];
-      for (const it of list) {
-        const fr = (it.fr || "").trim(),
-          en = (it.en || "").trim();
-        if (!fr || !en) continue;
-        const k = keyOf(fr, en);
-        if (have.has(k)) continue;
-        toAdd.push({
-          front: fr,
-          back: en,
-          fr,
-          en,
-          article: it.article || "",
-          tags: Array.isArray(it.tags) ? it.tags : [],
-          due: nowISO,
-          ease: 2.5,
-          reps: 0,
-          interval: 0,
-          last: nowISO,
-        });
-        have.add(k);
-      }
+  const toAdd = [];
+  for (const it of list){
+    const fr = (it.fr||'').trim(), en = (it.en||'').trim();
+    if (!fr || !en) continue;
+    const k = keyOf(fr, en);
+    if (have.has(k)) continue;
+    toAdd.push({
+      front: fr, back: en,       // SRS core
+      fr, en, article: it.article || '',
+      example: it.example || '',
+      tags: Array.isArray(it.tags) ? it.tags : [],
+      due: nowISO, ease: 2.5, reps: 0, interval: 0, last: nowISO
+    });
+    have.add(k);
+  }
 
-      if (toAdd.length) {
-        try {
-          await db.vocab.bulkAdd(toAdd);
-        } catch {
-          for (const r of toAdd) {
-            try {
-              await db.vocab.add(r);
-            } catch {}
-          }
-        }
-      }
-      await Vocab.reloadVocabByTag(db, state.flashcards);
-      alert(`Loaded "${name}" into SRS: ${toAdd.length} new card(s).`);
-    }
+  if (toAdd.length){
+    try { await db.vocab.bulkAdd(toAdd); }
+    catch { for (const r of toAdd) { try { await db.vocab.add(r); } catch {} } }
+  }
+  if (Vocab?.reloadVocabByTag) await Vocab.reloadVocabByTag(db, state.flashcards);
+  alert(`Loaded "${name}" into SRS: ${toAdd.length} new card(s).`);
+}
+
 
     // -------------------- Boot --------------------
     methods.loadAll();

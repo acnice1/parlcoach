@@ -89,6 +89,7 @@ const DataPanel = {
               <div>
                 <div><strong>FR:</strong> {{ item.article ? (item.article + ' ') : '' }}{{ item.fr || '—' }}</div>
                 <div class="dim"><strong>EN:</strong> {{ item.en || '—' }}</div>
+                 <div class="dim" v-if="item.example"><strong>Ex:</strong> {{ item.example }}</div>
                 <div class="dim" v-if="item.tags && item.tags.length">tags: {{ item.tags.join(', ') }}</div>
               </div>
             </div>
@@ -154,6 +155,8 @@ const DataPanel = {
             <div style="display:flex; gap:8px;">
               <button class="small" @click="methods.loadListIntoSrs(l.name)">Load into SRS</button>
               <button class="small" @click="methods.loadListIntoReview(l.name)">Use in Review</button>
+              <button class="small danger" @click="methods.deleteSavedList(l.name)">Delete</button>
+
             </div>
           </div>
         </div>
