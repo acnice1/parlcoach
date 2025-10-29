@@ -109,7 +109,8 @@ const VocabPanel = {
           <div v-if="state.showEnglishTranslation && methods.currentVocabCard()?.example?.en">
             <strong>Ex (EN):</strong> {{ methods.currentVocabCard().example.en }}
           </div>
-
+          <div class="dim" v-if="methods.currentVocabCard()?.example" style="margin-top:6px;">
+  <strong>Ex:</strong> {{ methods.currentVocabCard().example }}
 </div>
         </div>
 
