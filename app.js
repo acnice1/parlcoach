@@ -735,6 +735,12 @@ notesTagFilter: "",
           count: Array.isArray(vocabLists[name]) ? vocabLists[name].length : 0,
         }));
 
+        // after loading settings and building savedLists:
+      const saved = (await db.settings.get('v1')) || { key:'v1' };
+      if (saved.activeReviewList) {
+        try { await methods.loadListIntoReview(saved.activeReviewList); } catch {}
+    }
+
       // --- AUTOLOAD GENERAL VOCAB (array or { vocab: [...] }) ---
       try {
         const resp = await fetch("general_vocab.json?v=" + Date.now());
@@ -1932,28 +1938,46 @@ function parseCsv(text) {
 }
 
 
-function normalizeCsvRow(o){
-  // Helper to read with aliases
-  const get = (alts)=> {
-    for (const k of alts) {
-      if (k in o && String(o[k]).trim() !== '') return String(o[k]).trim();
-    }
-    return '';
+function normalizeCsvRow(row){
+  const fr = normalizeStr(row.FR ?? row.fr ?? row.French ?? row.french);
+  const en = normalizeStr(row.EN ?? row.en ?? row.English ?? row.english);
+  const rawArticle = normalizeStr(row.article ?? row.Article ?? row.gender ?? row.Gender);
+  const tags = Array.isArray(row.tags) ? row.tags : normalizeStr(row.tags).split(',').map(t=>t.trim()).filter(Boolean);
+  const ex = row.example ?? row.Example ?? row.ex ?? '';
+
+  if (!fr || !en) return null;
+
+  return {
+    fr,
+    en,
+    article: normalizeArticle(fr, rawArticle),
+    // keep gender optional if you want
+    gender: ['m','masc','masculin'].includes(rawArticle.toLowerCase()) ? 'm'
+          : ['f','fem','féminin','feminin','feminine'].includes(rawArticle.toLowerCase()) ? 'f'
+          : '',
+    example: coerceExample(ex),
+    tags
   };
-
-  // Primary expected headers: FR, Article, EN, Example, TAGS
-  const fr      = get(['fr','french','front','fra','français','francais']);
-  const article = get(['article','art','det','déterminant','determinant']);
-  const en      = get(['en','english','back','ang','anglais']);
-  const example = get(['example','exemple','ex','sample','sentence']);
-  const tagsRaw = get(['tags','tag','labels','label','categorie','cat','categories']);
-
-  const tags = tagsRaw ? tagsRaw.split(/[,;|]/).map(s=>s.trim()).filter(Boolean) : [];
-
-  // Require at least FR or EN to keep a row
-  return (fr || en) ? { fr, en, article, example, tags } : null;
 }
 
+// helpers (top of app.js near your other helpers)
+const normalizeStr = s => (s ?? '').toString().trim();
+const isVowelStart = s => /^[aeiouhâêîôûéèëïüAEIOUH]/.test(s || '');
+function normalizeArticle(fr, raw) {
+  const a = normalizeStr(raw).toLowerCase();
+  if (['le','la','l\'','l’','les'].includes(a)) return (a === "l'") ? 'l’' : a;
+  if (['m','masc','masculin'].includes(a)) return isVowelStart(fr) ? 'l’' : 'le';
+  if (['f','fem','femme','féminin','feminin','feminine'].includes(a)) return isVowelStart(fr) ? 'l’' : 'la';
+  return ''; // unknown → no article
+}
+
+// coerce example to a standard shape used by VocabPanel
+function coerceExample(ex) {
+  if (!ex) return null;
+  if (typeof ex === 'string') return { fr: ex.trim(), en: '' };
+  if (typeof ex === 'object') return { fr: normalizeStr(ex.fr), en: normalizeStr(ex.en) };
+  return null;
+}
 
 
 async function importVocabCsv(evt){
@@ -2026,13 +2050,18 @@ async function savePickedAsList(pickedIdxArr){
       .map(([k]) => Number(k));
   }
 
-  const picked = indices
-    .map(i => state.wordPicker.items[i])
-    .filter(Boolean)
-    .map(it => ({
-      fr: it.fr, en: it.en, article: it.article,
-      example: it.example || '', tags: it.tags || []
-    }));
+ // in savePickedAsList(), change the mapping of picked items
+const picked = indices
+  .map(i => state.wordPicker.items[i])
+  .filter(Boolean)
+  .map(it => ({
+    fr: it.fr,
+    en: it.en,
+    article: it.article,
+    example: coerceExample(it.example),  // <— use helper
+    tags: it.tags || []
+  }));
+
 
   if (!picked.length){ alert('No words selected.'); return; }
 
@@ -2044,18 +2073,21 @@ async function savePickedAsList(pickedIdxArr){
     // === Load a saved sub-list straight into Review (non-SRS) ===
 async function loadListIntoReview(name){
   const settings = (await db.settings.get('v1')) || { key: 'v1' };
+  await db.settings.put({ ...settings, activeReviewList: name || '', key: 'v1' });
+
   const list = settings?.vocabLists?.[name];
   if (!Array.isArray(list) || !list.length) { alert('List not found or empty.'); return; }
 
-  const cards = list.map(it => ({
-    id: null,
-    fr: (it.fr || '').trim(),
-    en: (it.en || '').trim(),
-    article: (it.article || '').trim(),
-    example: (it.example || '').trim(),
-    tags: Array.isArray(it.tags) ? it.tags : [],
-    source: 'list:' + name
-  })).filter(c => c.fr && c.en);
+const cards = list.map(it => ({
+  id: null,
+  fr: (it.fr || '').trim(),
+  en: (it.en || '').trim(),
+  article: (it.article || '').trim(),
+  example: coerceExample(it.example),   // <— changed
+  tags: Array.isArray(it.tags) ? it.tags : [],
+  source: 'list:' + name
+})).filter(c => c.fr && c.en);
+
 
   state.vocab.cards = cards;
   if (typeof buildVocabDeck === 'function') buildVocabDeck();
