@@ -19,6 +19,31 @@ const DrillPanel = {
     return 'bad';
   });
 
+  
+// 1) Add this computed:
+const fullConj = Vue.computed(() => {
+  try {
+    const sess = props.state.drillSession;
+    if (!sess?.question?.meta) return null;
+
+    const inf = sess.question.meta.infinitive;
+    const tense = sess.question.meta.tense; // uses human label like "Présent"
+    if (!inf || !tense) return null;
+
+    // dataset is a Map: infinitive -> { "Présent": {...}, "Passé composé": {...}, ... }
+    const tensesObj = props.state.dataset?.get(inf);
+    if (!tensesObj) return null;
+    const block = tensesObj[tense];
+    if (!block) return null;
+
+    const persons = ["je", "tu", "il/elle/on", "nous", "vous", "ils/elles"];
+    return persons.map(p => ({ person: p, value: block[p] ?? "—" }));
+  } catch {
+    return null;
+  }
+});
+
+
   const includeCSV = Vue.computed({
     get(){
       const v = props.state.drillPrefs.includeOnlyTags;
@@ -49,7 +74,8 @@ const DrillPanel = {
     }
   });
 
-  return { inputRef, scoreCls, includeCSV, excludeCSV };
+// 2) Ensure you RETURN it from setup:
+return { inputRef, scoreCls, includeCSV, excludeCSV, fullConj };
 },
 
   template: `
@@ -184,20 +210,45 @@ const DrillPanel = {
         </div>
 
 
-        <!-- Help wrapper reserves previous height to stop page jump -->
+<!-- Help wrapper keeps height to avoid page jump -->
 <div :style="{ minHeight: (helpMin || 0) + 'px' }">
   <div class="rule-help"
        ref="helpRef"
        v-if="(state.drillSession.correct === false) ||
               (state.drillSession.correct === true && !state.drillPrefs.autoNext)">
-    <h4 style="margin:8px 0 4px">Examples</h4>
-    <div><strong>FR:</strong> {{ state.drillSession.side.fr || '—' }}</div>
-    <div><strong>EN:</strong> {{ state.drillSession.side.en || '—' }}</div>
 
-    <h4 style="margin:8px 0 4px">How to form it</h4>
-    <ul style="margin:0; padding-left:18px">
-      <li v-for="(ln,i) in state.drillSession.help?.lines" :key="i" v-html="ln"></li>
-    </ul>
+    <!-- Responsive two-column container; wraps to stacked on narrow screens -->
+    <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:flex-start">
+
+      <!-- LEFT: Examples + Rules -->
+      <div style="flex:1 1 280px; min-width:260px">
+        <h4 style="margin:8px 0 4px">Examples</h4>
+        <div><strong>FR:</strong> {{ state.drillSession.side.fr || '—' }}</div>
+        <div><strong>EN:</strong> {{ state.drillSession.side.en || '—' }}</div>
+
+        <h4 style="margin:8px 0 4px">How to form it</h4>
+        <ul style="margin:0; padding-left:18px">
+          <li v-for="(ln,i) in state.drillSession.help?.lines" :key="i" v-html="ln"></li>
+        </ul>
+      </div>
+
+      <!-- RIGHT: All persons (only useful on wrong, but harmless otherwise) -->
+      <div style="flex:1 1 320px; min-width:280px" v-if="fullConj?.length">
+        <h4 style="margin:8px 0 4px">
+          All persons ({{ state.drillSession.question.meta.tense }})
+        </h4>
+
+        <div class="conj-row" style="display:flex; flex-wrap:wrap; gap:12px;">
+          <div v-for="(row,i) in fullConj" :key="i"
+               class="conj-cell"
+               style="min-width:140px; padding:6px 8px; border:1px solid #ccc; border-radius:6px; background:#fafafa">
+            <div style="font-weight:600">{{ row.person }}</div>
+            <div>{{ row.value }}</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 

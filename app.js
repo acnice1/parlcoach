@@ -1,22 +1,22 @@
 // app.js (rebuilt, with UI toggle persistence + Vocab pills without Gender)
 
-import DrillPanel from "./js/components/DrillPanel.js?v=1";
-import VocabPanel from "./js/components/VocabPanel.js?v=1";
-import RecorderPanel from "./js/components/RecorderPanel.js?v=1";
-import ProfileWidget from "./js/components/ProfileWidget.js?v=1";
-import DataPanel from "./js/components/DataPanel.js?v=4";
+import DrillPanel from "./js/components/DrillPanel.js?v=3";
+import VocabPanel from "./js/components/VocabPanel.js?v=3";
+import RecorderPanel from "./js/components/RecorderPanel.js?v=2";
+import ProfileWidget from "./js/components/ProfileWidget.js?v=2";
+import DataPanel from "./js/components/DataPanel.js?v=6";
 
-import { initDexie, opfs, TAG_PILL_OPTIONS } from "./js/db.js?v=1";
+import { initDexie, opfs, TAG_PILL_OPTIONS } from "./js/db.js?v=2";
 import {
   sm2Schedule,
   fixedSchedule,
   loadDataset,
   loadRules,
   saveDrillPrefs,
-} from "./js/drills.js?v=1";
-import * as Vocab from "./js/vocab.js?v=1";
-import * as Verb from "./js/verbs.js?v=1";
-import { answersEqual, toArr } from "./js/utils.js?v=1";
+} from "./js/drills.js?v=2";
+import * as Vocab from "./js/vocab.js?v=2";
+import * as Verb from "./js/verbs.js?v=2";
+import { answersEqual, toArr } from "./js/utils.js?v=2";
 
 const db = initDexie();
 const { createApp, reactive, ref, watch, toRefs, nextTick } = Vue;

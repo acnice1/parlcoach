@@ -1376,3 +1376,18 @@ a:hover, button.link:hover {
   color: var(--muted);
   background: color-mix(in oklab, var(--card-bg) 90%, transparent);
 }
+.conj-wrap h4 {
+  margin-top: 10px;
+}
+
+.conj-cell {
+  font-size: 0.95rem;
+}
+
+.conj-cell div:first-child {
+  color: #333;
+}
+
+.conj-cell div:last-child {
+  color: #111;
+}
