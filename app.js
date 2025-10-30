@@ -287,61 +287,45 @@ notesTagFilter: "",
       saveReviewPointer();  
     }
 
-    // Render FR w/ article for nouns
+
     function renderFr(card) {
-      // 1) Pull the French surface form from any known field shape
-      const w = (card?.fr ?? card?.front ?? card?.french ?? "").trim();
+  const w = (card?.fr ?? card?.front ?? card?.french ?? "").trim();
+  if (!w) return w;
 
-      if (!w) return w;
+  // If the string itself already carries an article, keep it.
+  if (/^(l['’]\s*|le\s+|la\s+|les\s+)/i.test(w)) return w;
 
-      // 2) If the string already contains an article, keep it as-is
-      if (/^(l['’]\s*|le\s+|la\s+)/i.test(w)) return w;
+  const rawArticle = (card?.article ?? "").trim();
+  let article = rawArticle.toLowerCase();
 
-      // 3) Decide if it's a noun:
-      //    - explicit flags from common schemas: partOfSpeech / pos / tags
-      const posStr = String(
-        card?.partOfSpeech || card?.pos || ""
-      ).toLowerCase();
-      const tagsArr = Array.isArray(card?.tags)
-        ? card.tags.map((t) => String(t).toLowerCase())
-        : [];
-      const isNoun =
-        posStr.includes("noun") ||
-        tagsArr.some((t) => t.startsWith("noun")) ||
-        // If gender exists, it’s almost certainly a noun in this dataset
-        (card?.gender && String(card.gender).trim() !== "");
-
-      if (!isNoun) return w;
-
-      // 4) Work out the article
-      //    - prefer explicit article if given
-      //    - otherwise use gender or elision for vowels / mute h
-      const startsWithVowelOrMuteH =
-        /^[aeiouâêîôûéèëïüœ]/i.test(w) || /^h/i.test(w);
-
-      let article = String(card?.article || "").toLowerCase();
-      let gender = String(card?.gender || "").toLowerCase(); // 'm' | 'f'
-
-      if (!article) {
-        if (startsWithVowelOrMuteH) {
-          article = "l'";
-        } else if (gender === "f" || tagsArr.includes("f")) {
-          article = "la";
-        } else if (gender === "m" || tagsArr.includes("m")) {
-          article = "le";
-        } else {
-          // Unknown gender and no elision → leave bare word rather than guessing
-          return w;
-        }
-      }
-
-      // 5) Normalize elided form
-      if (article === "l'") {
-        const bare = w.replace(/^l['’]\s*/i, "").trim();
-        return `l'${bare}`;
-      }
-      return `${article} ${w}`;
+  // If an explicit article exists → use it unconditionally.
+  if (article) {
+    if (article === "l'") article = "l’";
+    if (article === "l’") {
+      const bare = w.replace(/^l['’]\s*/i, "").trim();
+      return `l’${bare}`;
     }
+    return `${article} ${w}`;
+  }
+
+  // Otherwise fall back to heuristics (gender / elision)
+  const posStr = String(card?.partOfSpeech || card?.pos || "").toLowerCase();
+  const tagsArr = Array.isArray(card?.tags) ? card.tags.map(t => String(t).toLowerCase()) : [];
+  const hasGender = !!String(card?.gender ?? "").trim();
+  const isNoun = posStr.includes("noun") || tagsArr.some(t => t.startsWith("noun")) || hasGender;
+
+  if (!isNoun) return w;
+
+  const startsWithVowelOrMuteH = /^[aeiouâêîôûéèëïüœ]/i.test(w) || /^h/i.test(w);
+  const gender = String(card?.gender || "").toLowerCase();
+
+  if (startsWithVowelOrMuteH) return `l’${w}`;
+  if (gender === "f" || tagsArr.includes("f")) return `la ${w}`;
+  if (gender === "m" || tagsArr.includes("m")) return `le ${w}`;
+
+  // Unknown gender → leave bare
+  return w;
+}
 
     // Rebuild vocab deck on prefs change
     watch(
@@ -2003,13 +1987,30 @@ function normalizeCsvRow(row){
 // helpers (top of app.js near your other helpers)
 const normalizeStr = s => (s ?? '').toString().trim();
 const isVowelStart = s => /^[aeiouhâêîôûéèëïüAEIOUH]/.test(s || '');
+
 function normalizeArticle(fr, raw) {
   const a = normalizeStr(raw).toLowerCase();
-  if (['le','la','l\'','l’','les'].includes(a)) return (a === "l'") ? 'l’' : a;
+
+  // direct articles pass-through (normalize straight apostrophe)
+  if (['le','la',"l'","l’",'les'].includes(a)) return (a === "l'") ? 'l’' : a;
+
+  // plural markers
+  if (['pl','plural','les'].includes(a)) return 'les';
+
+  // mixed gender
+  if (['mf','m/f','m-f','m&f','masc/fem','masculin/féminin','masculin/feminin'].includes(a)) {
+    // show as "le/la" (no elision for mixed)
+    return 'le/la';
+  }
+
+  // gendered
   if (['m','masc','masculin'].includes(a)) return isVowelStart(fr) ? 'l’' : 'le';
-  if (['f','fem','femme','féminin','feminin','feminine'].includes(a)) return isVowelStart(fr) ? 'l’' : 'la';
+  if (['f','fem','féminin','feminin','feminine'].includes(a)) return isVowelStart(fr) ? 'l’' : 'la';
+
   return ''; // unknown → no article
 }
+
+
 
 // Coerce example to a { fr, en } or null; keeps UI consistent
 function coerceExample(ex) {

@@ -86,12 +86,19 @@ const DataPanel = {
               style="display:grid; grid-template-columns:auto 1fr; gap:8px; align-items:center; padding:4px 2px;"
             >
               <input type="checkbox" v-model="state.wordPicker.selected[idx]" />
-              <div>
-                <div><strong>FR:</strong> {{ item.article ? (item.article + ' ') : '' }}{{ item.fr || '—' }}</div>
-                <div class="dim"><strong>EN:</strong> {{ item.en || '—' }}</div>
-                 <div class="dim" v-if="item.example"><strong>Ex:</strong> {{ item.example }}</div>
-                <div class="dim" v-if="item.tags && item.tags.length">tags: {{ item.tags.join(', ') }}</div>
-              </div>
+<div>
+  <div>
+    <strong>FR:</strong>
+    {{
+      item.article
+        ? ((item.article === "l’" || item.article === "l'") ? "l’" : (item.article + " "))
+        : ""
+    }}{{ item.fr || "—" }}
+  </div>
+  <div class="dim"><strong>EN:</strong> {{ item.en || '—' }}</div>
+  <div class="dim" v-if="item.example"><strong>Ex:</strong> {{ item.example }}</div>
+  <div class="dim" v-if="item.tags && item.tags.length">tags: {{ item.tags.join(', ') }}</div>
+</div>
             </div>
           </div>
         </div>
