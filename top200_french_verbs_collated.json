@@ -16599,14 +16599,14 @@
           "vous": "concevez",
           "ils/elles": ""
         },
-        "Présent": {
-          "je": "concevois",
-          "tu": "concevois",
-          "il/elle/on": "concevoit",
-          "nous": "concevoissons",
-          "vous": "concevoissez",
-          "ils/elles": "concevoissent"
-        }
+    "Présent": {
+      "je": "conçois",
+      "tu": "conçois",
+      "il/elle/on": "conçoit",
+      "nous": "concevons",
+      "vous": "concevez",
+      "ils/elles": "conçoivent"
+    }
       },
       "english": "to conceive; to design",
       "examples": {
@@ -16709,13 +16709,13 @@
           "vous": "décevez",
           "ils/elles": ""
         },
-        "Présent": {
-          "je": "décevois",
-          "tu": "décevois",
-          "il/elle/on": "décevoit",
-          "nous": "décevoissons",
-          "vous": "décevoissez",
-          "ils/elles": "décevoissent"
+    "Présent": {
+      "je": "déçois",
+      "tu": "déçois",
+      "il/elle/on": "déçoit",
+      "nous": "décevons",
+      "vous": "décevez",
+      "ils/elles": "déçoivent"
         }
       },
       "english": "to disappoint",
@@ -16818,14 +16818,15 @@
           "vous": "percevez",
           "ils/elles": ""
         },
-        "Présent": {
-          "je": "percevois",
-          "tu": "percevois",
-          "il/elle/on": "percevoit",
-          "nous": "percevoissons",
-          "vous": "percevoissez",
-          "ils/elles": "percevoissent"
-        }
+"Présent": {
+  "je": "perçois",
+  "tu": "perçois",
+  "il/elle/on": "perçoit",
+  "nous": "percevons",
+  "vous": "percevez",
+  "ils/elles": "perçoivent"
+}
+
       },
       "english": "to perceive; collect (taxes)",
       "examples": {
