@@ -1090,7 +1090,7 @@ state.verbs = await db.verbs.orderBy("infinitive").toArray();
 
     // -------------------- Methods --------------------
     
-    
+    //    
     function toggleIncludeTag(tag) {
       const arr = state.drillPrefs.includeOnlyTags ?? [];
       const i = arr.indexOf(tag);
@@ -1460,31 +1460,60 @@ nextVocabCard: async () => {
         }
       },
 
-      nextDrill() {
-        return withScrollLock(async () => {
-          const q = buildQuestion();
-          if (!q) {
-            state.drillSession.running = false;
-            alert("No more questions available with current filters.");
-            return;
-          }
-          state.drillSession.question = {
-            prompt: { label: q.label },
-            answer: q.answer,
-            meta: {
-              infinitive: q.verb.infinitive,
-              english: q.verb.english || "",
-              person: q.personLabel,
-              tense: q.tenseLabel,
-            },
-          };
-          state.drillSession.side.english = q.verb.english || "";
-          attachExamplesAndRules(q);
+//     nextDrill: async function
+nextDrill() {
+  return withScrollLock(async () => {
+    // Try a bunch of times to find a valid Q with current prefs
+    let q = null;
+    for (let tries = 0; tries < 40 && !q; tries++) {
+      q = buildQuestion();
+    }
 
-          state.drillSession.input = "";
-          state.drillSession.correct = null;
-        });
+    // If nothing came back, check whether the filtered pool still has verbs
+    if (!q) {
+      // Recompute the verb pool exactly like buildQuestion() does
+      let pool = state.verbs.slice();
+      const inc = Array.isArray(state.drillPrefs.includeOnlyTags)
+        ? state.drillPrefs.includeOnlyTags.filter(Boolean)
+        : [];
+      const exc = Array.isArray(state.drillPrefs.excludeTags)
+        ? state.drillPrefs.excludeTags.filter(Boolean)
+        : [];
+
+      if (inc.length) pool = pool.filter(v => (v.tags || []).some(t => inc.includes(t)));
+      if (exc.length) pool = pool.filter(v => !(v.tags || []).some(t => exc.includes(t)));
+
+      if (pool.length > 0) {
+        // We *do* have verbs in-scope; just try again shortly (no alert).
+        setTimeout(() => methods.nextDrill(), 0);
+        return;
+      }
+
+      // Truly no drillable items → stop, but keep the original helpful alert
+      state.drillSession.running = false;
+      alert("No more questions available with current filters.");
+      return;
+    }
+
+    // We have a question → proceed as before
+    state.drillSession.question = {
+      prompt: { label: q.label },
+      answer: q.answer,
+      meta: {
+        infinitive: q.verb.infinitive,
+        english: q.verb.english || "",
+        person: q.personLabel,
+        tense: q.tenseLabel,
       },
+    };
+    state.drillSession.side.english = q.verb.english || "";
+    attachExamplesAndRules(q);
+
+    state.drillSession.input = "";
+    state.drillSession.correct = null;
+  });
+},
+
 
       stopDrill() {
         state.drillSession.running = false;
@@ -2020,7 +2049,7 @@ async function importVocabCsv(evt){
         `You can also use english/french/front/back or det/déterminant.`
       );
     } else {
-      alert(`CSV loaded: ${items.length} row(s) normalized (of ${parsed.rows.length} raw).`);
+      console.log(`CSV loaded: ${items.length} row(s) normalized (of ${parsed.rows.length} raw).`);
     }
   } catch (e) {
     alert('Failed to read CSV: ' + (e.message || e));

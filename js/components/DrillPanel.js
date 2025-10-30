@@ -124,7 +124,7 @@ return { inputRef, scoreCls, includeCSV, excludeCSV, fullConj };
         <!-- Include-only pills -->
 <div class="tag-pills" style="display:flex; gap:8px; flex-wrap:wrap;">
   <button
-    v-for="tag in tagPills"
+    v-for="tag in state.tagPills"
     :key="'inc-'+tag"
     type="button"
     class="pill"
@@ -138,7 +138,7 @@ return { inputRef, scoreCls, includeCSV, excludeCSV, fullConj };
 <!-- Exclude pills (optional second row) -->
 <div class="tag-pills" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
   <button
-    v-for="tag in tagPills"
+    v-for="tag in state.tagPills"
     :key="'exc-'+tag"
     type="button"
     class="pill"
