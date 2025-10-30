@@ -741,81 +741,67 @@ notesTagFilter: "",
         }));
 
 // After loading `settings` and building savedLists:
-const active = (settings?.activeReviewList || "").trim();
+// Restore the last-used Review list (if any); otherwise seed from built-in JSON once
+const active = (settings?.activeReviewList || '').trim();
+
+// Reflect into the UI dropdown so the DataPanel shows the true active list
+state.wordPicker.activeList = active || '';
 
 if (active) {
-  // Restore the previously chosen list so it wins over defaults
   try {
     await methods.loadListIntoReview(active);
   } catch (e) {
     console.warn("[Lists] failed to restore activeReviewList:", active, e);
   }
 } else {
-  // No saved list → autoload the default vocab JSON once
+  // No remembered list → first-run/default: load bundled general_vocab.json
   try {
     const resp = await fetch("general_vocab.json?v=" + Date.now());
-    if (!resp.ok) {
-      console.warn("Failed to fetch general_vocab.json:", resp.status);
-    } else {
+    if (resp.ok) {
       const raw = await resp.json();
-
-      // Accept either an array or an object with a `vocab` array
-      const arr = Array.isArray(raw)
-        ? raw
-        : Array.isArray(raw?.vocab)
-        ? raw.vocab
-        : null;
-
-      if (!arr) {
-        console.warn(
-          "general_vocab.json did not contain an array or a {vocab: []} shape."
-        );
-      } else {
-        // Normalize into our in-memory card shape
+      const arr = Array.isArray(raw) ? raw
+               : Array.isArray(raw?.vocab) ? raw.vocab
+               : null;
+      if (arr) {
         state.vocab.cards = arr.map((c, i) => ({
-          id: c.id ?? i + 1,
-          fr: (c.french ?? c.front ?? "").trim(),
-          en: (c.english ?? c.back ?? "").trim(),
-          partOfSpeech: (c.partOfSpeech ?? c.pos ?? "").trim(),
-          gender: (c.gender ?? "").trim(), // 'm' | 'f' | '' for non-nouns
-          topic: (c.topic ?? "").trim(),
-          tags: Array.isArray(c.tags)
-            ? c.tags.slice()
-            : c.tags
-            ? String(c.tags)
-                .split(/[;,]/)
-                .map((t) => t.trim())
-                .filter(Boolean)
-            : [],
+          id: i + 1,
+          fr: (c.french ?? c.front ?? c.fr ?? '').trim(),
+          en: (c.english ?? c.back  ?? c.en ?? '').trim(),
+          partOfSpeech: (c.partOfSpeech ?? c.pos ?? '').trim(),
+          gender: (c.gender ?? '').trim(),
+          topic: (c.topic ?? '').trim(),
+          tags: Array.isArray(c.tags) ? c.tags.slice()
+               : c.tags ? String(c.tags).split(/[;,]/).map(t=>t.trim()).filter(Boolean)
+                        : [],
           example: coerceExample(c.example ?? c.eg ?? null),
         }));
 
-        // Build pills from whatever is currently in state.vocab.cards
-        (function buildVocabPillsFromData(cards) {
-          const topic = new Set(),
-            tags = new Set(),
-            pos = new Set();
+        // build pills + deck
+        (function buildPills(cards){
+          const topic = new Set(), tags = new Set(), pos = new Set();
           for (const c of cards) {
             if (c?.topic) topic.add(c.topic);
-            if (Array.isArray(c?.tags)) c.tags.forEach((t) => t && tags.add(t));
+            if (Array.isArray(c?.tags)) c.tags.forEach(t => t && tags.add(t));
             if (c?.partOfSpeech) pos.add(c.partOfSpeech);
           }
           state.vocabPills.topic = Array.from(topic).sort();
-          state.vocabPills.tags = Array.from(tags).sort();
-          state.vocabPills.pos = Array.from(pos).sort();
+          state.vocabPills.tags  = Array.from(tags).sort();
+          state.vocabPills.pos   = Array.from(pos).sort();
         })(state.vocab.cards);
 
-        applyVocabPillFilter();
-
-        console.log(
-          `[Vocab] Loaded ${state.vocab.cards.length} cards from general_vocab.json`
-        );
+        if (typeof Vocab?.buildVocabDeck === 'function') Vocab.buildVocabDeck(state);
+        else { state.vocab.deck = [...state.vocab.cards]; state.vocab.deckPtr = 0; }
+      } else {
+        console.warn("general_vocab.json did not contain an array or a {vocab: []} shape.");
       }
+    } else {
+      console.warn("Failed to fetch general_vocab.json:", resp.status);
     }
   } catch (err) {
     console.error("Error loading general_vocab.json:", err);
   }
 }
+
 
       const _vocabCount = await db.vocab.count();
       if (_vocabCount > 0) {
@@ -1730,6 +1716,14 @@ async deleteSavedList(listName) {
     console.error("[Lists] deleteSavedList failed:", e);
     alert("Could not delete that list.");
   }
+  // If that list was active in the Review picker, revert to Default (built-in)
+if (state.wordPicker.activeList === listName) {
+  state.wordPicker.activeList = '';
+  const s = (await db.settings.get('v1')) || { key: 'v1' };
+  await db.settings.put({ ...s, activeReviewList: '', key: 'v1' });
+  // Keep current deck; the next full reload will seed from built-in
+  // (or call methods.loadListIntoReview('') if you want to clear immediately)
+}
 },
 
 
@@ -1956,7 +1950,7 @@ function normalizeArticle(fr, raw) {
   return ''; // unknown → no article
 }
 
-// coerce example to a standard shape used by VocabPanel
+// Coerce example to a { fr, en } or null; keeps UI consistent
 function coerceExample(ex) {
   if (!ex) return null;
   if (typeof ex === 'string') return { fr: ex.trim(), en: '' };
@@ -2004,16 +1998,21 @@ async function importVocabCsv(evt){
 }
 
 
-   async function saveVocabListsToSettings(updater) {
+async function saveVocabListsToSettings(updater) {
   const existing = (await db.settings.get("v1")) || { key: "v1" };
-  const current = (existing.vocabLists && typeof existing.vocabLists === "object") ? existing.vocabLists : {};
-  const nextRaw = updater(current);
-  const next = JSON.parse(JSON.stringify(nextRaw)); // ensure plain JSON
+  const current  = (existing.vocabLists && typeof existing.vocabLists === "object") ? existing.vocabLists : {};
+  const nextRaw  = updater(current);
+  const next     = JSON.parse(JSON.stringify(nextRaw)); // clone to plain JSON
+
   await db.settings.put({ ...existing, vocabLists: next, key: "v1" });
+
+  // Rebuild the Saved Lists UI (⚠️ keep this chain contiguous)
   state.wordPicker.savedLists = Object.keys(next)
     .sort((a, b) => a.localeCompare(b))
     .map((name) => ({ name, count: Array.isArray(next[name]) ? next[name].length : 0 }));
 }
+
+
 
     function togglePickAll(flag) {
       const sel = {};
@@ -2025,7 +2024,7 @@ async function savePickedAsList(pickedIdxArr){
   const name = (state.wordPicker.listName || '').trim();
   if (!name) { alert('Please enter a list name.'); return; }
 
-  // If indices were provided, use them; otherwise fall back to checkboxes
+  // indices from filteredItems (if passed) or from checkboxes
   let indices;
   if (Array.isArray(pickedIdxArr) && pickedIdxArr.length) {
     indices = pickedIdxArr;
@@ -2035,49 +2034,61 @@ async function savePickedAsList(pickedIdxArr){
       .map(([k]) => Number(k));
   }
 
- // in savePickedAsList(), change the mapping of picked items
-const picked = indices
-  .map(i => state.wordPicker.items[i])
-  .filter(Boolean)
-  .map(it => ({
-    fr: it.fr,
-    en: it.en,
-    article: it.article,
-    example: coerceExample(it.example),  // <— use helper
-    tags: it.tags || []
-  }));
-
+  // Build normalized entries
+  const picked = indices
+    .map(i => state.wordPicker.items[i])
+    .filter(Boolean)
+    .map(it => ({
+      fr: (it.fr || '').trim(),
+      en: (it.en || '').trim(),
+      article: (it.article || '').trim(),
+      example: coerceExample(it.example),
+      tags: Array.isArray(it.tags) ? it.tags : []
+    }));
 
   if (!picked.length){ alert('No words selected.'); return; }
 
   await saveVocabListsToSettings(curr => ({ ...curr, [name]: picked }));
+
+  // Mark this as the active Review list and mirror into UI
+  const settings = (await db.settings.get('v1')) || { key: 'v1' };
+  await db.settings.put({ ...settings, activeReviewList: name, key: 'v1' });
+  state.wordPicker.activeList = name;
+
   alert(`Saved list "${name}" with ${picked.length} items.`);
 }
 
 
     // === Load a saved sub-list straight into Review (non-SRS) ===
 
+// Load a saved sub-list straight into Review (non-SRS)
 async function loadListIntoReview(name){
   const settings = (await db.settings.get('v1')) || { key: 'v1' };
-  await db.settings.put({ ...settings, activeReviewList: name || '', key: 'v1' }); // persist choice
+  await db.settings.put({ ...settings, activeReviewList: name || '', key: 'v1' });
 
   const list = settings?.vocabLists?.[name];
-  //if (!Array.isArray(list) || !list.length) { alert('List not found or empty.'); return; }
-  if (!Array.isArray(list) || !list.length) { console.log(`[Lists] loadListIntoReview: list "${name}" not found or empty; keeping existing deck.`); return; }
-  
+
+  // If blank or missing, keep current deck (lets app fall back during initial hydration)
+  if (!Array.isArray(list) || !list.length) {
+    console.log(`[Lists] loadListIntoReview: list "${name}" not found or empty; keeping existing deck.`);
+    return;
+  }
+
   const cards = list.map(it => ({
     id: null,
     fr: (it.fr || '').trim(),
     en: (it.en || '').trim(),
     article: (it.article || '').trim(),
-    example: coerceExample(it.example),   // normalized (see §3)
+    example: coerceExample(it.example),
     tags: Array.isArray(it.tags) ? it.tags : [],
     source: 'list:' + name
   })).filter(c => c.fr && c.en);
 
   state.vocab.cards = cards;
-  if (typeof buildVocabDeck === 'function') buildVocabDeck();
+  // IMPORTANT: call your deck builder correctly
+  if (typeof Vocab?.buildVocabDeck === 'function') Vocab.buildVocabDeck(state);
   else { state.vocab.deck = [...state.vocab.cards]; state.vocab.deckPtr = 0; }
+
   state.tab = 'learn';
 }
 
