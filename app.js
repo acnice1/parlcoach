@@ -284,6 +284,7 @@ notesTagFilter: "",
       }
       state.vocab.deck = deck;
       state.vocab.deckPtr = 0;
+      saveReviewPointer();  
     }
 
     // Render FR w/ article for nouns
@@ -667,6 +668,11 @@ notesTagFilter: "",
     }
 
     // -------------------- Load-all bootstrap --------------------
+    //  Hydrate state from IndexedDB
+    // Load dataset + rules + settings + plan + drill prefs
+// Also load external examples if available
+// Restore active Review list or seed from general_vocab.json
+//  =LOAD==================================================================  
     
    async function loadAll() {
       state.dataset = await loadDataset();
@@ -690,6 +696,7 @@ notesTagFilter: "",
       ]);
 
       // Settings → state
+      // Hydrate settings    
       if (settings) {
         state.settings = settings;
         state.fixedIntervalsText = (
@@ -725,9 +732,8 @@ notesTagFilter: "",
       if (state.todayStats.date !== today) {
         state.todayStats = { right: 0, total: 0, date: today };
       }
+      // -------------------- Vocab Lists hydration --------------------
 
-      //
-      // hydration
       const vocabLists =
         settings?.vocabLists && typeof settings.vocabLists === "object"
           ? settings.vocabLists
@@ -740,13 +746,13 @@ notesTagFilter: "",
           count: Array.isArray(vocabLists[name]) ? vocabLists[name].length : 0,
         }));
 
-// After loading `settings` and building savedLists:
 // Restore the last-used Review list (if any); otherwise seed from built-in JSON once
 const active = (settings?.activeReviewList || '').trim();
 
 // Reflect into the UI dropdown so the DataPanel shows the true active list
 state.wordPicker.activeList = active || '';
 
+// Restore the last-used Review list (if any); otherwise seed from built-in JSON once
 if (active) {
   try {
     await methods.loadListIntoReview(active);
@@ -790,7 +796,9 @@ if (active) {
         })(state.vocab.cards);
 
         if (typeof Vocab?.buildVocabDeck === 'function') Vocab.buildVocabDeck(state);
-        else { state.vocab.deck = [...state.vocab.cards]; state.vocab.deckPtr = 0; }
+        else { state.vocab.deck = [...state.vocab.cards]; state.vocab.deckPtr = 0; 
+          await saveReviewPointer();    
+        }
       } else {
         console.warn("general_vocab.json did not contain an array or a {vocab: []} shape.");
       }
@@ -802,7 +810,13 @@ if (active) {
   }
 }
 
+// Restore deck pointer
+if (settings?.reviewDeckPtr != null) {
+  const ptr = Number(settings.reviewDeckPtr) || 0;
+  state.vocab.deckPtr = Math.min(Math.max(ptr, 0), Math.max(0, state.vocab.deck.length - 1));
+}
 
+// Coerce example field into string or {fr,en} shape
       const _vocabCount = await db.vocab.count();
       if (_vocabCount > 0) {
         // Populate SRS-only subset after DB seed (if applicable)
@@ -1075,6 +1089,8 @@ state.verbs = await db.verbs.orderBy("infinitive").toArray();
     }
 
     // -------------------- Methods --------------------
+    
+    
     function toggleIncludeTag(tag) {
       const arr = state.drillPrefs.includeOnlyTags ?? [];
       const i = arr.indexOf(tag);
@@ -1099,6 +1115,15 @@ state.verbs = await db.verbs.orderBy("infinitive").toArray();
       state.drillPrefs.excludeTags = [];
       methods.saveDrillPrefs();
     }
+
+    async function saveReviewPointer() {
+  const existing = (await db.settings.get("v1")) || { key: "v1" };
+  await db.settings.put({
+    ...existing,
+    reviewDeckPtr: state.vocab.deckPtr,
+    key: "v1"
+  });
+}
 
     async function rate(q) {
       if (!state.flashcards.currentCard) return;
@@ -1135,8 +1160,15 @@ state.verbs = await db.verbs.orderBy("infinitive").toArray();
       addCard: () => Vocab.addCard(db, state.flashcards),
       deleteCard: (id) => Vocab.deleteCard(db, id, state.flashcards),
 
-      reshuffleVocabDeck: () => Vocab.reshuffleVocabDeck(state),
-      nextVocabCard: () => Vocab.nextVocabCard(state),
+reshuffleVocabDeck: async () => {
+  Vocab.reshuffleVocabDeck(state);
+  await saveReviewPointer();           // NEW: persist reset to 0
+},
+
+nextVocabCard: async () => {
+  Vocab.nextVocabCard(state);          // moves the pointer
+  await saveReviewPointer();           // NEW: persist new ptr
+},
       currentVocabCard: () => state.vocab.deck[state.vocab.deckPtr] || null,
       rate,
 
@@ -2088,7 +2120,7 @@ async function loadListIntoReview(name){
   // IMPORTANT: call your deck builder correctly
   if (typeof Vocab?.buildVocabDeck === 'function') Vocab.buildVocabDeck(state);
   else { state.vocab.deck = [...state.vocab.cards]; state.vocab.deckPtr = 0; }
-
+await saveReviewPointer();    
   state.tab = 'learn';
 }
 

@@ -24,14 +24,16 @@ export async function reloadVocabByTag(db, flash) {
   // IMPORTANT: do NOT touch any Review fields (no state.vocab.* writes here)
 }
 
-export function buildVocabDeck(state) {
-const src = Array.isArray(state.vocab.cards) ? [...state.vocab.cards] : [];
 
+export function currentVocabCard(state) { return state.vocab.deck[state.vocab.deckPtr] || null; }
+
+export function buildVocabDeck(state) {
+  const src = Array.isArray(state.vocab.cards) ? [...state.vocab.cards] : [];
   if (state.vocab.prefs.randomize) shuffleInPlace(src);
   state.vocab.deck = src;
-  state.vocab.deckPtr = 0;
+  state.vocab.deckPtr = 0;       // stay pure; app.js will persist
 }
-export function currentVocabCard(state) { return state.vocab.deck[state.vocab.deckPtr] || null; }
+
 export function nextVocabCard(state) {
   const n = state.vocab.deck.length;
   if (!n) return;
@@ -45,6 +47,7 @@ export function nextVocabCard(state) {
     state.vocab.deckPtr = Math.floor(Math.random() * n);
   }
 }
+
 export function reshuffleVocabDeck(state) {
   if (!state.vocab.deck.length) return;
   shuffleInPlace(state.vocab.deck);
