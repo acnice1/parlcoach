@@ -1,7 +1,59 @@
 :root{
   --ink:#0f172a; --ink-2:#334155; --bg:#0b1020; --card:#111927; --accent:#22d3ee; --muted:#94a3b8;
   --br:14px; --shadow:0 10px 30px rgba(0,0,0,.2);
+  --ex-accent:#060659; 
+  --ex-bg:#f8f5ff;
+  --brand-accent: #060659;
+  --brand-bg:     #f8f5ff;  /* soft violet surface */
 }
+
+/* Reusable card style */
+.boxy{
+  margin: 14px 0 8px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: var(--box-bg, var(--brand-bg));
+  border: 1px solid var(--box-border, rgba(0,0,0,.06));
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Left accent stripe */
+.boxy::before{
+  content:"";
+  position:absolute; inset:0 auto 0 0;
+  width:6px;
+  background: var(--box-accent, var(--brand-accent));
+  opacity:.85;
+}
+
+/* Optional small label pill inside a box */
+.boxy .label{
+  display:inline-block;
+  font-size:.78rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-weight:600;
+  color: rgba(0,0,0,.65);
+  background: rgba(0,0,0,.04);
+  border-radius: 999px;
+  padding: 2px 8px;
+  margin-bottom: 8px;
+}
+
+@media (prefers-color-scheme: dark){
+  .boxy{
+    border-color: rgba(255,255,255,.08);
+    box-shadow: 0 2px 10px rgba(0,0,0,.35);
+  }
+  .boxy .label{
+    color: rgba(255,255,255,.75);
+    background: rgba(255,255,255,.08);
+  }
+}
+
+
 /* Hide Vue content until it's hydrated */
 [v-cloak]{ display:none !important; }
 
@@ -1305,9 +1357,9 @@ a:hover, button.link:hover {
 }
 
 .vocab-card .en{
-  font-size: 1.15rem;
-  line-height: 1.45;
-  font-weight: 500;
+  font-size: 1.6rem;
+  line-height: 1.25;
+  font-weight: 700;
   opacity: 0.95;
   word-wrap: break-word;
   color: #b45309; /* amber-700 */
@@ -1328,19 +1380,8 @@ a:hover, button.link:hover {
   .vocab-card .en{
     background: color-mix(in srgb, #f59e0b 6%, transparent);
     padding: 18px 14px;
-    border-radius: 0 12px 12px 0;
-  }
-}
-
-/* Dark mode color adjustments */
-@media (prefers-color-scheme: dark){
-  .vocab-card .fr{
-    color: #60a5fa; /* blue-400 */
-    background: color-mix(in srgb, #1e3a8a 15%, transparent);
-  }
-  .vocab-card .en{
-    color: #fbbf24; /* amber-400 */
-    background: color-mix(in srgb, #78350f 15%, transparent);
+    border-right: 1px dashed var(--card-border);
+    border-radius: 12px 0 0 12px;
   }
 }
 
@@ -1390,4 +1431,66 @@ a:hover, button.link:hover {
 
 .conj-cell div:last-child {
   color: #111;
+}
+/* CSS — make it tasteful + readable */
+.example-block{
+  margin: 14px 0 8px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: var(--ex-bg, #fafafa);
+  border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.example-block::before{
+  content:"";
+  position:absolute;
+  left:0; top:0; bottom:0;
+  width:6px;
+  background: var(--ex-accent, #5b8def);
+  opacity:.85;
+}
+
+.ex-label{
+  display:inline-block;
+  font-size:.78rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-weight:600;
+  color: rgba(0,0,0,.65);
+  background: rgba(0,0,0,.04);
+  border-radius: 999px;
+  padding: 2px 8px;
+  margin-bottom: 8px;
+}
+
+.ex-fr{
+  font-size: clamp(1.05rem, 2.2vw, 1.28rem);
+  line-height: 1.5;
+  font-weight: 600;
+  margin: 4px 0 4px;
+  color: #111;
+}
+
+.ex-en{
+  font-size: clamp(.9rem, 1.8vw, 1rem);
+  line-height: 1.45;
+  margin: 6px 0 0;
+  color: rgba(0,0,0,.65);
+  font-style: italic;
+}
+
+/* dark mode friendly defaults */
+@media (prefers-color-scheme: dark){
+  .example-block{
+    background: #14161a;
+    border-color: rgba(255,255,255,.08);
+    box-shadow: 0 2px 10px rgba(0,0,0,.35);
+  }
+  .ex-label{ color: rgba(255,255,255,.75); background: rgba(255,255,255,.08); }
+  .ex-fr{ color: #f3f6ff; }
+  .ex-en{ color: rgba(255,255,255,.75); }
+  .example-block::before{ background: var(--ex-accent, #7aa2ff); }
 }
