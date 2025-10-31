@@ -209,6 +209,103 @@ notesTagFilter: "",
     });
 
     // -------------------- Generic helpers --------------------
+
+    // === Auto-import all CSVs from /data into Saved Lists =======================
+
+// Attempt to list .csv files under /data via an index json or directory listing
+async function listDataCsvs() {
+  async function tryJson(url) {
+    try {
+      const r = await fetch(url + '?v=' + Date.now());
+      if (!r.ok) return null;
+      const j = await r.json();
+      if (Array.isArray(j)) return j.filter(s => /\.csv$/i.test(s));
+      if (Array.isArray(j.files)) return j.files.filter(s => /\.csv$/i.test(s));
+      return null;
+    } catch { return null; }
+  }
+
+  // Prefer an explicit index if you provide one
+  let files =
+      await tryJson('data/index.json') ||
+      await tryJson('data/manifest.json');
+
+  if (files && files.length) return files;
+
+  // Fallback: parse directory listing (works with `python -m http.server`)
+  try {
+    const r = await fetch('data/');
+    if (r.ok) {
+      const html = await r.text();
+      const matches = [...html.matchAll(/href="([^"]+\.csv)"/gi)]
+        .map(m => decodeURIComponent(m[1]));
+      files = Array.from(new Set(matches));
+    }
+  } catch {}
+  return files || [];
+}
+
+// Fetch/parse one CSV and save it as a named list
+async function importCsvAsList(url) {
+  const bust = url.includes('?') ? '&' : '?';
+  const res = await fetch(url + bust + 'v=' + Date.now());
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const txt = await res.text();
+
+  const parsed = parseCsv(txt);
+  const items = parsed.rows.map(normalizeCsvRow).filter(Boolean);
+  if (!items.length) return { name: null, count: 0 };
+
+  // List name from filename (nicely spaced)
+  const name = url.split('/').pop()
+    .replace(/\.csv$/i, '')
+    .replace(/[_-]+/g, ' ')
+    .trim();
+
+  await saveVocabListsToSettings(curr => ({ ...curr, [name]: items }));
+  return { name, count: items.length };
+}
+
+// Public method you can call once at startup
+async function autoImportCsvListsFromData() {
+  const settings = (await db.settings.get('v1')) || { key: 'v1' };
+  const existingNames = new Set(Object.keys(settings.vocabLists || {}));
+  const alreadyImported = new Set((settings.autoImportedDataCsvs || []).map(s => s.toLowerCase()));
+
+  // Build candidate list of /data/*.csv
+  const files = await listDataCsvs();
+
+  const imported = [];
+  for (const f of files) {
+    // Normalize to a friendly list name for dedupe checks
+    const base = f.split('/').pop().replace(/\.csv$/i,'').replace(/[_-]+/g,' ').trim();
+    if (existingNames.has(base) || alreadyImported.has(base.toLowerCase())) continue;
+
+    try {
+      const url = f.startsWith('data/') ? f : ('data/' + f);
+      const { name, count } = await importCsvAsList(url);
+      if (name && count) imported.push({ name, count });
+    } catch (e) {
+      console.warn('[AutoCSV] Skipping', f, e);
+    }
+  }
+
+  // Mark which names came from /data so we don't re-import every load
+  if (imported.length) {
+    const updated = (await db.settings.get('v1')) || { key: 'v1' };
+    const marker = [...new Set([...(updated.autoImportedDataCsvs || []), ...imported.map(x => x.name)])];
+    await db.settings.put({ ...updated, autoImportedDataCsvs: marker, key: 'v1' });
+  }
+
+  // If there was no active list and we imported something, set the first one active for convenience
+  if (!settings.activeReviewList && imported[0]) {
+    const s2 = (await db.settings.get('v1')) || { key: 'v1' };
+    await db.settings.put({ ...s2, activeReviewList: imported[0].name, key: 'v1' });
+    state.wordPicker.activeList = imported[0].name;
+  }
+}
+
+  // Auto-resize textarea
     function autosizeTextarea(e) {
       const el = e && e.target;
       if (!el) return;
@@ -723,12 +820,18 @@ notesTagFilter: "",
           ? settings.vocabLists
           : {};
 
+          // Reflect saved lists into wordPicker UI - hydration
       state.wordPicker.savedLists = Object.keys(vocabLists)
         .sort((a, b) => a.localeCompare(b))
         .map((name) => ({
           name,
           count: Array.isArray(vocabLists[name]) ? vocabLists[name].length : 0,
         }));
+        // after settings hydration and UI seeding:
+      // Auto-import any new CSVs from /data into Saved Lists
+        methods.autoImportCsvListsFromData().catch(console.warn);
+
+
 
 // Restore the last-used Review list (if any); otherwise seed from built-in JSON once
 const active = (settings?.activeReviewList || '').trim();
@@ -1891,6 +1994,8 @@ togglePickAll,
 savePickedAsList,
 loadListIntoSrs,
 loadListIntoReview,
+autoImportCsvListsFromData,
+
 
       // END METHODS
 
