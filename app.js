@@ -213,40 +213,86 @@ notesTagFilter: "",
     // === Auto-import all CSVs from /data into Saved Lists =======================
 
 // Attempt to list .csv files under /data via an index json or directory listing
-async function listDataCsvs() {
+// === Discover /data entries with metadata from data/index.json ===============
+// Returns [{ file, name, description }]
+// Put this ABOVE both saveVocabListsToSettings and reconcileVocabMetaFromIndex
+async function refreshSavedListsUI() {
+  try {
+    const s = (await db.settings.get('v1')) || { key: 'v1' };
+    const listsObj = (s && s.vocabLists && typeof s.vocabLists === 'object') ? s.vocabLists : {};
+    const meta     = (s && s.vocabMeta) || {};
+
+    const names = Object.keys(listsObj).sort((a, b) =>
+      a.localeCompare(b, undefined, { sensitivity: 'base' })
+    );
+
+    state.wordPicker.savedLists = names.map((name) => {
+      const items = Array.isArray(listsObj[name]) ? listsObj[name] : [];
+      const m  = meta[name] || meta[name.replace(/[_-]+/g, ' ')] || {};
+      const displayName = (m.name || name).trim();
+      const description = (m.description || '').trim();
+      const file        = (m.file || '').trim();
+      return { name, displayName, description, desc: description, file, count: items.length };
+    });
+  } catch (e) {
+    console.warn('[Lists] refreshSavedListsUI failed:', e);
+    state.wordPicker.savedLists = [];
+  }
+}
+// make it visible even if something calls window.refreshSavedListsUI()
+window.refreshSavedListsUI = refreshSavedListsUI;
+
+async function listDataEntries() {
   async function tryJson(url) {
     try {
       const r = await fetch(url + '?v=' + Date.now());
       if (!r.ok) return null;
       const j = await r.json();
-      if (Array.isArray(j)) return j.filter(s => /\.csv$/i.test(s));
-      if (Array.isArray(j.files)) return j.files.filter(s => /\.csv$/i.test(s));
+
+      // Case A: desired shape already
+      if (Array.isArray(j) && j.length && typeof j[0] === 'object' && j[0].file) {
+        return j.filter(x => /\.csv$/i.test(x.file));
+      }
+      // Case B: { files: ["a.csv", ...] }
+      if (Array.isArray(j?.files)) {
+        return j.files
+          .filter(s => /\.csv$/i.test(s))
+          .map(f => ({ file: f, name: f.replace(/\.csv$/i,'').replace(/[_-]+/g,' ').trim(), description: "" }));
+      }
+      // Case C: ["a.csv", ...]
+      if (Array.isArray(j) && j.length && typeof j[0] === 'string') {
+        return j
+          .filter(s => /\.csv$/i.test(s))
+          .map(f => ({ file: f, name: f.replace(/\.csv$/i,'').replace(/[_-]+/g,' ').trim(), description: "" }));
+      }
       return null;
     } catch { return null; }
   }
 
-  // Prefer an explicit index if you provide one
-  let files =
+  // Prefer explicit index/manifest
+  let entries =
       await tryJson('data/index.json') ||
       await tryJson('data/manifest.json');
 
-  if (files && files.length) return files;
+  if (entries && entries.length) return entries;
 
-  // Fallback: parse directory listing (works with `python -m http.server`)
+  // Fallback: directory listing (python -m http.server etc.)
   try {
     const r = await fetch('data/');
     if (r.ok) {
       const html = await r.text();
-      const matches = [...html.matchAll(/href="([^"]+\.csv)"/gi)]
+      const files = [...html.matchAll(/href="([^"]+\.csv)"/gi)]
         .map(m => decodeURIComponent(m[1]));
-      files = Array.from(new Set(matches));
+      entries = Array.from(new Set(files)).map(f => ({ file: f, name: f.replace(/\.csv$/i,'').replace(/[_-]+/g,' ').trim(), description: "" }));
     }
   } catch {}
-  return files || [];
+  return entries || [];
 }
 
+
 // Fetch/parse one CSV and save it as a named list
-async function importCsvAsList(url) {
+// Fetch/parse one CSV and save it as a named list, with optional meta
+async function importCsvAsList(url, meta = null) {
   const bust = url.includes('?') ? '&' : '?';
   const res = await fetch(url + bust + 'v=' + Date.now());
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -256,54 +302,79 @@ async function importCsvAsList(url) {
   const items = parsed.rows.map(normalizeCsvRow).filter(Boolean);
   if (!items.length) return { name: null, count: 0 };
 
-  // List name from filename (nicely spaced)
-  const name = url.split('/').pop()
+  // List name from meta or filename (nicely spaced)
+  const fallbackName = url.split('/').pop()
     .replace(/\.csv$/i, '')
     .replace(/[_-]+/g, ' ')
     .trim();
+  const displayName = (meta?.name || fallbackName).trim();
+  const listKey     = fallbackName; // stable key used internally
 
-  await saveVocabListsToSettings(curr => ({ ...curr, [name]: items }));
-  return { name, count: items.length };
+  
+  // Save list items
+  await saveVocabListsToSettings(curr => ({ ...curr, [listKey]: items }));
+
+  // Save metadata alongside lists (file, pretty name, description)
+  const settings = (await db.settings.get('v1')) || { key: 'v1' };
+  const vocabMeta = { ...(settings.vocabMeta || {}) };
+  vocabMeta[listKey] = {
+    file: meta?.file || url.replace(/^data\//,''),
+    name: displayName,
+    description: meta?.description || ""
+  };
+  await db.settings.put({ ...settings, vocabMeta, key: 'v1' });
+
+  return { name: listKey, count: items.length };
 }
+
+
 
 // Public method you can call once at startup
 async function autoImportCsvListsFromData() {
   const settings = (await db.settings.get('v1')) || { key: 'v1' };
-  const existingNames = new Set(Object.keys(settings.vocabLists || {}));
-  const alreadyImported = new Set((settings.autoImportedDataCsvs || []).map(s => s.toLowerCase()));
 
-  // Build candidate list of /data/*.csv
-  const files = await listDataCsvs();
+  const existingNames = new Set(Object.keys(settings.vocabLists || {}));
+  const alreadyImported = new Set(
+    (settings.autoImportedDataCsvs || []).map(s => s.toLowerCase())
+  );
+
+  // Discover /data entries (with file/name/description)
+  const entries = await listDataEntries();
 
   const imported = [];
-  for (const f of files) {
-    // Normalize to a friendly list name for dedupe checks
-    const base = f.split('/').pop().replace(/\.csv$/i,'').replace(/[_-]+/g,' ').trim();
+  for (const e of entries) {
+    const base = String(e.file || '')
+      .split('/').pop()
+      .replace(/\.csv$/i,'')
+      .replace(/[_-]+/g,' ')
+      .trim();
+
+    if (!base) continue;
     if (existingNames.has(base) || alreadyImported.has(base.toLowerCase())) continue;
 
     try {
-      const url = f.startsWith('data/') ? f : ('data/' + f);
-      const { name, count } = await importCsvAsList(url);
+      const url = e.file.startsWith('data/') ? e.file : ('data/' + e.file);
+      const { name, count } = await importCsvAsList(url, e);
       if (name && count) imported.push({ name, count });
-    } catch (e) {
-      console.warn('[AutoCSV] Skipping', f, e);
+    } catch (err) {
+      console.warn('[AutoCSV] Skipping', e.file, err);
     }
   }
 
-  // Mark which names came from /data so we don't re-import every load
   if (imported.length) {
     const updated = (await db.settings.get('v1')) || { key: 'v1' };
     const marker = [...new Set([...(updated.autoImportedDataCsvs || []), ...imported.map(x => x.name)])];
     await db.settings.put({ ...updated, autoImportedDataCsvs: marker, key: 'v1' });
   }
 
-  // If there was no active list and we imported something, set the first one active for convenience
+  // If no active list yet and we imported something, set the first active
   if (!settings.activeReviewList && imported[0]) {
     const s2 = (await db.settings.get('v1')) || { key: 'v1' };
     await db.settings.put({ ...s2, activeReviewList: imported[0].name, key: 'v1' });
     state.wordPicker.activeList = imported[0].name;
   }
 }
+
 
   // Auto-resize textarea
     function autosizeTextarea(e) {
@@ -815,22 +886,60 @@ async function autoImportCsvListsFromData() {
       }
       // -------------------- Vocab Lists hydration --------------------
 
-      const vocabLists =
-        settings?.vocabLists && typeof settings.vocabLists === "object"
-          ? settings.vocabLists
-          : {};
+/*const vocabLists =
+  settings?.vocabLists && typeof settings.vocabLists === "object"
+    ? settings.vocabLists
+    : {};
+const meta = settings?.vocabMeta || {};
+*/ 
+// after you’ve got: const vocabLists = …; const meta = settings?.vocabMeta || {};
 
-          // Reflect saved lists into wordPicker UI - hydration
-      state.wordPicker.savedLists = Object.keys(vocabLists)
-        .sort((a, b) => a.localeCompare(b))
-        .map((name) => ({
-          name,
-          count: Array.isArray(vocabLists[name]) ? vocabLists[name].length : 0,
-        }));
-        // after settings hydration and UI seeding:
-      // Auto-import any new CSVs from /data into Saved Lists
-        methods.autoImportCsvListsFromData().catch(console.warn);
+// Put this near your other helpers in app.js
+async function reconcileVocabMetaFromIndex() {
+  const settings = (await db.settings.get('v1')) || { key: 'v1' };
+  const entries = await listDataEntries();            // [{file,name,description}]
+  await (window.refreshSavedListsUI ? window.refreshSavedListsUI() : refreshSavedListsUI());
 
+  if (!entries?.length) return;
+
+  const meta = { ...(settings.vocabMeta || {}) };
+  for (const e of entries) {
+    const base = String(e.file || '')
+      .split('/').pop()
+      .replace(/\.csv$/i,'')
+      .replace(/[_-]+/g,' ')
+      .trim();
+    if (!base) continue;
+
+    // Normalize fields
+    const pretty = (e.name || base).trim();
+    const desc   = (e.description || e.desc || "").trim();
+    const file   = e.file.startsWith('data/') ? e.file : ('data/' + e.file);
+
+    // Only write if missing or different
+    const m = meta[base] || {};
+    if (m.name !== pretty || m.description !== desc || m.file !== file) {
+      meta[base] = { name: pretty, description: desc, file };
+    }
+  }
+
+  await db.settings.put({ ...settings, vocabMeta: meta, key: 'v1' });
+  // Update in-memory copy and refresh the table
+  state.settings.vocabMeta = meta;
+  refreshSavedListsUI();
+}
+
+// after settings hydration and UI seeding:
+// Auto-import any new CSVs from /data into Saved Lists
+methods.autoImportCsvListsFromData().catch(console.warn);
+
+// after: refreshSavedListsUI();
+await methods.autoImportCsvListsFromData().catch(console.warn);
+
+// backfill meta for pre-existing lists:
+await reconcileVocabMetaFromIndex();   // <-- add this line
+// rebuild the UI with fresh meta
+refreshSavedListsUI();
 
 
 // Restore the last-used Review list (if any); otherwise seed from built-in JSON once
@@ -1133,7 +1242,40 @@ state.verbs = await db.verbs.orderBy("infinitive").toArray();
     }
 
     // -------------------- Import helpers (merge-safe upsert for vocab) --------------------
-    function normalizeVocabItem(c) {
+    // Put this near your other helpers in app.js
+async function reconcileVocabMetaFromIndex() {
+  const settings = (await db.settings.get('v1')) || { key: 'v1' };
+  const entries = await listDataEntries();            // [{file,name,description}]
+  if (!entries?.length) return;
+
+  const meta = { ...(settings.vocabMeta || {}) };
+  for (const e of entries) {
+    const base = String(e.file || '')
+      .split('/').pop()
+      .replace(/\.csv$/i,'')
+      .replace(/[_-]+/g,' ')
+      .trim();
+    if (!base) continue;
+
+    // Normalize fields
+    const pretty = (e.name || base).trim();
+    const desc   = (e.description || "").trim();
+    const file   = e.file.startsWith('data/') ? e.file : ('data/' + e.file);
+
+    // Only write if missing or different
+    const m = meta[base] || {};
+    if (m.name !== pretty || m.description !== desc || m.file !== file) {
+      meta[base] = { name: pretty, description: desc, file };
+    }
+  }
+
+  await db.settings.put({ ...settings, vocabMeta: meta, key: 'v1' });
+  // Update in-memory copy and refresh the table
+  state.settings.vocabMeta = meta;
+  refreshSavedListsUI();
+}
+
+function normalizeVocabItem(c) {
       const fr = (c.french ?? c.front ?? "").trim();
       const en = (c.english ?? c.back ?? "").trim();
       return {
@@ -1177,7 +1319,7 @@ state.verbs = await db.verbs.orderBy("infinitive").toArray();
 
     // -------------------- Methods --------------------
     
-    //    
+    // Vocab pills management 
     function toggleIncludeTag(tag) {
       const arr = state.drillPrefs.includeOnlyTags ?? [];
       const i = arr.indexOf(tag);
@@ -1841,12 +1983,7 @@ async deleteSavedList(listName) {
     await db.settings.put({ ...settingsRec, vocabLists: lists, key: "v1" });
 
     // Refresh savedLists in UI
-    state.wordPicker.savedLists = Object.keys(lists)
-      .sort((a, b) => a.localeCompare(b))
-      .map((name) => ({
-        name,
-        count: Array.isArray(lists[name]) ? lists[name].length : 0,
-      }));
+  
 
     // If that list was active in the Review picker, revert to Default (built-in)
     if (state.wordPicker.activeList === listName) {
@@ -1858,6 +1995,7 @@ async deleteSavedList(listName) {
         console.warn("[Lists] fallback to default review deck failed:", e);
       }
     }
+    refreshSavedListsUI();
 
     console.log(`[Lists] Deleted "${listName}"`);
   } catch (e) {
@@ -2174,9 +2312,8 @@ async function saveVocabListsToSettings(updater) {
   await db.settings.put({ ...existing, vocabLists: next, key: "v1" });
 
   // Rebuild the Saved Lists UI (⚠️ keep this chain contiguous)
-  state.wordPicker.savedLists = Object.keys(next)
-    .sort((a, b) => a.localeCompare(b))
-    .map((name) => ({ name, count: Array.isArray(next[name]) ? next[name].length : 0 }));
+ 
+  refreshSavedListsUI();
 }
 
 

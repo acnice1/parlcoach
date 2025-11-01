@@ -1,7 +1,14 @@
 [
-  { "file": "administrative_vocab_1.csv", "name": "Admin Vocab Set 1 ~100 terms", "description": "Set 1." },
-  { "file": "administrative_vocab_2.csv", "description": "Admin Vocab Set 2 ~100 terms", "description": "Set 2."  },
-
- // "legacy.csv",                         // still supported
- // { "files": ["alt1.csv", "alt2.csv"] } // also supported (manifest.json style)
+  { "file": "administrative_vocab_1.csv",
+    "name": "Administrative Vocab 1 ~100 terms",
+    "description": "Set 1."
+  },
+  { "file": "administrative_vocab_2.csv",
+    "name": "Administrative Vocab 2 ~100 terms",
+    "description": "Set 2."
+  },
+  { "file": "opinion_phrases_extended.csv",
+    "name": "Opinion Phrases (extended)",
+    "description": "≈100 discourse markers"
+  }
 ]
