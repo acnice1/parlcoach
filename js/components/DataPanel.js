@@ -107,10 +107,25 @@ const DataPanel = {
             Load into SRS
           </button>
         </div>
+<!-- SRS maintenance (scoped to SRS DB; does not touch Review lists) -->
+<div class="row" style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+  <button class="danger"
+          @click="methods.clearAllSrs()"
+          title="Delete all SRS cards from the database">
+    Clear SRS (delete all)
+  </button>
+
+  <button
+          @click="methods.resetSrsScheduling()"
+          title="Keep cards; reset due dates/ease/reps so everything is due now">
+    Reset SRS scheduling
+  </button>
+</div>
 
         <div v-if="!state.wordPicker.savedLists || !state.wordPicker.savedLists.length" class="dim" style="margin-top:6px;">
           No saved lists yet. Upload a CSV/TSV and save a list above.
         </div>
+        
 
         <!-- Single, valid table (no orphan v-else) -->
         <div v-else style="margin-top:8px;">
@@ -147,6 +162,12 @@ const DataPanel = {
           :title="(l.description || l.desc) || ''">
     Use in Review
   </button>
+  <button class="small"
+        @click="methods.clearSrsForList(l.name)"
+        title="Remove only the SRS cards that came from this list">
+  Remove from SRS
+</button>
+
   <button class="small danger"
           @click="methods.deleteSavedList(l.name)">
     Delete

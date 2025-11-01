@@ -10,11 +10,10 @@
  */
 // app.js (rebuilt, with UI toggle persistence + Vocab pills without Gender)
 import {
-   loadSettings,
-   applySettingsToState,
-   startAutoSave
- } from "./core/settings.js";
-
+  loadSettings,
+  applySettingsToState,
+  startAutoSave,
+} from "./core/settings.js";
 
 import DrillPanel from "./js/components/DrillPanel.js?v=3";
 import VocabPanel from "./js/components/VocabPanel.js?v=3";
@@ -62,11 +61,9 @@ const vueApp = Vue.createApp({
      *  10) LOAD BOOTSTRAP (dataset/rules/settings/plan/verbs) ....... [LOADALL]
      *  11) METHODS (grouped by domain; bodies unchanged) ............ [METHODS]
      * ========================================================================= */
-    
+
     // ------------------------- STATE -------------------------
     const state = reactive({
-
-      
       // Profile + stats
       profileName: "",
       globalStats: {
@@ -82,7 +79,13 @@ const vueApp = Vue.createApp({
 
       //  Data import/export
       csv: { rows: [], headers: [], meta: null },
-wordPicker: { items: [], selected: {}, listName: "", savedLists: [], activeList: "" },
+      wordPicker: {
+        items: [],
+        selected: {},
+        listName: "",
+        savedLists: [],
+        activeList: "",
+      },
 
       // UI flags (persisted)
       ui: {
@@ -226,241 +229,296 @@ wordPicker: { items: [], selected: {}, listName: "", savedLists: [], activeList:
     });
 
     // Apply persisted UI/prefs from localStorage (settings.js)
-  applySettingsToState(state, loadSettings());
+    applySettingsToState(state, loadSettings());
 
-  // Start autosaving UI/prefs to localStorage (debounced)
-  startAutoSave(state, watch, { debounceMs: 300 });
+    // Start autosaving UI/prefs to localStorage (debounced)
+    startAutoSave(state, watch, { debounceMs: 300 });
 
-  // --- Settings: hydrate UI/prefs from localStorage, then start autosave ---
+    // --- Settings: hydrate UI/prefs from localStorage, then start autosave ---
 
-// Optional: when you *must* flush immediately (rare), call:
-const flushSettingsNow = () => saveSettings(extractSettingsFromState(state));
+    // Optional: when you *must* flush immediately (rare), call:
+   // const flushSettingsNow = () => saveSettings(extractSettingsFromState(state));
 
-// ==================== END STATE ====================
+    // ==================== END STATE ====================
     // -------------------- Generic helpers --------------------
 
     // === Auto-import all CSVs from /data into Saved Lists =======================
 
-// Attempt to list .csv files under /data via an index json or directory listing
-// === Discover /data entries with metadata from data/index.json ===============
-// Returns [{ file, name, description }]
-// Put this ABOVE both saveVocabListsToSettings and reconcileVocabMetaFromIndex
-async function refreshSavedListsUI() {
-  try {
-    const s = (await db.settings.get('v1')) || { key: 'v1' };
-    const listsObj = (s && s.vocabLists && typeof s.vocabLists === 'object') ? s.vocabLists : {};
-    const meta     = (s && s.vocabMeta) || {};
+    // Attempt to list .csv files under /data via an index json or directory listing
+    // === Discover /data entries with metadata from data/index.json ===============
+    // Returns [{ file, name, description }]
+    // Put this ABOVE both saveVocabListsToSettings and reconcileVocabMetaFromIndex
+    async function refreshSavedListsUI() {
+      try {
+        const s = (await db.settings.get("v1")) || { key: "v1" };
+        const listsObj =
+          s && s.vocabLists && typeof s.vocabLists === "object"
+            ? s.vocabLists
+            : {};
+        const meta = (s && s.vocabMeta) || {};
 
-    const names = Object.keys(listsObj).sort((a, b) =>
-      a.localeCompare(b, undefined, { sensitivity: 'base' })
-    );
+        const names = Object.keys(listsObj).sort((a, b) =>
+          a.localeCompare(b, undefined, { sensitivity: "base" })
+        );
 
-    state.wordPicker.savedLists = names.map((name) => {
-      const items = Array.isArray(listsObj[name]) ? listsObj[name] : [];
-      const m  = meta[name] || meta[name.replace(/[_-]+/g, ' ')] || {};
-      const displayName = (m.name || name).trim();
-      const description = (m.description || '').trim();
-      const file        = (m.file || '').trim();
-      return { name, displayName, description, desc: description, file, count: items.length };
-    });
-  } catch (e) {
-    console.warn('[Lists] refreshSavedListsUI failed:', e);
-    state.wordPicker.savedLists = [];
-  }
-}
-// make it visible even if something calls window.refreshSavedListsUI()
-window.refreshSavedListsUI = refreshSavedListsUI;
-
-async function listDataEntries() {
-  async function tryJson(url) {
-    try {
-      const r = await fetch(url + '?v=' + Date.now());
-      if (!r.ok) return null;
-      const j = await r.json();
-
-      // Case A: desired shape already
-      if (Array.isArray(j) && j.length && typeof j[0] === 'object' && j[0].file) {
-        return j.filter(x => /\.csv$/i.test(x.file));
+        state.wordPicker.savedLists = names.map((name) => {
+          const items = Array.isArray(listsObj[name]) ? listsObj[name] : [];
+          const m = meta[name] || meta[name.replace(/[_-]+/g, " ")] || {};
+          const displayName = (m.name || name).trim();
+          const description = (m.description || "").trim();
+          const file = (m.file || "").trim();
+          return {
+            name,
+            displayName,
+            description,
+            desc: description,
+            file,
+            count: items.length,
+          };
+        });
+      } catch (e) {
+        console.warn("[Lists] refreshSavedListsUI failed:", e);
+        state.wordPicker.savedLists = [];
       }
-      // Case B: { files: ["a.csv", ...] }
-      if (Array.isArray(j?.files)) {
-        return j.files
-          .filter(s => /\.csv$/i.test(s))
-          .map(f => ({ file: f, name: f.replace(/\.csv$/i,'').replace(/[_-]+/g,' ').trim(), description: "" }));
-      }
-      // Case C: ["a.csv", ...]
-      if (Array.isArray(j) && j.length && typeof j[0] === 'string') {
-        return j
-          .filter(s => /\.csv$/i.test(s))
-          .map(f => ({ file: f, name: f.replace(/\.csv$/i,'').replace(/[_-]+/g,' ').trim(), description: "" }));
-      }
-      return null;
-    } catch { return null; }
-  }
-
-  // Prefer explicit index/manifest
-  let entries =
-      await tryJson('data/index.json') ||
-      await tryJson('data/manifest.json');
-
-  if (entries && entries.length) return entries;
-
-  // Fallback: directory listing (python -m http.server etc.)
-  try {
-    const r = await fetch('data/');
-    if (r.ok) {
-      const html = await r.text();
-      const files = [...html.matchAll(/href="([^"]+\.csv)"/gi)]
-        .map(m => decodeURIComponent(m[1]));
-      entries = Array.from(new Set(files)).map(f => ({ file: f, name: f.replace(/\.csv$/i,'').replace(/[_-]+/g,' ').trim(), description: "" }));
     }
-  } catch {}
-  return entries || [];
-}
+    // make it visible even if something calls window.refreshSavedListsUI()
+    window.refreshSavedListsUI = refreshSavedListsUI;
 
+    async function listDataEntries() {
+      async function tryJson(url) {
+        try {
+          const r = await fetch(url + "?v=" + Date.now());
+          if (!r.ok) return null;
+          const j = await r.json();
 
-// Fetch/parse one CSV and save it as a named list
-// Fetch/parse one CSV and save it as a named list, with optional meta
-async function importCsvAsList(url, meta = null) {
-  const bust = url.includes('?') ? '&' : '?';
-  const res = await fetch(url + bust + 'v=' + Date.now());
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const txt = await res.text();
+          // Case A: desired shape already
+          if (
+            Array.isArray(j) &&
+            j.length &&
+            typeof j[0] === "object" &&
+            j[0].file
+          ) {
+            return j.filter((x) => /\.csv$/i.test(x.file));
+          }
+          // Case B: { files: ["a.csv", ...] }
+          if (Array.isArray(j?.files)) {
+            return j.files
+              .filter((s) => /\.csv$/i.test(s))
+              .map((f) => ({
+                file: f,
+                name: f
+                  .replace(/\.csv$/i, "")
+                  .replace(/[_-]+/g, " ")
+                  .trim(),
+                description: "",
+              }));
+          }
+          // Case C: ["a.csv", ...]
+          if (Array.isArray(j) && j.length && typeof j[0] === "string") {
+            return j
+              .filter((s) => /\.csv$/i.test(s))
+              .map((f) => ({
+                file: f,
+                name: f
+                  .replace(/\.csv$/i, "")
+                  .replace(/[_-]+/g, " ")
+                  .trim(),
+                description: "",
+              }));
+          }
+          return null;
+        } catch {
+          return null;
+        }
+      }
 
-  const parsed = parseCsv(txt);
-  const items = parsed.rows.map(normalizeCsvRow).filter(Boolean);
-  if (!items.length) return { name: null, count: 0 };
+      // Prefer explicit index/manifest
+      let entries =
+        (await tryJson("data/index.json")) ||
+        (await tryJson("data/manifest.json"));
 
-  // List name from meta or filename (nicely spaced)
-  const fallbackName = url.split('/').pop()
-    .replace(/\.csv$/i, '')
-    .replace(/[_-]+/g, ' ')
-    .trim();
-  const displayName = (meta?.name || fallbackName).trim();
-  const listKey     = fallbackName; // stable key used internally
+      if (entries && entries.length) return entries;
 
-  
-  // Save list items
-  await saveVocabListsToSettings(curr => ({ ...curr, [listKey]: items }));
-
-  // Save metadata alongside lists (file, pretty name, description)
-  const settings = (await db.settings.get('v1')) || { key: 'v1' };
-  const vocabMeta = { ...(settings.vocabMeta || {}) };
-  vocabMeta[listKey] = {
-    file: meta?.file || url.replace(/^data\//,''),
-    name: displayName,
-    description: meta?.description || ""
-  };
-  await db.settings.put({ ...settings, vocabMeta, key: 'v1' });
-
-  return { name: listKey, count: items.length };
-}
-
-
-
-// Public method you can call once at startup
-async function autoImportCsvListsFromData() {
-  const settings = (await db.settings.get('v1')) || { key: 'v1' };
-
-  const existingNames = new Set(Object.keys(settings.vocabLists || {}));
-  const alreadyImported = new Set(
-    (settings.autoImportedDataCsvs || []).map(s => s.toLowerCase())
-  );
-
-  // Discover /data entries (with file/name/description)
-  const entries = await listDataEntries();
-
-  const imported = [];
-  for (const e of entries) {
-    const base = String(e.file || '')
-      .split('/').pop()
-      .replace(/\.csv$/i,'')
-      .replace(/[_-]+/g,' ')
-      .trim();
-
-    if (!base) continue;
-    if (existingNames.has(base) || alreadyImported.has(base.toLowerCase())) continue;
-
-    try {
-      const url = e.file.startsWith('data/') ? e.file : ('data/' + e.file);
-      const { name, count } = await importCsvAsList(url, e);
-      if (name && count) imported.push({ name, count });
-    } catch (err) {
-      console.warn('[AutoCSV] Skipping', e.file, err);
+      // Fallback: directory listing (python -m http.server etc.)
+      try {
+        const r = await fetch("data/");
+        if (r.ok) {
+          const html = await r.text();
+          const files = [...html.matchAll(/href="([^"]+\.csv)"/gi)].map((m) =>
+            decodeURIComponent(m[1])
+          );
+          entries = Array.from(new Set(files)).map((f) => ({
+            file: f,
+            name: f
+              .replace(/\.csv$/i, "")
+              .replace(/[_-]+/g, " ")
+              .trim(),
+            description: "",
+          }));
+        }
+      } catch {}
+      return entries || [];
     }
-  }
 
-  if (imported.length) {
-    const updated = (await db.settings.get('v1')) || { key: 'v1' };
-    const marker = [...new Set([...(updated.autoImportedDataCsvs || []), ...imported.map(x => x.name)])];
-    await db.settings.put({ ...updated, autoImportedDataCsvs: marker, key: 'v1' });
-  }
+    // Fetch/parse one CSV and save it as a named list
+    // Fetch/parse one CSV and save it as a named list, with optional meta
+    async function importCsvAsList(url, meta = null) {
+      const bust = url.includes("?") ? "&" : "?";
+      const res = await fetch(url + bust + "v=" + Date.now());
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const txt = await res.text();
 
-  // If no active list yet and we imported something, set the first active
-  if (!settings.activeReviewList && imported[0]) {
-    const s2 = (await db.settings.get('v1')) || { key: 'v1' };
-    await db.settings.put({ ...s2, activeReviewList: imported[0].name, key: 'v1' });
-    state.wordPicker.activeList = imported[0].name;
-  }
-}
+      const parsed = parseCsv(txt);
+      const items = parsed.rows.map(normalizeCsvRow).filter(Boolean);
+      if (!items.length) return { name: null, count: 0 };
 
-// --- SRS row sanitizer: ensure plain JSON cloneable objects for IndexedDB ---
-function sanitizeExample(ex) {
-  if (!ex) return null;
-  if (typeof ex === 'string') return ex; // keep simple FR string
-  // allow only {fr, en} if it's an object; drop everything else
-  const fr = typeof ex.fr === 'string' ? ex.fr : '';
-  const en = typeof ex.en === 'string' ? ex.en : '';
-  if (!fr && !en) return null;
-  return { fr, en };
-}
+      // List name from meta or filename (nicely spaced)
+      const fallbackName = url
+        .split("/")
+        .pop()
+        .replace(/\.csv$/i, "")
+        .replace(/[_-]+/g, " ")
+        .trim();
+      const displayName = (meta?.name || fallbackName).trim();
+      const listKey = fallbackName; // stable key used internally
 
-function sanitizeTags(tags) {
-  if (!Array.isArray(tags)) return [];
-  return tags.map(t => (t == null ? '' : String(t))).filter(Boolean);
-}
+      // Save list items
+      await saveVocabListsToSettings((curr) => ({ ...curr, [listKey]: items }));
 
-function toISO(d) {
-  try { return new Date(d).toISOString(); } catch { return new Date().toISOString(); }
-}
+      // Save metadata alongside lists (file, pretty name, description)
+      const settings = (await db.settings.get("v1")) || { key: "v1" };
+      const vocabMeta = { ...(settings.vocabMeta || {}) };
+      vocabMeta[listKey] = {
+        file: meta?.file || url.replace(/^data\//, ""),
+        name: displayName,
+        description: meta?.description || "",
+      };
+      await db.settings.put({ ...settings, vocabMeta, key: "v1" });
 
-function sanitizeSrsRow(c) {
-  // Never pass Vue proxies/refs through; copy only allowed fields
-  const row = {
-    // SRS core fields
-    front: (c?.fr || c?.front || '').trim(),
-    back:  (c?.en || c?.back  || '').trim(),
-    due:   toISO(c?.due || Date.now()),
-    ease:  Number.isFinite(c?.ease) ? c.ease : 2.5,
-    reps:  Number.isFinite(c?.reps) ? c.reps : 0,
-    interval: Number.isFinite(c?.interval) ? c.interval : 0,
-    last:  toISO(c?.last || Date.now()),
+      return { name: listKey, count: items.length };
+    }
 
-    // Extras for consistent UI
-    fr: (c?.fr || c?.front || '').trim(),
-    en: (c?.en || c?.back  || '').trim(),
-    article: (c?.article || '').trim(),
-    example: sanitizeExample(c?.example),
-    topic: (c?.topic || '').trim(),
-    partOfSpeech: (c?.partOfSpeech || '').trim(),
-    gender: (c?.gender || '').trim(),
-    tags: sanitizeTags(c?.tags),
-  };
+    // Public method you can call once at startup
+    async function autoImportCsvListsFromData() {
+      const settings = (await db.settings.get("v1")) || { key: "v1" };
 
-  // Strip undefined/null to keep the record tight
-  return Object.fromEntries(Object.entries(row).filter(([_, v]) => v !== undefined));
-}
+      const existingNames = new Set(Object.keys(settings.vocabLists || {}));
+      const alreadyImported = new Set(
+        (settings.autoImportedDataCsvs || []).map((s) => s.toLowerCase())
+      );
 
+      // Discover /data entries (with file/name/description)
+      const entries = await listDataEntries();
 
+      const imported = [];
+      for (const e of entries) {
+        const base = String(e.file || "")
+          .split("/")
+          .pop()
+          .replace(/\.csv$/i, "")
+          .replace(/[_-]+/g, " ")
+          .trim();
 
-  // Auto-resize textarea
+        if (!base) continue;
+        if (existingNames.has(base) || alreadyImported.has(base.toLowerCase()))
+          continue;
+
+        try {
+          const url = e.file.startsWith("data/") ? e.file : "data/" + e.file;
+          const { name, count } = await importCsvAsList(url, e);
+          if (name && count) imported.push({ name, count });
+        } catch (err) {
+          console.warn("[AutoCSV] Skipping", e.file, err);
+        }
+      }
+
+      if (imported.length) {
+        const updated = (await db.settings.get("v1")) || { key: "v1" };
+        const marker = [
+          ...new Set([
+            ...(updated.autoImportedDataCsvs || []),
+            ...imported.map((x) => x.name),
+          ]),
+        ];
+        await db.settings.put({
+          ...updated,
+          autoImportedDataCsvs: marker,
+          key: "v1",
+        });
+      }
+
+      // If no active list yet and we imported something, set the first active
+      if (!settings.activeReviewList && imported[0]) {
+        const s2 = (await db.settings.get("v1")) || { key: "v1" };
+        await db.settings.put({
+          ...s2,
+          activeReviewList: imported[0].name,
+          key: "v1",
+        });
+        state.wordPicker.activeList = imported[0].name;
+      }
+    }
+
+    // --- SRS row sanitizer: ensure plain JSON cloneable objects for IndexedDB ---
+    function sanitizeExample(ex) {
+      if (!ex) return null;
+      if (typeof ex === "string") return ex; // keep simple FR string
+      // allow only {fr, en} if it's an object; drop everything else
+      const fr = typeof ex.fr === "string" ? ex.fr : "";
+      const en = typeof ex.en === "string" ? ex.en : "";
+      if (!fr && !en) return null;
+      return { fr, en };
+    }
+
+    function sanitizeTags(tags) {
+      if (!Array.isArray(tags)) return [];
+      return tags.map((t) => (t == null ? "" : String(t))).filter(Boolean);
+    }
+
+    function toISO(d) {
+      try {
+        return new Date(d).toISOString();
+      } catch {
+        return new Date().toISOString();
+      }
+    }
+
+    function sanitizeSrsRow(c) {
+      // Never pass Vue proxies/refs through; copy only allowed fields
+      const row = {
+        // SRS core fields
+        front: (c?.fr || c?.front || "").trim(),
+        back: (c?.en || c?.back || "").trim(),
+        due: toISO(c?.due || Date.now()),
+        ease: Number.isFinite(c?.ease) ? c.ease : 2.5,
+        reps: Number.isFinite(c?.reps) ? c.reps : 0,
+        interval: Number.isFinite(c?.interval) ? c.interval : 0,
+        last: toISO(c?.last || Date.now()),
+
+        // Extras for consistent UI
+        fr: (c?.fr || c?.front || "").trim(),
+        en: (c?.en || c?.back || "").trim(),
+        article: (c?.article || "").trim(),
+        example: sanitizeExample(c?.example),
+        topic: (c?.topic || "").trim(),
+        partOfSpeech: (c?.partOfSpeech || "").trim(),
+        gender: (c?.gender || "").trim(),
+        tags: sanitizeTags(c?.tags),
+      };
+
+      // Strip undefined/null to keep the record tight
+      return Object.fromEntries(
+        Object.entries(row).filter(([_, v]) => v !== undefined)
+      );
+    }
+
+    // Auto-resize textarea
     function autosizeTextarea(e) {
       const el = e && e.target;
       if (!el) return;
       el.style.height = "auto";
       el.style.height = el.scrollHeight + "px";
     }
-
 
     // Speech support
     function detectSpeechSupport() {
@@ -479,14 +537,14 @@ function sanitizeSrsRow(c) {
     // Example map placeholder (may be loaded later)
     state.exampleMap = new Map();
 
- // Drills Tag Pills (existing set for drills)
+    // Drills Tag Pills (existing set for drills)
 
- // Drills Tag Pills (existing set for drills)
- const tagPills = ref(TAG_PILL_OPTIONS.slice());
- // Expose to state so DrillPanel can render chips
- state.tagPills = tagPills.value;
+    // Drills Tag Pills (existing set for drills)
+    const tagPills = ref(TAG_PILL_OPTIONS.slice());
+    // Expose to state so DrillPanel can render chips
+    state.tagPills = tagPills.value;
 
-// ==================== END // ==================== END STATE ==================== ====================
+    // ==================== END // ==================== END STATE ==================== ====================
     // -------------------- Vocab Pills (distinct) --------------------
     function toggleVocabPill(group, value) {
       const allowed = ["topic", "tags", "pos"];
@@ -531,48 +589,55 @@ function sanitizeSrsRow(c) {
       }
       state.vocab.deck = deck;
       state.vocab.deckPtr = 0;
-      saveReviewPointer();  
+      saveReviewPointer();
     }
-
 
     function renderFr(card) {
-  const w = (card?.fr ?? card?.front ?? card?.french ?? "").trim();
-  if (!w) return w;
+      const w = (card?.fr ?? card?.front ?? card?.french ?? "").trim();
+      if (!w) return w;
 
-  // If the string itself already carries an article, keep it.
-  if (/^(l['’]\s*|le\s+|la\s+|les\s+)/i.test(w)) return w;
+      // If the string itself already carries an article, keep it.
+      if (/^(l['’]\s*|le\s+|la\s+|les\s+)/i.test(w)) return w;
 
-  const rawArticle = (card?.article ?? "").trim();
-  let article = rawArticle.toLowerCase();
+      const rawArticle = (card?.article ?? "").trim();
+      let article = rawArticle.toLowerCase();
 
-  // If an explicit article exists → use it unconditionally.
-  if (article) {
-    if (article === "l'") article = "l’";
-    if (article === "l’") {
-      const bare = w.replace(/^l['’]\s*/i, "").trim();
-      return `l’${bare}`;
+      // If an explicit article exists → use it unconditionally.
+      if (article) {
+        if (article === "l'") article = "l’";
+        if (article === "l’") {
+          const bare = w.replace(/^l['’]\s*/i, "").trim();
+          return `l’${bare}`;
+        }
+        return `${article} ${w}`;
+      }
+
+      // Otherwise fall back to heuristics (gender / elision)
+      const posStr = String(
+        card?.partOfSpeech || card?.pos || ""
+      ).toLowerCase();
+      const tagsArr = Array.isArray(card?.tags)
+        ? card.tags.map((t) => String(t).toLowerCase())
+        : [];
+      const hasGender = !!String(card?.gender ?? "").trim();
+      const isNoun =
+        posStr.includes("noun") ||
+        tagsArr.some((t) => t.startsWith("noun")) ||
+        hasGender;
+
+      if (!isNoun) return w;
+
+      const startsWithVowelOrMuteH =
+        /^[aeiouâêîôûéèëïüœ]/i.test(w) || /^h/i.test(w);
+      const gender = String(card?.gender || "").toLowerCase();
+
+      if (startsWithVowelOrMuteH) return `l’${w}`;
+      if (gender === "f" || tagsArr.includes("f")) return `la ${w}`;
+      if (gender === "m" || tagsArr.includes("m")) return `le ${w}`;
+
+      // Unknown gender → leave bare
+      return w;
     }
-    return `${article} ${w}`;
-  }
-
-  // Otherwise fall back to heuristics (gender / elision)
-  const posStr = String(card?.partOfSpeech || card?.pos || "").toLowerCase();
-  const tagsArr = Array.isArray(card?.tags) ? card.tags.map(t => String(t).toLowerCase()) : [];
-  const hasGender = !!String(card?.gender ?? "").trim();
-  const isNoun = posStr.includes("noun") || tagsArr.some(t => t.startsWith("noun")) || hasGender;
-
-  if (!isNoun) return w;
-
-  const startsWithVowelOrMuteH = /^[aeiouâêîôûéèëïüœ]/i.test(w) || /^h/i.test(w);
-  const gender = String(card?.gender || "").toLowerCase();
-
-  if (startsWithVowelOrMuteH) return `l’${w}`;
-  if (gender === "f" || tagsArr.includes("f")) return `la ${w}`;
-  if (gender === "m" || tagsArr.includes("m")) return `le ${w}`;
-
-  // Unknown gender → leave bare
-  return w;
-}
 
     // Rebuild vocab deck on prefs change
     watch(
@@ -580,7 +645,7 @@ function sanitizeSrsRow(c) {
       () => Vocab.buildVocabDeck(state)
     );
 
-// ==================== END  ====================
+    // ==================== END  ====================
     // -------------------- Drill helpers --------------------
     const TENSE_LABEL = {
       present: "Présent",
@@ -651,7 +716,7 @@ function sanitizeSrsRow(c) {
       return { label, answer, verb, personLabel, tenseLabel };
     }
 
-// ==================== END ); ====================
+    // ==================== END ); ====================
     // -------------------- Recorder helpers --------------------
     function getRecognizer() {
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -738,7 +803,7 @@ function sanitizeSrsRow(c) {
 
     //
 
-// ==================== END RETURN { LABEL, ANSWER, VERB, PERSONLABEL, TENSELABEL }; ====================
+    // ==================== END RETURN { LABEL, ANSWER, VERB, PERSONLABEL, TENSELABEL }; ====================
     // -------------------- OPFS helpers --------------------
     async function opfsWrite(path, blob) {
       const root = await navigator.storage.getDirectory();
@@ -775,7 +840,27 @@ function sanitizeSrsRow(c) {
       await dir.removeEntry(name);
     }
 
-// ==================== END } ====================
+    // ==================== END } ====================
+
+    const saveGlobalToSettingsDebounced = (() => {
+  let t = null;
+  return (delay = 300) => {
+    clearTimeout(t);
+    t = setTimeout(async () => {
+      const existing = (await db.settings.get("v1")) || { key: "v1" };
+      await db.settings.put({
+        ...existing,
+        profileName: state.profileName,
+        globalStats: state.globalStats,
+        todayStats: state.todayStats,
+        ui: { ...(existing.ui || {}), showVocabTags: !!state.ui.showVocabTags },
+        key: "v1",
+      });
+    }, delay);
+  };
+})();
+
+
     // -------------------- Recordings persistence --------------------
     async function persistRecording({
       blob,
@@ -846,13 +931,12 @@ function sanitizeSrsRow(c) {
       return hit?.id ?? null;
     }
 
-// ==================== END DIR = AWAIT DIR.GETDIRECTORYHANDLE(PARTS[I]); ====================
+    // ==================== END DIR = AWAIT DIR.GETDIRECTORYHANDLE(PARTS[I]); ====================
     // -------------------- Settings persistence helpers --------------------
     const saveSettingsMerged = async (partial) => {
       const existing = (await db.settings.get("v1")) || { key: "v1" };
       await db.settings.put({ ...existing, ...partial, key: "v1" });
     };
-
 
     function bumpGlobal(isRight) {
       state.globalStats.total += 1;
@@ -864,19 +948,19 @@ function sanitizeSrsRow(c) {
       saveGlobalToSettingsDebounced();
     }
 
-// ==================== END CONST HIT = ROWS.FIND( ====================
+    // ==================== END CONST HIT = ROWS.FIND( ====================
     // -------------------- Load-all bootstrap --------------------
     //  Hydrate state from IndexedDB
     // Load dataset + rules + settings + plan + drill prefs
-// Also load external examples if available
-// Restore active Review list or seed from general_vocab.json
-//  =LOAD==================================================================  
-    
-   async function loadAll() {
+    // Also load external examples if available
+    // Restore active Review list or seed from general_vocab.json
+    //  =LOAD==================================================================
+
+    async function loadAll() {
       state.dataset = await loadDataset();
       state.rules = await loadRules();
 
-// ==================== END IF (ISRIGHT) { ====================
+      // ==================== END IF (ISRIGHT) { ====================
       // -------------------- Examples loading --------------------
       // External examples (optional)
       if (typeof Verb.loadExternalVerbs === "function") {
@@ -895,7 +979,7 @@ function sanitizeSrsRow(c) {
       ]);
 
       // Settings → state
-      // Hydrate settings    
+      // Hydrate settings
       if (settings) {
         state.settings = settings;
         state.fixedIntervalsText = (
@@ -934,123 +1018,176 @@ function sanitizeSrsRow(c) {
       // Re-apply UI/prefs from localStorage so they take precedence for UI
       applySettingsToState(state, loadSettings());
 
-// ==================== END // ALSO LOAD EXTERNAL EXAMPLES IF AVAILABLE ====================
+      // ==================== END // ALSO LOAD EXTERNAL EXAMPLES IF AVAILABLE ====================
       // -------------------- Vocab Lists hydration --------------------
-await methods.autoImportCsvListsFromData().catch(console.warn);
-await reconcileVocabMetaFromIndex();
-await refreshSavedListsUI();
+      await methods.autoImportCsvListsFromData().catch(console.warn);
+      await reconcileVocabMetaFromIndex();
+      await refreshSavedListsUI();
 
-// Restore the last-used Review list (if any); otherwise seed from built-in JSON once
-const active = (settings?.activeReviewList || '').trim();
+      // Restore the last-used Review list (if any); otherwise seed from built-in JSON once
+      const active = (settings?.activeReviewList || "").trim();
 
-// Reflect into the UI dropdown so the DataPanel shows the true active list
-state.wordPicker.activeList = active || '';
+      // Reflect into the UI dropdown so the DataPanel shows the true active list
+      state.wordPicker.activeList = active || "";
 
-// Restore the last-used Review list (if any); otherwise seed from built-in JSON once
-if (active) {
-  try {
-    await methods.loadListIntoReview(active);
-  } catch (e) {
-    console.warn("[Lists] failed to restore activeReviewList:", active, e);
-  }
-} else {
-  // No remembered list → first-run/default: load bundled general_vocab.json
-  try {
-    const resp = await fetch("general_vocab.json?v=" + Date.now());
-    if (resp.ok) {
-      const raw = await resp.json();
-      const arr = Array.isArray(raw) ? raw
-               : Array.isArray(raw?.vocab) ? raw.vocab
-               : null;
-      if (arr) {
-        state.vocab.cards = arr.map((c, i) => ({
-          id: i + 1,
-          fr: (c.french ?? c.front ?? c.fr ?? '').trim(),
-          en: (c.english ?? c.back  ?? c.en ?? '').trim(),
-          partOfSpeech: (c.partOfSpeech ?? c.pos ?? '').trim(),
-          gender: (c.gender ?? '').trim(),
-          topic: (c.topic ?? '').trim(),
-          tags: Array.isArray(c.tags) ? c.tags.slice()
-               : c.tags ? String(c.tags).split(/[;,]/).map(t=>t.trim()).filter(Boolean)
-                        : [],
-          example: coerceExample(c.example ?? c.eg ?? null),
-        }));
-
-        // build pills + deck
-        (function buildPills(cards){
-          const topic = new Set(), tags = new Set(), pos = new Set();
-          for (const c of cards) {
-            if (c?.topic) topic.add(c.topic);
-            if (Array.isArray(c?.tags)) c.tags.forEach(t => t && tags.add(t));
-            if (c?.partOfSpeech) pos.add(c.partOfSpeech);
-          }
-          state.vocabPills.topic = Array.from(topic).sort();
-          state.vocabPills.tags  = Array.from(tags).sort();
-          state.vocabPills.pos   = Array.from(pos).sort();
-        })(state.vocab.cards);
-
-        if (typeof Vocab?.buildVocabDeck === 'function') Vocab.buildVocabDeck(state);
-        else { state.vocab.deck = [...state.vocab.cards]; state.vocab.deckPtr = 0; 
-          await saveReviewPointer();    
+      // Restore the last-used Review list (if any); otherwise seed from built-in JSON once
+      if (active) {
+        try {
+          await methods.loadListIntoReview(active);
+        } catch (e) {
+          console.warn(
+            "[Lists] failed to restore activeReviewList:",
+            active,
+            e
+          );
         }
       } else {
-        console.warn("general_vocab.json did not contain an array or a {vocab: []} shape.");
+        // No remembered list → first-run/default: load bundled general_vocab.json
+        try {
+          const resp = await fetch("general_vocab.json?v=" + Date.now());
+          if (resp.ok) {
+            const raw = await resp.json();
+            const arr = Array.isArray(raw)
+              ? raw
+              : Array.isArray(raw?.vocab)
+              ? raw.vocab
+              : null;
+            if (arr) {
+              state.vocab.cards = arr.map((c, i) => ({
+                id: i + 1,
+                fr: (c.french ?? c.front ?? c.fr ?? "").trim(),
+                en: (c.english ?? c.back ?? c.en ?? "").trim(),
+                partOfSpeech: (c.partOfSpeech ?? c.pos ?? "").trim(),
+                gender: (c.gender ?? "").trim(),
+                topic: (c.topic ?? "").trim(),
+                tags: Array.isArray(c.tags)
+                  ? c.tags.slice()
+                  : c.tags
+                  ? String(c.tags)
+                      .split(/[;,]/)
+                      .map((t) => t.trim())
+                      .filter(Boolean)
+                  : [],
+                example: coerceExample(c.example ?? c.eg ?? null),
+              }));
+
+              // build pills + deck
+              (function buildPills(cards) {
+                const topic = new Set(),
+                  tags = new Set(),
+                  pos = new Set();
+                for (const c of cards) {
+                  if (c?.topic) topic.add(c.topic);
+                  if (Array.isArray(c?.tags))
+                    c.tags.forEach((t) => t && tags.add(t));
+                  if (c?.partOfSpeech) pos.add(c.partOfSpeech);
+                }
+                state.vocabPills.topic = Array.from(topic).sort();
+                state.vocabPills.tags = Array.from(tags).sort();
+                state.vocabPills.pos = Array.from(pos).sort();
+              })(state.vocab.cards);
+
+              if (typeof Vocab?.buildVocabDeck === "function")
+                Vocab.buildVocabDeck(state);
+              else {
+                state.vocab.deck = [...state.vocab.cards];
+                state.vocab.deckPtr = 0;
+                await saveReviewPointer();
+              }
+            } else {
+              console.warn(
+                "general_vocab.json did not contain an array or a {vocab: []} shape."
+              );
+            }
+          } else {
+            console.warn("Failed to fetch general_vocab.json:", resp.status);
+          }
+        } catch (err) {
+          console.error("Error loading general_vocab.json:", err);
+        }
       }
-    } else {
-      console.warn("Failed to fetch general_vocab.json:", resp.status);
-    }
-  } catch (err) {
-    console.error("Error loading general_vocab.json:", err);
-  }
-}
 
-// Seed SRS once from Review if DB is empty
-try {
-  const srsCount = await db.vocab.count();
-  if (!srsCount && Array.isArray(state.vocab.cards) && state.vocab.cards.length) {
-    const nowISO = new Date().toISOString();
-const seedRows = state.vocab.cards.slice(0, 200).map(c => ({
-  // SRS core
-  front: (c.fr || '').trim(),
-  back:  (c.en || '').trim(),
-  due: nowISO, ease: 2.5, reps: 0, interval: 0, last: nowISO,
-  // carry useful metadata to keep Review/SRS “feel” aligned
-  fr: c.fr || '', en: c.en || '',
-  article: c.article || '',
-  example: c.example ?? null,
-  topic: c.topic || '',
-  partOfSpeech: c.partOfSpeech || '',
-  gender: c.gender || '',
-  tags: Array.isArray(c.tags) ? c.tags.filter(Boolean) : []
-})).filter(r => r.front && r.back);
+      // Seed SRS once from Review if DB is empty
+      try {
+        const srsCount = await db.vocab.count();
+        if (
+          !srsCount &&
+          Array.isArray(state.vocab.cards) &&
+          state.vocab.cards.length
+        ) {
+          const nowISO = new Date().toISOString();
+          const seedRows = state.vocab.cards
+            .slice(0, 200)
+            .map((c) => ({
+              // SRS core
+              front: (c.fr || "").trim(),
+              back: (c.en || "").trim(),
+              due: nowISO,
+              ease: 2.5,
+              reps: 0,
+              interval: 0,
+              last: nowISO,
+              // carry useful metadata to keep Review/SRS “feel” aligned
+              fr: c.fr || "",
+              en: c.en || "",
+              article: c.article || "",
+              example: c.example ?? null,
+              topic: c.topic || "",
+              partOfSpeech: c.partOfSpeech || "",
+              gender: c.gender || "",
+              tags: Array.isArray(c.tags) ? c.tags.filter(Boolean) : [],
+            }))
+            .filter((r) => r.front && r.back);
 
-// ✅ sanitize before writing to Dexie
-const cleanSeedRows = seedRows.map(sanitizeSrsRow).filter(r => r.front && r.back);
-if (cleanSeedRows.length) {
-  try { await db.vocab.bulkAdd(cleanSeedRows); }
-  catch { for (const r of cleanSeedRows) { try { await db.vocab.add(r); } catch {} } }
-}
+          // ✅ sanitize before writing to Dexie
+          const cleanSeedRows = seedRows
+            .map(sanitizeSrsRow)
+            .filter((r) => r.front && r.back);
+          if (cleanSeedRows.length) {
+            try {
+              await db.vocab.bulkAdd(cleanSeedRows);
+            } catch {
+              for (const r of cleanSeedRows) {
+                try {
+                  await db.vocab.add(r);
+                } catch {}
+              }
+            }
+          }
 
+              } // <-- closes: if (!srsCount && state.vocab.cards.length)
+      } catch (e) {
+        console.warn("[SRS seed] failed:", e);
+      }
 
-    if (seedRows.length) {
-      try { await db.vocab.bulkAdd(seedRows); }
-      catch { for (const r of seedRows) { try { await db.vocab.add(r); } catch {} } }
-    }
-  }
-} catch (e) {
-  console.warn('[SRS seed] skipped:', e);
-}
-
-
+      // --- SRS bootstrap: normalize and load queue on startup ---
 // --- SRS bootstrap: normalize and load queue on startup ---
 try {
-  // Normalize any cards that are missing/invalid SRS fields so they can be due
   const rows = await db.vocab.toArray();
-  if (rows && rows.length) {
+  if (Array.isArray(rows) && rows.length) {
     const nowISO = new Date().toISOString();
-    for (const r of rows) {
-      const invalidDue = !r.due || Number.isNaN(new Date(r.due).getTime());
-      if (invalidDue || r.ease == null || r.reps == null || r.interval == null || !r.last) {
+
+    const isInvalidDate = (v) => {
+      if (!v) return true;
+      const t = new Date(v).getTime();
+      return Number.isNaN(t);
+    };
+
+    // Normalize any cards missing/invalid SRS fields so they can be due
+    await Promise.all(
+      rows.map(async (r) => {
+        const invalidDue =
+          isInvalidDate(r.due);
+
+        const needsPatch =
+          invalidDue ||
+          r.ease == null ||
+          r.reps == null ||
+          r.interval == null ||
+          !r.last;
+
+        if (!needsPatch || r.id == null) return;
+
         try {
           await db.vocab.update(r.id, {
             due: invalidDue ? nowISO : r.due,
@@ -1059,53 +1196,18 @@ try {
             interval: r.interval ?? 0,
             last: r.last || nowISO,
           });
-        } catch {}
-      }
-    }
+        } catch (e) {
+          // non-fatal; continue with remaining rows
+        }
+      })
+    );
   }
 
   // Pull SRS cards + compute first current card
   await Vocab.reloadVocabByTag(db, state.flashcards);
 } catch (e) {
-  console.warn('[SRS bootstrap] failed:', e);
+  console.warn("[SRS bootstrap] failed:", e);
 }
-
-
-// Restore deck pointer
-if (settings?.reviewDeckPtr != null) {
-  const ptr = Number(settings.reviewDeckPtr) || 0;
-  state.vocab.deckPtr = Math.min(Math.max(ptr, 0), Math.max(0, state.vocab.deck.length - 1));
-}
-
-// Coerce example field into string or {fr,en} shape
-      const _vocabCount = await db.vocab.count();
-      if (_vocabCount > 0) {
-        // Populate SRS-only subset after DB seed (if applicable)
-        // (existing logic unchanged)
-      }
-
-      watch(
-        () => state.vocab.cards,
-        (cards) => {
-          // defensive: cards may be replaced wholesale
-          if (!Array.isArray(cards)) return;
-          // Rebuild pills + keep filtering in sync
-          // If buildVocabPillsFromData is inside loadAll's scope, inline here:
-          const topic = new Set(),
-            tags = new Set(),
-            pos = new Set();
-          for (const c of cards) {
-            if (c?.topic) topic.add(c.topic);
-            if (Array.isArray(c?.tags)) c.tags.forEach((t) => t && tags.add(t));
-            if (c?.partOfSpeech) pos.add(c.partOfSpeech);
-          }
-          state.vocabPills.topic = Array.from(topic).sort();
-          state.vocabPills.tags = Array.from(tags).sort();
-          state.vocabPills.pos = Array.from(pos).sort();
-          applyVocabPillFilter();
-        },
-        { deep: true }
-      );
 
       // Verbs (seeders optional)
       if (typeof Verb.maybeSeedVerbsFromTop200 === "function") {
@@ -1122,10 +1224,10 @@ if (settings?.reviewDeckPtr != null) {
           console.warn("[verbs] maybeSeedIrregulars failed:", e);
         }
       }
-if (typeof Verb.ensureSeedTaggingAndImport === "function") {
-  await Verb.ensureSeedTaggingAndImport(db);
-}
-state.verbs = await db.verbs.orderBy("infinitive").toArray();
+      if (typeof Verb.ensureSeedTaggingAndImport === "function") {
+        await Verb.ensureSeedTaggingAndImport(db);
+      }
+      state.verbs = await db.verbs.orderBy("infinitive").toArray();
 
       // Interview questions (optional seed)
       if (!state.questions?.length) {
@@ -1162,7 +1264,7 @@ state.verbs = await db.verbs.orderBy("infinitive").toArray();
       }
     }
 
-// ==================== END  ====================
+    // ==================== END  ====================
     // -------------------- Drill rule attachment --------------------
     const EX_KEY = {
       Présent: "present",
@@ -1307,40 +1409,40 @@ state.verbs = await db.verbs.orderBy("infinitive").toArray();
       state.drillSession.help = lines.length ? { lines } : null;
     }
 
-// ==================== END RESP.STATUS + ====================
+    // ==================== END RESP.STATUS + ====================
     // -------------------- Import helpers (merge-safe upsert for vocab) --------------------
     // Put this near your other helpers in app.js
-async function reconcileVocabMetaFromIndex() {
-  const settings = (await db.settings.get('v1')) || { key: 'v1' };
-  const entries = await listDataEntries(); // [{file,name,description}]
-  if (!entries?.length) return;
+    async function reconcileVocabMetaFromIndex() {
+      const settings = (await db.settings.get("v1")) || { key: "v1" };
+      const entries = await listDataEntries(); // [{file,name,description}]
+      if (!entries?.length) return;
 
-  const meta = { ...(settings.vocabMeta || {}) };
-  for (const e of entries) {
-    const base = String(e.file || '')
-      .split('/').pop()
-      .replace(/\.csv$/i,'')
-      .replace(/[_-]+/g,' ')
-      .trim();
-    if (!base) continue;
+      const meta = { ...(settings.vocabMeta || {}) };
+      for (const e of entries) {
+        const base = String(e.file || "")
+          .split("/")
+          .pop()
+          .replace(/\.csv$/i, "")
+          .replace(/[_-]+/g, " ")
+          .trim();
+        if (!base) continue;
 
-    const pretty = (e.name || base).trim();
-    const desc   = (e.description || e.desc || "").trim();
-    const file   = e.file.startsWith('data/') ? e.file : ('data/' + e.file);
+        const pretty = (e.name || base).trim();
+        const desc = (e.description || e.desc || "").trim();
+        const file = e.file.startsWith("data/") ? e.file : "data/" + e.file;
 
-    const m = meta[base] || {};
-    if (m.name !== pretty || m.description !== desc || m.file !== file) {
-      meta[base] = { name: pretty, description: desc, file };
+        const m = meta[base] || {};
+        if (m.name !== pretty || m.description !== desc || m.file !== file) {
+          meta[base] = { name: pretty, description: desc, file };
+        }
+      }
+
+      await db.settings.put({ ...settings, vocabMeta: meta, key: "v1" });
+      state.settings.vocabMeta = meta;
+      refreshSavedListsUI();
     }
-  }
 
-  await db.settings.put({ ...settings, vocabMeta: meta, key: 'v1' });
-  state.settings.vocabMeta = meta;
-  refreshSavedListsUI();
-}
-
-
-function normalizeVocabItem(c) {
+    function normalizeVocabItem(c) {
       const fr = (c.french ?? c.front ?? "").trim();
       const en = (c.english ?? c.back ?? "").trim();
       return {
@@ -1382,10 +1484,10 @@ function normalizeVocabItem(c) {
       state.vocabPills.pos = Array.from(pos).sort();
     }
 
-// ==================== END } ====================
+    // ==================== END } ====================
     // -------------------- Methods --------------------
-    
-    // Vocab pills management 
+
+    // Vocab pills management
     function toggleIncludeTag(tag) {
       const arr = state.drillPrefs.includeOnlyTags ?? [];
       const i = arr.indexOf(tag);
@@ -1412,13 +1514,13 @@ function normalizeVocabItem(c) {
     }
 
     async function saveReviewPointer() {
-  const existing = (await db.settings.get("v1")) || { key: "v1" };
-  await db.settings.put({
-    ...existing,
-    reviewDeckPtr: state.vocab.deckPtr,
-    key: "v1"
-  });
-}
+      const existing = (await db.settings.get("v1")) || { key: "v1" };
+      await db.settings.put({
+        ...existing,
+        reviewDeckPtr: state.vocab.deckPtr,
+        key: "v1",
+      });
+    }
 
     async function rate(q) {
       if (!state.flashcards.currentCard) return;
@@ -1455,15 +1557,15 @@ function normalizeVocabItem(c) {
       addCard: () => Vocab.addCard(db, state.flashcards),
       deleteCard: (id) => Vocab.deleteCard(db, id, state.flashcards),
 
-reshuffleVocabDeck: async () => {
-  Vocab.reshuffleVocabDeck(state);
-  await saveReviewPointer();           // NEW: persist reset to 0
-},
+      reshuffleVocabDeck: async () => {
+        Vocab.reshuffleVocabDeck(state);
+        await saveReviewPointer(); // NEW: persist reset to 0
+      },
 
-nextVocabCard: async () => {
-  Vocab.nextVocabCard(state);          // moves the pointer
-  await saveReviewPointer();           // NEW: persist new ptr
-},
+      nextVocabCard: async () => {
+        Vocab.nextVocabCard(state); // moves the pointer
+        await saveReviewPointer(); // NEW: persist new ptr
+      },
       currentVocabCard: () => state.vocab.deck[state.vocab.deckPtr] || null,
       rate,
 
@@ -1755,60 +1857,65 @@ nextVocabCard: async () => {
         }
       },
 
-//     nextDrill: async function
-nextDrill() {
-  return withScrollLock(async () => {
-    // Try a bunch of times to find a valid Q with current prefs
-    let q = null;
-    for (let tries = 0; tries < 40 && !q; tries++) {
-      q = buildQuestion();
-    }
+      //     nextDrill: async function
+      nextDrill() {
+        return withScrollLock(async () => {
+          // Try a bunch of times to find a valid Q with current prefs
+          let q = null;
+          for (let tries = 0; tries < 40 && !q; tries++) {
+            q = buildQuestion();
+          }
 
-    // If nothing came back, check whether the filtered pool still has verbs
-    if (!q) {
-      // Recompute the verb pool exactly like buildQuestion() does
-      let pool = state.verbs.slice();
-      const inc = Array.isArray(state.drillPrefs.includeOnlyTags)
-        ? state.drillPrefs.includeOnlyTags.filter(Boolean)
-        : [];
-      const exc = Array.isArray(state.drillPrefs.excludeTags)
-        ? state.drillPrefs.excludeTags.filter(Boolean)
-        : [];
+          // If nothing came back, check whether the filtered pool still has verbs
+          if (!q) {
+            // Recompute the verb pool exactly like buildQuestion() does
+            let pool = state.verbs.slice();
+            const inc = Array.isArray(state.drillPrefs.includeOnlyTags)
+              ? state.drillPrefs.includeOnlyTags.filter(Boolean)
+              : [];
+            const exc = Array.isArray(state.drillPrefs.excludeTags)
+              ? state.drillPrefs.excludeTags.filter(Boolean)
+              : [];
 
-      if (inc.length) pool = pool.filter(v => (v.tags || []).some(t => inc.includes(t)));
-      if (exc.length) pool = pool.filter(v => !(v.tags || []).some(t => exc.includes(t)));
+            if (inc.length)
+              pool = pool.filter((v) =>
+                (v.tags || []).some((t) => inc.includes(t))
+              );
+            if (exc.length)
+              pool = pool.filter(
+                (v) => !(v.tags || []).some((t) => exc.includes(t))
+              );
 
-      if (pool.length > 0) {
-        // We *do* have verbs in-scope; just try again shortly (no alert).
-        setTimeout(() => methods.nextDrill(), 0);
-        return;
-      }
+            if (pool.length > 0) {
+              // We *do* have verbs in-scope; just try again shortly (no alert).
+              setTimeout(() => methods.nextDrill(), 0);
+              return;
+            }
 
-      // Truly no drillable items → stop, but keep the original helpful alert
-      state.drillSession.running = false;
-      alert("No more questions available with current filters.");
-      return;
-    }
+            // Truly no drillable items → stop, but keep the original helpful alert
+            state.drillSession.running = false;
+            alert("No more questions available with current filters.");
+            return;
+          }
 
-    // We have a question → proceed as before
-    state.drillSession.question = {
-      prompt: { label: q.label },
-      answer: q.answer,
-      meta: {
-        infinitive: q.verb.infinitive,
-        english: q.verb.english || "",
-        person: q.personLabel,
-        tense: q.tenseLabel,
+          // We have a question → proceed as before
+          state.drillSession.question = {
+            prompt: { label: q.label },
+            answer: q.answer,
+            meta: {
+              infinitive: q.verb.infinitive,
+              english: q.verb.english || "",
+              person: q.personLabel,
+              tense: q.tenseLabel,
+            },
+          };
+          state.drillSession.side.english = q.verb.english || "";
+          attachExamplesAndRules(q);
+
+          state.drillSession.input = "";
+          state.drillSession.correct = null;
+        });
       },
-    };
-    state.drillSession.side.english = q.verb.english || "";
-    attachExamplesAndRules(q);
-
-    state.drillSession.input = "";
-    state.drillSession.correct = null;
-  });
-},
-
 
       stopDrill() {
         state.drillSession.running = false;
@@ -1881,16 +1988,30 @@ nextDrill() {
             if (!ex) {
               // First-time (fr,en) → create FR→EN card now; EN→FR handled below
               if (wantFRtoEN) {
-// when creating FR→EN
-toAdd.push(sanitizeSrsRow({
-  front: inc.fr, back: inc.en,
-  due: nowISO, ease: 2.5, reps: 0, interval: 0, last: nowISO,
-  fr: inc.fr, en: inc.en,
-  partOfSpeech: inc.partOfSpeech, gender: inc.gender, topic: inc.topic,
-  tags: inc.tags, article: inc.article, plural: inc.plural,
-  example: inc.example, notes: inc.notes, audio: inc.audio, image: inc.image
-}));
-
+                // when creating FR→EN
+                toAdd.push(
+                  sanitizeSrsRow({
+                    front: inc.fr,
+                    back: inc.en,
+                    due: nowISO,
+                    ease: 2.5,
+                    reps: 0,
+                    interval: 0,
+                    last: nowISO,
+                    fr: inc.fr,
+                    en: inc.en,
+                    partOfSpeech: inc.partOfSpeech,
+                    gender: inc.gender,
+                    topic: inc.topic,
+                    tags: inc.tags,
+                    article: inc.article,
+                    plural: inc.plural,
+                    example: inc.example,
+                    notes: inc.notes,
+                    audio: inc.audio,
+                    image: inc.image,
+                  })
+                );
 
                 addedSrs++;
               }
@@ -1936,14 +2057,29 @@ toAdd.push(sanitizeSrsRow({
               );
               if (!existsEF) {
                 // when creating EN→FR
-toAdd.push(sanitizeSrsRow({
-  front: inc.en, back: inc.fr,
-  due: nowISO, ease: 2.5, reps: 0, interval: 0, last: nowISO,
-  fr: inc.en, en: inc.fr,
-  partOfSpeech: inc.partOfSpeech, gender: inc.gender, topic: inc.topic,
-  tags: inc.tags, article: inc.article, plural: inc.plural,
-  example: inc.example, notes: inc.notes, audio: inc.audio, image: inc.image
-}));
+                toAdd.push(
+                  sanitizeSrsRow({
+                    front: inc.en,
+                    back: inc.fr,
+                    due: nowISO,
+                    ease: 2.5,
+                    reps: 0,
+                    interval: 0,
+                    last: nowISO,
+                    fr: inc.en,
+                    en: inc.fr,
+                    partOfSpeech: inc.partOfSpeech,
+                    gender: inc.gender,
+                    topic: inc.topic,
+                    tags: inc.tags,
+                    article: inc.article,
+                    plural: inc.plural,
+                    example: inc.example,
+                    notes: inc.notes,
+                    audio: inc.audio,
+                    image: inc.image,
+                  })
+                );
 
                 addedSrs++;
               }
@@ -2010,117 +2146,145 @@ toAdd.push(sanitizeSrsRow({
       },
 
       // === Load a saved list into the Review deck (non-SRS) ===
-async deleteSavedList(listName) {
-  try {
-    if (!listName) return;
-    if (!confirm(`Delete the list "${listName}"? This cannot be undone.`)) return;
+      async deleteSavedList(listName) {
+        try {
+          if (!listName) return;
+          if (!confirm(`Delete the list "${listName}"? This cannot be undone.`))
+            return;
 
-    const settingsRec = (await db.settings.get("v1")) || { key: "v1" };
-    const lists = { ...(settingsRec.vocabLists || {}) };
+          const settingsRec = (await db.settings.get("v1")) || { key: "v1" };
+          const lists = { ...(settingsRec.vocabLists || {}) };
 
-    if (!(listName in lists)) {
-      alert("List not found.");
-      return;
+          if (!(listName in lists)) {
+            alert("List not found.");
+            return;
+          }
+
+          // Remove and persist
+          delete lists[listName];
+          await db.settings.put({
+            ...settingsRec,
+            vocabLists: lists,
+            key: "v1",
+          });
+
+          // Refresh savedLists in UI
+
+          // If that list was active in the Review picker, revert to Default (built-in)
+          if (state.wordPicker.activeList === listName) {
+            state.wordPicker.activeList = "";
+            try {
+              // Use existing loader to swap Review back to built-in JSON deck
+              await methods.loadListIntoReview("");
+            } catch (e) {
+              console.warn(
+                "[Lists] fallback to default review deck failed:",
+                e
+              );
+            }
+          }
+          refreshSavedListsUI();
+
+          console.log(`[Lists] Deleted "${listName}"`);
+        } catch (e) {
+          console.error("[Lists] deleteSavedList failed:", e);
+          alert("Could not delete that list.");
+        }
+        // If that list was active in the Review picker, revert to Default (built-in)
+        if (state.wordPicker.activeList === listName) {
+          state.wordPicker.activeList = "";
+          const s = (await db.settings.get("v1")) || { key: "v1" };
+          await db.settings.put({ ...s, activeReviewList: "", key: "v1" });
+          // Keep current deck; the next full reload will seed from built-in
+          // (or call methods.loadListIntoReview('') if you want to clear immediately)
+        }
+      },
+
+      // --- SRS: remove only the cards from a specific saved list ---
+async clearSrsForList(listName) {
+  if (!listName) return alert('No list selected.');
+  const settingsRec = (await db.settings.get('v1')) || { key: 'v1' };
+  const list = settingsRec?.vocabLists?.[listName];
+  if (!Array.isArray(list) || !list.length) return alert('List not found or empty.');
+
+  if (!confirm(`Remove SRS cards matching the list "${listName}"?`)) return;
+
+  // Build a set of (front,en) keys to match
+  const keyOf = (front, back) => (front||'').toLowerCase().trim() + '␟' + (back||'').toLowerCase().trim();
+  const delKeys = new Set(
+    list
+      .map(it => ({ fr: (it.fr||'').trim(), en: (it.en||'').trim() }))
+      .filter(x => x.fr && x.en)
+      .map(x => keyOf(x.fr, x.en))
+  );
+
+  // Delete matching SRS rows
+  const rows = await db.vocab.toArray();
+  let removed = 0;
+  for (const r of rows) {
+    const k = keyOf(r.front || r.fr, r.back || r.en);
+    if (delKeys.has(k)) {
+      try { await db.vocab.delete(r.id); removed++; } catch {}
     }
-
-    // Remove and persist
-    delete lists[listName];
-    await db.settings.put({ ...settingsRec, vocabLists: lists, key: "v1" });
-
-
-    // Refresh savedLists in UI
-  
-
-    // If that list was active in the Review picker, revert to Default (built-in)
-    if (state.wordPicker.activeList === listName) {
-      state.wordPicker.activeList = "";
-      try {
-        // Use existing loader to swap Review back to built-in JSON deck
-        await methods.loadListIntoReview("");
-      } catch (e) {
-        console.warn("[Lists] fallback to default review deck failed:", e);
-      }
-    }
-    refreshSavedListsUI();
-
-    console.log(`[Lists] Deleted "${listName}"`);
-  } catch (e) {
-    console.error("[Lists] deleteSavedList failed:", e);
-    alert("Could not delete that list.");
   }
-  // If that list was active in the Review picker, revert to Default (built-in)
-if (state.wordPicker.activeList === listName) {
-  state.wordPicker.activeList = '';
-  const s = (await db.settings.get('v1')) || { key: 'v1' };
-  await db.settings.put({ ...s, activeReviewList: '', key: 'v1' });
-  // Keep current deck; the next full reload will seed from built-in
-  // (or call methods.loadListIntoReview('') if you want to clear immediately)
-}
+
+  // Refresh SRS pane
+  await Vocab.reloadVocabByTag(db, state.flashcards);
+  alert(`Removed ${removed} SRS card(s) from "${listName}".`);
 },
 
+      // --- SRS maintenance ---
+      async clearAllSrs() {
+        if (!confirm("Delete ALL SRS cards? This cannot be undone.")) return;
+        // extra safety: second confirm
+        if (!confirm("Really delete all SRS cards now?")) return;
 
-// === Load a saved list into SRS (Dexie-backed) ===
-async loadListIntoSrs(listName) {
-  try {
-    const settingsRec = (await db.settings.get("v1")) || { key: "v1" };
-    const lists = settingsRec.vocabLists || {};
-    const arr = Array.isArray(lists[listName]) ? lists[listName] : [];
+        try {
+          await db.vocab.clear();
+        } catch (e) {
+          console.warn("[SRS] clearAllSrs failed:", e);
+          alert("Failed to clear SRS: " + (e.message || e));
+          return;
+        }
 
-    if (!arr.length) {
-      alert("That list is empty or not found.");
-      return;
-    }
+        // Reset SRS UI
+        state.flashcards.allCards = [];
+        state.flashcards.dueCards = [];
+        state.flashcards.currentCard = null;
+        state.flashcards.showBack = false;
+        state.flashcards.counts = { total: 0, learned: 0 };
 
-    const nowISO = new Date().toISOString();
-
-    // Helper: upsert by (front/back) to avoid dupes
-    async function upsert(front, back, tags = []) {
-      const existing = await db.vocab
-        .where("front")
-        .equals(front)
-        .and((r) => r.back === back)
-        .first();
-      if (existing) {
-        // Don't change scheduling; just union tags if present
-        const mergedTags = Array.from(
-          new Set([...(existing.tags || []), ...(tags || [])].filter(Boolean))
+        alert(
+          "SRS cleared. You can re-load a list into SRS from the Data tab."
         );
+      },
 
-        await db.vocab.update(existing.id, { tags: mergedTags });
-        return existing.id;
-      } else {
-        const row = {
-          front,
-          back,
-          due: nowISO,
-          ease: 2.5,
-          reps: 0,
-          interval: 0,
-          last: nowISO,
-          tags: Array.isArray(tags) ? tags.filter(Boolean) : []
-        };
-        return await db.vocab.add(row);
-      }
-    }
+      async resetSrsScheduling() {
+        if (!confirm("Reset SRS scheduling (keep cards, set all due now)?"))
+          return;
 
-    // Upsert all words from the list
-    for (const c of arr) {
-      const fr = (c.fr || c.french || "").trim();
-      const en = (c.en || c.english || "").trim();
-      if (!fr || !en) continue;
-      const tags = Array.isArray(c.tags) ? c.tags : (c.tags ? [c.tags] : []);
-      await upsert(fr, en, tags);
-    }
+        const nowISO = new Date().toISOString();
+        try {
+          const rows = await db.vocab.toArray();
+          for (const r of rows) {
+            await db.vocab.update(r.id, {
+              due: nowISO,
+              ease: 2.5,
+              reps: 0,
+              interval: 0,
+              last: nowISO,
+            });
+          }
+        } catch (e) {
+          console.warn("[SRS] reset scheduling failed:", e);
+          alert("Failed to reset SRS scheduling: " + (e.message || e));
+          return;
+        }
 
-    // Reload SRS queue from DB
-    await Vocab.reloadVocabByTag(db, state.flashcards); // keeps SRS subtree only
-    // Recompute due already happens inside reloadVocabByTag; currentCard is set.  :contentReference[oaicite:6]{index=6}
-    alert(`Loaded "${listName}" into SRS.`);
-  } catch (e) {
-    console.error("[SRS] loadListIntoSrs failed:", e);
-    alert("Could not load list into SRS.");
-  }
-},
+        // Reload SRS queue and refresh current card
+        await Vocab.reloadVocabByTag(db, state.flashcards);
+        alert("SRS scheduling reset. All cards are now due.");
+      },
 
       // Settings/Plan saves
       saveSettings: () =>
@@ -2173,14 +2337,12 @@ async loadListIntoSrs(listName) {
         saveGlobalToSettingsDebounced();
       },
 
-
       importVocabCsv,
-togglePickAll,
-savePickedAsList,
-loadListIntoSrs,
-loadListIntoReview,
-autoImportCsvListsFromData,
-
+      togglePickAll,
+      savePickedAsList,
+      loadListIntoSrs,
+      loadListIntoReview,
+      autoImportCsvListsFromData,
 
       // END METHODS
 
@@ -2188,179 +2350,227 @@ autoImportCsvListsFromData,
       loadAll,
     };
 
-    //    
+    //
     // Auto-detect delimiter: comma, semicolon, or tab
-function detectDelimiter(line) {
-  const candidates = [',',';','\t'];
-  let best = ',', bestCount = 0;
-  for (const d of candidates) {
-    // count split parts ignoring empty trailing fields
-    const count = line.split(d).length;
-    if (count > bestCount) { best = d; bestCount = count; }
-  }
-  return best;
-}
-
-//    
-function toPlainWord(it){
-  const tags =
-    Array.isArray(it.tags) ? it.tags.slice()
-  : (it.tags && typeof it.tags[Symbol.iterator] === 'function') ? [...it.tags]
-  : (typeof it.tags === 'string') ? it.tags.split(/[,;|]/).map(s=>s.trim()).filter(Boolean)
-  : [];
-  return {
-    fr: String(it.fr || '').trim(),
-    en: String(it.en || '').trim(),
-    article: String(it.article || '').trim(),
-    tags: tags.map(t => String(t)),
-  };
-}
-
-//    
-function parseCsv(text) {
-  // strip BOM
-  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
-  const linesRaw = text.split(/\r?\n/);
-  const lines = linesRaw.filter(l => l.trim() !== '');
-  if (!lines.length) return { headers: [], rows: [], delimiter: ',' };
-
-  const delimiter = detectDelimiter(lines[0]);
-
-  const split = (line) => {
-    const out = [];
-    let cur = '', inQ = false;
-    for (let i=0; i<line.length; i++){
-      const ch = line[i], nxt = line[i+1];
-      if (ch === '"' && inQ && nxt === '"') { cur += '"'; i++; continue; }
-      if (ch === '"') { inQ = !inQ; continue; }
-      if (ch === delimiter && !inQ) { out.push(cur); cur=''; continue; }
-      cur += ch;
-    }
-    out.push(cur);
-    return out.map(s => s.trim());
-  };
-
-  const headers = split(lines[0]).map(h => h.toLowerCase());
-  const rows = lines.slice(1).map(l => {
-    const cols = split(l);
-    const obj = {};
-    headers.forEach((h,i)=> obj[h] = (cols[i] ?? '').trim());
-    return obj;
-  });
-
-  return { headers, rows, delimiter };
-}
-
-
-function normalizeCsvRow(row){
-  const fr = normalizeStr(row.FR ?? row.fr ?? row.French ?? row.french);
-  const en = normalizeStr(row.EN ?? row.en ?? row.English ?? row.english);
-  const rawArticle = normalizeStr(row.article ?? row.Article ?? row.gender ?? row.Gender);
-  const tags = Array.isArray(row.tags) ? row.tags : normalizeStr(row.tags).split(',').map(t=>t.trim()).filter(Boolean);
-  const ex = row.example ?? row.Example ?? row.ex ?? '';
-
-  if (!fr || !en) return null;
-
-  return {
-    fr,
-    en,
-    article: normalizeArticle(fr, rawArticle),
-    // keep gender optional if you want
-    gender: ['m','masc','masculin'].includes(rawArticle.toLowerCase()) ? 'm'
-          : ['f','fem','féminin','feminin','feminine'].includes(rawArticle.toLowerCase()) ? 'f'
-          : '',
-    example: coerceExample(ex),
-    tags
-  };
-}
-
-// helpers (top of app.js near your other helpers)
-const normalizeStr = s => (s ?? '').toString().trim();
-const isVowelStart = s => /^[aeiouhâêîôûéèëïüAEIOUH]/.test(s || '');
-
-function normalizeArticle(fr, raw) {
-  const a = normalizeStr(raw).toLowerCase();
-
-  // direct articles pass-through (normalize straight apostrophe)
-  if (['le','la',"l'","l’",'les'].includes(a)) return (a === "l'") ? 'l’' : a;
-
-  // plural markers
-  if (['pl','plural','les'].includes(a)) return 'les';
-
-  // mixed gender
-  if (['mf','m/f','m-f','m&f','masc/fem','masculin/féminin','masculin/feminin'].includes(a)) {
-    // show as "le/la" (no elision for mixed)
-    return 'le/la';
-  }
-
-  // gendered
-  if (['m','masc','masculin'].includes(a)) return isVowelStart(fr) ? 'l’' : 'le';
-  if (['f','fem','féminin','feminin','feminine'].includes(a)) return isVowelStart(fr) ? 'l’' : 'la';
-
-  return ''; // unknown → no article
-}
-
-
-
-// Coerce example to a { fr, en } or null; keeps UI consistent
-function coerceExample(ex) {
-  if (!ex) return null;
-  if (typeof ex === 'string') return { fr: ex.trim(), en: '' };
-  if (typeof ex === 'object') return { fr: normalizeStr(ex.fr), en: normalizeStr(ex.en) };
-  return null;
-}
-
-
-async function importVocabCsv(evt){
-  console.log('[CSV]', { file: evt?.target?.files?.[0]?.name });
-  const f = evt?.target?.files?.[0];
-  if (!f) return;
-  try {
-    const txt = await f.text();
-    const parsed = parseCsv(txt);
-    const items = parsed.rows.map(normalizeCsvRow).filter(Boolean);
-
-    state.csv.headers = parsed.headers;
-    state.csv.rows = parsed.rows;
-    state.csv.meta = { delimiter: parsed.delimiter, total: parsed.rows.length, normalized: items.length };
-
-    state.wordPicker.items = items;
-    state.wordPicker.selected = {};
-    items.forEach((_,i)=> state.wordPicker.selected[i] = true);
-    if (!state.wordPicker.listName) {
-      state.wordPicker.listName = new Date().toISOString().slice(0,10) + ' list';
+    function detectDelimiter(line) {
+      const candidates = [",", ";", "\t"];
+      let best = ",",
+        bestCount = 0;
+      for (const d of candidates) {
+        // count split parts ignoring empty trailing fields
+        const count = line.split(d).length;
+        if (count > bestCount) {
+          best = d;
+          bestCount = count;
+        }
+      }
+      return best;
     }
 
-    if (!items.length) {
-      alert(
-        `CSV loaded but 0 usable rows.\n\n` +
-        `Detected delimiter: "${parsed.delimiter}"\n` +
-        `Headers: [${parsed.headers.join(', ')}]\n\n` +
-        `Expected headers include EN/FR/article (case-insensitive). ` +
-        `You can also use english/french/front/back or det/déterminant.`
+    //
+    function toPlainWord(it) {
+      const tags = Array.isArray(it.tags)
+        ? it.tags.slice()
+        : it.tags && typeof it.tags[Symbol.iterator] === "function"
+        ? [...it.tags]
+        : typeof it.tags === "string"
+        ? it.tags
+            .split(/[,;|]/)
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : [];
+      return {
+        fr: String(it.fr || "").trim(),
+        en: String(it.en || "").trim(),
+        article: String(it.article || "").trim(),
+        tags: tags.map((t) => String(t)),
+      };
+    }
+
+    //
+    function parseCsv(text) {
+      // strip BOM
+      if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
+      const linesRaw = text.split(/\r?\n/);
+      const lines = linesRaw.filter((l) => l.trim() !== "");
+      if (!lines.length) return { headers: [], rows: [], delimiter: "," };
+
+      const delimiter = detectDelimiter(lines[0]);
+
+      const split = (line) => {
+        const out = [];
+        let cur = "",
+          inQ = false;
+        for (let i = 0; i < line.length; i++) {
+          const ch = line[i],
+            nxt = line[i + 1];
+          if (ch === '"' && inQ && nxt === '"') {
+            cur += '"';
+            i++;
+            continue;
+          }
+          if (ch === '"') {
+            inQ = !inQ;
+            continue;
+          }
+          if (ch === delimiter && !inQ) {
+            out.push(cur);
+            cur = "";
+            continue;
+          }
+          cur += ch;
+        }
+        out.push(cur);
+        return out.map((s) => s.trim());
+      };
+
+      const headers = split(lines[0]).map((h) => h.toLowerCase());
+      const rows = lines.slice(1).map((l) => {
+        const cols = split(l);
+        const obj = {};
+        headers.forEach((h, i) => (obj[h] = (cols[i] ?? "").trim()));
+        return obj;
+      });
+
+      return { headers, rows, delimiter };
+    }
+
+    function normalizeCsvRow(row) {
+      const fr = normalizeStr(row.FR ?? row.fr ?? row.French ?? row.french);
+      const en = normalizeStr(row.EN ?? row.en ?? row.English ?? row.english);
+      const rawArticle = normalizeStr(
+        row.article ?? row.Article ?? row.gender ?? row.Gender
       );
-    } else {
-      console.log(`CSV loaded: ${items.length} row(s) normalized (of ${parsed.rows.length} raw).`);
+      const tags = Array.isArray(row.tags)
+        ? row.tags
+        : normalizeStr(row.tags)
+            .split(",")
+            .map((t) => t.trim())
+            .filter(Boolean);
+      const ex = row.example ?? row.Example ?? row.ex ?? "";
+
+      if (!fr || !en) return null;
+
+      return {
+        fr,
+        en,
+        article: normalizeArticle(fr, rawArticle),
+        // keep gender optional if you want
+        gender: ["m", "masc", "masculin"].includes(rawArticle.toLowerCase())
+          ? "m"
+          : ["f", "fem", "féminin", "feminin", "feminine"].includes(
+              rawArticle.toLowerCase()
+            )
+          ? "f"
+          : "",
+        example: coerceExample(ex),
+        tags,
+      };
     }
-  } catch (e) {
-    alert('Failed to read CSV: ' + (e.message || e));
-  } finally {
-    if (evt?.target) evt.target.value = '';
-  }
-}
 
+    // helpers (top of app.js near your other helpers)
+    const normalizeStr = (s) => (s ?? "").toString().trim();
+    const isVowelStart = (s) => /^[aeiouhâêîôûéèëïüAEIOUH]/.test(s || "");
 
-async function saveVocabListsToSettings(updater) {
-  const settingsRec = (await db.settings.get('v1')) || { key: 'v1' };
-  const curr = settingsRec.vocabLists && typeof settingsRec.vocabLists === 'object'
-    ? settingsRec.vocabLists
-    : {};
-  const next = typeof updater === 'function' ? updater(curr) : updater || curr;
-  await db.settings.put({ ...settingsRec, vocabLists: next, key: 'v1' });
-}
+    function normalizeArticle(fr, raw) {
+      const a = normalizeStr(raw).toLowerCase();
 
+      // direct articles pass-through (normalize straight apostrophe)
+      if (["le", "la", "l'", "l’", "les"].includes(a))
+        return a === "l'" ? "l’" : a;
 
+      // plural markers
+      if (["pl", "plural", "les"].includes(a)) return "les";
 
+      // mixed gender
+      if (
+        [
+          "mf",
+          "m/f",
+          "m-f",
+          "m&f",
+          "masc/fem",
+          "masculin/féminin",
+          "masculin/feminin",
+        ].includes(a)
+      ) {
+        // show as "le/la" (no elision for mixed)
+        return "le/la";
+      }
+
+      // gendered
+      if (["m", "masc", "masculin"].includes(a))
+        return isVowelStart(fr) ? "l’" : "le";
+      if (["f", "fem", "féminin", "feminin", "feminine"].includes(a))
+        return isVowelStart(fr) ? "l’" : "la";
+
+      return ""; // unknown → no article
+    }
+
+    // Coerce example to a { fr, en } or null; keeps UI consistent
+    function coerceExample(ex) {
+      if (!ex) return null;
+      if (typeof ex === "string") return { fr: ex.trim(), en: "" };
+      if (typeof ex === "object")
+        return { fr: normalizeStr(ex.fr), en: normalizeStr(ex.en) };
+      return null;
+    }
+
+    async function importVocabCsv(evt) {
+      console.log("[CSV]", { file: evt?.target?.files?.[0]?.name });
+      const f = evt?.target?.files?.[0];
+      if (!f) return;
+      try {
+        const txt = await f.text();
+        const parsed = parseCsv(txt);
+        const items = parsed.rows.map(normalizeCsvRow).filter(Boolean);
+
+        state.csv.headers = parsed.headers;
+        state.csv.rows = parsed.rows;
+        state.csv.meta = {
+          delimiter: parsed.delimiter,
+          total: parsed.rows.length,
+          normalized: items.length,
+        };
+
+        state.wordPicker.items = items;
+        state.wordPicker.selected = {};
+        items.forEach((_, i) => (state.wordPicker.selected[i] = true));
+        if (!state.wordPicker.listName) {
+          state.wordPicker.listName =
+            new Date().toISOString().slice(0, 10) + " list";
+        }
+
+        if (!items.length) {
+          alert(
+            `CSV loaded but 0 usable rows.\n\n` +
+              `Detected delimiter: "${parsed.delimiter}"\n` +
+              `Headers: [${parsed.headers.join(", ")}]\n\n` +
+              `Expected headers include EN/FR/article (case-insensitive). ` +
+              `You can also use english/french/front/back or det/déterminant.`
+          );
+        } else {
+          console.log(
+            `CSV loaded: ${items.length} row(s) normalized (of ${parsed.rows.length} raw).`
+          );
+        }
+      } catch (e) {
+        alert("Failed to read CSV: " + (e.message || e));
+      } finally {
+        if (evt?.target) evt.target.value = "";
+      }
+    }
+
+    async function saveVocabListsToSettings(updater) {
+      const settingsRec = (await db.settings.get("v1")) || { key: "v1" };
+      const curr =
+        settingsRec.vocabLists && typeof settingsRec.vocabLists === "object"
+          ? settingsRec.vocabLists
+          : {};
+      const next =
+        typeof updater === "function" ? updater(curr) : updater || curr;
+      await db.settings.put({ ...settingsRec, vocabLists: next, key: "v1" });
+    }
 
     function togglePickAll(flag) {
       const sel = {};
@@ -2368,142 +2578,183 @@ async function saveVocabListsToSettings(updater) {
       state.wordPicker.selected = sel;
     }
 
-async function savePickedAsList(pickedIdxArr){
-  const name = (state.wordPicker.listName || '').trim();
-  if (!name) { alert('Please enter a list name.'); return; }
+    async function savePickedAsList(pickedIdxArr) {
+      const name = (state.wordPicker.listName || "").trim();
+      if (!name) {
+        alert("Please enter a list name.");
+        return;
+      }
 
-  // indices from filteredItems (if passed) or from checkboxes
-  let indices;
-  if (Array.isArray(pickedIdxArr) && pickedIdxArr.length) {
-    indices = pickedIdxArr;
-  } else {
-    indices = Object.entries(state.wordPicker.selected)
-      .filter(([,v]) => !!v)
-      .map(([k]) => Number(k));
-  }
+      // indices from filteredItems (if passed) or from checkboxes
+      let indices;
+      if (Array.isArray(pickedIdxArr) && pickedIdxArr.length) {
+        indices = pickedIdxArr;
+      } else {
+        indices = Object.entries(state.wordPicker.selected)
+          .filter(([, v]) => !!v)
+          .map(([k]) => Number(k));
+      }
 
-  // Build normalized entries
-  const picked = indices
-    .map(i => state.wordPicker.items[i])
-    .filter(Boolean)
-    .map(it => ({
-      fr: (it.fr || '').trim(),
-      en: (it.en || '').trim(),
-      article: (it.article || '').trim(),
-      example: coerceExample(it.example),
-      tags: Array.isArray(it.tags) ? it.tags : []
-    }));
+      // Build normalized entries
+      const picked = indices
+        .map((i) => state.wordPicker.items[i])
+        .filter(Boolean)
+        .map((it) => ({
+          fr: (it.fr || "").trim(),
+          en: (it.en || "").trim(),
+          article: (it.article || "").trim(),
+          example: coerceExample(it.example),
+          tags: Array.isArray(it.tags) ? it.tags : [],
+        }));
 
-  if (!picked.length){ alert('No words selected.'); return; }
+      if (!picked.length) {
+        alert("No words selected.");
+        return;
+      }
 
-  await saveVocabListsToSettings(curr => ({ ...curr, [name]: picked }));
+      await saveVocabListsToSettings((curr) => ({ ...curr, [name]: picked }));
 
-  // Mark this as the active Review list and mirror into UI
-  const settings = (await db.settings.get('v1')) || { key: 'v1' };
-  await db.settings.put({ ...settings, activeReviewList: name, key: 'v1' });
-  state.wordPicker.activeList = name;
+      // Mark this as the active Review list and mirror into UI
+      const settings = (await db.settings.get("v1")) || { key: "v1" };
+      await db.settings.put({ ...settings, activeReviewList: name, key: "v1" });
+      state.wordPicker.activeList = name;
 
-  alert(`Saved list "${name}" with ${picked.length} items.`);
-}
-
+      alert(`Saved list "${name}" with ${picked.length} items.`);
+    }
 
     // === Load a saved sub-list straight into Review (non-SRS) ===
 
-// Load a saved sub-list straight into Review (non-SRS)
-async function loadListIntoReview(name){
-  const settings = (await db.settings.get('v1')) || { key: 'v1' };
-  await db.settings.put({ ...settings, activeReviewList: name || '', key: 'v1' });
+    // Load a saved sub-list straight into Review (non-SRS)
+    async function loadListIntoReview(name) {
+      const settings = (await db.settings.get("v1")) || { key: "v1" };
+      await db.settings.put({
+        ...settings,
+        activeReviewList: name || "",
+        key: "v1",
+      });
 
-  const list = settings?.vocabLists?.[name];
+      const list = settings?.vocabLists?.[name];
 
-  // If blank or missing, keep current deck (lets app fall back during initial hydration)
-  if (!Array.isArray(list) || !list.length) {
-    console.log(`[Lists] loadListIntoReview: list "${name}" not found or empty; keeping existing deck.`);
-    return;
-  }
+      // If blank or missing, keep current deck (lets app fall back during initial hydration)
+      if (!Array.isArray(list) || !list.length) {
+        console.log(
+          `[Lists] loadListIntoReview: list "${name}" not found or empty; keeping existing deck.`
+        );
+        return;
+      }
 
-  const cards = list.map(it => ({
-    id: null,
-    fr: (it.fr || '').trim(),
-    en: (it.en || '').trim(),
-    article: (it.article || '').trim(),
-    example: coerceExample(it.example),
-    tags: Array.isArray(it.tags) ? it.tags : [],
-    source: 'list:' + name
-  })).filter(c => c.fr && c.en);
+      const cards = list
+        .map((it) => ({
+          id: null,
+          fr: (it.fr || "").trim(),
+          en: (it.en || "").trim(),
+          article: (it.article || "").trim(),
+          example: coerceExample(it.example),
+          tags: Array.isArray(it.tags) ? it.tags : [],
+          source: "list:" + name,
+        }))
+        .filter((c) => c.fr && c.en);
 
-  state.vocab.cards = cards;
-  // IMPORTANT: call your deck builder correctly
-  if (typeof Vocab?.buildVocabDeck === 'function') Vocab.buildVocabDeck(state);
-  else { state.vocab.deck = [...state.vocab.cards]; state.vocab.deckPtr = 0; }
-await saveReviewPointer();    
-  state.tab = 'learn';
-}
+      state.vocab.cards = cards;
+      // IMPORTANT: call your deck builder correctly
+      if (typeof Vocab?.buildVocabDeck === "function")
+        Vocab.buildVocabDeck(state);
+      else {
+        state.vocab.deck = [...state.vocab.cards];
+        state.vocab.deckPtr = 0;
+      }
+      await saveReviewPointer();
+      state.tab = "learn";
+    }
 
     // === Load a saved list into SRS (Dexie-backed) ===f
-async function loadListIntoSrs(name){
-  const settings = (await db.settings.get('v1')) || { key: 'v1' };
-  const list = settings?.vocabLists?.[name];
-  if (!Array.isArray(list) || !list.length) { alert('List not found or empty.'); return; }
+    async function loadListIntoSrs(name) {
+      const settings = (await db.settings.get("v1")) || { key: "v1" };
+      const list = settings?.vocabLists?.[name];
+      if (!Array.isArray(list) || !list.length) {
+        alert("List not found or empty.");
+        return;
+      }
 
-  const nowISO = new Date().toISOString();
-  const existing = await db.vocab.toArray();
-  const keyOf = (front, back) => (front||'').toLowerCase().trim() + '␟' + (back||'').toLowerCase().trim();
-  const have = new Set(existing.map(r => keyOf(r.front || r.fr, r.back || r.en)));
+      const nowISO = new Date().toISOString();
+      const existing = await db.vocab.toArray();
+      const keyOf = (front, back) =>
+        (front || "").toLowerCase().trim() +
+        "␟" +
+        (back || "").toLowerCase().trim();
+      const have = new Set(
+        existing.map((r) => keyOf(r.front || r.fr, r.back || r.en))
+      );
 
-  const toAdd = [];
-  for (const it of list){
-    const fr = (it.fr||'').trim(), en = (it.en||'').trim();
-    if (!fr || !en) continue;
-    const k = keyOf(fr, en);
-    if (have.has(k)) continue;
-toAdd.push(sanitizeSrsRow({
-  front: fr, back: en,            // SRS core
-  fr, en,
-  article: it.article || '',
-  example: it.example || null,
-  tags: Array.isArray(it.tags) ? it.tags : [],
-  due: nowISO, ease: 2.5, reps: 0, interval: 0, last: nowISO
-}));
+      const toAdd = [];
+      for (const it of list) {
+        const fr = (it.fr || "").trim(),
+          en = (it.en || "").trim();
+        if (!fr || !en) continue;
+        const k = keyOf(fr, en);
+        if (have.has(k)) continue;
+        toAdd.push(
+          sanitizeSrsRow({
+            front: fr,
+            back: en, // SRS core
+            fr,
+            en,
+            article: it.article || "",
+            example: it.example || null,
+            tags: Array.isArray(it.tags) ? it.tags : [],
+            due: nowISO,
+            ease: 2.5,
+            reps: 0,
+            interval: 0,
+            last: nowISO,
+          })
+        );
 
-    have.add(k);
-  }
+        have.add(k);
+      }
 
-  if (toAdd.length){
-    try { await db.vocab.bulkAdd(toAdd); }
-    catch { for (const r of toAdd) { try { await db.vocab.add(r); } catch {} } }
-  }
-  if (Vocab?.reloadVocabByTag) await Vocab.reloadVocabByTag(db, state.flashcards);
-  alert(`Loaded "${name}" into SRS: ${toAdd.length} new card(s).`);
-}
+      if (toAdd.length) {
+        try {
+          await db.vocab.bulkAdd(toAdd);
+        } catch {
+          for (const r of toAdd) {
+            try {
+              await db.vocab.add(r);
+            } catch {}
+          }
+        }
+      }
+      if (Vocab?.reloadVocabByTag)
+        await Vocab.reloadVocabByTag(db, state.flashcards);
+      alert(`Loaded "${name}" into SRS: ${toAdd.length} new card(s).`);
+    }
 
-
-// ==================== END TAGS = NEW SET(), ====================
+    // ==================== END TAGS = NEW SET(), ====================
     // -------------------- Boot --------------------
     loadAll();
 
     // Expose refs & methods to template
     const refs = toRefs(state);
     return {
-  ...refs,
-  state,
-  methods,
-  tagPills,
-  // expose helpers the templates use
-  renderFr,
-  toggleVocabPill,
-  clearVocabPills,
-  clearAllVocabPills,
-  applyVocabPillFilter,
-  // CSV & Word Picker
-  importVocabCsv,
-  togglePickAll,
-  savePickedAsList,
-  loadListIntoSrs,
-  loadListIntoReview,
-};
+      ...refs,
+      state,
+      methods,
+      tagPills,
+      // expose helpers the templates use
+      renderFr,
+      toggleVocabPill,
+      clearVocabPills,
+      clearAllVocabPills,
+      applyVocabPillFilter,
+      // CSV & Word Picker
+      importVocabCsv,
+      togglePickAll,
+      savePickedAsList,
+      loadListIntoSrs,
+      loadListIntoReview,
+    };
 
-// ==================== END }); ====================
+    // ==================== END }); ====================
   },
 });
 

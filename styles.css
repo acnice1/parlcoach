@@ -1494,3 +1494,5 @@ a:hover, button.link:hover {
   .ex-en{ color: rgba(255,255,255,.75); }
   .example-block::before{ background: var(--ex-accent, #7aa2ff); }
 }
+button.danger { background:#b91c1c; color:#fff; }
+button.danger:hover { filter:brightness(1.05); }

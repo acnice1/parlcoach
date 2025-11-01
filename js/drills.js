@@ -1,15 +1,11 @@
 // js/drills.js
 import { clamp, toArr } from './utils.js';
+import * as DB from './db.js?v=2';
 
-// drills.js
-import * as DB from './db.js?v=1';
 const COLLATED_URL = DB.COLLATED_URL ?? 'top200_french_verbs_collated.json';
 const RULES_URL    = DB.RULES_URL    ?? 'verb_conjugation_rules.json';
 
-//import { RULES_URL, COLLATED_URL } from './db.js?v=1';
-
-
-export function sm2Schedule(card, q/*0..5*/){
+export function sm2Schedule(card, q/*0..5*/) {
   let ease = card.ease ?? 2.5, reps = card.reps ?? 0, interval = card.interval ?? 0;
   if (q < 3) { reps = 0; interval = 1; }
   else {
@@ -20,17 +16,18 @@ export function sm2Schedule(card, q/*0..5*/){
     if (ease < 1.3) ease = 1.3;
     reps += 1;
   }
-  const now = new Date(); const due = new Date(now); due.setDate(now.getDate()+interval);
+  const now = new Date(); const due = new Date(now); due.setDate(now.getDate() + interval);
   return { ease, reps, interval, due: due.toISOString(), last: now.toISOString() };
 }
-export function fixedSchedule(card, intervalsDays, q){
+
+export function fixedSchedule(card, intervalsDays, q) {
   let reps = card.reps ?? 0; if (q < 3) reps = 0; else reps += 1;
   const idx = clamp(reps, 0, intervalsDays.length - 1), interval = intervalsDays[idx];
-  const now = new Date(); const due = new Date(now); due.setDate(now.getDate()+interval);
+  const now = new Date(); const due = new Date(now); due.setDate(now.getDate() + interval);
   return { ease: 2.5, reps, interval, due: due.toISOString(), last: now.toISOString() };
 }
 
-export async function loadDataset(){
+export async function loadDataset() {
   try {
     const res = await fetch(COLLATED_URL, { cache: 'no-store' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -47,7 +44,7 @@ export async function loadDataset(){
   }
 }
 
-export async function loadRules(){
+export async function loadRules() {
   try {
     const res = await fetch(RULES_URL, { cache: 'no-store' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -58,7 +55,7 @@ export async function loadRules(){
   }
 }
 
-export async function saveDrillPrefs(db, state){
+export async function saveDrillPrefs(db, state) {
   const prefs = state.drillPrefs;
   const base = (typeof Vue !== 'undefined' && Vue.toRaw) ? Vue.toRaw(prefs) : prefs;
 
@@ -76,7 +73,7 @@ export async function saveDrillPrefs(db, state){
     acceptAposVariants: !!base.acceptAposVariants,
     maxQuestions: typeof base.maxQuestions === 'number' ? base.maxQuestions : Number(base.maxQuestions) || 10,
     autoNext: !!base.autoNext,
-    tenses: Array.isArray(base.tenses) ? base.tenses.slice() : []
+    tenses: Array.isArray(base.tenses) ? base.tenses.slice() : [],
   };
 
   const storable = (typeof structuredClone === 'function')
@@ -86,7 +83,7 @@ export async function saveDrillPrefs(db, state){
   await db.drill.put(storable);
 }
 
-export function scoreClass(total, right){
+export function scoreClass(total, right) {
   if (!total) return 'default';
   const pct = (right / total) * 100;
   if (pct >= 80) return 'good';
