@@ -1,3 +1,13 @@
+/**
+ * app.js — Readability pass v1 (safe)
+ * - No logic changes to functions.
+ * - Only comment banner + reordering inside `const methods = {
+
+  // -- Other ----------------------------------------------------------------------
+  ...
+`.
+ * - Methods regrouped by domain for scan-ability; bodies unchanged.
+ */
 // app.js (rebuilt, with UI toggle persistence + Vocab pills without Gender)
 import {
    loadSettings,
