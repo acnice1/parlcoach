@@ -1932,6 +1932,7 @@ async deleteSavedList(listName) {
     delete lists[listName];
     await db.settings.put({ ...settingsRec, vocabLists: lists, key: "v1" });
 
+
     // Refresh savedLists in UI
   
 
@@ -1987,8 +1988,9 @@ async loadListIntoSrs(listName) {
       if (existing) {
         // Don't change scheduling; just union tags if present
         const mergedTags = Array.from(
-          new Set([...(existing.tags || []), ...tags].filter(Boolean))
+          new Set([...(existing.tags || []), ...(tags || [])].filter(Boolean))
         );
+
         await db.vocab.update(existing.id, { tags: mergedTags });
         return existing.id;
       } else {

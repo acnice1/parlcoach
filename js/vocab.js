@@ -29,6 +29,7 @@ export function currentVocabCard(state) { return state.vocab.deck[state.vocab.de
 
 export function buildVocabDeck(state) {
   const src = Array.isArray(state.vocab.cards) ? [...state.vocab.cards] : [];
+
   if (state.vocab.prefs.randomize) shuffleInPlace(src);
   state.vocab.deck = src;
   state.vocab.deckPtr = 0;       // stay pure; app.js will persist

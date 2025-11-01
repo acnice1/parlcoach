@@ -174,31 +174,68 @@ const VocabPanel = {
   </div>
 
     <!-- Flashcards (SRS) -->
-  <div v-if="state.vocabMode==='flashcards'">
-    <div v-if="state.flashcards.dueCards.length" class="card" style="margin-top:16px;">
-    <div class="front">
-    {{ methods.renderFr
-        ? methods.renderFr({ fr: (state.flashcards.currentCard.fr || state.flashcards.currentCard.front),
-                            article: state.flashcards.currentCard.article })
-        : (state.flashcards.currentCard.front) }}
-  </div>
-    <div class="back" v-if="state.flashcards.showBack">{{ state.flashcards.currentCard.back }}</div>
-      <div class="card-actions">
-        <button v-if="!state.flashcards.showBack" @click="state.flashcards.showBack=true">Show</button>
-        <template v-else>
-          <button @click="methods.rate(0)">Again</button>
-          <button @click="methods.rate(3)">Hard</button>
-          <button @click="methods.rate(4)">Good</button>
-          <button @click="methods.rate(5)">Easy</button>
-        </template>
-        <span v-if="state.ui.showVocabTags && state.flashcards.currentCard?.tags?.length" class="answer">
-          tags: {{ state.flashcards.currentCard.tags.join(', ') }}
-        </span>
-      </div>
-      <div class="meta">
-        Due: {{ state.flashcards.dueCards.length }} • Total: {{ state.flashcards.counts.total }} • Learned: {{ state.flashcards.counts.learned }}
-      </div>
+ <!-- Flashcards (SRS) – SAME CARD LAYOUT AS REVIEW -->
+<div v-if="state.vocabMode==='flashcards'">
+  <div class="vocab-card" v-if="state.flashcards.currentCard">
+    <div class="fr boxy">
+      {{ methods.renderFr
+          ? methods.renderFr({
+              fr: (state.flashcards.currentCard.fr || state.flashcards.currentCard.front),
+              article: state.flashcards.currentCard.article
+            })
+          : (state.flashcards.currentCard.front) }}
     </div>
+
+    <!-- Show EN only after “Show” (mirrors Review’s EN block & showEnglishTranslation) -->
+    <div class="en boxy"
+         v-if="state.flashcards.showBack && state.showEnglishTranslation">
+      {{ state.flashcards.currentCard.back }}
+    </div>
+
+    <!-- Example block — same pattern as Review -->
+    <div
+      v-if="state.flashcards.currentCard.example"
+      class="example-block"
+      role="note"
+      aria-label="Exemple"
+    >
+      <span class="ex-label">Exemple</span>
+
+      <template v-if="typeof state.flashcards.currentCard.example==='string'">
+        <p class="ex-fr">« {{ state.flashcards.currentCard.example }} »</p>
+      </template>
+      <template v-else>
+        <p v-if="state.flashcards.currentCard.example?.fr" class="ex-fr">
+          « {{ state.flashcards.currentCard.example.fr }} »
+        </p>
+        <p v-if="state.showEnglishTranslation && state.flashcards.currentCard.example?.en" class="ex-en">
+          — {{ state.flashcards.currentCard.example.en }}
+        </p>
+      </template>
+    </div>
+
+    <div class="dim"
+         v-if="state.ui.showVocabTags && state.flashcards.currentCard?.tags?.length"
+         style="margin-top:6px;">
+      tags: {{ state.flashcards.currentCard.tags.join(', ') }}
+    </div>
+  </div>
+
+  <!-- Controls mimic Review’s button group, but with Show / rate -->
+  <div class="button-group">
+    <button v-if="!state.flashcards.showBack" @click="state.flashcards.showBack=true">Show</button>
+    <template v-else>
+      <button @click="methods.rate(0)">Again</button>
+      <button @click="methods.rate(3)">Hard</button>
+      <button @click="methods.rate(4)">Good</button>
+      <button @click="methods.rate(5)">Easy</button>
+    </template>
+    <span class="dim" style="margin-left:8px;">
+      Due: {{ state.flashcards.dueCards.length }} • Total: {{ state.flashcards.counts.total }}
+    </span>
+  </div>
+</div>
+
     <p v-else class="empty">No cards due. 🎉 Add more above or go to the <strong>Data</strong> page to import.</p>
   </div>
 
