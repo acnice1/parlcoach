@@ -1504,3 +1504,70 @@ button.danger:hover { filter:brightness(1.05); }
 .toast.success{ border-left:5px solid #22c55e; color:#dcfce7; }
 .toast.warn{    border-left:5px solid #f59e0b; color:#fef9c3; }
 .toast.error{   border-left:5px solid #ef4444; color:#fee2e2; }
+/* ===== Grammar Panel buttons/pills ===== */
+.grammar-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 12px;
+}
+
+.g-btn {
+  border: 1px solid var(--border, #334155);
+  background: var(--surface, hsl(220, 100%, 95%));
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform .06s ease, background .15s ease, border-color .15s ease;
+}
+.g-btn:hover { transform: translateY(-1px); }
+.g-btn:active { transform: translateY(0); }
+.g-btn.active {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 2px rgba(139,92,246,.2) inset;
+}
+
+/* Small utility for right-aligned controls */
+.grammar-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* Inputs in the toolbar */
+.grammar-toolbar input[type="file"],
+.grammar-toolbar input[type="search"] {
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border, #334155);
+  background: var(--surface, #0b1220);
+  color: inherit;
+}
+
+/* Grammar table look (optional) */
+.grammar-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font-size: 14px;
+}
+.grammar-table th,
+.grammar-table td {
+  border-bottom: 1px solid rgba(148,163,184,.15);
+  padding: 8px 10px;
+  vertical-align: top;
+}
+.grammar-table th {
+  text-align: left;
+  font-weight: 600;
+  opacity: .85;
+}
+.grammar-table tr:hover {
+  background: rgba(148,163,184,.06);
+}
+
+/* Dim helper */
+.dim { opacity: .75; }

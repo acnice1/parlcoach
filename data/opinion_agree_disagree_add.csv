@@ -1,0 +1,50 @@
+FR,Article,EN,Example,TAGS
+tout à fait,,absolutely; exactly,"Tout à fait, la mesure renforcera la transparence auprès des citoyens.",opinion;Accord total
+absolument,,absolutely,"Absolument, nous devons publier les indicateurs de performance chaque trimestre.",opinion;Accord total
+je suis (entièrement) d’accord,,I (fully) agree,Je suis entièrement d’accord : il faut simplifier le formulaire de demande.,opinion;Accord total
+je partage cet avis,,I share that view,Je partage cet avis sur la nécessité d’un projet pilote.,opinion;Accord total
+nous sommes sur la même longueur d’onde,,we’re on the same page,Nous sommes sur la même longueur d’onde concernant la gouvernance des données.,opinion;Accord total
+cela va de soi,,that goes without saying,"Que l’accessibilité soit une exigence, cela va de soi.",opinion;Accord total
+c’est indéniable,,that’s undeniable,C’est indéniable : la centralisation simplifie la conformité.,opinion;Accord total
+sans réserve,,unreservedly,J’appuie cette recommandation sans réserve.,opinion;Accord total
+je suis en grande partie d’accord,,I agree for the most part,"Je suis en grande partie d’accord, mais attention aux impacts régionaux.",opinion;Accord partiel/nuancé
+globalement d’accord,,broadly agree,"Globalement d’accord, même si l’échéancier me paraît ambitieux.",opinion;Accord partiel/nuancé
+je vous rejoins sur...,,I agree with you on...,"Je vous rejoins sur la stratégie, sur le budget je resterais prudent.",opinion;Accord partiel/nuancé
+vous avez raison sur...,,you’re right about...,Vous avez raison sur le diagnostic; la solution mérite toutefois d’être précisée.,opinion;Accord partiel/nuancé
+j’en conviens,,I admit/agree to that,"J’en conviens, la communication initiale était insuffisante.",opinion;Accord partiel/nuancé
+je vous accorde que...,,I grant you that...,"Je vous accorde que le risque est réel, mais il reste maîtrisable.",opinion;Accord partiel/nuancé
+je souscris à l’idée que...,,I subscribe to the idea that...,Je souscris à l’idée que l’on priorise les services à fort impact.,opinion;Accord partiel/nuancé
+"c’est pertinent, toutefois...",,"that’s relevant, however...","C’est pertinent, toutefois il faudra consulter les partenaires autochtones.",opinion;Accord partiel/nuancé
+je ne suis pas d’accord,,I do not agree,Je ne suis pas d’accord : le modèle proposé accroît la dette technique.,opinion;Désaccord
+je ne partage pas cet avis,,I don’t share that view,Je ne partage pas cet avis sur l’externalisation complète.,opinion;Désaccord
+je m’inscris en faux,,I must object/contest (formal),Je m’inscris en faux contre l’idée que cela réduira les coûts à court terme.,opinion;Désaccord
+je conteste,,I dispute,Je conteste la conclusion : l’échantillon est trop limité.,opinion;Désaccord
+je ne peux pas souscrire à,,I cannot endorse,Je ne peux pas souscrire à cette approche sans analyse de sécurité.,opinion;Désaccord
+je réfute,,I refute,Je réfute le lien de causalité avancé entre ces deux variables.,opinion;Désaccord
+c’est inexact,,that’s inaccurate,C’est inexact : la directive n’impose pas cette contrainte.,opinion;Désaccord
+je ne suis pas certain que...,,I’m not certain that...,Je ne suis pas certain que cette option respecte nos capacités actuelles.,opinion;Désaccord nuancé
+je reste sceptique,,I remain skeptical,Je reste sceptique quant aux économies annoncées.,opinion;Désaccord nuancé
+j’émettrais une réserve,,I’d express a reservation,J’émettrais une réserve sur la faisabilité avant mars.,opinion;Désaccord nuancé
+ce point est discutable,,this point is debatable,Ce point est discutable au vu des données disponibles.,opinion;Désaccord nuancé
+il me semble que...,,it seems to me that...,Il me semble que les risques d’intégration sont sous-estimés.,opinion;Désaccord nuancé
+je ne suis pas convaincu,,I’m not convinced,Je ne suis pas convaincu que le bénéfice justifie l’effort.,opinion;Désaccord nuancé
+permets-moi de nuancer,,allow me to nuance that,Permets-moi de nuancer : l’impact n’est pas homogène selon les régions.,opinion;Désaccord nuancé
+avec tout le respect,,with all due respect,"Avec tout le respect, la conclusion me paraît prématurée.",opinion;Désaccord nuancé
+"je comprends votre point, mais...",,"I understand your point, but...","Je comprends votre point, mais la conformité demeure prioritaire.",opinion;Reconnaître puis nuancer
+"je prends acte de..., toutefois...",,"I take note of..., however...","Je prends acte des résultats, toutefois l’échantillon est restreint.",opinion;Reconnaître puis nuancer
+tout en reconnaissant que...,,while acknowledging that...,"Tout en reconnaissant que le délai est court, on peut livrer en phases.",opinion;Reconnaître puis nuancer
+"je vous rejoins sur X, mais sur Y...",,"I agree on X, but on Y...","Je vous rejoins sur la cible, mais sur la méthode je diverge.",opinion;Reconnaître puis nuancer
+"certes..., mais...",,"admittedly..., but...","Certes les coûts initiaux sont élevés, mais le TCO baisse ensuite.",opinion;Reconnaître puis nuancer
+"soit..., toutefois...",,"granted..., however...","Soit, la démarche est ambitieuse; toutefois, il manque un plan de relève.",opinion;Reconnaître puis nuancer
+de plus,,in addition,"De plus, la charte sera mise à jour d’ici la fin du mois.",opinion;Ajouter une information
+en outre,,furthermore (formal),"En outre, nous publierons un guide d’accessibilité.",opinion;Ajouter une information
+par ailleurs,,moreover/elsewhere,"Par ailleurs, le comité propose un indicateur de satisfaction.",opinion;Ajouter une information
+à cela s’ajoute...,,in addition comes...,À cela s’ajoute la question de l’archivage légal.,opinion;Ajouter une information
+s’ajoute que...,,it should be added that...,S’ajoute que les licences actuelles expirent en juin.,opinion;Ajouter une information
+j’ajouterais que...,,I would add that...,J’ajouterais que l’équipe a déjà l’expertise requise.,opinion;Ajouter une information
+j’aimerais préciser que...,,I’d like to clarify that...,J’aimerais préciser que l’analyse inclut les coûts récurrents.,opinion;Ajouter une information
+pour compléter,,to complete/add,"Pour compléter, un tableau comparatif sera annexé.",opinion;Ajouter une information
+à noter que...,,note that...,À noter que la phase 2 dépend du financement additionnel.,opinion;Ajouter une information
+sans oublier...,,not to mention...,Sans oublier les exigences de cybersécurité pour les fournisseurs.,opinion;Ajouter une information
+il convient d’ajouter que...,,it should be added that (formal),Il convient d’ajouter que la norme WCAG 2.2 s’applique.,opinion;Ajouter une information
+également,,also,"Également, un calendrier de formation sera diffusé.",opinion;Ajouter une information

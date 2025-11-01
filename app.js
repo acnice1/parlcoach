@@ -20,6 +20,7 @@ import VocabPanel from "./js/components/VocabPanel.js?v=3";
 import RecorderPanel from "./js/components/RecorderPanel.js?v=2";
 import ProfileWidget from "./js/components/ProfileWidget.js?v=2";
 import DataPanel from "./js/components/DataPanel.js?v=6";
+import GrammarPanel from "./js/components/GrammarPanel.js?v=1";
 
 import { initDexie, opfs, TAG_PILL_OPTIONS } from "./js/db.js?v=2";
 import {
@@ -40,6 +41,7 @@ const vueApp = Vue.createApp({
   components: {
     DrillPanel,
     VocabPanel,
+    GrammarPanel, 
     RecorderPanel,
     ProfileWidget,
     DataPanel,
@@ -133,6 +135,7 @@ const vueApp = Vue.createApp({
         vocabTagFilter: "", // keep your tag filter, but scoped to SRS
       },
 
+
       // Top-level tabs
       tab: "learn",
       learnTab: "drills",
@@ -182,6 +185,15 @@ const vueApp = Vue.createApp({
         help: null,
         side: { english: "—", fr: "—", en: "—" },
       },
+
+      // GRAMMAR
+      grammar: {
+  relpron: [],   // normalized rows from prepositional relative pronouns CSV
+  verbprep: [],  // normalized rows from verb+preposition CSV
+  filters: { q: '' },
+  pages: { relpron: 1, verbprep: 1 },
+  pageSize: 20,
+},
 
       // Recorder / Interview bank
       questionBank: [],
@@ -380,7 +392,6 @@ const toast = {
       return entries || [];
     }
 
-    // Fetch/parse one CSV and save it as a named list
     // Fetch/parse one CSV and save it as a named list, with optional meta
     async function importCsvAsList(url, meta = null) {
       const bust = url.includes("?") ? "&" : "?";
@@ -502,7 +513,7 @@ const toast = {
         return new Date().toISOString();
       }
     }
-
+    //  Normalize one CSV row into SRS vocab card shape
     function sanitizeSrsRow(c) {
       // Never pass Vue proxies/refs through; copy only allowed fields
       const row = {
@@ -525,12 +536,12 @@ const toast = {
         gender: (c?.gender || "").trim(),
         tags: sanitizeTags(c?.tags),
       };
-
       // Strip undefined/null to keep the record tight
       return Object.fromEntries(
         Object.entries(row).filter(([_, v]) => v !== undefined)
       );
     }
+
 
     // Auto-resize textarea
     function autosizeTextarea(e) {
@@ -1506,6 +1517,96 @@ const toast = {
 
     // ==================== END } ====================
     // -------------------- Methods --------------------
+      // ---- Grammar normalizers (map various headers to a common shape) ----
+function normRelPronRow(row, idx){
+  const g = (k) => (row[k] ?? row[k.toLowerCase()] ?? '').toString().trim();
+
+  // Expected aliases
+  const fr      = g('form') || g('lequel') || g('fr') || g('laquelle') || g('lesquels') || g('lesquelles');
+  const basePre = g('base_preposition') || g('preposition') || g('prep') || '';
+  const anteced = g('antecedent_type') || g('antecedent') || '';
+  const meaning = g('meaning_short') || g('meaning') || g('en') || '';
+  const notes   = g('notes') || '';
+  const exFr    = g('example_fr') || g('ex_fr') || g('exemple_fr') || '';
+  const exEn    = g('example_en') || g('ex_en') || g('exemple_en') || '';
+
+  // Compose rule text from base preposition / antecedent when present
+  const rule = [basePre && `Base prep: ${basePre}`, anteced && `Antecedent: ${anteced}`]
+    .filter(Boolean).join(' — ');
+
+  if (!fr && !meaning && !exFr) return null;
+  return {
+    _id: 'relpron-'+idx+'-'+(fr||meaning||exFr).slice(0,32),
+    type: 'relpron',
+    fr, en: '',            // some rows may not need EN headword
+    meaning,
+    notes,
+    example_fr: exFr,
+    example_en: exEn,
+    rule
+  };
+}
+
+function normVerbPrepRow(row, idx){
+  const g = (k) => (row[k] ?? row[k.toLowerCase()] ?? '').toString().trim();
+
+  // Expected aliases
+  const verb    = g('verb') || g('verbe') || '';
+  const prep    = g('preposition') || g('prep') || '';
+  const fr      = [verb, prep].filter(Boolean).join(' ');
+  const en      = g('english_meaning') || g('en') || '';
+  const meaning = g('english_meaning') || g('meaning') || g('meaning_short') || '';
+  const notes   = g('notes') || '';
+  const exFr    = g('example_fr') || g('ex_fr') || g('exemple_fr') || '';
+  const exEn    = g('example_en') || g('ex_en') || g('exemple_en') || '';
+  const comp    = g('typical_complement') || '';
+  const clitic  = g('clitic_replacement') || '';
+
+  const rule = [comp && `Complement: ${comp}`, clitic && `Clitic: ${clitic}`]
+    .filter(Boolean).join(' — ');
+
+  if (!fr && !en && !meaning && !exFr) return null;
+  return {
+    _id: 'verbprep-'+idx+'-'+(fr||en||meaning||exFr).slice(0,32),
+    type: 'verbprep',
+    fr, en,
+    meaning,
+    notes,
+    example_fr: exFr,
+    example_en: exEn,
+    rule
+  };
+}
+    // kind ∈ {'relpron','verbprep'}
+// Reuses parseCsv(text) already in this file
+async function importGrammarCsv(evt, kind){
+  const f = evt?.target?.files?.[0];
+  if (!f) return;
+  try {
+    const txt = await f.text();
+    const parsed = parseCsv(txt);
+    const rows = parsed.rows || [];
+
+    let normalized;
+    if (kind === 'relpron') {
+      normalized = rows.map((r,i)=>normRelPronRow(r,i)).filter(Boolean);
+      state.grammar.relpron = normalized;
+      state.grammar.pages.relpron = 1;
+      toast?.success?.(`Loaded ${normalized.length} relative-pronoun row(s).`);
+    } else if (kind === 'verbprep') {
+      normalized = rows.map((r,i)=>normVerbPrepRow(r,i)).filter(Boolean);
+      state.grammar.verbprep = normalized;
+      state.grammar.pages.verbprep = 1;
+      toast?.success?.(`Loaded ${normalized.length} verb+preposition row(s).`);
+    } else {
+      toast?.warn?.('Unknown grammar import kind: '+kind);
+    }
+  } catch(e){
+    toast?.error?.('Failed to import CSV: ' + (e.message || e));
+  } finally {
+    if (evt?.target) evt.target.value = '';
+  }
+}
 
     // Vocab pills management
     function toggleIncludeTag(tag) {
@@ -1589,6 +1690,8 @@ const toast = {
       currentVocabCard: () => state.vocab.deck[state.vocab.deckPtr] || null,
       rate,
 
+      // GRAMMAR
+      importGrammarCsv,
       // Vocab rendering + pills
       renderFr,
       toggleVocabPill,

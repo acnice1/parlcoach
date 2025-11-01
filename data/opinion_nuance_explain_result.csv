@@ -1,0 +1,48 @@
+FR,Article,EN,Example,TAGS
+en effet,,indeed; actually (to justify),"Nous avons prolongé la période de consultation; en effet, plusieurs partenaires n’avaient pas reçu l’avis initial.",opinion;Expliquer/justifier
+car,,because (explanatory 'for'),"La décision a été reportée, car le comité attend l’avis juridique.",opinion;Expliquer/justifier
+puisque,,since; as (shared cause),"Puisque les risques sont mieux documentés, nous pouvons simplifier le plan d’atténuation.",opinion;Expliquer/justifier
+étant donné que,,given that,"Étant donné que le financement est confirmé, l’équipe peut lancer le projet pilote.",opinion;Expliquer/justifier
+dans la mesure où,,insofar as,"Dans la mesure où les données sont incomplètes, les résultats doivent être interprétés avec prudence.",opinion;Expliquer/justifier
+compte tenu de,,considering,"Compte tenu de la charge actuelle, nous prioriserons les dossiers à fort impact citoyen.",opinion;Expliquer/justifier
+en raison de,,due to; because of,Le webinaire a été reprogrammé en raison de problèmes techniques.,opinion;Expliquer/justifier
+au vu de,,in light of,"Au vu des commentaires du public, nous ajusterons la rédaction de la directive.",opinion;Expliquer/justifier
+de fait,,in fact; as it happens,"Le service affiche de meilleurs résultats; de fait, le temps d’attente a diminué de moitié.",opinion;Expliquer/justifier
+en fait,,actually; in fact,"On parlait d’une hausse des coûts; en fait, il s’agit surtout d’un réétalement budgétaire.",opinion;Expliquer/justifier
+à vrai dire,,truth be told,"À vrai dire, le gabarit actuel complique la lecture des rapports.",opinion;Expliquer/justifier
+précisément parce que,,precisely because,"Nous renforçons la gouvernance, précisément parce que le périmètre s’élargit.",opinion;Expliquer/justifier
+c’est que…,,the fact is that…,"Nous proposons un échéancier plus long, c’est que la phase de test requiert plus d’essais.",opinion;Expliquer/justifier
+c’est-à-dire (que),,that is to say,"Le service est centralisé, c’est-à-dire que les ministères utiliseront un point d’accès commun.",opinion;Expliquer/justifier
+autrement dit,,in other words,"Le financement est non récurrent; autrement dit, il faudra planifier la pérennité.",opinion;Expliquer/justifier
+à savoir,,namely,"Nous ciblons trois chantiers, à savoir l’accessibilité, la sécurité et la qualité des données.",opinion;Expliquer/justifier
+notamment,,notably,"Le rapport décrit les risques, notamment ceux liés à la confidentialité.",opinion;Expliquer/justifier
+pour rappel,,as a reminder,"Pour rappel, l’appel d’offres doit respecter les lignes directrices en accessibilité.",opinion;Expliquer/justifier
+pour contextualiser,,to provide context,"Pour contextualiser, les retards proviennent surtout de la migration des données historiques.",opinion;Expliquer/justifier
+cela étant,,that said (soft pivot),"La solution est robuste; cela étant, il faudra prévoir un plan de relève.",opinion;Expliquer/justifier
+ceci dit,,that said (soft pivot),"Les indicateurs sont positifs; ceci dit, la satisfaction usager stagne.",opinion;Expliquer/justifier
+or,,now; whereas (logical hinge),"Le volume de requêtes a doublé; or, l’infrastructure actuelle atteint sa limite.",opinion;Expliquer/justifier
+au demeurant,,moreover; incidentally (formal),"La mesure est souhaitable et, au demeurant, conforme aux pratiques exemplaires.",opinion;Expliquer/justifier
+dès lors que,,once; since (formal-causal),"Dès lors que le cadre sera approuvé, nous pourrons publier le guide d’implantation.",opinion;Expliquer/justifier
+faute de,,for lack of,"Faute de ressources spécialisées, nous échelonnerons l’intégration sur deux trimestres.",opinion;Expliquer/justifier
+donc,,so; therefore,"Les essais sont concluants; donc, la mise en production aura lieu lundi.",opinion;Conséquence/résultat
+ainsi,,thus,"Les accès sont consolidés; ainsi, les usagers n’ont plus qu’un seul identifiant.",opinion;Conséquence/résultat
+par conséquent,,consequently,"Les critères ont changé; par conséquent, certains projets seront reclassés.",opinion;Conséquence/résultat
+en conséquence,,accordingly (formal),"Le mandat a évolué; en conséquence, la charte du projet sera mise à jour.",opinion;Conséquence/résultat
+de ce fait,,as a result,"La formation a été renforcée; de ce fait, les erreurs de saisie diminuent.",opinion;Conséquence/résultat
+dès lors,,from that point; therefore,"Le financement est confirmé; dès lors, nous pouvons recruter.",opinion;Conséquence/résultat
+il s’ensuit que,,it follows that,Les exigences ont été élargies; il s’ensuit que le calendrier doit être ajusté.,opinion;Conséquence/résultat
+de sorte que,,so that; with the result that,"Nous avons clarifié le formulaire, de sorte que les demandes incomplètes sont rares.",opinion;Conséquence/résultat
+si bien que,,so much so that,"La campagne a été très visible, si bien que le volume de requêtes a triplé.",opinion;Conséquence/résultat
+à tel point que,,to such an extent that,Le service est utilisé à tel point que nous devons élargir la capacité.,opinion;Conséquence/résultat
+au point que,,to the point that,"Les gains d’efficacité sont réels, au point que les délais sont divisés par deux.",opinion;Conséquence/résultat
+ce qui fait que,,which means that,"Le périmètre s’élargit, ce qui fait que la gouvernance doit être précisée.",opinion;Conséquence/résultat
+avec pour effet de,,with the effect of,"Nous avons consolidé les systèmes, avec pour effet de réduire les coûts de maintenance.",opinion;Conséquence/résultat
+aboutissant à,,resulting in,"Une meilleure coordination, aboutissant à des décisions plus rapides.",opinion;Conséquence/résultat
+entraîne,,leads to,La rotation du personnel entraîne une perte de connaissances tacites.,opinion;Conséquence/résultat
+engendre,,gives rise to,L’absence de normes engendre des écarts de qualité.,opinion;Conséquence/résultat
+implique que,,implies that,Le virage produit implique que les équipes partagent une feuille de route commune.,opinion;Conséquence/résultat
+débouche sur,,culminates in; leads to,La consolidation des données débouche sur des tableaux de bord plus fiables.,opinion;Conséquence/résultat
+du coup,,so; as a result (informal),"Une panne est survenue; du coup, nous prolongeons le délai de dépôt.",opinion;Conséquence/résultat
+pour finir,,ultimately,"Nous avons testé plusieurs options et, pour finir, retenu la solution la plus simple.",opinion;Conséquence/résultat
+au final,,in the end,"Au final, les économies dépassent les prévisions initiales.",opinion;Conséquence/résultat
+in fine,,in the end (formal),"In fine, la réforme améliore l’accès aux services.",opinion;Conséquence/résultat

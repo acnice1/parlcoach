@@ -38,43 +38,28 @@
 
       <main class="view">
         <!-- ==================== LEARN ==================== -->
-        <section v-if="tab==='learn'" class="panel">
-          <!-- Learn sub-tabs -->
-          <nav class="subtabs">
-            <button
-              :class="{active: learnTab==='drills'}"
-              @click="learnTab='drills'"
-            >
-              Verb Drills
-            </button>
-            <button
-              :class="{active: learnTab==='vocab'}"
-              @click="learnTab='vocab'"
-            >
-              Vocab
-            </button>
-           <!-- <button
-              :class="{active: learnTab==='myverbs'}"
-              @click="learnTab='myverbs'"
-            >
-              My Verbs
-            </button>
-            <button
-              :class="{active: learnTab==='seedverbs'}"
-              @click="learnTab='seedverbs'"
-            >
-              Seed (Top 200)
-            </button> -->
-          </nav>
+<!-- ==================== LEARN ==================== -->
+<section v-if="tab==='learn'" class="panel">
+  <nav class="subtabs">
+    <button :class="{active: learnTab==='drills'}"  @click="learnTab='drills'">Verb Drills</button>
+    <button :class="{active: learnTab==='vocab'}"   @click="learnTab='vocab'">Vocab</button>
+    <button :class="{active: learnTab==='grammar'}" @click="learnTab='grammar'">Grammar</button>
+    <!-- optional -->
+  </nav>
 
-<div v-if="learnTab==='drills'">
-  <drill-panel :state="state" :methods="methods"></drill-panel>
-</div>
+  <div v-if="learnTab==='drills'">
+    <drill-panel :state="state" :methods="methods"></drill-panel>
+  </div>
 
-          <!-- ==================== VOCAB ==================== -->
-          <div v-else-if="learnTab==='vocab'">
-            <vocab-panel :state="state" :methods="methods"></vocab-panel>
-          </div>
+  <div v-else-if="learnTab==='vocab'">
+    <vocab-panel :state="state" :methods="methods"></vocab-panel>
+  </div>
+
+  <div v-else-if="learnTab==='grammar'">
+    <grammar-panel :state="state" :methods="methods"></grammar-panel>
+  </div>
+
+</section>
 
           <!-- ==================== MY VERBS ==================== -->
           <div v-else-if="learnTab==='myverbs'">
@@ -146,6 +131,17 @@
             </div>
           </div>
         </section>
+
+                  <!-- ==================== VOCAB ==================== -->
+          <div v-else-if="learnTab==='vocab'">
+            <vocab-panel :state="state" :methods="methods"></vocab-panel>
+          </div>
+
+          <!-- ==================== GRAMMAR ==================== -->
+<div v-else-if="learnTab==='grammar'">
+  <grammar-panel :state="state" :methods="methods"></grammar-panel>
+</div>
+
 
         <!-- ==================== RECORD ==================== -->
         <section v-if="tab==='record'" class="panel">
@@ -341,21 +337,21 @@
         </div>
       </main>
 
-            </main>
-
       <!-- Toast stack (click to dismiss) -->
-      <div class="toast-stack" aria-live="polite" aria-atomic="true">
-        <div v-for="t in toasts"
-             :key="t.id"
-             class="toast"
-             :class="t.type"
-             role="status"
-             @click="dismissToast(t.id)"
-             title="Click to dismiss">
-          <span class="toast-dot" aria-hidden="true"></span>
-          <span>{{ t.msg }}</span>
-        </div>
-      </div>
+<!-- Toast stack (click to dismiss) -->
+<div class="toast-stack" aria-live="polite" aria-atomic="true">
+  <div v-for="t in state.toasts"
+       :key="t.id"
+       class="toast"
+       :class="t.type"
+       role="status"
+       @click="dismissToast(t.id)"
+       title="Click to dismiss">
+    <span class="toast-dot" aria-hidden="true"></span>
+    <span>{{ t.msg }}</span>
+  </div>
+</div>
+
 
     </div>
 
