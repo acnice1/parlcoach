@@ -64,6 +64,10 @@ const vueApp = Vue.createApp({
 
     // ------------------------- STATE -------------------------
     const state = reactive({
+
+      // transient notifications (info/success/warn/error)
+
+      toasts: [], 
       // Profile + stats
       profileName: "",
       globalStats: {
@@ -242,12 +246,27 @@ const vueApp = Vue.createApp({
     // ==================== END STATE ====================
     // -------------------- Generic helpers --------------------
 
-    // === Auto-import all CSVs from /data into Saved Lists =======================
+    //  -- Toast notifications (transient) ---  
+    function pushToast(msg, type = 'info', ms = 2400) {
+  const id = crypto?.randomUUID?.() || Math.random().toString(36).slice(2);
+  state.toasts.push({ id, msg: String(msg), type, ts: Date.now() });
+  setTimeout(() => {
+    const i = state.toasts.findIndex(t => t.id === id);
+    if (i > -1) state.toasts.splice(i, 1);
+  }, ms);
+}
+function dismissToast(id) {
+  const i = state.toasts.findIndex(t => t.id === id);
+  if (i > -1) state.toasts.splice(i, 1);
+}
+const toast = {
+  info:   (m, ms) => pushToast(m, 'info',   ms),
+  success:(m, ms) => pushToast(m, 'success',ms),
+  warn:   (m, ms) => pushToast(m, 'warn',   ms),
+  error:  (m, ms) => pushToast(m, 'error',  ms),
+};
 
-    // Attempt to list .csv files under /data via an index json or directory listing
-    // === Discover /data entries with metadata from data/index.json ===============
-    // Returns [{ file, name, description }]
-    // Put this ABOVE both saveVocabListsToSettings and reconcileVocabMetaFromIndex
+   // CSV parser (simple, no quotes/escapes)
     async function refreshSavedListsUI() {
       try {
         const s = (await db.settings.get("v1")) || { key: "v1" };
@@ -284,6 +303,7 @@ const vueApp = Vue.createApp({
     // make it visible even if something calls window.refreshSavedListsUI()
     window.refreshSavedListsUI = refreshSavedListsUI;
 
+    // List .csv entries under /data via index.json or directory listing
     async function listDataEntries() {
       async function tryJson(url) {
         try {
@@ -732,7 +752,7 @@ const vueApp = Vue.createApp({
       if (state.speech.isOn) return;
       const r = getRecognizer();
       if (!r) {
-        alert(
+        toast.error(
           "SpeechRecognition not supported in this browser. Try Chrome/Edge on https://"
         );
         return;
@@ -1638,7 +1658,7 @@ const vueApp = Vue.createApp({
           const txt = await f.text();
           await methods.importQuestionBankFromText(txt);
         } catch (e) {
-          alert("Failed to read file: " + (e.message || e));
+          toast.error("Failed to read file: " + (e.message || e));
         } finally {
           evt.target.value = "";
         }
@@ -1672,7 +1692,7 @@ const vueApp = Vue.createApp({
         if (state.isRecording) return;
         try {
           if (!navigator.mediaDevices?.getUserMedia) {
-            alert("Recording not supported in this browser.");
+            toast.error("Recording not supported in this browser.");
             return;
           }
           const stream = await navigator.mediaDevices.getUserMedia({
@@ -1695,7 +1715,7 @@ const vueApp = Vue.createApp({
           };
           mr.onerror = (e) => {
             console.error("[Recorder] error", e);
-            alert(
+            toast.error(
               "Recorder error: " + (e.error?.message || e.message || e.name)
             );
             try {
@@ -1743,7 +1763,7 @@ const vueApp = Vue.createApp({
           mr.start();
         } catch (err) {
           console.error("[Recorder] start failed", err);
-          alert("Microphone permission was denied or unavailable.");
+          toast.error("Microphone permission was denied or unavailable.");
           state.isRecording = false;
         }
       },
@@ -1815,7 +1835,7 @@ const vueApp = Vue.createApp({
         const q = buildQuestion();
         if (!q) {
           state.drillSession.running = false;
-          alert(
+          toast.warn(
             "No drillable items. Add verbs or adjust filters/tenses/persons."
           );
           return;
@@ -1894,7 +1914,7 @@ const vueApp = Vue.createApp({
 
             // Truly no drillable items → stop, but keep the original helpful alert
             state.drillSession.running = false;
-            alert("No more questions available with current filters.");
+            toast.warn("No more questions available with current filters.");
             return;
           }
 
@@ -1933,7 +1953,7 @@ const vueApp = Vue.createApp({
 
           const resp = await fetch("general_vocab.json?v=" + Date.now());
           if (!resp.ok) {
-            alert("Failed to fetch general_vocab.json: " + resp.status);
+            toast.error("Failed to fetch general_vocab.json: " + resp.status);
             return;
           }
           const raw = await resp.json();
@@ -1943,7 +1963,7 @@ const vueApp = Vue.createApp({
             ? raw.vocab
             : [];
           if (!arr.length) {
-            alert("general_vocab.json has no entries.");
+            toast.error("general_vocab.json has no entries.");
             return;
           }
 
@@ -2129,7 +2149,7 @@ const vueApp = Vue.createApp({
           rebuildVocabPillsFromCards(state.vocab.cards || []);
           applyVocabPillFilter();
 
-          alert(
+          toast.success(
             `Imported ${incoming.length} entries; added ${addedSrs} new SRS cards (both directions, deduped; metadata merged).`
           );
 
@@ -2138,7 +2158,7 @@ const vueApp = Vue.createApp({
           state.learnTab = "vocab";
         } catch (e) {
           console.error(e);
-          alert("Import failed: " + (e.message || e));
+          toast.error("Import failed: " + (e.message || e));
         } finally {
           state.newVocabFront = "";
           state.newVocabBack = "";
@@ -2156,7 +2176,7 @@ const vueApp = Vue.createApp({
           const lists = { ...(settingsRec.vocabLists || {}) };
 
           if (!(listName in lists)) {
-            alert("List not found.");
+            toast.error("List not found.");
             return;
           }
 
@@ -2188,7 +2208,7 @@ const vueApp = Vue.createApp({
           console.log(`[Lists] Deleted "${listName}"`);
         } catch (e) {
           console.error("[Lists] deleteSavedList failed:", e);
-          alert("Could not delete that list.");
+          toast.error("Could not delete that list.");
         }
         // If that list was active in the Review picker, revert to Default (built-in)
         if (state.wordPicker.activeList === listName) {
@@ -2202,11 +2222,11 @@ const vueApp = Vue.createApp({
 
       // --- SRS: remove only the cards from a specific saved list ---
       async clearSrsForList(listName) {
-        if (!listName) return alert("No list selected.");
+        if (!listName) return toast.warn("No list selected.");
         const settingsRec = (await db.settings.get("v1")) || { key: "v1" };
         const list = settingsRec?.vocabLists?.[listName];
         if (!Array.isArray(list) || !list.length)
-          return alert("List not found or empty.");
+          return toast.warn("List not found or empty.");
 
         if (!confirm(`Remove SRS cards matching the list "${listName}"?`))
           return;
@@ -2241,7 +2261,7 @@ const vueApp = Vue.createApp({
 
         // Refresh SRS pane
         await Vocab.reloadVocabByTag(db, state.flashcards);
-        alert(`Removed ${removed} SRS card(s) from "${listName}".`);
+        toast.success(`Removed ${removed} SRS card(s) from "${listName}".`);
       },
 
       // --- SRS maintenance ---
@@ -2254,7 +2274,7 @@ const vueApp = Vue.createApp({
           await db.vocab.clear();
         } catch (e) {
           console.warn("[SRS] clearAllSrs failed:", e);
-          alert("Failed to clear SRS: " + (e.message || e));
+          toast.warn("Failed to clear SRS: " + (e.message || e));
           return;
         }
 
@@ -2265,7 +2285,7 @@ const vueApp = Vue.createApp({
         state.flashcards.showBack = false;
         state.flashcards.counts = { total: 0, learned: 0 };
 
-        alert(
+        toast.success(
           "SRS cleared. You can re-load a list into SRS from the Data tab."
         );
       },
@@ -2288,13 +2308,13 @@ const vueApp = Vue.createApp({
           }
         } catch (e) {
           console.warn("[SRS] reset scheduling failed:", e);
-          alert("Failed to reset SRS scheduling: " + (e.message || e));
+          toast.warn("Failed to reset SRS scheduling: " + (e.message || e));
           return;
         }
 
         // Reload SRS queue and refresh current card
         await Vocab.reloadVocabByTag(db, state.flashcards);
-        alert("SRS scheduling reset. All cards are now due.");
+        toast.info("SRS scheduling reset. All cards are now due.");
       },
 
       // Settings/Plan saves
@@ -2553,7 +2573,7 @@ const vueApp = Vue.createApp({
         }
 
         if (!items.length) {
-          alert(
+          toast.warn(
             `CSV loaded but 0 usable rows.\n\n` +
               `Detected delimiter: "${parsed.delimiter}"\n` +
               `Headers: [${parsed.headers.join(", ")}]\n\n` +
@@ -2566,7 +2586,7 @@ const vueApp = Vue.createApp({
           );
         }
       } catch (e) {
-        alert("Failed to read CSV: " + (e.message || e));
+        toast.error("Failed to read CSV: " + (e.message || e));
       } finally {
         if (evt?.target) evt.target.value = "";
       }
@@ -2604,7 +2624,7 @@ const vueApp = Vue.createApp({
     async function savePickedAsList(pickedIdxArr) {
       const name = (state.wordPicker.listName || "").trim();
       if (!name) {
-        alert("Please enter a list name.");
+        toast.info("Please enter a list name.");
         return;
       }
 
@@ -2631,7 +2651,7 @@ const vueApp = Vue.createApp({
         }));
 
       if (!picked.length) {
-        alert("No words selected.");
+        toast.warn("No words selected.");
         return;
       }
 
@@ -2651,7 +2671,7 @@ const vueApp = Vue.createApp({
       // ✅ Refresh the Data Panel's Saved Lists immediately (no page reload needed)
       await refreshSavedListsUI();
 
-      alert(`Saved list "${name}" with ${plainPicked.length} items.`);
+      toast.success(`Saved list "${name}" with ${plainPicked.length} items.`);
     }
 
     // === Load a saved sub-list straight into Review (non-SRS) ===
@@ -2704,7 +2724,7 @@ const vueApp = Vue.createApp({
       const settings = (await db.settings.get("v1")) || { key: "v1" };
       const list = settings?.vocabLists?.[name];
       if (!Array.isArray(list) || !list.length) {
-        alert("List not found or empty.");
+        toast.warn("List not found or empty.");
         return;
       }
 
@@ -2758,7 +2778,7 @@ const vueApp = Vue.createApp({
       }
       if (Vocab?.reloadVocabByTag)
         await Vocab.reloadVocabByTag(db, state.flashcards);
-      alert(`Loaded "${name}" into SRS: ${toAdd.length} new card(s).`);
+      toast.success(`Loaded "${name}" into SRS: ${toAdd.length} new card(s).`);
     }
 
     // ==================== END TAGS = NEW SET(), ====================
@@ -2771,6 +2791,9 @@ const vueApp = Vue.createApp({
       ...refs,
       state,
       methods,
+      toast,
+      dismissToast,
+      //  
       tagPills,
       // expose helpers the templates use
       renderFr,

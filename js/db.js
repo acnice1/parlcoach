@@ -20,7 +20,7 @@ export const USE_TOP200_ONLY = true;
 
 export function initDexie(){
   if (!window.Dexie) {
-    alert('Dexie failed to load. Check your connection or CDN.');
+    toast.Error('Dexie failed to load. Check your connection or CDN.');
     throw new Error('Dexie missing');
   }
   const db = new Dexie('parlcoach');

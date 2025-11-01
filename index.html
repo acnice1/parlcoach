@@ -340,6 +340,23 @@
           </div>
         </div>
       </main>
+
+            </main>
+
+      <!-- Toast stack (click to dismiss) -->
+      <div class="toast-stack" aria-live="polite" aria-atomic="true">
+        <div v-for="t in toasts"
+             :key="t.id"
+             class="toast"
+             :class="t.type"
+             role="status"
+             @click="dismissToast(t.id)"
+             title="Click to dismiss">
+          <span class="toast-dot" aria-hidden="true"></span>
+          <span>{{ t.msg }}</span>
+        </div>
+      </div>
+
     </div>
 
     <!-- Vue / Dexie from CDN -->
