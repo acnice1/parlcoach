@@ -2396,34 +2396,7 @@ await saveReviewPointer();
   state.tab = 'learn';
 }
 
-    
-    // inside app.js
-async function loadListIntoReview(name){
-  const settings = (await db.settings.get('v1')) || { key: 'v1' };
-  await db.settings.put({ ...settings, activeReviewList: name || '', key: 'v1' }); // persist choice
-
-  const list = settings?.vocabLists?.[name];
-  if (!Array.isArray(list) || !list.length) { alert('List not found or empty.'); return; }
-
-  const cards = list.map(it => ({
-    id: null,
-    fr: (it.fr || '').trim(),
-    en: (it.en || '').trim(),
-    article: (it.article || '').trim(),
-    example: coerceExample(it.example),   // normalized (see §3)
-    tags: Array.isArray(it.tags) ? it.tags : [],
-    source: 'list:' + name
-  })).filter(c => c.fr && c.en);
-
-  state.vocab.cards = cards;
-  if (typeof buildVocabDeck === 'function') buildVocabDeck();
-  else { state.vocab.deck = [...state.vocab.cards]; state.vocab.deckPtr = 0; }
-  state.tab = 'learn';
-}
-
-
-
-
+    // === Load a saved list into SRS (Dexie-backed) ===
 async function loadListIntoSrs(name){
   const settings = (await db.settings.get('v1')) || { key: 'v1' };
   const list = settings?.vocabLists?.[name];
@@ -2460,29 +2433,29 @@ async function loadListIntoSrs(name){
 
 
     // -------------------- Boot --------------------
-    methods.loadAll();
+    loadAll();
 
     // Expose refs & methods to template
     const refs = toRefs(state);
     return {
-      ...refs,
-      ...methods,
-      state,
-      methods,
-      tagPills,
-      // Flashcards
-      renderFr,
-      toggleVocabPill,
-      clearVocabPills,
-      clearAllVocabPills,
-      applyVocabPillFilter,
-      // CSV & Word Picker
- importVocabCsv,
+  ...refs,
+  state,
+  methods,
+  tagPills,
+  // expose helpers the templates use
+  renderFr,
+  toggleVocabPill,
+  clearVocabPills,
+  clearAllVocabPills,
+  applyVocabPillFilter,
+  // CSV & Word Picker
+  importVocabCsv,
   togglePickAll,
   savePickedAsList,
   loadListIntoSrs,
   loadListIntoReview,
-    };
+};
+
   },
 });
 
