@@ -47,6 +47,22 @@ const vueApp = Vue.createApp({
   },
 
   setup() {
+    /* =========================================================================
+     * setup() — grouped, commented (non-invasive)
+     * SECTION MAP (scan-ability only; no logic changes):
+     *   1) STATE ...................................................... [STATE]
+     *   2) SETTINGS HYDRATION & AUTOSAVE ............................ [SETTINGS]
+     *   3) CONSTANTS & LABELS (drills) ............................... [LABELS]
+     *   4) GENERIC HELPERS (UI, speech, parsing) ................... [HELPERS]
+     *   5) VOCAB (rendering, pills, deck) ............................. [VOCAB]
+     *   6) DRILL HELPERS (build question, attach rules) .............. [DRILL]
+     *   7) RECORDER (speech/recording, OPFS) ....................... [RECORDER]
+     *   8) IMPORT / CSV INDEX (lists meta) .......................... [IMPORTS]
+     *   9) PERSISTENCE HELPERS (settings/stats) ................... [PERSISTED]
+     *  10) LOAD BOOTSTRAP (dataset/rules/settings/plan/verbs) ....... [LOADALL]
+     *  11) METHODS (grouped by domain; bodies unchanged) ............ [METHODS]
+     * ========================================================================= */
+    
     // ------------------------- STATE -------------------------
     const state = reactive({
 
@@ -220,6 +236,7 @@ wordPicker: { items: [], selected: {}, listName: "", savedLists: [], activeList:
 // Optional: when you *must* flush immediately (rare), call:
 const flushSettingsNow = () => saveSettings(extractSettingsFromState(state));
 
+// ==================== END STATE ====================
     // -------------------- Generic helpers --------------------
 
     // === Auto-import all CSVs from /data into Saved Lists =======================
@@ -420,6 +437,7 @@ async function autoImportCsvListsFromData() {
  // Expose to state so DrillPanel can render chips
  state.tagPills = tagPills.value;
 
+// ==================== END // ==================== END STATE ==================== ====================
     // -------------------- Vocab Pills (distinct) --------------------
     function toggleVocabPill(group, value) {
       const allowed = ["topic", "tags", "pos"];
@@ -513,6 +531,7 @@ async function autoImportCsvListsFromData() {
       () => Vocab.buildVocabDeck(state)
     );
 
+// ==================== END  ====================
     // -------------------- Drill helpers --------------------
     const TENSE_LABEL = {
       present: "Présent",
@@ -583,6 +602,7 @@ async function autoImportCsvListsFromData() {
       return { label, answer, verb, personLabel, tenseLabel };
     }
 
+// ==================== END ); ====================
     // -------------------- Recorder helpers --------------------
     function getRecognizer() {
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -669,6 +689,7 @@ async function autoImportCsvListsFromData() {
 
     //
 
+// ==================== END RETURN { LABEL, ANSWER, VERB, PERSONLABEL, TENSELABEL }; ====================
     // -------------------- OPFS helpers --------------------
     async function opfsWrite(path, blob) {
       const root = await navigator.storage.getDirectory();
@@ -705,6 +726,7 @@ async function autoImportCsvListsFromData() {
       await dir.removeEntry(name);
     }
 
+// ==================== END } ====================
     // -------------------- Recordings persistence --------------------
     async function persistRecording({
       blob,
@@ -775,6 +797,7 @@ async function autoImportCsvListsFromData() {
       return hit?.id ?? null;
     }
 
+// ==================== END DIR = AWAIT DIR.GETDIRECTORYHANDLE(PARTS[I]); ====================
     // -------------------- Settings persistence helpers --------------------
     const saveSettingsMerged = async (partial) => {
       const existing = (await db.settings.get("v1")) || { key: "v1" };
@@ -792,6 +815,7 @@ async function autoImportCsvListsFromData() {
       saveGlobalToSettingsDebounced();
     }
 
+// ==================== END CONST HIT = ROWS.FIND( ====================
     // -------------------- Load-all bootstrap --------------------
     //  Hydrate state from IndexedDB
     // Load dataset + rules + settings + plan + drill prefs
@@ -803,6 +827,7 @@ async function autoImportCsvListsFromData() {
       state.dataset = await loadDataset();
       state.rules = await loadRules();
 
+// ==================== END IF (ISRIGHT) { ====================
       // -------------------- Examples loading --------------------
       // External examples (optional)
       if (typeof Verb.loadExternalVerbs === "function") {
@@ -860,6 +885,7 @@ async function autoImportCsvListsFromData() {
       // Re-apply UI/prefs from localStorage so they take precedence for UI
       applySettingsToState(state, loadSettings());
 
+// ==================== END // ALSO LOAD EXTERNAL EXAMPLES IF AVAILABLE ====================
       // -------------------- Vocab Lists hydration --------------------
 await methods.autoImportCsvListsFromData().catch(console.warn);
 await reconcileVocabMetaFromIndex();
@@ -1020,6 +1046,7 @@ state.verbs = await db.verbs.orderBy("infinitive").toArray();
       }
     }
 
+// ==================== END  ====================
     // -------------------- Drill rule attachment --------------------
     const EX_KEY = {
       Présent: "present",
@@ -1164,6 +1191,7 @@ state.verbs = await db.verbs.orderBy("infinitive").toArray();
       state.drillSession.help = lines.length ? { lines } : null;
     }
 
+// ==================== END RESP.STATUS + ====================
     // -------------------- Import helpers (merge-safe upsert for vocab) --------------------
     // Put this near your other helpers in app.js
 async function reconcileVocabMetaFromIndex() {
@@ -1238,6 +1266,7 @@ function normalizeVocabItem(c) {
       state.vocabPills.pos = Array.from(pos).sort();
     }
 
+// ==================== END } ====================
     // -------------------- Methods --------------------
     
     // Vocab pills management 
@@ -2350,6 +2379,7 @@ async function loadListIntoSrs(name){
 }
 
 
+// ==================== END TAGS = NEW SET(), ====================
     // -------------------- Boot --------------------
     loadAll();
 
@@ -2374,6 +2404,7 @@ async function loadListIntoSrs(name){
   loadListIntoReview,
 };
 
+// ==================== END }); ====================
   },
 });
 
