@@ -1,4 +1,10 @@
 // app.js (rebuilt, with UI toggle persistence + Vocab pills without Gender)
+import {
+   loadSettings,
+   applySettingsToState,
+   startAutoSave
+ } from "./core/settings.js";
+
 
 import DrillPanel from "./js/components/DrillPanel.js?v=3";
 import VocabPanel from "./js/components/VocabPanel.js?v=3";
@@ -21,22 +27,6 @@ import { answersEqual, toArr } from "./js/utils.js?v=2";
 const db = initDexie();
 const { createApp, reactive, ref, watch, toRefs, nextTick } = Vue;
 
-
-/* // Debounce utility
-function debounce(fn, ms = 300){
-  let t;
-  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
-}
-  */
- 
-function debounce(fn, ms = 300) {
-  let t;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), ms);
-  };
-}
-
 const vueApp = Vue.createApp({
   components: {
     DrillPanel,
@@ -49,6 +39,8 @@ const vueApp = Vue.createApp({
   setup() {
     // ------------------------- STATE -------------------------
     const state = reactive({
+
+      
       // Profile + stats
       profileName: "",
       globalStats: {
@@ -65,7 +57,6 @@ const vueApp = Vue.createApp({
       //  Data import/export
       csv: { rows: [], headers: [], meta: null },
 wordPicker: { items: [], selected: {}, listName: "", savedLists: [], activeList: "" },
-notesTagFilter: "",
 
       // UI flags (persisted)
       ui: {
@@ -207,6 +198,17 @@ notesTagFilter: "",
       storagePersisted: false,
       translator: { endpoint: "", apiKey: "" },
     });
+
+    // Apply persisted UI/prefs from localStorage (settings.js)
+  applySettingsToState(state, loadSettings());
+
+  // Start autosaving UI/prefs to localStorage (debounced)
+  startAutoSave(state, watch, { debounceMs: 300 });
+
+  // --- Settings: hydrate UI/prefs from localStorage, then start autosave ---
+
+// Optional: when you *must* flush immediately (rare), call:
+const flushSettingsNow = () => saveSettings(extractSettingsFromState(state));
 
     // -------------------- Generic helpers --------------------
 
@@ -769,45 +771,6 @@ async function autoImportCsvListsFromData() {
       await db.settings.put({ ...existing, ...partial, key: "v1" });
     };
 
-    const saveGlobalToSettings = async () => {
-      const existing = (await db.settings.get("v1")) || { key: "v1" };
-      const today = new Date().toISOString().slice(0, 10);
-      const record = {
-        key: "v1",
-        srsMode: existing.srsMode,
-        fixedIntervals: existing.fixedIntervals,
-        translator: existing.translator,
-        profileName: String(state.profileName || ""),
-        globalStats: {
-          right: Number(state.globalStats?.right || 0),
-          total: Number(state.globalStats?.total || 0),
-          since: String(state.globalStats?.since || today),
-        },
-        todayStats: {
-          right: Number(state.todayStats?.right || 0),
-          total: Number(state.todayStats?.total || 0),
-          date: String(state.todayStats?.date || today),
-        },
-        // persist UI toggles here
-        ui: { ...(existing.ui || {}), showVocabTags: !!state.ui.showVocabTags },
-      };
-      await db.settings.put(record);
-    };
-    const saveGlobalToSettingsDebounced = debounce(saveGlobalToSettings, 500);
-
-    // Persist UI changes quickly (only the UI subtree)
-    const saveUI = debounce(async () => {
-      await saveSettingsMerged({
-        ui: { showVocabTags: !!state.ui.showVocabTags },
-      });
-    }, 200);
-
-    watch(
-      () => state.ui.showVocabTags,
-      () => {
-        saveUI();
-      }
-    );
 
     function bumpGlobal(isRight) {
       state.globalStats.total += 1;
@@ -884,63 +847,13 @@ async function autoImportCsvListsFromData() {
       if (state.todayStats.date !== today) {
         state.todayStats = { right: 0, total: 0, date: today };
       }
+      // Re-apply UI/prefs from localStorage so they take precedence for UI
+      applySettingsToState(state, loadSettings());
+
       // -------------------- Vocab Lists hydration --------------------
-
-/*const vocabLists =
-  settings?.vocabLists && typeof settings.vocabLists === "object"
-    ? settings.vocabLists
-    : {};
-const meta = settings?.vocabMeta || {};
-*/ 
-// after you’ve got: const vocabLists = …; const meta = settings?.vocabMeta || {};
-
-// Put this near your other helpers in app.js
-async function reconcileVocabMetaFromIndex() {
-  const settings = (await db.settings.get('v1')) || { key: 'v1' };
-  const entries = await listDataEntries();            // [{file,name,description}]
-  await (window.refreshSavedListsUI ? window.refreshSavedListsUI() : refreshSavedListsUI());
-
-  if (!entries?.length) return;
-
-  const meta = { ...(settings.vocabMeta || {}) };
-  for (const e of entries) {
-    const base = String(e.file || '')
-      .split('/').pop()
-      .replace(/\.csv$/i,'')
-      .replace(/[_-]+/g,' ')
-      .trim();
-    if (!base) continue;
-
-    // Normalize fields
-    const pretty = (e.name || base).trim();
-    const desc   = (e.description || e.desc || "").trim();
-    const file   = e.file.startsWith('data/') ? e.file : ('data/' + e.file);
-
-    // Only write if missing or different
-    const m = meta[base] || {};
-    if (m.name !== pretty || m.description !== desc || m.file !== file) {
-      meta[base] = { name: pretty, description: desc, file };
-    }
-  }
-
-  await db.settings.put({ ...settings, vocabMeta: meta, key: 'v1' });
-  // Update in-memory copy and refresh the table
-  state.settings.vocabMeta = meta;
-  refreshSavedListsUI();
-}
-
-// after settings hydration and UI seeding:
-// Auto-import any new CSVs from /data into Saved Lists
-methods.autoImportCsvListsFromData().catch(console.warn);
-
-// after: refreshSavedListsUI();
 await methods.autoImportCsvListsFromData().catch(console.warn);
-
-// backfill meta for pre-existing lists:
-await reconcileVocabMetaFromIndex();   // <-- add this line
-// rebuild the UI with fresh meta
-refreshSavedListsUI();
-
+await reconcileVocabMetaFromIndex();
+await refreshSavedListsUI();
 
 // Restore the last-used Review list (if any); otherwise seed from built-in JSON once
 const active = (settings?.activeReviewList || '').trim();
@@ -1245,7 +1158,7 @@ state.verbs = await db.verbs.orderBy("infinitive").toArray();
     // Put this near your other helpers in app.js
 async function reconcileVocabMetaFromIndex() {
   const settings = (await db.settings.get('v1')) || { key: 'v1' };
-  const entries = await listDataEntries();            // [{file,name,description}]
+  const entries = await listDataEntries(); // [{file,name,description}]
   if (!entries?.length) return;
 
   const meta = { ...(settings.vocabMeta || {}) };
@@ -1257,12 +1170,10 @@ async function reconcileVocabMetaFromIndex() {
       .trim();
     if (!base) continue;
 
-    // Normalize fields
     const pretty = (e.name || base).trim();
-    const desc   = (e.description || "").trim();
+    const desc   = (e.description || e.desc || "").trim();
     const file   = e.file.startsWith('data/') ? e.file : ('data/' + e.file);
 
-    // Only write if missing or different
     const m = meta[base] || {};
     if (m.name !== pretty || m.description !== desc || m.file !== file) {
       meta[base] = { name: pretty, description: desc, file };
@@ -1270,10 +1181,10 @@ async function reconcileVocabMetaFromIndex() {
   }
 
   await db.settings.put({ ...settings, vocabMeta: meta, key: 'v1' });
-  // Update in-memory copy and refresh the table
   state.settings.vocabMeta = meta;
   refreshSavedListsUI();
 }
+
 
 function normalizeVocabItem(c) {
       const fr = (c.french ?? c.front ?? "").trim();
@@ -2304,17 +2215,14 @@ async function importVocabCsv(evt){
 
 
 async function saveVocabListsToSettings(updater) {
-  const existing = (await db.settings.get("v1")) || { key: "v1" };
-  const current  = (existing.vocabLists && typeof existing.vocabLists === "object") ? existing.vocabLists : {};
-  const nextRaw  = updater(current);
-  const next     = JSON.parse(JSON.stringify(nextRaw)); // clone to plain JSON
-
-  await db.settings.put({ ...existing, vocabLists: next, key: "v1" });
-
-  // Rebuild the Saved Lists UI (⚠️ keep this chain contiguous)
- 
-  refreshSavedListsUI();
+  const settingsRec = (await db.settings.get('v1')) || { key: 'v1' };
+  const curr = settingsRec.vocabLists && typeof settingsRec.vocabLists === 'object'
+    ? settingsRec.vocabLists
+    : {};
+  const next = typeof updater === 'function' ? updater(curr) : updater || curr;
+  await db.settings.put({ ...settingsRec, vocabLists: next, key: 'v1' });
 }
+
 
 
 
@@ -2396,7 +2304,7 @@ await saveReviewPointer();
   state.tab = 'learn';
 }
 
-    // === Load a saved list into SRS (Dexie-backed) ===
+    // === Load a saved list into SRS (Dexie-backed) ===f
 async function loadListIntoSrs(name){
   const settings = (await db.settings.get('v1')) || { key: 'v1' };
   const list = settings?.vocabLists?.[name];
