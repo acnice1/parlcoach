@@ -404,6 +404,54 @@ async function autoImportCsvListsFromData() {
   }
 }
 
+// --- SRS row sanitizer: ensure plain JSON cloneable objects for IndexedDB ---
+function sanitizeExample(ex) {
+  if (!ex) return null;
+  if (typeof ex === 'string') return ex; // keep simple FR string
+  // allow only {fr, en} if it's an object; drop everything else
+  const fr = typeof ex.fr === 'string' ? ex.fr : '';
+  const en = typeof ex.en === 'string' ? ex.en : '';
+  if (!fr && !en) return null;
+  return { fr, en };
+}
+
+function sanitizeTags(tags) {
+  if (!Array.isArray(tags)) return [];
+  return tags.map(t => (t == null ? '' : String(t))).filter(Boolean);
+}
+
+function toISO(d) {
+  try { return new Date(d).toISOString(); } catch { return new Date().toISOString(); }
+}
+
+function sanitizeSrsRow(c) {
+  // Never pass Vue proxies/refs through; copy only allowed fields
+  const row = {
+    // SRS core fields
+    front: (c?.fr || c?.front || '').trim(),
+    back:  (c?.en || c?.back  || '').trim(),
+    due:   toISO(c?.due || Date.now()),
+    ease:  Number.isFinite(c?.ease) ? c.ease : 2.5,
+    reps:  Number.isFinite(c?.reps) ? c.reps : 0,
+    interval: Number.isFinite(c?.interval) ? c.interval : 0,
+    last:  toISO(c?.last || Date.now()),
+
+    // Extras for consistent UI
+    fr: (c?.fr || c?.front || '').trim(),
+    en: (c?.en || c?.back  || '').trim(),
+    article: (c?.article || '').trim(),
+    example: sanitizeExample(c?.example),
+    topic: (c?.topic || '').trim(),
+    partOfSpeech: (c?.partOfSpeech || '').trim(),
+    gender: (c?.gender || '').trim(),
+    tags: sanitizeTags(c?.tags),
+  };
+
+  // Strip undefined/null to keep the record tight
+  return Object.fromEntries(Object.entries(row).filter(([_, v]) => v !== undefined));
+}
+
+
 
   // Auto-resize textarea
     function autosizeTextarea(e) {
@@ -412,6 +460,7 @@ async function autoImportCsvListsFromData() {
       el.style.height = "auto";
       el.style.height = el.scrollHeight + "px";
     }
+
 
     // Speech support
     function detectSpeechSupport() {
@@ -954,6 +1003,73 @@ if (active) {
     console.error("Error loading general_vocab.json:", err);
   }
 }
+
+// Seed SRS once from Review if DB is empty
+try {
+  const srsCount = await db.vocab.count();
+  if (!srsCount && Array.isArray(state.vocab.cards) && state.vocab.cards.length) {
+    const nowISO = new Date().toISOString();
+const seedRows = state.vocab.cards.slice(0, 200).map(c => ({
+  // SRS core
+  front: (c.fr || '').trim(),
+  back:  (c.en || '').trim(),
+  due: nowISO, ease: 2.5, reps: 0, interval: 0, last: nowISO,
+  // carry useful metadata to keep Review/SRS “feel” aligned
+  fr: c.fr || '', en: c.en || '',
+  article: c.article || '',
+  example: c.example ?? null,
+  topic: c.topic || '',
+  partOfSpeech: c.partOfSpeech || '',
+  gender: c.gender || '',
+  tags: Array.isArray(c.tags) ? c.tags.filter(Boolean) : []
+})).filter(r => r.front && r.back);
+
+// ✅ sanitize before writing to Dexie
+const cleanSeedRows = seedRows.map(sanitizeSrsRow).filter(r => r.front && r.back);
+if (cleanSeedRows.length) {
+  try { await db.vocab.bulkAdd(cleanSeedRows); }
+  catch { for (const r of cleanSeedRows) { try { await db.vocab.add(r); } catch {} } }
+}
+
+
+    if (seedRows.length) {
+      try { await db.vocab.bulkAdd(seedRows); }
+      catch { for (const r of seedRows) { try { await db.vocab.add(r); } catch {} } }
+    }
+  }
+} catch (e) {
+  console.warn('[SRS seed] skipped:', e);
+}
+
+
+// --- SRS bootstrap: normalize and load queue on startup ---
+try {
+  // Normalize any cards that are missing/invalid SRS fields so they can be due
+  const rows = await db.vocab.toArray();
+  if (rows && rows.length) {
+    const nowISO = new Date().toISOString();
+    for (const r of rows) {
+      const invalidDue = !r.due || Number.isNaN(new Date(r.due).getTime());
+      if (invalidDue || r.ease == null || r.reps == null || r.interval == null || !r.last) {
+        try {
+          await db.vocab.update(r.id, {
+            due: invalidDue ? nowISO : r.due,
+            ease: r.ease ?? 2.5,
+            reps: r.reps ?? 0,
+            interval: r.interval ?? 0,
+            last: r.last || nowISO,
+          });
+        } catch {}
+      }
+    }
+  }
+
+  // Pull SRS cards + compute first current card
+  await Vocab.reloadVocabByTag(db, state.flashcards);
+} catch (e) {
+  console.warn('[SRS bootstrap] failed:', e);
+}
+
 
 // Restore deck pointer
 if (settings?.reviewDeckPtr != null) {
@@ -1765,27 +1881,17 @@ nextDrill() {
             if (!ex) {
               // First-time (fr,en) → create FR→EN card now; EN→FR handled below
               if (wantFRtoEN) {
-                toAdd.push({
-                  front: inc.fr,
-                  back: inc.en,
-                  due: nowISO,
-                  ease: 2.5,
-                  reps: 0,
-                  interval: 0,
-                  last: nowISO,
-                  fr: inc.fr,
-                  en: inc.en,
-                  partOfSpeech: inc.partOfSpeech,
-                  gender: inc.gender,
-                  topic: inc.topic,
-                  tags: inc.tags,
-                  article: inc.article,
-                  plural: inc.plural,
-                  example: inc.example,
-                  notes: inc.notes,
-                  audio: inc.audio,
-                  image: inc.image,
-                });
+// when creating FR→EN
+toAdd.push(sanitizeSrsRow({
+  front: inc.fr, back: inc.en,
+  due: nowISO, ease: 2.5, reps: 0, interval: 0, last: nowISO,
+  fr: inc.fr, en: inc.en,
+  partOfSpeech: inc.partOfSpeech, gender: inc.gender, topic: inc.topic,
+  tags: inc.tags, article: inc.article, plural: inc.plural,
+  example: inc.example, notes: inc.notes, audio: inc.audio, image: inc.image
+}));
+
+
                 addedSrs++;
               }
             } else {
@@ -1829,27 +1935,16 @@ nextDrill() {
                   (r.front || r.fr) === inc.en && (r.back || r.en) === inc.fr
               );
               if (!existsEF) {
-                toAdd.push({
-                  front: inc.en,
-                  back: inc.fr,
-                  due: nowISO,
-                  ease: 2.5,
-                  reps: 0,
-                  interval: 0,
-                  last: nowISO,
-                  fr: inc.en,
-                  en: inc.fr,
-                  partOfSpeech: inc.partOfSpeech,
-                  gender: inc.gender,
-                  topic: inc.topic,
-                  tags: inc.tags,
-                  article: inc.article,
-                  plural: inc.plural,
-                  example: inc.example,
-                  notes: inc.notes,
-                  audio: inc.audio,
-                  image: inc.image,
-                });
+                // when creating EN→FR
+toAdd.push(sanitizeSrsRow({
+  front: inc.en, back: inc.fr,
+  due: nowISO, ease: 2.5, reps: 0, interval: 0, last: nowISO,
+  fr: inc.en, en: inc.fr,
+  partOfSpeech: inc.partOfSpeech, gender: inc.gender, topic: inc.topic,
+  tags: inc.tags, article: inc.article, plural: inc.plural,
+  example: inc.example, notes: inc.notes, audio: inc.audio, image: inc.image
+}));
+
                 addedSrs++;
               }
             }
@@ -2362,13 +2457,15 @@ async function loadListIntoSrs(name){
     if (!fr || !en) continue;
     const k = keyOf(fr, en);
     if (have.has(k)) continue;
-    toAdd.push({
-      front: fr, back: en,       // SRS core
-      fr, en, article: it.article || '',
-      example: it.example || '',
-      tags: Array.isArray(it.tags) ? it.tags : [],
-      due: nowISO, ease: 2.5, reps: 0, interval: 0, last: nowISO
-    });
+toAdd.push(sanitizeSrsRow({
+  front: fr, back: en,            // SRS core
+  fr, en,
+  article: it.article || '',
+  example: it.example || null,
+  tags: Array.isArray(it.tags) ? it.tags : [],
+  due: nowISO, ease: 2.5, reps: 0, interval: 0, last: nowISO
+}));
+
     have.add(k);
   }
 
