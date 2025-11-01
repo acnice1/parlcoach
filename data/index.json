@@ -1,14 +1,27 @@
 [
-  { "file": "administrative_vocab_1.csv",
+  {
+    "file": "administrative_vocab_1.csv",
     "name": "Administrative Vocab 1 ~100 terms",
     "description": "Set 1."
   },
-  { "file": "administrative_vocab_2.csv",
+  {
+    "file": "administrative_vocab_2.csv",
     "name": "Administrative Vocab 2 ~100 terms",
     "description": "Set 2."
   },
-  { "file": "opinion_phrases_extended.csv",
+  {
+    "file": "opinion_phrases_extended.csv",
     "name": "Opinion Phrases (extended)",
-    "description": "≈100 discourse markers"
+    "description": "Expressing, supporting and asking opinions"
+  },
+  {
+    "file": "opinion_agree_disagree_add.csv",
+    "name": "Opinion — Agree / Disagree / Add",
+    "description": "Agreeing, disagreeing (partial/fully), and adding points"
+  },
+  {
+    "file": "opinion_nuance_explain_result.csv",
+    "name": "Opinion — Nuance / Explain / Result",
+    "description": "Nuancing an opinion, explanations, and resulting effects"
   }
 ]

@@ -1571,3 +1571,14 @@ button.danger:hover { filter:brightness(1.05); }
 
 /* Dim helper */
 .dim { opacity: .75; }
+/* Toast placement + click behavior */
+.toast-stack{
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 9999;
+  pointer-events: none; /* do NOT block underlying UI */
+}
+.toast-stack .toast{
+  pointer-events: auto; /* individual toasts remain clickable */
+}
