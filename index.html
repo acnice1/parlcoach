@@ -12,10 +12,18 @@
   </head>
   <body>
     <div id="app" v-cloak>
-      <header class="app-header">
-        <h1>BienAppris</h1>
-        <small class="tag">BAP</small>
-      </header>
+      
+<header class="app-header">
+  <div class="header-left">
+    <h1>{{ $t('app.title') }}</h1>
+    <small class="tag">BAP</small>
+
+  
+
+  <!-- Main language switcher (global) -->
+  <lang-switcher :state="state"></lang-switcher>
+  </div>
+</header>
 
       <profile-widget :state="state" :methods="methods"></profile-widget>
 

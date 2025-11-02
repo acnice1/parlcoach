@@ -1810,3 +1810,22 @@ label.g-btn input[type="file"]{ position:absolute; inset:0; opacity:0; cursor:po
   padding:10px 12px; color:#e5e7eb; border-bottom:1px solid rgba(255,255,255,.06);
 }
 .grammar-table tbody tr:hover{ background: rgba(255,255,255,.04); }
+.app-header .header-left{
+  display:flex;
+  align-items:baseline;   /* aligns the bottoms nicely with big H1 */
+  gap:8px;                /* space between title and tag */
+  flex-wrap:wrap;         /* allows wrap on narrow screens */
+}
+.app-header h1{
+  margin:0;
+  line-height:1.1;
+}
+.app-header .tag{
+  font-weight:600;
+  font-size:.85rem;
+  padding:2px 8px;
+  border-radius:9999px;
+  border:1px solid var(--accent, #22d3ee);
+  color:var(--accent, #22d3ee);
+  background:transparent;
+}

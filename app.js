@@ -48,6 +48,14 @@ const i18n = createI18n({
   basePath: '/locales',    // folder with /en/common.json and /fr/common.json
   preload: ['common']      // load the "common" namespace on boot
 });
+// preload both locales for 'common' so FR exists immediately
+await Promise.all([
+  i18n.ensure('en', ['common']),
+  i18n.ensure('fr', ['common'])
+]);
+
+// optional: for console debugging
+window.__i18n = i18n;
 
 // ---------------- Root App ----------------
 const app = createApp({
@@ -1954,10 +1962,20 @@ const app = createApp({
 });
 
 // --- make i18n helpers available in all templates ---
-// usage in templates:  {{ $t('common.vocab.next') }}, {{ $n(1234) }}, {{ $d(new Date()) }}
-app.config.globalProperties.$t = (k, v) => i18n.t(k, v);
+// --- make i18n helpers available in all templates ---
+// If the key has no namespace, default to "common"
+// If the key has no namespace, default to "common"
+const withDefaultNs = (k) =>
+  (k.includes(':') ? k.replace(':', '.') : (k.startsWith('common.') ? k : `common.${k}`));
+
+app.config.globalProperties.$t = (k, v) => i18n.t(withDefaultNs(k), v);
 app.config.globalProperties.$n = (x, o) => i18n.n(x, o);
 app.config.globalProperties.$d = (x, o) => i18n.d(x, o);
+
+// expose for console debugging
+window.__i18n = i18n;
+
+
 
 // Mount
 const vm = app.mount("#app");

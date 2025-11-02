@@ -1,7 +1,8 @@
 {
-  "tabs": { "learn": "Learn", "data": "Data", "plan": "Plan", "record": "Record" },
+  "app": 
+  { "title": "BienAppris" 
+},
   "vocab": {
-  "app.title": "ParlCoach",
   "tabs.learn": "Learn",
   "tabs.data": "Data",
   "tabs.plan": "Plan",

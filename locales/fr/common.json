@@ -1,26 +1,44 @@
 {
-  "app.title": "ParlCoach",
-  "tabs.learn": "Apprendre",
-  "tabs.data": "Données",
-  "tabs.plan": "Plan",
-  "tabs.record": "Enregistrer",
-  "tabs.grammar": "Grammaire",
+  "app": {
+    "title": "BienAppris"
+  },
 
-  "mode.review": "Mode : Révision (JSON)",
-  "mode.srs": "Mode : Cartes (SRS)",
-  "toggle.showExamples": "Afficher les exemples",
-  "toggle.showTags": "Afficher les étiquettes",
-  "controls.reshuffle": "Mélanger",
-  "controls.next": "Suivant",
-  "vocab.exampleLabel": "Exemple",
-  "vocab.noDue": "Aucune carte à réviser. 🎉 Ajoutez-en ci-dessus ou allez à l’onglet Données pour importer.",
-  "vocab.shortcuts": "Raccourcis : 1=Encore, 2=Difficile, 3=Bien, 4=Facile",
-  "vocab.due": "À réviser",
-  "vocab.total": "Total",
+  "tabs": {
+    "learn": "Apprendre",
+    "data": "Données",
+    "plan": "Plan",
+    "record": "Enregistrer",
+    "grammar": "Grammaire"
+  },
 
-  "srs.again": "Encore",
-  "srs.hard": "Difficile",
-  "srs.good": "Bien",
-  "srs.easy": "Facile",
-  "srs.show": "Afficher"
+  "mode": {
+    "review": "Mode : Révision (JSON)",
+    "srs": "Mode : Cartes (SRS)"
+  },
+
+  "toggle": {
+    "showExamples": "Afficher les exemples",
+    "showTags": "Afficher les étiquettes"
+  },
+
+  "controls": {
+    "reshuffle": "Mélanger",
+    "next": "Suivant"
+  },
+
+  "vocab": {
+    "exampleLabel": "Exemple",
+    "noDue": "Aucune carte à réviser. 🎉 Ajoutez-en ci-dessus ou allez à l’onglet Données pour importer.",
+    "shortcuts": "Raccourcis : 1=Encore, 2=Difficile, 3=Bien, 4=Facile",
+    "due": "À réviser",
+    "total": "Total"
+  },
+
+  "srs": {
+    "again": "Encore",
+    "hard": "Difficile",
+    "good": "Bien",
+    "easy": "Facile",
+    "show": "Afficher"
+  }
 }
