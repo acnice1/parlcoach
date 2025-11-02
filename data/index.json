@@ -24,4 +24,9 @@
     "name": "Opinion — Nuance / Explain / Result",
     "description": "Nuancing an opinion, explanations, and resulting effects"
   }
+  {
+  "file": "french_verb_prepositions_with_examples.csv",
+  "name": "French Verbs + Prepositions — with Examples",
+  "description": "Common verb–preposition pairings with concise example sentences"
+  }
 ]

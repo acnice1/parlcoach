@@ -20,28 +20,39 @@ const VocabPanel = {
   },
 
   computed: {
-    // ---------- REVIEW: example helpers ----------
-   // ---------- REVIEW: example helpers ----------
+
+   // ---------- REVIEW: example helpers (robust) ----------
 exFr() {
-  const card = this.methods.currentVocabCard?.();
-  if (!card) return '';
-  // Prefer explicit fields (Review deck shape)
-  if (card.exampleFr) return card.exampleFr || '';
-  // Fallback to unified 'example' (string or {fr,en})
-  const ex = card.example;
-  if (!ex) return '';
-  return (typeof ex === 'string') ? ex : (ex.fr || '');
+  const c = this.methods.currentVocabCard?.() || {};
+  // Accept many shapes: exampleFr, example.fr, examples.fr, plain string, etc.
+  const candidates = [
+    c.exampleFr,
+    c.examples?.fr,
+    c.example?.fr,
+    (typeof c.example === 'string' ? c.example : ''), // FR-only string
+    c.exFr,
+    c.frExample,
+    c.example_fr
+  ];
+  const v = candidates.find(v => typeof v === 'string' && v.trim());
+  return v ? v.trim() : '';
 },
 exEn() {
-  const card = this.methods.currentVocabCard?.();
-  if (!card) return '';
-  // Prefer explicit fields (Review deck shape)
-  if (card.exampleEn) return card.exampleEn || '';
-  // Fallback to unified 'example' (string or {fr,en})
-  const ex = card.example;
-  if (!ex || typeof ex === 'string') return '';
-  return ex.en || '';
+  const c = this.methods.currentVocabCard?.() || {};
+  // Accept many shapes: exampleEn, example.en, examples.en, englishExample, etc.
+  const candidates = [
+    c.exampleEn,
+    c.examples?.en,
+    c.example?.en,
+    c.englishExample,
+    c.enExample,
+    c.exEn,
+    c.example_en
+  ];
+  const v = candidates.find(v => typeof v === 'string' && v.trim());
+  return v ? v.trim() : '';
 },
+
 
     // ---------- SRS: safe getters ----------
     srsCard() {
@@ -196,11 +207,11 @@ exEn() {
             type="checkbox"
             :checked="state.vocabMode==='flashcards'"
             @change="state.vocabMode = $event.target.checked ? 'flashcards' : 'review'"
-            aria-label="Switch between Review (JSON) and Flashcards (SRS)"
+            aria-label="Switch between Review and Flashcards (SRS)"
           />
           <span class="slider" aria-hidden="true"></span>
           <span class="label-text">
-            {{ state.vocabMode === 'review' ? 'Mode: Review (JSON)' : 'Mode: Flashcards (SRS)' }}
+            {{ state.vocabMode === 'review' ? 'Current Mode: Review' : 'Current Mode: Flashcards (SRS)' }}
           </span>
         </label>
 
