@@ -1,0 +1,30 @@
+{
+  "tabs": { "learn": "Learn", "data": "Data", "plan": "Plan", "record": "Record" },
+  "vocab": {
+  "app.title": "ParlCoach",
+  "tabs.learn": "Learn",
+  "tabs.data": "Data",
+  "tabs.plan": "Plan",
+  "tabs.record": "Record",
+  "tabs.grammar": "Grammar",
+
+  "mode.review": "Mode: Review (JSON)",
+  "mode.srs": "Mode: Flashcards (SRS)",
+  "toggle.showExamples": "Show examples",
+  "toggle.showTags": "Show tags on cards",
+  "controls.reshuffle": "Reshuffle",
+  "controls.next": "Next",
+  "vocab.exampleLabel": "Example",
+  "vocab.noDue": "No cards due. 🎉 Add more above or go to the Data page to import.",
+  "vocab.shortcuts": "Shortcuts: 1=Again, 2=Hard, 3=Good, 4=Easy",
+  "vocab.due": "Due",
+  "vocab.total": "Total",
+
+  "srs.again": "Again",
+  "srs.hard": "Hard",
+  "srs.good": "Good",
+  "srs.easy": "Easy",
+  "srs.show": "Show"
+
+  }
+}
