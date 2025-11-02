@@ -3,9 +3,13 @@
 const DataPanel = {
   name: 'DataPanel',
   props: ['state', 'methods'],
+
   template: `
     <div class="panel">
       <h2 style="margin-bottom:10px">Data loaders &amp; tools</h2>
+      <div class="dim" style="margin:-4px 0 8px 0; font-size:12px;">
+        SRS deck: <strong>{{ srsCount }}</strong> item<span v-if="srsCount !== 1">s</span>
+      </div>
 
       <!-- ===== Built-in JSON seeding ===== -->
       <div class="box" style="padding:12px">
@@ -55,7 +59,7 @@ const DataPanel = {
             Clear all
           </button>
 
-          <span v-if="state.csv && state.csv.parsing" aria-live="polite" class="dim">Parsing…</span>
+          <span class="dim" v-if="state.csv && state.csv.parsing" aria-live="polite">Parsing…</span>
         </div>
 
         <!-- Parse/normalize meta -->
@@ -123,7 +127,6 @@ const DataPanel = {
               <tbody>
                 <tr v-for="row in pageItems" :key="row.idx" style="border-bottom:1px solid var(--muted);">
                   <td style="padding:6px 0; vertical-align:top;">
-                    <!-- Bind directly to the parent-selected map -->
                     <input type="checkbox" v-model="state.wordPicker.selected[row.idx]" />
                   </td>
                   <td style="padding:6px 0; vertical-align:top;">
@@ -174,13 +177,13 @@ const DataPanel = {
         <!-- SRS maintenance -->
         <div class="row" style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
           <button class="danger"
-                  @click="confirm('Delete ALL SRS cards? This cannot be undone.') && (methods.clearAllSrs ? methods.clearAllSrs() : null)"
+                  @click="safeConfirm('Delete ALL SRS cards? This cannot be undone.') && clearAllSrsAndRefresh()"
                   title="Delete all SRS cards from the database">
             Clear SRS (delete all)
           </button>
 
           <button
-                  @click="confirm('Reset scheduling for ALL SRS cards to Due Now?') && (methods.resetSrsScheduling ? methods.resetSrsScheduling() : null)"
+                  @click="safeConfirm('Reset scheduling for ALL SRS cards to Due Now?') && resetSrsSchedulingAndRefresh()"
                   title="Keep cards; reset due dates/ease/reps so everything is due now">
             Reset SRS scheduling
           </button>
@@ -211,18 +214,15 @@ const DataPanel = {
                 </td>
                 <td style="padding:6px 0; vertical-align:top; white-space:nowrap;">{{ l.count }}</td>
                 <td style="padding:6px 0; vertical-align:top; white-space:nowrap;">
-                  <button class="small"
-                          @click="methods.loadListIntoSrs ? methods.loadListIntoSrs(l.name) : null"
-                          :title="(l.description || l.desc) || ''">
-                    Load into SRS
-                  </button>
+                  <button class="small" @click="loadIntoSrsAndRefresh(l.name)">Load into SRS</button>
+
                   <button class="small"
                           @click="methods.loadListIntoReview ? methods.loadListIntoReview(l.name) : null"
                           :title="(l.description || l.desc) || ''">
                     Use in Review
                   </button>
                   <button class="small"
-                          @click="methods.clearSrsForList ? methods.clearSrsForList(l.name) : null"
+                          @click="clearSrsForListAndRefresh(l.name)"
                           title="Remove only the SRS cards that came from this list">
                     Remove from SRS
                   </button>
@@ -244,42 +244,38 @@ const DataPanel = {
     return {
       // filtering
       tagFilter: '',
-      tagLogic: 'AND', // AND | OR
+      tagLogic: 'AND',
       // naming
       newListName: '',
       // pagination
       currentPage: 1,
-      pageSize: 20
+      pageSize: 20,
+      // srs count fallback cache
+      localSrsCount: null,
     };
   },
 
   computed: {
-    // csv meta
-    hasHeaders(){
+    hasHeaders() {
       return !!(this.state?.csv?.headers && this.state.csv.headers.length);
     },
-    rowCount(){
+    rowCount() {
       return (this.state?.wordPicker?.items || []).length || 0;
     },
-    // saved lists
-    savedLists(){
+    savedLists() {
       return this.state?.wordPicker?.savedLists || [];
     },
-    // selection (from parent map)
-    selectedCount(){
+    selectedCount() {
       const sel = this.state?.wordPicker?.selected || {};
       return Object.values(sel).reduce((n, v) => n + (v ? 1 : 0), 0);
     },
-    // filter
     filteredItems() {
       const items = this.state?.wordPicker?.items || [];
       const list = items.map((it, idx) => ({ item: it, idx }));
       const q = (this.tagFilter || '').trim();
       if (!q) return list;
 
-      const wanted = q.split(',')
-        .map(s => s.trim().toLowerCase())
-        .filter(Boolean);
+      const wanted = q.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
       if (!wanted.length) return list;
 
       return list.filter(({ item }) => {
@@ -290,29 +286,70 @@ const DataPanel = {
           : wanted.some(t => tags.includes(t));
       });
     },
-    // pagination
-    filteredTotal(){ return this.filteredItems.length; },
-    totalPages(){ return Math.max(1, Math.ceil(this.filteredTotal / this.pageSize)); },
-    rangeStart(){ return this.filteredTotal ? (this.currentPage - 1) * this.pageSize + 1 : 0; },
-    rangeEnd(){ return Math.min(this.filteredTotal, this.currentPage * this.pageSize); },
-    pageItems(){
+    filteredTotal() { return this.filteredItems.length; },
+    totalPages() { return Math.max(1, Math.ceil(this.filteredTotal / this.pageSize)); },
+    rangeStart() { return this.filteredTotal ? (this.currentPage - 1) * this.pageSize + 1 : 0; },
+    rangeEnd() { return Math.min(this.filteredTotal, this.currentPage * this.pageSize); },
+    pageItems() {
       const start = (this.currentPage - 1) * this.pageSize;
       const end   = start + this.pageSize;
       return this.filteredItems.slice(start, end);
-    }
+    },
+
+    // --- SRS badge with fallbacks ---
+    srsCount() {
+      const fromFlashcards =
+        this.state?.flashcards?.cards?.length ??
+        this.state?.flashcards?.allCards?.length;
+
+      const fromSrs =
+        this.state?.srs?.cards?.length ??
+        this.state?.srsDeck?.length ??
+        this.state?.srsQueue?.length;
+
+      const fromStats =
+        this.state?.stats?.srsCount ??
+        this.state?.globalStats?.srsCount ??
+        this.state?.todayStats?.srsCount;
+
+      return (
+        fromFlashcards ??
+        fromSrs ??
+        fromStats ??
+        this.localSrsCount ??
+        0
+      );
+    },
   },
 
   watch: {
-    tagFilter(){ this.currentPage = 1; },
-    tagLogic(){ this.currentPage = 1; },
-    rowCount(){ this.currentPage = 1; }
+    tagFilter() { this.currentPage = 1; },
+    tagLogic() { this.currentPage = 1; },
+    rowCount() { this.currentPage = 1; },
+
+    // Live updates if your app keeps SRS arrays in memory
+    'state.srs.cards': { handler() { this.refreshSrsCount(); }, deep: false },
+    'state.flashcards.cards': { handler() { this.refreshSrsCount(); }, deep: false },
   },
 
   methods: {
+    // -------- confirmations (avoid shadowing) --------
+    safeConfirm(msg) {
+      try {
+        const fn =
+          (typeof window !== 'undefined' && typeof window.confirm === 'function' && window.confirm) ||
+          (typeof globalThis !== 'undefined' && typeof globalThis.confirm === 'function' && globalThis.confirm);
+        return fn ? fn(msg) : true; // default to true if not available (e.g., tests)
+      } catch {
+        return true;
+      }
+    },
+
     // util
-    goToFirstPage(){ this.currentPage = 1; },
+    goToFirstPage() { this.currentPage = 1; },
+
     // article/tag formatting
-    normalizeArticle(a){
+    normalizeArticle(a) {
       if (!a) return '';
       const s = String(a).trim().toLowerCase();
       if (s === 'm') return 'le';
@@ -321,43 +358,78 @@ const DataPanel = {
       if (s === 'pl' || s === 'p' || s === 'les') return 'les';
       return a;
     },
-    formatTags(tags){
+    formatTags(tags) {
       if (!tags) return '';
       if (Array.isArray(tags)) return tags.join(', ');
       return String(tags);
     },
 
-    // selection helpers (operate on parent map)
-    selectAllLocal(val){
+    // selection helpers
+    selectAllLocal(val) {
       const items = this.state?.wordPicker?.items || [];
       const sel = {};
       items.forEach((_, i) => { sel[i] = !!val; });
-      this.state.wordPicker.selected = sel;
+      if (this.state?.wordPicker) this.state.wordPicker.selected = sel;
     },
-    toggleFilteredSelection(val){
+    toggleFilteredSelection(val) {
       const sel = { ...(this.state?.wordPicker?.selected || {}) };
       this.filteredItems.forEach(({ idx }) => { sel[idx] = !!val; });
-      this.state.wordPicker.selected = sel;
+      if (this.state?.wordPicker) this.state.wordPicker.selected = sel;
     },
 
     // save
-    onSavePicked(){
-      // If user typed a name here, mirror it to app.js state before calling the app method.
+    onSavePicked() {
       const n = (this.newListName || '').trim();
-      if (n) this.state.wordPicker.listName = n;
+      if (n && this.state?.wordPicker) this.state.wordPicker.listName = n;
       if (this.methods?.savePickedAsList) {
         try { this.methods.savePickedAsList(); }
-        catch(e){ console.error('[DataPanel] savePickedAsList failed', e); alert('Save failed.'); }
+        catch (e) { console.error('[DataPanel] savePickedAsList failed', e); alert('Save failed.'); }
       }
     },
 
-    // pagination methods
-    goToPage(p){ this.currentPage = Math.min(this.totalPages, Math.max(1, p)); },
-    firstPage(){ this.goToPage(1); },
-    lastPage(){ this.goToPage(this.totalPages); },
-    nextPage(){ this.goToPage(this.currentPage + 1); },
-    prevPage(){ this.goToPage(this.currentPage - 1); }
-  }
+    // pagination
+    goToPage(p) { this.currentPage = Math.min(this.totalPages, Math.max(1, p)); },
+    firstPage() { this.goToPage(1); },
+    lastPage() { this.goToPage(this.totalPages); },
+    nextPage() { this.goToPage(this.currentPage + 1); },
+    prevPage() { this.goToPage(this.currentPage - 1); },
+
+    // ---- SRS count helpers ----
+    async refreshSrsCount() {
+      if (this.methods?.countSrsCards) {
+        try {
+          const n = await this.methods.countSrsCards();
+          this.localSrsCount = Number.isFinite(n) ? n : 0;
+          return;
+        } catch (e) {
+          console.warn('[DataPanel] countSrsCards failed; falling back', e);
+        }
+      }
+      this.localSrsCount = this.srsCount || 0;
+    },
+
+    // Wrappers so the badge updates after changes
+    async loadIntoSrsAndRefresh(name) {
+      try { await this.methods?.loadListIntoSrs?.(name); }
+      finally { await this.refreshSrsCount(); }
+    },
+    async clearAllSrsAndRefresh() {
+      try { await this.methods?.clearAllSrs?.(); }
+      finally { await this.refreshSrsCount(); }
+    },
+    async resetSrsSchedulingAndRefresh() {
+      try { await this.methods?.resetSrsScheduling?.(); }
+      finally { await this.refreshSrsCount(); }
+    },
+    async clearSrsForListAndRefresh(name) {
+      try { await this.methods?.clearSrsForList?.(name); }
+      finally { await this.refreshSrsCount(); }
+    },
+  },
+
+  mounted() {
+    this.refreshSrsCount();
+  },
 };
 
 export default DataPanel;

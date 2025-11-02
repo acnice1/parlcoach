@@ -2378,30 +2378,34 @@ async function withScrollLock(run) {
       },
 
       // --- SRS maintenance ---
-      async clearAllSrs() {
-        if (!confirm("Delete ALL SRS cards? This cannot be undone.")) return;
-        // extra safety: second confirm
-        if (!confirm("Really delete all SRS cards now?")) return;
+// --- SRS maintenance ---
+async clearAllSrs() {
+  if (!confirm("Delete ALL SRS cards? This cannot be undone.")) return;
+  if (!confirm("Really delete all SRS cards now?")) return;
 
-        try {
-          await db.vocab.clear();
-        } catch (e) {
-          console.warn("[SRS] clearAllSrs failed:", e);
-          toast.warn("Failed to clear SRS: " + (e.message || e));
-          return;
-        }
+  try {
+    await db.vocab.clear();
+  } catch (e) {
+    console.warn("[SRS] clearAllSrs failed:", e);
+    toast.warn("Failed to clear SRS: " + (e.message || e));
+    return;
+  }
 
-        // Reset SRS UI
-        state.flashcards.allCards = [];
-        state.flashcards.dueCards = [];
-        state.flashcards.currentCard = null;
-        state.flashcards.showBack = false;
-        state.flashcards.counts = { total: 0, learned: 0 };
+  // Reset SRS UI
+  state.flashcards.allCards = [];
+  state.flashcards.dueCards = [];
+  state.flashcards.currentCard = null;
+  state.flashcards.showBack = false;
+  state.flashcards.counts = { total: 0, learned: 0 };
 
-        toast.success(
-          "SRS cleared. You can re-load a list into SRS from the Data tab."
-        );
-      },
+  // ✅ Rebuild SRS view so everything downstream is consistent
+  if (Vocab?.reloadVocabByTag) {
+    await Vocab.reloadVocabByTag(db, state.flashcards);
+  }
+
+  toast.success("SRS cleared. You can re-load a list into SRS from the Data tab.");
+},
+
 
       async resetSrsScheduling() {
         if (!confirm("Reset SRS scheduling (keep cards, set all due now)?"))
@@ -2579,38 +2583,65 @@ async function withScrollLock(run) {
       return { headers, rows, delimiter };
     }
 
-    function normalizeCsvRow(row) {
-      const fr = normalizeStr(row.FR ?? row.fr ?? row.French ?? row.french);
-      const en = normalizeStr(row.EN ?? row.en ?? row.English ?? row.english);
-      const rawArticle = normalizeStr(
-        row.article ?? row.Article ?? row.gender ?? row.Gender
-      );
-      const tags = Array.isArray(row.tags)
-        ? row.tags
-        : normalizeStr(row.tags)
-            .split(",")
-            .map((t) => t.trim())
-            .filter(Boolean);
-      const ex = row.example ?? row.Example ?? row.ex ?? "";
+   // Extend the CSV normalizer to also handle FR_verb + preposition schemas
+function normalizeCsvRow(row) {
+  const get = (k) => (row[k] ?? row[k.toLowerCase()] ?? "").toString().trim();
 
-      if (!fr || !en) return null;
+  // A) Legacy vocab headers (still supported)
+  const frLegacy = get("FR") || get("French") || get("french");
+  const enLegacy = get("EN") || get("English") || get("english");
+  const rawArticle = get("article") || get("gender") || get("Gender");
 
-      return {
-        fr,
-        en,
-        article: normalizeArticle(fr, rawArticle),
-        // keep gender optional if you want
-        gender: ["m", "masc", "masculin"].includes(rawArticle.toLowerCase())
-          ? "m"
-          : ["f", "fem", "féminin", "feminin", "feminine"].includes(
-              rawArticle.toLowerCase()
-            )
-          ? "f"
-          : "",
-        example: coerceExample(ex),
-        tags,
-      };
-    }
+  // B) New verb+preposition headers
+  const frVerb = get("FR_verb") || get("fr_verb") || get("verb") || get("verbe");
+  const prep   = get("preposition") || get("prep");
+  const enMean = get("english_meaning") || get("meaning") || get("meaning_short");
+
+  // Build FR/EN with priority: legacy if present, else verb+prep
+  const fr = (frLegacy || [frVerb, prep].filter(Boolean).join(" ")).trim();
+  const en = (enLegacy || enMean).trim();
+
+  // Examples: accept either single 'example' or split FR/EN examples
+  const exStr = get("example") || get("ex"); // legacy single-string
+  const exFr  = get("example_fr") || get("ex_fr") || get("exemple_fr");
+  const exEn  = get("example_en") || get("ex_en") || get("exemple_en");
+
+  // Tags: still supported (comma/pipe separated or array)
+  const tags = Array.isArray(row.tags)
+    ? row.tags
+    : (get("tags") || "")
+        .split(/[,|]/)
+        .map((t) => t.trim())
+        .filter(Boolean);
+
+  // If nothing useful, skip row
+  if (!fr || !en) return null;
+
+  // Compose example object if present
+  let example = null;
+  if (exFr || exEn) {
+    example = { fr: exFr || "", en: exEn || "" };
+  } else if (exStr) {
+    example = { fr: exStr, en: "" };
+  }
+
+  return {
+    fr,
+    en,
+    article: normalizeArticle(fr, rawArticle), // will be "" for verbs; OK
+    gender:
+      ["m", "masc", "masculin"].includes((rawArticle || "").toLowerCase())
+        ? "m"
+        : ["f", "fem", "féminin", "feminin", "feminine"].includes(
+            (rawArticle || "").toLowerCase()
+          )
+        ? "f"
+        : "",
+    example, // {fr,en} or null
+    tags,
+  };
+}
+
 
     // helpers (top of app.js near your other helpers)
     const normalizeStr = (s) => (s ?? "").toString().trim();

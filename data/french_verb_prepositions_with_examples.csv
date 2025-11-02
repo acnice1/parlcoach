@@ -1,0 +1,56 @@
+﻿FR_verb,preposition,english_meaning,typical_complement,clitic_replacement,notes,example_fr,example_en
+penser,à,think about,thing/person,y (thing) / à + stressed pronoun (person),opinion uses 'penser de',Je pense à la réunion de 15 h pour le dossier de cybersécurité.,I'm thinking about the 3 p.m. meeting for the cybersecurity file.
+s’intéresser,à,be interested in,thing/person,y (thing),—,La sous-ministre s’intéresse à l’usage responsable de l’IA dans nos services.,The deputy minister is interested in the responsible use of AI in our services.
+se fier,à,rely on,thing/person,y (thing),—,On ne peut pas se fier à ces chiffres avant la validation du contrôle financier.,We can't rely on those figures before financial control validates them.
+participer,à,take part in,event,y,—,Notre équipe participe à la consultation publique la semaine prochaine.,Our team is taking part in the public consultation next week.
+répondre,à,answer,to someone/thing,y (thing) / lui/leur (person),COI with people,Peux-tu répondre à ce courriel avant midi ?,Can you respond to this email before noon?
+parler,à,speak to,person,lui/leur,vs 'parler de' = talk about,Je parlerai au gestionnaire des risques après la séance d’information.,I'll speak to the risk manager after the briefing.
+renoncer,à,give up,thing/infinitive,y,—,"Faute de budget, nous avons renoncé à moderniser ce module cette année.","For lack of budget, we gave up on modernizing that module this year."
+arriver,à,manage to,infinitive,—,= réussir à,On n’arrive pas à déployer la mise à jour sur tous les postes.,We aren't managing to deploy the update on all workstations.
+tenir,à,care about / insist on,thing/infinitive/person,y (thing),—,Je tiens à remercier le comité pour son appui.,I really want to thank the committee for its support.
+s’habituer,à,get used to,thing/infinitive,y,—,L’équipe s’habitue à la nouvelle plateforme de gestion de projets.,The team is getting used to the new project management platform.
+réfléchir,à,think about,thing/person,y (thing),—,Le directeur réfléchit à une solution pour réduire les délais d’approbation.,The director is thinking about a solution to shorten approval timelines.
+consentir,à,agree to,infinitive/thing,y,—,Le fournisseur a consenti à prolonger le contrat sans frais.,The vendor agreed to extend the contract at no cost.
+se mettre,à,begin to,infinitive,—,—,"Après le feu vert, nous nous sommes mis à rédiger le plan de déploiement.","After the green light, we started drafting the deployment plan."
+aider,à,help to,infinitive,—,aider qqn à + inf,Cette fiche aide à expliquer la politique de confidentialité au personnel.,This fact sheet helps to explain the privacy policy to staff.
+servir,à,be used for,thing/infinitive,y,—,Ce tableau sert à suivre l’état d’avancement des livrables.,This table is used to track the status of deliverables.
+songer,à,think about,thing/person,y (thing),slightly formal,Le comité songe à externaliser une partie du service.,The committee is thinking about outsourcing part of the service.
+faire attention,à,pay attention to,thing/person,y (thing),—,Faites attention à la formulation : le message s’adresse au public.,Pay attention to the wording: the message is for the public.
+s’opposer,à,oppose,thing/person,y (thing),—,Plusieurs directeurs s’opposent à la réduction du budget de formation.,Several directors oppose the reduction of the training budget.
+aboutir,à,result in,thing,y,—,Les discussions ont abouti à un compromis acceptable pour tous.,The discussions resulted in a compromise acceptable to all.
+parler,de,talk about,thing/person,en (thing),—,On parlera du calendrier et des risques au prochain point d’étape.,We'll talk about the timeline and risks at the next checkpoint.
+se souvenir,de,remember,thing/person,en (thing),—,Souviens-toi de joindre le rapport en pièce jointe.,Remember to attach the report.
+se servir,de,use,thing,en,—,Nous nous servons de Power BI pour visualiser les indicateurs clés.,We use Power BI to visualize the key indicators.
+profiter,de,take advantage of,thing,en,—,Profitons de cette rencontre pour clarifier les besoins des régions.,Let's take advantage of this meeting to clarify the regions' needs.
+dépendre,de,depend on,thing/person,—,no clitic; 'en' only for quantities (rare),La mise en production dépend de l’approbation de sécurité.,Go‑live depends on the security approval.
+avoir besoin,de,need,thing/person,en (thing),—,J’ai besoin de deux analystes supplémentaires pour respecter l’échéancier.,I need two additional analysts to meet the schedule.
+se passer,de,do without,thing,en,—,On devra se passer de consultants ce trimestre.,We'll have to do without consultants this quarter.
+s’occuper,de,take care of,thing/person,en (thing),—,Marie s’occupe de la mise à jour du registre des risques.,Marie is taking care of updating the risk register.
+se méfier,de,distrust,thing/person,en (thing),—,Je me méfie des chiffres sans source vérifiable.,I'm wary of figures without a verifiable source.
+se plaindre,de,complain about,thing/person,en (thing),—,Les utilisateurs se plaignent de la lenteur du portail.,Users are complaining about the portal's slowness.
+manquer,de,lack,thing,en,—,Le projet manque de ressources bilingues pour le service à la clientèle.,The project lacks bilingual resources for customer service.
+douter,de,doubt,thing/person,en (thing),—,Je doute de la faisabilité du scénario sans budget additionnel.,I doubt the feasibility of the scenario without additional budget.
+se charger,de,take on / handle,thing,en,—,Pourrais-tu te charger de la note d’information ?,Could you take care of the briefing note?
+discuter,de,discuss,thing/person,en (thing),no 'sur' for topic,Nous discuterons des options au comité de gestion demain.,We'll discuss the options at the management committee tomorrow.
+rêver,de,dream of,thing/infinitive,en (thing),—,"Après ce sprint, je rêve de quelques jours de congé.","After this sprint, I'm dreaming of a few days off."
+s’agir,de,be about (impers.),thing,en,il s’agit de…,Il s’agit de clarifier la portée avant d’assigner les tâches.,It's a matter of clarifying the scope before assigning tasks.
+se rendre compte,de,realize,thing,en,—,On s’est rendu compte des impacts après l’audit.,We realized the impacts after the audit.
+changer,de,change (switch),"thing (e.g., job)",—,no article: changer de travail,J’ai changé de poste pour me rapprocher de l’équipe numérique.,I changed positions to be closer to the digital team.
+jouir,de,enjoy (formal),thing,en,—,Le programme jouit d’un fort appui des partenaires externes.,The program enjoys strong support from external partners.
+abuser,de,abuse/misuse,thing,en,—,Certains abusent de la fonction « répondre à tous ».,Some people misuse the 'reply all' function.
+compter,sur,count on,person/thing,—,no clitic; use stressed pronoun for people,Nous comptons sur les régions pour valider les besoins locaux.,We are counting on the regions to validate local needs.
+miser,sur,bank on,thing/strategy,—,—,La stratégie mise sur l’automatisation pour réduire les délais.,The strategy bets on automation to reduce turnaround times.
+se baser,sur,base oneself on,thing/criteria,—,—,Le rapport se base sur des données de l’exercice précédent.,The report is based on data from the previous fiscal year.
+s’entendre,avec,get along with,person,—,—,Je m’entends bien avec l’équipe des opérations.,I get along well with the operations team.
+traiter,avec,deal with,person/entity,—,—,Nous devons traiter avec plusieurs fournisseurs étrangers.,We have to deal with several foreign vendors.
+opter,pour,opt for,thing/option,—,—,Le comité a opté pour une solution infonuagique hybride.,The committee opted for a hybrid cloud solution.
+plaider,pour,advocate for,thing/cause,—,—,Le DG a plaidé pour un budget pluriannuel.,The director general advocated for a multi‑year budget.
+militer,pour,campaign for,cause,—,—,Le syndicat milite pour le télétravail flexible.,The union campaigns for flexible telework.
+voter,pour,vote for,person/option,—,—,Le conseil a voté pour la proposition de modernisation.,The board voted for the modernization proposal.
+lutter,contre,fight against,thing/cause,—,—,Nous luttons contre le phishing avec une formation ciblée.,We are fighting phishing with targeted training.
+se prononcer,contre,come out against,thing/proposal,—,—,Le comité s’est prononcé contre la réduction du soutien technique.,The committee came out against reducing tech support.
+être,contre,be against,thing/idea,—,—,Je suis contre l’idée de supprimer l’environnement d’essai.,I'm against removing the test environment.
+consister,en,consist of,thing/elements,—,not 'de': consister en + nom,"Le mandat consiste en trois volets : sécurité, données et expérience usager.","The mandate consists of three components: security, data, and user experience."
+croire,en,believe in,person/ideal,—,'croire à' for event/possibility,Je crois en l’équipe et en sa capacité de livrer.,I believe in the team and its ability to deliver.
+entrer,dans,enter,place/field,—,—,Le projet entre dans sa phase de stabilisation.,The project is entering its stabilization phase.
+investir,dans,invest in,thing/sector,—,—,Le ministère investit dans l’infrastructure nuagique.,The department is investing in cloud infrastructure.
