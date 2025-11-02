@@ -96,6 +96,7 @@ const vueApp = Vue.createApp({
       // UI flags (persisted)
       ui: {
         showVocabTags: false, // <— persisted toggle
+        showExamples: true,  // 
       },
 
       exampleMap: new Map(),
@@ -894,6 +895,7 @@ watch(
             ui: {
               ...(existing.ui || {}),
               showVocabTags: !!state.ui.showVocabTags,
+              showExamples:  !!state.ui.showExamples, // NEW
             },
             key: "v1",
           });
@@ -1028,9 +1030,10 @@ watch(
         state.translator = settings.translator || { endpoint: "", apiKey: "" };
 
         // Hydrate persisted UI toggles
-        if (settings.ui && typeof settings.ui === "object") {
-          state.ui.showVocabTags = !!settings.ui.showVocabTags;
-        }
+if (settings.ui && typeof settings.ui === "object") {
+  state.ui.showVocabTags = !!settings.ui.showVocabTags;
+  state.ui.showExamples  = settings.ui.showExamples != null ? !!settings.ui.showExamples : true; // NEW
+}
         // Hydrate profile/stats
         if (settings.profileName) state.profileName = settings.profileName;
         if (settings.globalStats)
