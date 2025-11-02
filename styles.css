@@ -1,280 +1,219 @@
-/* ======================= Root tokens & theme ======================= */
 :root{
-  /* Core palette */
-  --ink:#0f172a; --ink-2:#334155;
-  --bg:#0b1020; --card:#111927; --accent:#22d3ee; --muted:#94a3b8;
-
-  /* Surfaces / brand */
+  --ink:#0f172a; --ink-2:#334155; --bg:#0b1020; --card:#111927; --accent:#22d3ee; --muted:#94a3b8;
   --br:14px; --shadow:0 10px 30px rgba(0,0,0,.2);
   --ex-accent:#060659; 
   --ex-bg:#f8f5ff;
-  --brand-accent:#060659;
-  --brand-bg:#f8f5ff;
+  --brand-accent: #060659;
+  --brand-bg:     #f8f5ff;  /* soft violet surface */
+}
 
-  /* Additional tokens used by later rules (previously undefined) */
-  --primary:#2563eb;
-  --danger:#dc2626; --danger-2:#b91c1c;
-  --panel:#0e1726;
-  --bg-2:#101827;
-  --border:#1f2937;
-  --focus:#3b82f6;
+/* Reusable card style */
+.boxy{
+  margin: 14px 0 8px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: var(--box-bg, var(--brand-bg));
+  border: 1px solid var(--box-border, rgba(0,0,0,.06));
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  position: relative;
+  overflow: hidden;
+}
 
-  /* Vocab / card/button tokens */
-  --card-bg:#ffffff;
-  --card-border:#e5e7eb;
-  --text:#0f172a;
-  --btn-bg:#0f172a;
-  --btn-text:#ffffff;
-  --btn-bg-hover:#111827;
-  --btn-disabled:#9ca3af;
+/* Left accent stripe */
+.boxy::before{
+  content:"";
+  position:absolute; inset:0 auto 0 0;
+  width:6px;
+  background: var(--box-accent, var(--brand-accent));
+  opacity:.85;
+}
 
-  /* Button refresh set */
-  --btn-accent:#6d28d9;
-  --btn-accent-2:#5b21b6;
-  --btn-fg:#ffffff;
-  --btn-muted-bg:#0f172a0d;
-  --btn-danger:#dc2626;
-  --btn-danger-2:#b91c1c;
-  --btn-shadow:0 2px 8px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.06);
-  --btn-shadow-hover:0 6px 16px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.08);
-  --focus-ring:#a78bfa;
+/* Optional small label pill inside a box */
+.boxy .label{
+  display:inline-block;
+  font-size:.78rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-weight:600;
+  color: rgba(0,0,0,.65);
+  background: rgba(0,0,0,.04);
+  border-radius: 999px;
+  padding: 2px 8px;
+  margin-bottom: 8px;
 }
 
 @media (prefers-color-scheme: dark){
-  :root{
-    --card-bg:#0b1220;
-    --card-border:#1f2937;
-    --text:#e5e7eb;
-    --muted:#9ca3af;
-    --shadow:0 10px 28px rgba(0,0,0,0.5);
-    --btn-bg:#1f2937;
-    --btn-text:#e5e7eb;
-    --btn-bg-hover:#273449;
-    --btn-disabled:#4b5563;
+  .boxy{
+    border-color: rgba(255,255,255,.08);
+    box-shadow: 0 2px 10px rgba(0,0,0,.35);
+  }
+  .boxy .label{
+    color: rgba(255,255,255,.75);
+    background: rgba(255,255,255,.08);
   }
 }
 
-/* =========================== Base / reset ========================== */
-*{ box-sizing:border-box; }
-html,body{ height:100%; margin:0; }
-body{
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  color:#e2e8f0;
-  background:var(--bg);
-}
+
 /* Hide Vue content until it's hydrated */
 [v-cloak]{ display:none !important; }
 
-/* ============================ Layout chrome ======================== */
-.app-header{
-  display:flex; align-items:center; gap:.6rem;
-  padding:16px 20px;
-  border-bottom:1px solid #1f2937;
-  background:#0c1424;
-  position:sticky; top:0; z-index:2;
-}
-.app-header h1{ margin:0; font-size:20px; letter-spacing:.2px; }
-.tag{ padding:2px 8px; border-radius:999px; background:#0b556a; color:#a9f7ff; font-size:12px; }
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#e2e8f0;background:var(--bg)}
 
-.tabs{
-  display:flex; gap:8px; padding:10px 12px;
-  background:#0c1424;
-  position:sticky; top:58px; z-index:1;
-  border-bottom:1px solid #1f2937;
-}
-.tabs button{
-  appearance:none; border:1px solid #1f2937; background:#101827; color:#d1d5db;
-  padding:8px 14px; border-radius:999px; cursor:pointer;
-}
-.tabs button.active{ background:#123146; border-color:#18465a; color:#8df2ff; }
 
-.view{
-  max-width:1200px;            /* widened */
-  margin:16px auto; padding:0 12px;
-  overflow-anchor:none;
-}
-@media (min-width:1440px){ .view{ max-width:1400px; } }
+.app-header{display:flex;align-items:center;gap:.6rem;padding:16px 20px;border-bottom:1px solid #1f2937;background:#0c1424;position:sticky;top:0;z-index:2}
+.app-header h1{margin:0;font-size:20px;letter-spacing:.2px}
+.tag{padding:2px 8px;border-radius:999px;background:#0b556a;color:#a9f7ff;font-size:12px}
 
-.panel{
-  background:var(--card);
-  border:1px solid #1f2937;
-  border-radius:var(--br);
-  box-shadow:var(--shadow);
-  padding:16px;
-}
-.panel h2{ margin:0; font-size:18px; }
+.tabs{display:flex;gap:8px;padding:10px 12px;background:#0c1424;position:sticky;top:58px;z-index:1;border-bottom:1px solid #1f2937}
+.tabs button{appearance:none;border:1px solid #1f2937;background:#101827;color:#d1d5db;padding:8px 14px;border-radius:999px;cursor:pointer}
+.tabs button.active{background:#123146;border-color:#18465a;color:#8df2ff}
 
-/* ====================== Reusable "boxy" & labels =================== */
-.boxy{
-  margin:14px 0 8px; padding:16px 18px;
-  border-radius:16px;
-  background:var(--box-bg, var(--brand-bg));
-  border:1px solid var(--box-border, rgba(0,0,0,.06));
-  box-shadow:0 2px 8px rgba(0,0,0,.06);
-  position:relative; overflow:hidden;
-}
-.boxy::before{
-  content:""; position:absolute; inset:0 auto 0 0; width:6px;
-  background:var(--box-accent, var(--brand-accent)); opacity:.85;
-}
-.boxy .label{
-  display:inline-block; font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; font-weight:600;
-  color:rgba(0,0,0,.65); background:rgba(0,0,0,.04);
-  border-radius:999px; padding:2px 8px; margin-bottom:8px;
-}
-@media (prefers-color-scheme: dark){
-  .boxy{ border-color:rgba(255,255,255,.08); box-shadow:0 2px 10px rgba(0,0,0,.35); }
-  .boxy .label{ color:rgba(255,255,255,.75); background:rgba(255,255,255,.08); }
-}
+.view{max-width:980px;margin:16px auto;padding:0 12px}
 
-/* =============================== Forms ============================= */
-.fixed-input{ width:180px; }
+.panel{background:var(--card);border:1px solid #1f2937;border-radius:var(--br);box-shadow:var(--shadow);padding:16px}
+/*.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+*/
+.panel h2{margin:0;font-size:18px}
+/*.actions{display:flex;gap:8px} */
+.fixed-input{width:180px}
 
-.add-row{
-  display:grid; grid-template-columns:1fr 1fr auto; gap:8px; margin:12px 0;
-}
-.add-row input{
-  padding:10px; border:1px solid #243041; background:#0f172a; color:#e2e8f0; border-radius:10px;
-}
-.add-row button{
-  padding:10px 14px; border:1px solid #1f2937; background:#162033; color:#e2e8f0; border-radius:10px; cursor:pointer;
-}
+.add-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin:12px 0}
+.add-row input{padding:10px;border:1px solid #243041;background:#0f172a;color:#e2e8f0;border-radius:10px}
+.add-row button{padding:10px 14px;border:1px solid #1f2937;background:#162033;color:#e2e8f0;border-radius:10px;cursor:pointer}
 
-/* Subtabs */
-.subtabs{ display:flex; gap:8px; margin:8px 0 12px; }
-.subtabs button{
-  appearance:none; border:1px solid #1f2937; background:#101827; color:#d1d5db;
-  padding:6px 12px; border-radius:10px; cursor:pointer;
-}
-.subtabs button.active{ background:#17263a; border-color:#1f3a52; color:#9beaff; }
+.card{padding:16px;border:1px solid #243041;border-radius:12px;background:#0e1726}
+.card .front{font-size:18px;margin-bottom:10px}
+.card .back{font-size:17px;opacity:.95;margin-bottom:10px}
+.card-actions{display:flex;gap:8px;margin-bottom:6px}
+.card-actions button{padding:8px 10px;border:1px solid #1f2937;background:#162033;color:#e2e8f0;border-radius:10px;cursor:pointer}
+.meta{color:var(--muted);font-size:12px}
 
-/* Dim helper (unified) */
-.dim{ color:#9ca3af; opacity:.85; }
+.list summary{cursor:pointer;margin-top:8px}
+.list-row{display:grid;grid-template-columns:1fr auto 1fr auto auto;gap:8px;padding:6px 0;border-bottom:1px dashed #1f2937;align-items:center}
+.list-row .front,.list-row .back{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list-row .sep{color:#648}
+.list-row .small{padding:6px 10px;border:1px solid #1f2937;background:#162033;color:#e2e8f0;border-radius:10px;cursor:pointer}
 
-/* ============================== Cards ============================== */
-.card{
-  padding:16px; border:1px solid #243041; border-radius:12px; background:#0e1726;
-}
-.card .front{ font-size:18px; margin-bottom:10px; }
-.card .back{ font-size:17px; opacity:.95; margin-bottom:10px; }
-.card-actions{ display:flex; gap:8px; margin-bottom:6px; align-items:center; flex-wrap:wrap; }
-.card-actions button{
-  padding:8px 10px; border:1px solid #1f2937; background:#162033; color:#e2e8f0; border-radius:10px; cursor:pointer;
-}
-.card-actions .answer{ padding:6px 10px; border-radius:8px; background:#17263a; border:1px solid #1f2937; }
-.meta{ color:var(--muted); font-size:12px; }
+.empty{color:#a1a1aa;margin:8px 0}
 
-/* Lists */
-.list summary{ cursor:pointer; margin-top:8px; }
-.list-row{
-  display:grid; grid-template-columns:1fr auto 1fr auto auto; gap:8px;
-  padding:6px 0; border-bottom:1px dashed #1f2937; align-items:center;
-}
-.list-row .front,.list-row .back{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.list-row .sep{ color:#648; }
-.list-row .small{
-  padding:6px 10px; border:1px solid #1f2937; background:#162033; color:#e2e8f0; border-radius:10px; cursor:pointer;
-}
-.empty{ color:#a1a1aa; margin:8px 0; }
+.qa{display:grid;grid-template-columns:1fr;gap:8px;margin:8px 0}
+.qa input,.qa textarea{padding:10px;border:1px solid #243041;background:#0f172a;color:#e2e8f0;border-radius:10px}
+.qa textarea{min-height:90px}
+.qa button{justify-self:start;padding:8px 12px;border:1px solid #1f2937;background:#162033;color:#e2e8f0;border-radius:10px;cursor:pointer}
 
-/* Q/A block */
-.qa{ display:grid; grid-template-columns:1fr; gap:8px; margin:8px 0; }
-.qa input,.qa textarea{
-  padding:10px; border:1px solid #243041; background:#0f172a; color:#e2e8f0; border-radius:10px;
-}
-.qa textarea{ min-height:90px; }
-.qa button{
-  justify-self:start; padding:8px 12px; border:1px solid #1f2937; background:#162033; color:#e2e8f0; border-radius:10px; cursor:pointer;
-}
+.recording{padding:10px;border:1px solid #243041;border-radius:10px;margin:8px 0;background:#0e1726}
+.rec-meta{display:flex;gap:8px;align-items:center;margin:6px 0}
+.rec-actions{display:flex;gap:12px}
+.rec-actions .danger{border-color:#3b1f28;background:#2a0e14}
 
-/* ======================== Recording / Recorder ===================== */
-.recording{ padding:10px; border:1px solid #243041; border-radius:10px; margin:8px 0; background:#0e1726; }
-.rec-meta{ display:flex; gap:8px; align-items:center; margin:6px 0; }
-.rec-actions{ display:flex; gap:12px; }
-.rec-actions .danger{ border-color:#3b1f28; background:#2a0e14; }
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#e2e8f0;background:var(--bg)}
 
-.recorder-panel .rec-actions-bar{
-  display:flex !important; gap:8px; align-items:center; flex-wrap:wrap;
-}
-.recorder-head{ position:relative; z-index:5; background:inherit; }
-.recorder-panel .qa{ margin-top:12px; position:relative; z-index:1; overflow:visible; }
-.recorder-panel .rec-actions-bar button{ outline:0; }
+.app-header{display:flex;align-items:center;gap:.6rem;padding:16px 20px;border-bottom:1px solid #1f2937;background:#0c1424;position:sticky;top:0;z-index:2}
+.app-header h1{margin:0;font-size:20px;letter-spacing:.2px}
+.tag{padding:2px 8px;border-radius:999px;background:#0b556a;color:#a9f7ff;font-size:12px}
 
-/* Recorder Action Buttons */
-.rec-actions a,
-.rec-actions button{
-  display:inline-block; font-size:0.9rem; font-weight:600; border-radius:8px; padding:6px 14px; cursor:pointer;
-  text-decoration:none; transition:all 0.2s ease;
-}
-.rec-actions a{
-  background:linear-gradient(135deg, #2563eb, #1e40af); color:#fff; border:none;
-  box-shadow:0 2px 6px rgba(37,99,235,.25);
-}
-.rec-actions a:hover{ background:linear-gradient(135deg,#1d4ed8,#1e3a8a); transform:scale(1.05); }
-.rec-actions a:active{ transform:scale(1.0); }
+.tabs{display:flex;gap:8px;padding:10px 12px;background:#0c1424;position:sticky;top:58px;z-index:1;border-bottom:1px solid #1f2937}
+.tabs button{appearance:none;border:1px solid #1f2937;background:#101827;color:#d1d5db;padding:8px 14px;border-radius:999px;cursor:pointer}
+.tabs button.active{background:#123146;border-color:#18465a;color:#8df2ff}
 
-.rec-actions .danger{
-  background:linear-gradient(135deg, #ef4444, #b91c1c); color:#fff; border:none;
-  box-shadow:0 2px 6px rgba(185,28,28,.25);
-}
-.rec-actions .danger:hover{ background:linear-gradient(135deg,#dc2626,#991b1b); transform:scale(1.05); }
-.rec-actions .danger:active{ background:linear-gradient(135deg,#991b1b,#7f1d1d); transform:scale(1.0); }
-.rec-actions .small{ font-size:0.9rem; padding:6px 10px; }
+.view{max-width:980px;margin:16px auto;padding:0 12px}
 
-/* Force dark dropdown for language selector */
-select[title="Transcription language"]{
-  appearance:none; -webkit-appearance:none; -moz-appearance:none;
-  background:linear-gradient(135deg,#0f172a,#1e293b);
-  color:#f8fafc; border:1px solid #243041; border-radius:8px; padding:8px 36px 8px 12px;
-  font-size:.95rem; font-weight:500; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,.3);
-  transition:all .25s ease;
-}
-select[title="Transcription language"]:hover{ background:linear-gradient(135deg,#1e293b,#162033); border-color:#3b82f6; }
-select[title="Transcription language"]:focus{ outline:none; border-color:#3b82f6; box-shadow:0 0 0 2px rgba(59,130,246,.35); }
-select[title="Transcription language"] option{ background-color:#0f172a; color:#f8fafc; padding:6px 8px; }
-select[title="Transcription language"] option:hover{ background-color:#1e293b; color:#60a5fa; }
+.panel{background:var(--card);border:1px solid #1f2937;border-radius:var(--br);box-shadow:var(--shadow);padding:16px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.panel h2{margin:0;font-size:18px}
+.actions{display:flex;gap:8px}
+.fixed-input{width:180px}
 
-/* ============================== Grids ============================== */
-.set-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; }
-.set-grid button{
-  padding:8px 12px; border:1px solid #1f2937; background:#162033; color:#e2e8f0; border-radius:10px; cursor:pointer;
-}
+.subtabs{display:flex;gap:8px;margin:8px 0 12px}
+.subtabs button{appearance:none;border:1px solid #1f2937;background:#101827;color:#d1d5db;padding:6px 12px;border-radius:10px;cursor:pointer}
+.subtabs button.active{background:#17263a;border-color:#1f3a52;color:#9beaff}
 
-.plan-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:8px; margin:8px 0; }
-.plan-grid input, .plan-grid select,
-.plan-text{
-  width:100%; padding:10px; border:1px solid #243041; background:#0f172a; color:#e2e8f0; border-radius:10px;
-}
-.plan-text{ min-height:130px; }
+.add-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin:12px 0}
+.add-row input{padding:10px;border:1px solid #243041;background:#0f172a;color:#e2e8f0;border-radius:10px}
+.add-row button{padding:10px 14px;border:1px solid #1f2937;background:#162033;color:#e2e8f0;border-radius:10px;cursor:pointer}
 
-/* Verbs / Drills */
-.verbs .box{ padding:12px; border:1px solid #243041; border-radius:12px; background:#0e1726; margin:10px 0; }
-.verbs .row{ display:flex; gap:10px; align-items:center; margin:6px 0; }
-.verbs-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px; }
-.verbs textarea, .verbs input{ width:100%; padding:10px; border:1px solid #243041; background:#0f172a; color:#e2e8f0; border-radius:10px; }
-.drill-grid{
-  display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:14px;
-}
-.drill-grid select, .drill-grid input{ width:100%; padding:10px; border:1px solid #243041; background:#0f172a; color:#e2e8f0; border-radius:10px; }
-.drill-side{ font-size:18px; margin-bottom:10px; }
+.card{padding:16px;border:1px solid #243041;border-radius:12px;background:#0e1726}
+.card .front{font-size:18px;margin-bottom:10px}
+.card .back{font-size:17px;opacity:.95;margin-bottom:10px}
+.card-actions{display:flex;gap:8px;margin-bottom:6px;align-items:center;flex-wrap:wrap}
+.card-actions button{padding:8px 10px;border:1px solid #1f2937;background:#162033;color:#e2e8f0;border-radius:10px;cursor:pointer}
+.card-actions .answer{padding:6px 10px;border-radius:8px;background:#17263a;border:1px solid #1f2937}
+.meta{color:var(--muted);font-size:12px}
 
-/* =========================== Drill card UI ========================= */
-.drill-card{ position:relative; padding:18px 20px; }
-.drill-card .pill{
-  position:absolute; top:.75rem; right:.75rem;
-  font-size:.8rem; padding:.25rem .5rem; border-radius:999px;
-  background:rgba(0,0,0,.06); color:#334155; pointer-events:none;
-}
-.drill-input{
-  position:relative; z-index:1; width:100%; font-size:1.15rem;
-  padding:.75rem 1rem; border-radius:.75rem; border:1px solid #e2e8f0; outline:none;
-}
-.drill-input:focus{ border-color:#94a3b8; box-shadow:0 0 0 3px rgba(148,163,184,.25); }
-.drill-card .controls{ display:flex; gap:.5rem; justify-content:center; margin:.75rem 0; }
-.drill-card .feedback{ text-align:center; margin:.25rem 0; }
-.drill-card .feedback.wrong{ color:#b91c1c; }
+.list summary{cursor:pointer;margin-top:8px}
+.list-row{display:grid;grid-template-columns:1fr auto 1fr auto auto;gap:8px;padding:6px 0;border-bottom:1px dashed #1f2937;align-items:center}
+.list-row .front,.list-row .back{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list-row .sep{color:#648}
+.list-row .small{padding:6px 10px;border:1px solid #1f2937;background:#162033;color:#e2e8f0;border-radius:10px;cursor:pointer}
 
-/* ------------------------------ Modal ------------------------------ */
+.empty{color:#a1a1aa;margin:8px 0}
+
+.qa{display:grid;grid-template-columns:1fr;gap:8px;margin:8px 0}
+.qa input,.qa textarea{padding:10px;border:1px solid #243041;background:#0f172a;color:#e2e8f0;border-radius:10px}
+.qa textarea{min-height:90px}
+.qa button{justify-self:start;padding:8px 12px;border:1px solid #1f2937;background:#162033;color:#e2e8f0;border-radius:10px;cursor:pointer}
+
+.recording{padding:10px;border:1px solid #243041;border-radius:10px;margin:8px 0;background:#0e1726}
+.rec-meta{display:flex;gap:8px;align-items:center;margin:6px 0}
+.rec-actions{display:flex;gap:12px}
+.rec-actions .danger{border-color:#3b1f28;background:#2a0e14}
+
+.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.set-grid button{padding:8px 12px;border:1px solid #1f2937;background:#162033;color:#e2e8f0;border-radius:10px;cursor:pointer}
+
+.plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin:8px 0}
+.plan-grid input, .plan-grid select{width:100%;padding:10px;border:1px solid #243041;background:#0f172a;color:#e2e8f0;border-radius:10px}
+.plan-text{width:100%;min-height:130px;padding:10px;border:1px solid #243041;background:#0f172a;color:#e2e8f0;border-radius:10px}
+
+.dim{color:#9ca3af}
+
+/* Verbs */
+.verbs .box{padding:12px;border:1px solid #243041;border-radius:12px;background:#0e1726;margin:10px 0}
+.verbs .row{display:flex;gap:10px;align-items:center;margin:6px 0}
+.verbs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.verbs textarea, .verbs input{width:100%;padding:10px;border:1px solid #243041;background:#0f172a;color:#e2e8f0;border-radius:10px}
+.drill-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.drill-grid select, .drill-grid input{width:100%;padding:10px;border:1px solid #243041;background:#0f172a;color:#e2e8f0;border-radius:10px}
+.drill-side{font-size:18px;margin-bottom:10px}
+
+
+.recording{padding:10px;border:1px solid #243041;border-radius:10px;margin:8px 0;background:#0e1726}
+.rec-meta{display:flex;gap:8px;align-items:center;margin:6px 0}
+.rec-actions{display:flex;gap:12px}
+.rec-actions .danger{border-color:#3b1f28;background:#2a0e14}
+
+.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.set-grid button{padding:8px 12px;border:1px solid #1f2937;background:#162033;color:#e2e8f0;border-radius:10px;cursor:pointer}
+
+.plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin:8px 0}
+.plan-grid input, .plan-grid select{width:100%;padding:10px;border:1px solid #243041;background:#0f172a;color:#e2e8f0;border-radius:10px}
+.plan-text{width:100%;min-height:130px;padding:10px;border:1px solid #243041;background:#0f172a;color:#e2e8f0;border-radius:10px}
+
+.dim{color:#9ca3af}
+
+/* Drill card layout & interactions */
+.drill-card { position: relative; padding: 1.25rem 1.5rem; }
+.drill-card .pill {
+  position: absolute; top: .75rem; right: .75rem;
+  font-size: .8rem; padding: .25rem .5rem; border-radius: 999px;
+  background: rgba(0,0,0,.06); color: #334155;
+  pointer-events: none;          /* <-- won’t steal clicks */
+}
+.drill-input {
+  position: relative; z-index: 1;/* <-- ensure on top */
+  width: 100%; font-size: 1.15rem;
+  padding: .75rem 1rem; border-radius: .75rem;
+  border: 1px solid #e2e8f0; outline: none;
+}
+.drill-input:focus { border-color:#94a3b8; box-shadow: 0 0 0 3px rgba(148,163,184,.25); }
+.drill-card .controls { display:flex; gap:.5rem; justify-content:center; margin:.75rem 0; }
+.drill-card .feedback { text-align:center; margin:.25rem 0; }
+.drill-card .feedback.wrong { color:#b91c1c; }
+/* --- JSON modal --- */
 .modal-overlay{
   position:fixed; inset:0; background:rgba(2,6,23,.6); backdrop-filter:saturate(90%) blur(2px);
   display:flex; align-items:center; justify-content:center; z-index:9999;
@@ -284,454 +223,1491 @@ select[title="Transcription language"] option:hover{ background-color:#1e293b; c
   background:#0e1726; border:1px solid #243041; border-radius:14px; box-shadow:var(--shadow);
   padding:16px;
 }
-.modal-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px; }
-.modal-row{ display:flex; gap:8px; align-items:center; margin:8px 0; }
-.modal-row .grow{ flex:1; }
+.modal-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px }
+.modal-row{ display:flex; gap:8px; align-items:center; margin:8px 0 }
+.modal-row .grow{ flex:1 }
 .json-area{
-  width:100%; min-height:360px; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  width:100%; min-height:360px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   padding:10px; border:1px solid #243041; border-radius:10px; background:#0f172a; color:#e2e8f0;
 }
-.modal-actions{ display:flex; gap:8px; align-items:center; margin-top:10px; }
-.modal-actions .danger{ border-color:#3b1f28; background:#2a0e14; }
-.modal .err{ color:#fca5a5; }
+.modal-actions{ display:flex; gap:8px; align-items:center; margin-top:10px }
+.modal-actions .danger{ border-color:#3b1f28; background:#2a0e14 }
+.modal .err{ color:#fca5a5 }
 
-/* =========================== Rule help box ========================= */
-.rule-help{
-  background:#f6f8fb; border:1px solid #e5e7eb; border-radius:10px; padding:10px 12px;
-  margin-top:10px;
+/* === Rule Help Styling === */
+.rule-help {
+  background: #fffef8; /* warm off-white for contrast */
+  border: 2px solid #f5d26b; /* soft golden accent */
+  border-left: 6px solid #e6b400; /* thicker accent bar */
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-top: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  font-size: 0.95rem;
+  color: #333;
 }
-.rule-help h4{ margin:0 0 6px; font-size:1rem; font-weight:600; color:#b58900; }
-.rule-help ul{ list-style:disc; margin:0; padding-left:20px; }
-.rule-help li{ margin-bottom:3px; line-height:1.45; }
-.rule-help li:first-child{ margin-top:2px; }
-.rule-help li::first-line{ font-weight:500; }
-.rule-help li::marker{ color:#e6b400; }
 
-/* ========================== Wrong answer UI ======================== */
-.feedback.wrong{
-  font-size:1.25rem; font-weight:600; color:#b91c1c;
-  background:#fee2e2; border:2px solid #fecaca; border-radius:10px;
-  padding:10px 14px; margin-top:12px; line-height:1.4;
-  box-shadow:0 2px 6px rgba(185,28,28,.1);
+.rule-help h4 {
+  margin: 0 0 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #b58900; /* dark amber tone */
 }
-.feedback.wrong strong{ font-size:1.4rem; color:#7f1d1d; }
 
-/* ============================ Switch control ======================= */
-.toggle-translate{ margin:8px 0; font-size:.9em; }
-.toggle-translate label{ cursor:pointer; user-select:none; }
-
-.form-switch{ margin:8px 0; display:inline-block; }
-.switch{
-  display:inline-flex; align-items:center; gap:10px; cursor:pointer; user-select:none;
-  font-size:.95rem; line-height:1.2;
+.rule-help ul {
+  list-style-type: disc;
+  margin: 0;
+  padding-left: 20px;
 }
-.switch input{ position:absolute; opacity:0; width:1px; height:1px; pointer-events:none; }
-.switch .slider{
-  --h:22px; --w:42px;
+
+.rule-help li {
+  margin-bottom: 3px;
+  line-height: 1.4;
+}
+
+.rule-help li::marker {
+  color: #e6b400; /* accent the bullets */
+}
+
+/* === Unified Button Styles === */
+button,
+.save-btn,
+.save-settings-btn {
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* --- Primary action buttons (Start, Save, Save Settings) --- */
+.start-drills-btn,
+.save-btn,
+.save-settings-btn {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(59, 130, 246, 0.25);
+  margin-top: 12px;
+  display: inline-block;
+}
+
+.start-drills-btn:hover,
+.save-btn:hover,
+.save-settings-btn:hover {
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  box-shadow: 0 5px 14px rgba(59, 130, 246, 0.35);
+  transform: translateY(-1px);
+}
+
+.start-drills-btn:active,
+.save-btn:active,
+.save-settings-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+}
+
+/* --- Layout alignment --- */
+.button-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+/* === Drill Score Styling === */
+.score-display {
+  font-size: 1.3rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 10px;
+  display: inline-block;
+  margin-top: 10px;
+  text-align: right;
+  float: right; /* aligns to right edge */
+  letter-spacing: 0.3px;
+  transition: all 0.25s ease;
+}
+
+/* Default look */
+.score-display.default {
+  background: #eef2ff;
+  color: #1e3a8a;
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.1);
+}
+
+/* Dynamic states */
+.score-display.good {
+  background: #dcfce7;
+  color: #166534;
+  box-shadow: 0 2px 6px rgba(22, 101, 52, 0.1);
+}
+
+.score-display.ok {
+  background: #fef9c3;
+  color: #854d0e;
+  box-shadow: 0 2px 6px rgba(133, 77, 14, 0.1);
+}
+
+.score-display.bad {
+  background: #fee2e2;
+  color: #991b1b;
+  box-shadow: 0 2px 6px rgba(153, 27, 27, 0.1);
+}
+
+.score-display:hover {
+  transform: scale(1.03);
+}
+.rule-help { background:#f6f8fb; border:1px solid #e5e7eb; border-radius:10px; padding:10px 12px; }
+.rule-help li {
+  line-height: 1.45;
+}
+.rule-help li:first-child {
+  margin-top: 2px;
+}
+.rule-help li::first-line {
+  font-weight: 500;
+}
+/* === Wrong Answer Feedback === */
+.feedback.wrong {
+  font-size: 1.25rem;        /* make it bigger */
+  font-weight: 600;
+  color: #b91c1c;            /* deep red for visibility */
+  background: #fee2e2;       /* light red background */
+  border: 2px solid #fecaca; /* soft red border */
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  line-height: 1.4;
+  box-shadow: 0 2px 6px rgba(185, 28, 28, 0.1);
+}
+
+.feedback.wrong strong {
+  font-size: 1.4rem;         /* even bigger for the expected answer */
+  color: #7f1d1d;            /* darker red for emphasis */
+}
+.toggle-translate {
+  margin: 8px 0;
+  font-size: 0.9em;
+}
+.toggle-translate label {
+  cursor: pointer;
+  user-select: none;
+}
+/* --- Modern switch for "Show Verb Translation" --- */
+.form-switch {
+  margin: 8px 0;
+  display: inline-block;
+}
+
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.switch input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.switch .slider {
+  --h: 22px;
+  --w: 42px;
   --track: color-mix(in srgb, currentColor 12%, transparent);
   --track-on: color-mix(in srgb, #4ade80 80%, transparent);
-  --knob:#fff;
-  position:relative; width:var(--w); height:var(--h); border-radius:var(--h);
-  background:var(--track); transition:background 160ms ease;
-  box-shadow:inset 0 0 0 1px color-mix(in srgb, currentColor 25%, transparent);
+  --knob: #fff;
+  position: relative;
+  width: var(--w);
+  height: var(--h);
+  border-radius: var(--h);
+  background: var(--track);
+  transition: background 160ms ease;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 25%, transparent);
 }
-.switch .slider::after{
-  content:""; position:absolute; top:2px; left:2px;
-  width:calc(var(--h) - 4px); height:calc(var(--h) - 4px); border-radius:50%;
-  background:var(--knob); box-shadow:0 1px 2px rgba(0,0,0,.25);
-  transition:transform 160ms ease;
+
+.switch .slider::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: calc(var(--h) - 4px);
+  height: calc(var(--h) - 4px);
+  border-radius: 50%;
+  background: var(--knob);
+  box-shadow: 0 1px 2px rgba(0,0,0,.25);
+  transition: transform 160ms ease;
 }
-.switch input:checked + .slider{ background:var(--track-on); }
-.switch input:checked + .slider::after{ transform:translateX(calc(var(--w) - var(--h))); }
-.switch input:focus-visible + .slider{ outline:2px solid color-mix(in srgb, currentColor 50%, transparent); outline-offset:2px; }
-.switch .label-text{ opacity:.9; }
 
-/* ============================ Prompt label ========================= */
-.label{
-  display:inline-block; font-size:1.2rem; font-weight:500; color:#0f172a;
-  background:#e0f2fe; border-left:5px solid #2563eb;
-  padding:.4rem 1.2rem; border-radius:8px; margin:1rem 0; text-align:center;
-  box-shadow:0 2px 6px rgba(0,0,0,0.1); transition:transform .2s ease, box-shadow .2s ease;
+.switch input:checked + .slider {
+  background: var(--track-on);
 }
-.label:hover{ transform:scale(1.03); box-shadow:0 4px 10px rgba(0,0,0,0.15); }
-
-/* Accent button cluster (tiny helpers) */
-.accent-buttons{ display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.6rem; justify-content:center; }
-.accent-btn{
-  background:#1e3a8a; color:#fff; border:none; border-radius:6px; padding:.3rem .6rem; font-size:1rem; cursor:pointer;
-  transition:background .2s, transform .1s;
+.switch input:checked + .slider::after {
+  transform: translateX(calc(var(--w) - var(--h)));
 }
-.accent-btn:hover{ background:#2563eb; transform:scale(1.1); }
-.accent-btn:active{ background:#1e40af; }
 
-/* ========================= Collapsible headers ===================== */
-details.box > summary{ list-style:none; cursor:pointer; margin:-4px 0 8px; }
-details.box > summary::-webkit-details-marker{ display:none; }
-details.box > summary h3::after{ content:'▾'; margin-left:.4rem; font-weight:400; opacity:.7; }
-details.box[open] > summary h3::after{ content:'▴'; }
+/* Focus outline for accessibility */
+.switch input:focus-visible + .slider {
+  outline: 2px solid color-mix(in srgb, currentColor 50%, transparent);
+  outline-offset: 2px;
+}
 
-/* ============================== Tag pills ========================== */
+.switch .label-text {
+  opacity: 0.9;
+}
+
+/* === Prompt Label Styling === */
+.label {
+  display: inline-block;
+  font-size: 1.2rem;              /* large and readable */
+  font-weight: 500;               /* bold for emphasis */
+  color: #0f172a;                 /* dark navy (good contrast on light backgrounds) */
+  background: #e0f2fe;            /* soft blue highlight */
+  border-left: 5px solid #2563eb; /* GC-blue accent */
+  padding: 0.4rem 1.2rem; /* spacious padding */
+  border-radius: 8px; /* rounded corners */
+  margin: 1rem 0;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.label:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.accent-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+  justify-content: center;
+}
+
+.accent-btn {
+  background: #1e3a8a;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.3rem 0.6rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.accent-btn:hover {
+  background: #2563eb;
+  transform: scale(1.1);
+}
+
+.accent-btn:active {
+  background: #1e40af;
+}
+/* Collapsible box header */
+details.box > summary {
+  list-style: none;
+  cursor: pointer;
+  margin: -4px 0 8px;
+}
+details.box > summary::-webkit-details-marker { display:none; }
+details.box[open] > summary h3::after,
+details.box > summary h3::after {
+  content: '▾';
+  margin-left: .4rem;
+  font-weight: 400;
+  opacity: .7;
+}
+details.box[open] > summary h3::after { content: '▴'; }
+
+/* nicer layout + spacing */
+.tag-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;   /* or flex-start / space-between */
+  gap: 10px;
+  padding: 6px 8px;
+}
+
+/* pill look (keep or tweak) */
+.tag-pill {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background: #1e293b;
+  color: #fff;
+  font-size: 0.85rem;
+  cursor: pointer;
+  user-select: none;
+  transition: background .2s, transform .1s;
+}
+.tag-pill:hover { background:#334155; transform:scale(1.05); }
+.tag-pill.active { background:#3b82f6; color:#fff; }
+/* === WIDER LAYOUT + AIRIER DRILL SETTINGS === */
+
+/* 1) Make the main view wider on desktop */
+.view{
+  max-width: 1200px;         /* was 980px */
+}
+@media (min-width: 1440px){
+  .view{ max-width: 1400px; } /* extra-wide screens */
+}
+
+/* 2) Reduce “crowded columns” feel in Drill Settings:
+      - use bigger min cards so fewer columns render
+      - add row gaps for breathing room */
+.drill-grid{
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* was 220px */
+  gap: 14px;                                                   /* was 10px */
+}
+
+/* 3) Ensure the tag pills span full width of the grid */
+.drill-grid > .tag-pills{
+  grid-column: 1 / -1;    /* force full-row span */
+}
+
+/* 4) Make pills flow horizontally and wrap naturally */
 .tag-pills{
-  display:flex; flex-wrap:wrap; justify-content:flex-start;
-  gap:10px 12px; padding:6px 2px; width:100%;
+  display: flex;
+  flex-wrap: wrap;        /* allow multiple rows */
+  justify-content: flex-start;
+  gap: 10px 12px;         /* row gap, column gap */
+  padding: 6px 2px;
+  width: 100%;
 }
+
 .tag-pill{
-  display:inline-block; white-space:nowrap; padding:7px 14px; border-radius:9999px;
-  background:#1e293b; color:#fff; font-size:.85rem; cursor:pointer; user-select:none;
-  transition:background .2s, transform .1s;
-}
-.tag-pill:hover{ background:#334155; transform:scale(1.05); }
-.tag-pill.active{ background:#3b82f6; color:#fff; }
-
-@media (prefers-color-scheme: dark){
-  .tag-pill, .pill{ background:#111827; color:#e5e7eb; border-color:#374151; }
-  .tag-pill:hover, .pill:hover{ background:#1f2937; border-color:#4b5563; }
-  .tag-pill.active, .pill.active{ background:#0b2545; border-color:#3b82f6; color:#bfdbfe; }
+  white-space: nowrap;    /* keep tags on one line each */
+  padding: 7px 14px;      /* slightly larger touch target */
+  border-radius: 9999px;
 }
 
-/* Pill variant shared with filters */
-.pill{
-  display:inline-flex; align-items:center; gap:6px;
-  padding:4px 10px; border-radius:999px; border:1px solid var(--pill-border, #d1d5db);
-  background:var(--pill-bg, #fff); color:var(--pill-fg, #111827);
-  font-size:12px; line-height:1; cursor:pointer; user-select:none;
-  transition:background-color .15s, border-color .15s, color .15s, box-shadow .15s;
+/* Optional: when you’ve got tons of tags, enable a single-line scroller instead of wrapping */
+/*
+.tag-pills{
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: thin;
 }
-.pill:hover{ background:var(--pill-bg-hover,#f3f4f6); border-color:var(--pill-border-hover,#c5cbd3); }
-.pill.active{
-  background:var(--pill-active-bg,#eaf3ff); border-color:var(--pill-active-border,#60a5fa); color:var(--pill-active-fg,#0b5fcc);
-  box-shadow:0 0 0 2px rgba(96,165,250,.25);
-}
-.pill.clear{ background:var(--pill-muted-bg,#f7f7f7); border-style:dashed; color:#6b7280; }
-.filters .pill-row{ display:flex; flex-wrap:wrap; gap:6px; }
+*/
 
-/* Collapsible Filters */
-details.filters{
-  border:1px solid #e5e7eb; border-radius:10px; padding:8px 10px; background:#fff;
-}
-details.filters[open]{ padding-bottom:12px; }
-details.filters > summary{
-  list-style:none; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:6px;
-}
-details.filters > summary::-webkit-details-marker{ display:none; }
-details.filters > summary::before{
-  content:"▸"; transform:rotate(0deg); transition:transform .15s ease; display:inline-block;
-}
-details.filters[open] > summary::before{ transform:rotate(90deg); }
-details.filters h3{ margin:0; font-size:14px; }
-@media (prefers-color-scheme: dark){
-  details.filters{ background:#0b1220; border-color:#1f2937; }
+/* 5) Give the drill card a tad more width comfort */
+.drill-card{
+  padding: 18px 20px;     /* subtle expansion */
 }
 
-/* ============================= Focus ring ========================== */
-.focus-ring{ outline:3px solid var(--focus); outline-offset:2px; }
-.focus-ring--inset{ box-shadow:0 0 0 2px var(--focus) inset; }
-.focus-ring--animated{ transition:outline-color .12s ease, box-shadow .12s ease; }
+/* 6) (Bugfix) If you see a stray "./*" before a comment in your CSS, delete the leading dot.
+      It breaks the rule that follows and can prevent the tag-pills row from spanning. */
+/* Recorder header should never be hidden */
+.recorder-panel .rec-actions-bar {
+  display: flex !important;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
 
-/* ========================== Enhanced hovers ======================== */
+/* Keep header above textareas so it can't be covered */
+.recorder-head {
+  position: relative;
+  z-index: 5;
+  background: inherit; /* or your panel bg */
+}
+
+/* Ensure the Q/A block doesn’t overlap the header */
+.recorder-panel .qa {
+  margin-top: 12px;         /* add space below header */
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+}
+
+/* (Optional) quick visual debug you can remove later */
+.recorder-panel .rec-actions-bar button { outline: 0; }
+
+/* --- Recorder Delete Button Fix --- */
+.rec-actions .danger {
+  background: linear-gradient(135deg, #ef4444, #b91c1c); /* red gradient */
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.rec-actions .danger:hover {
+  background: linear-gradient(135deg, #dc2626, #991b1b);
+  transform: scale(1.05);
+}
+
+.rec-actions .danger:active {
+  background: linear-gradient(135deg, #991b1b, #7f1d1d);
+  transform: scale(1.0);
+}
+
+.rec-actions .small {
+  font-size: 0.9rem;
+  padding: 6px 10px;
+}
+/* --- Recorder Action Buttons: Download + Delete --- */
+.rec-actions a,
+.rec-actions button {
+  display: inline-block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 6px 14px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+/* Download button – cool blue to match theme */
+.rec-actions a {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: #fff;
+  border: none;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+}
+.rec-actions a:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
+  transform: scale(1.05);
+}
+.rec-actions a:active {
+  transform: scale(1.0);
+}
+
+/* Delete button – vivid red */
+.rec-actions .danger {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  color: #fff;
+  border: none;
+  box-shadow: 0 2px 6px rgba(185, 28, 28, 0.25);
+}
+.rec-actions .danger:hover {
+  background: linear-gradient(135deg, #dc2626, #991b1b);
+  transform: scale(1.05);
+}
+.rec-actions .danger:active {
+  background: linear-gradient(135deg, #991b1b, #7f1d1d);
+  transform: scale(1.0);
+}
+/* --- Force dark dropdown appearance for language selector --- */
+select[title="Transcription language"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: #f8fafc;
+  border: 1px solid #243041;
+  border-radius: 8px;
+  padding: 8px 36px 8px 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  transition: all 0.25s ease;
+}
+
+select[title="Transcription language"]:hover {
+  background: linear-gradient(135deg, #1e293b, #162033);
+  border-color: #3b82f6;
+}
+
+select[title="Transcription language"]:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59,130,246,0.35);
+}
+
+/* Force dark dropdown list (works in most Chromium browsers) */
+select[title="Transcription language"] option {
+  background-color: #0f172a;
+  color: #f8fafc;
+  padding: 6px 8px;
+}
+
+/* Highlight on hover within dropdown (limited cross-browser) */
+select[title="Transcription language"] option:hover {
+  background-color: #1e293b;
+  color: #60a5fa;
+}
+.view { overflow-anchor: none; }
+/* --- Question Bank (Record page) --- */
+.qb .qb-import-row {
+  display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin:8px 0;
+}
+.qb .qb-paste { margin:8px 0; }
+.qb-filters {
+  display:flex; gap:12px; flex-wrap:wrap; margin:8px 0;
+}
+.qb-filters select {
+  padding:8px; border:1px solid #243041; background:#0f172a; color:#e2e8f0; border-radius:10px;
+}
+.qb-grid {
+  display:grid; gap:10px; grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
+}
+.qb-item {
+  padding:12px; border:1px solid #243041; border-radius:12px; background:#0e1726; display:grid; gap:6px;
+}
+.qb-head { display:flex; justify-content:space-between; gap:8px; align-items:center; }
+.qb-cat { font-size:12px; color:#9ca3af; }
+.qb-tags { display:flex; gap:6px; flex-wrap:wrap; }
+.qb-pill {
+  font-size:11px; padding:2px 8px; border-radius:999px; border:1px solid #1f2937; background:#162033;
+}
+.qb-prompt { font-weight:600; line-height:1.35; }
+.qb-followups { margin:4px 0 0; padding-left:18px; }
+.qb-sample { margin-top:4px; }
+.qb-actions { margin-top:6px; display:flex; justify-content:flex-end; }
+.qb-file input[type=file] { display:none; }
+.qb-file { padding:6px 10px; border:1px solid #1f2937; background:#162033; color:#e2e8f0; border-radius:10px; cursor:pointer; }
+
+/* Q/A textareas: same look for Question and Answer */
+.qa .qa-text {
+  width: 100%;
+  min-height: 120px;      /* gives a larger default box */
+  padding: 10px 12px;
+  border: 1px solid #243041;
+  background: #0e1726;
+  color: #e2e8f0;
+  border-radius: 10px;
+  line-height: 1.4;
+  resize: vertical;        /* allow user to drag taller if desired */
+  white-space: pre-wrap;   /* wrap long lines and keep newlines */
+  word-break: break-word;  /* prevent overflow on very long tokens */
+  box-sizing: border-box;
+}
+
+/* Optional: nicer placeholder color in dark mode */
+.qa .qa-text::placeholder {
+  color: #94a3b8;
+  opacity: 0.8;
+}
+/* --- Question Picker summary arrow --- */
+.qb-summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.qb-arrow {
+  display: inline-block;
+  transition: transform 0.25s ease;
+  transform: rotate(0deg);
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.qb-arrow.open {
+  transform: rotate(90deg);
+  color: #e2e8f0;
+}
+/* --- Vocab Filters: make .pill look/behave like .tag-pill --- */
+.tag-pill,
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--pill-border, #d1d5db);
+  background: var(--pill-bg, #fff);
+  color: var(--pill-fg, #111827);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease;
+}
+
+.tag-pill:hover,
+.pill:hover {
+  background: var(--pill-bg-hover, #f3f4f6);
+  border-color: var(--pill-border-hover, #c5cbd3);
+}
+
+.tag-pill.active,
+.pill.active {
+  background: var(--pill-active-bg, #eaf3ff);
+  border-color: var(--pill-active-border, #60a5fa);
+  color: var(--pill-active-fg, #0b5fcc);
+  box-shadow: 0 0 0 2px rgba(96,165,250,.25);
+}
+
+.tag-pill.muted,
+.pill.clear {
+  background: var(--pill-muted-bg, #f7f7f7);
+  border-style: dashed;
+  color: #6b7280;
+}
+
+.tag-pill:focus-visible,
+.pill:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59,130,246,.35);
+}
+
+/* Optional: compact row container spacing to match existing areas */
+.tag-pills,
+.filters .pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* --- Collapsible Filters header tweaks --- */
+details.filters {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: #fff;
+}
+
+details.filters[open] {
+  padding-bottom: 12px;
+}
+
+details.filters > summary {
+  list-style: none;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+details.filters > summary::-webkit-details-marker { display: none; }
+
+details.filters > summary::before {
+  content: "▸";
+  transform: rotate(0deg);
+  transition: transform .15s ease;
+  display: inline-block;
+}
+
+details.filters[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+details.filters h3 {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Optional dark-ish theme guards if you use one */
+@media (prefers-color-scheme: dark) {
+  .tag-pill,
+  .pill {
+    background: #111827;
+    color: #e5e7eb;
+    border-color: #374151;
+  }
+  .tag-pill:hover,
+  .pill:hover {
+    background: #1f2937;
+    border-color: #4b5563;
+  }
+  .tag-pill.active,
+  .pill.active {
+    background: #0b2545;
+    border-color: #3b82f6;
+    color: #bfdbfe;
+  }
+  details.filters {
+    background: #0b1220;
+    border-color: #1f2937;
+  }
+}
+/* =============================== Focus Ring =============================== */
+/* Apply this class to any interactive element that needs visible keyboard focus */
+.focus-ring {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Optional variant for inset focus (useful on dark panels) */
+.focus-ring--inset {
+  box-shadow: 0 0 0 2px var(--focus) inset;
+}
+
+/* Transition-friendly version (fade-in ring) */
+.focus-ring--animated {
+  transition: outline-color .12s ease, box-shadow .12s ease;
+}
+/* =========================== Enhanced Hover Feedback ============================ */
+
+/* =========================== Enhanced Hover Feedback ============================ */
+
+/* Primary buttons & start/save actions */
 .btn:hover,
 .start-drills-btn:hover,
 .save-btn:hover,
-.save-settings-btn:hover{
-  background:linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--accent) 60%, var(--primary)));
-  transform:translateY(-2px);
-  box-shadow:0 0 0 2px color-mix(in srgb, var(--accent) 40%, transparent), 0 4px 20px rgba(0,0,0,.35);
+.save-settings-btn:hover {
+  background: linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--accent) 60%, var(--primary)));
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 40%, transparent),
+              0 4px 20px rgba(0,0,0,.35);
 }
+
+/* Danger buttons */
 .btn-danger:hover,
-.rec-actions .danger:hover{
-  background:linear-gradient(135deg, var(--danger), color-mix(in srgb, var(--danger-2) 30%, var(--accent)));
-  box-shadow:0 0 0 2px color-mix(in srgb, var(--danger) 40%, transparent), 0 4px 20px rgba(0,0,0,.35);
-  transform:translateY(-2px);
+.rec-actions .danger:hover {
+  background: linear-gradient(135deg, var(--danger), color-mix(in srgb, var(--danger-2) 30%, var(--accent)));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--danger) 40%, transparent),
+              0 4px 20px rgba(0,0,0,.35);
+  transform: translateY(-2px);
 }
-.tabs button:hover{
-  color:#fff;
-  background:linear-gradient(180deg, color-mix(in srgb, var(--primary) 15%, var(--bg-2)), var(--panel));
-  border-color:color-mix(in srgb, var(--primary) 45%, var(--border));
+
+/* Tabs */
+.tabs button:hover {
+  color: #fff;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 15%, var(--bg-2)), var(--panel));
+  border-color: color-mix(in srgb, var(--primary) 45%, var(--border));
 }
-.pill:hover, .tag-pill:hover{
-  background:color-mix(in srgb, var(--accent) 25%, var(--bg-2));
-  border-color:color-mix(in srgb, var(--accent) 40%, var(--border));
-  color:#fff;
-  box-shadow:0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent);
+
+/* Pills and tag pills */
+.pill:hover,
+.tag-pill:hover {
+  background: color-mix(in srgb, var(--accent) 25%, var(--bg-2));
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+  color: #fff;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent);
 }
-.icon-btn:hover, .card:hover, .qb-file:hover{
-  background:color-mix(in srgb, var(--primary) 15%, var(--bg-2));
-  border-color:color-mix(in srgb, var(--primary) 35%, var(--border));
-  box-shadow:0 2px 14px rgba(0,0,0,.45);
+
+/* Generic clickable chips, icon buttons, or cards */
+.icon-btn:hover,
+.card:hover,
+.qb-file:hover {
+  background: color-mix(in srgb, var(--primary) 15%, var(--bg-2));
+  border-color: color-mix(in srgb, var(--primary) 35%, var(--border));
+  box-shadow: 0 2px 14px rgba(0,0,0,.45);
 }
-.switch:hover .slider{
-  border-color:color-mix(in srgb, var(--accent) 40%, var(--border));
-  background:color-mix(in srgb, var(--accent) 20%, var(--bg-2));
+
+/* Switch toggle track on hover */
+.switch:hover .slider {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+  background: color-mix(in srgb, var(--accent) 20%, var(--bg-2));
 }
-.table tr:hover td{ background:color-mix(in srgb, var(--primary) 12%, var(--panel)); }
-a:hover, button.link:hover{
-  color:var(--accent);
-  text-shadow:0 0 6px color-mix(in srgb, var(--accent) 50%, transparent);
-  transition:color .12s ease, text-shadow .12s ease;
+
+/* Table rows hover */
+.table tr:hover td {
+  background: color-mix(in srgb, var(--primary) 12%, var(--panel));
 }
-/* Subtabs / actions hover */
-.subtabs button:hover{
-  color:#fff;
-  background:linear-gradient(180deg, color-mix(in srgb, var(--primary) 18%, var(--bg-2)), var(--panel));
-  border-color:color-mix(in srgb, var(--primary) 50%, var(--border));
-  box-shadow:0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent), 0 4px 18px rgba(0,0,0,.35);
-  transform:translateY(-2px);
+
+/* Accent glow for hovered links */
+a:hover, button.link:hover {
+  color: var(--accent);
+  text-shadow: 0 0 6px color-mix(in srgb, var(--accent) 50%, transparent);
+  transition: color .12s ease, text-shadow .12s ease;
 }
+/* ===================== Enhanced Hover: Sub-tabs & Record Panel ===================== */
+
+/* Sub-tabs like “Verb Drills” / “Vocab” */
+.subtabs button:hover {
+  color: #fff;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--primary) 18%, var(--bg-2)),
+    var(--panel)
+  );
+  border-color: color-mix(in srgb, var(--primary) 50%, var(--border));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent),
+              0 4px 18px rgba(0,0,0,.35);
+  transform: translateY(-2px);
+}
+
+/* Record panel action buttons (non-danger) */
 .rec-actions button:hover,
 .card-actions button:hover,
-.actions button:hover{
-  background:color-mix(in srgb, var(--primary) 15%, var(--bg-2));
-  border-color:color-mix(in srgb, var(--primary) 40%, var(--border));
-  color:#fff;
-  box-shadow:0 0 0 2px color-mix(in srgb, var(--primary) 30%, transparent), 0 4px 18px rgba(0,0,0,.35);
-  transform:translateY(-2px);
-}
-.subtabs button.active:hover{
-  background:color-mix(in srgb, var(--accent) 25%, #17263a);
-  border-color:color-mix(in srgb, var(--accent) 45%, #1f3a52);
-  color:#fff;
+.actions button:hover {
+  background: color-mix(in srgb, var(--primary) 15%, var(--bg-2));
+  border-color: color-mix(in srgb, var(--primary) 40%, var(--border));
+  color: #fff;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 30%, transparent),
+              0 4px 18px rgba(0,0,0,.35);
+  transform: translateY(-2px);
 }
 
-/* Smoothened transition timings */
+/* Keep destructive buttons punchy */
+.rec-actions .danger:hover {
+  background: linear-gradient(135deg, var(--danger), color-mix(in srgb, var(--danger-2) 30%, var(--accent)));
+  border-color: color-mix(in srgb, var(--danger) 50%, var(--border));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--danger) 35%, transparent),
+              0 4px 20px rgba(0,0,0,.38);
+  transform: translateY(-2px);
+}
+
+/* Hover feedback for file-chip & icon buttons near record panel */
+.qb-file:hover,
+.icon-btn:hover {
+  background: color-mix(in srgb, var(--primary) 15%, var(--bg-2));
+  border-color: color-mix(in srgb, var(--primary) 35%, var(--border));
+  color: #fff;
+  box-shadow: 0 2px 14px rgba(0,0,0,.45);
+}
+
+/* Sub-tab “active + hover”: keep strong highlight */
+.subtabs button.active:hover {
+  background: color-mix(in srgb, var(--accent) 25%, #17263a);
+  border-color: color-mix(in srgb, var(--accent) 45%, #1f3a52);
+  color: #fff;
+}
+/* =========================== Hover Timing Tuning ============================ */
+/* Slows down hover transitions for a smoother feel */
+
 :where(
-  .btn, .btn-primary, .btn-danger,
-  .start-drills-btn, .save-btn, .save-settings-btn,
-  .tabs button, .subtabs button, .pill, .tag-pill,
-  .rec-actions button, .card-actions button, .icon-btn, .qb-file
-){
+  .btn,
+  .btn-primary,
+  .btn-danger,
+  .start-drills-btn,
+  .save-btn,
+  .save-settings-btn,
+  .tabs button,
+  .subtabs button,
+  .pill,
+  .tag-pill,
+  .rec-actions button,
+  .card-actions button,
+  .icon-btn,
+  .qb-file
+) {
   transition:
-    background-color .3s ease,
-    border-color .3s ease,
-    box-shadow .3s ease,
-    transform .25s ease,
-    color .3s ease;
-}
-.tabs button, .subtabs button, .pill, .tag-pill{ transition-duration:.4s; }
-
-/* Vocab drill box transitions */
-:where(.vocab-card, .drill-side, .answer-box, .question-box, .panel.vocab-panel){
-  transition:background-color .45s ease, border-color .45s ease, box-shadow .45s ease, transform .35s ease;
-}
-:where(.vocab-card:hover, .drill-side:hover, .answer-box:hover, .question-box:hover){
-  background:color-mix(in srgb, var(--accent) 12%, var(--bg-2));
-  border-color:color-mix(in srgb, var(--accent) 40%, var(--border));
-  box-shadow:0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent), 0 4px 22px rgba(0,0,0,.35);
-  transform:translateY(-1px);
-}
-:where(.vocab-card:focus-within, .drill-side:focus-within, .answer-box:focus-within, .question-box:focus-within){
-  outline:2px solid var(--focus); outline-offset:3px;
-  transition:outline-color .45s ease, box-shadow .45s ease;
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.25s ease,
+    color 0.3s ease;
 }
 
-/* ===================== Vocab panel emphasis ======================== */
-.vocab-panel{
-  padding:18px 20px; border-radius:var(--br);
-  background:linear-gradient(180deg, var(--panel), var(--bg-2));
-  box-shadow:0 8px 24px rgba(0,0,0,.25);
+/* Optionally: slightly longer for tabs/pills to emphasize state change */
+.tabs button,
+.subtabs button,
+.pill,
+.tag-pill {
+  transition-duration: 0.4s;
 }
-.vocab-fr{
-  display:block; font-size:clamp(1.8rem, 3.2vw, 2.6rem); font-weight:700; color:var(--accent);
-  text-shadow:0 1px 6px rgba(34,211,238,.3); margin-bottom:8px; letter-spacing:.5px; line-height:1.25;
-}
-.vocab-en{
-  display:block; font-size:clamp(1.7rem, 3vw, 2.4rem); font-weight:700;
-  color:color-mix(in srgb, var(--ink) 15%, rgb(7,105,124)); text-shadow:0 1px 4px rgba(0,0,0,.25);
-  margin-top:8px; opacity:1.15;
-}
-.vocab-divider{
-  width:40px; height:3px; border-radius:2px;
-  background:color-mix(in srgb, var(--accent) 60%, var(--primary)); margin:10px 0;
-}
-.vocab-example{ font-size:1rem; color:var(--ink-2); line-height:1.5; margin-top:12px; }
-.vocab-panel:hover .vocab-fr, .vocab-panel:hover .vocab-en{
-  transform:scale(1.03);
-  transition:transform .35s ease, text-shadow .45s ease;
-  text-shadow:0 2px 12px rgba(34,211,238,.4);
+/* ====================== Vocabulary Drill Input/Output Hover Timing ====================== */
+
+/* Smooth down transitions on vocab drill boxes */
+:where(
+  .vocab-card,
+  .drill-side,
+  .answer-box,
+  .question-box,
+  .panel.vocab-panel
+) {
+  transition:
+    background-color 0.45s ease,
+    border-color 0.45s ease,
+    box-shadow 0.45s ease,
+    transform 0.35s ease;
 }
 
-/* ======================= Card grid & look (VC) ===================== */
-.card-grid, .card-grid .grid{
-  display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px; align-items:stretch;
+/* On hover: keep the strong highlight, but fade in/out slowly */
+:where(
+  .vocab-card:hover,
+  .drill-side:hover,
+  .answer-box:hover,
+  .question-box:hover
+) {
+  background: color-mix(in srgb, var(--accent) 12%, var(--bg-2));
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent),
+              0 4px 22px rgba(0,0,0,.35);
+  transform: translateY(-1px);
 }
-.vc-card{
-  background:var(--card-bg, #0b1220);
-  border:1px solid var(--card-border, #1f2937);
-  border-radius:14px; padding:14px 14px 12px; box-shadow:0 4px 18px rgba(0,0,0,0.18);
-  display:flex; flex-direction:column; min-height:120px;
+
+/* Optional: make focus effect slower and smoother too */
+:where(
+  .vocab-card:focus-within,
+  .drill-side:focus-within,
+  .answer-box:focus-within,
+  .question-box:focus-within
+) {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  transition: outline-color 0.45s ease, box-shadow 0.45s ease;
 }
-.vc-card-h{ display:flex; align-items:center; justify-content:flex-start; gap:8px; margin-bottom:8px; }
-.vc-card-f{ margin-top:10px; }
-.vc-card-body{ font-size:16px; line-height:1.4; flex:1 1 auto; position:relative; word-wrap:break-word; overflow-wrap:anywhere; }
-.vc-card-body.big{ font-size:22px; line-height:1.3; }
+/* ====================== Vocabulary Panel — Enhanced Text Emphasis ====================== */
 
-.pill.subtle{ opacity:.8; text-transform:none; }
+/* Container styles: give breathing room */
+.vocab-panel {
+  padding: 18px 20px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, var(--panel), var(--bg-2));
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+}
 
-/* Vocab card specifics */
+/* French phrase — hero element */
+.vocab-fr {
+  display: block;
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem);   /* scales responsively */
+  font-weight: 700;
+  color: var(--accent);
+  text-shadow: 0 1px 6px rgba(34,211,238,.3);
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+  line-height: 1.25;
+}
+
+/* English translation — secondary but still prominent */
+.vocab-en {
+  display: block;
+  font-size: clamp(1.7rem, 3.0vw, 2.4rem);
+  font-weight: 700;
+  color: color-mix(in srgb, var(--ink) 15%, rgb(7, 105, 124));
+  text-shadow: 0 1px 4px rgba(0,0,0,.25);
+  margin-top: 8px;
+  opacity: 1.15;
+}
+
+/* Optional: subtle divider between the two */
+.vocab-divider {
+  width: 40px;
+  height: 3px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--accent) 60%, var(--primary));
+  margin: 10px 0;
+}
+
+/* Example sentences area */
+.vocab-example {
+  font-size: 1rem;
+  color: var(--ink-muted);
+  line-height: 1.5;
+  margin-top: 12px;
+}
+
+/* Slight zoom on hover (or when active) */
+.vocab-panel:hover .vocab-fr,
+.vocab-panel:hover .vocab-en {
+  transform: scale(1.03);
+  transition: transform 0.35s ease, text-shadow 0.45s ease;
+  text-shadow: 0 2px 12px rgba(34,211,238,.4);
+}
+/* ====== Card grid ====== */
+.card-grid, .card-grid .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  align-items: stretch;
+}
+
+/* ====== Generic card look ====== */
+.vc-card {
+  background: var(--card-bg, #0b1220);
+  border: 1px solid var(--card-border, #1f2937);
+  border-radius: 14px;
+  padding: 14px 14px 12px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+  display: flex;
+  flex-direction: column;
+  min-height: 120px;
+}
+
+.vc-card-h {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.vc-card-f {
+  margin-top: 10px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1;
+  border-radius: 999px;
+  padding: 6px 10px;
+  border: 1px solid var(--pill-border, #324357);
+  background: var(--pill-bg, #0f172a);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.pill.subtle {
+  opacity: 0.8;
+  text-transform: none;
+}
+
+.vc-card-body {
+  font-size: 16px;
+  line-height: 1.4;
+  flex: 1 1 auto;
+  position: relative;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+.vc-card-body.big {
+  font-size: 22px;
+  line-height: 1.3;
+}
+
+/* ---------- Vocab UI: buttons + card ---------- */
+:root{
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --text: #0f172a;
+  --muted: #6b7280;
+  --shadow: 0 8px 24px rgba(2, 6, 23, 0.08);
+  --btn-bg: #0f172a;
+  --btn-text: #ffffff;
+  --btn-bg-hover: #111827;
+  --btn-disabled: #9ca3af;
+}
+
+@media (prefers-color-scheme: dark){
+  :root{
+    --card-bg: #0b1220;
+    --card-border: #1f2937;
+    --text: #e5e7eb;
+    --muted: #9ca3af;
+    --shadow: 0 10px 28px rgba(0,0,0,0.5);
+    --btn-bg: #1f2937;
+    --btn-text: #e5e7eb;
+    --btn-bg-hover: #273449;
+    --btn-disabled: #4b5563;
+  }
+}
+
+.button-group{
+  display: flex;
+  gap: 10px;
+  margin: 8px 0 14px;
+  flex-wrap: wrap;
+}
+
+.button-group button{
+  appearance: none;
+  border: 1px solid var(--card-border);
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  padding: 10px 14px;
+  border-radius: 12px;
+  font: 600 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+  box-shadow: var(--shadow);
+  transform: translateY(0);
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease, border-color 120ms ease;
+  cursor: pointer;
+}
+
+.button-group button:hover{
+  background: var(--btn-bg-hover);
+  transform: translateY(-1px);
+}
+
+.button-group button:active{
+  transform: translateY(0);
+}
+
+.button-group button:disabled{
+  cursor: not-allowed;
+  opacity: 0.6;
+  background: transparent;
+  color: var(--btn-disabled);
+}
+
+/* The card itself */
 .vocab-card{
-  background:var(--card-bg); color:var(--text); border:1px solid var(--card-border);
-  border-radius:16px; box-shadow:var(--shadow);
-  padding:18px; display:grid; grid-template-columns:1fr; gap:14px; max-width:920px;
-  transition:box-shadow 160ms ease, transform 160ms ease, border-color 160ms ease;
+  background: var(--card-bg);
+  color: var(--text);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 18px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  transition: box-shadow 160ms ease, transform 160ms ease, border-color 160ms ease;
+  max-width: 920px;
 }
-.vocab-card:hover{ transform:translateY(-2px); box-shadow:0 12px 32px rgba(2,6,23,.12); }
-.vocab-card .fr, .vocab-card .en{
-  font-size:1.6rem; line-height:1.25; font-weight:700; word-wrap:break-word;
+
+.vocab-card:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(2, 6, 23, 0.12);
 }
-.vocab-card .fr{ color:#2563eb; }
-.vocab-card .en{ color:#b45309; opacity:.95; }
-@media (min-width:700px){
-  .vocab-card{ grid-template-columns:1fr 1fr; align-items:start; }
+
+/* ---------- Vocab Card Color Accents ---------- */
+
+/* Base text + color tones for FR and EN */
+.vocab-card .fr{
+  font-size: 1.6rem;
+  line-height: 1.25;
+  font-weight: 700;
+  word-wrap: break-word;
+  color: #2563eb; /* blue-600 */
+}
+
+.vocab-card .en{
+  font-size: 1.6rem;
+  line-height: 1.25;
+  font-weight: 700;
+  opacity: 0.95;
+  word-wrap: break-word;
+  color: #b45309; /* amber-700 */
+}
+
+/* Background tints for larger screens (side-by-side layout) */
+@media (min-width: 700px){
+  .vocab-card{
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
   .vocab-card .fr{
-    background:color-mix(in srgb, #2563eb 6%, transparent);
-    padding:18px 14px; border-right:1px dashed var(--card-border); border-radius:12px 0 0 12px;
+    background: color-mix(in srgb, #2563eb 6%, transparent);
+    padding: 18px 14px;
+    border-right: 1px dashed var(--card-border);
+    border-radius: 12px 0 0 12px;
   }
   .vocab-card .en{
-    background:color-mix(in srgb, #f59e0b 6%, transparent);
-    padding:18px 14px; border-right:1px dashed var(--card-border); border-radius:12px 0 0 12px;
+    background: color-mix(in srgb, #f59e0b 6%, transparent);
+    padding: 18px 14px;
+    border-right: 1px dashed var(--card-border);
+    border-radius: 12px 0 0 12px;
   }
 }
-.vocab-card .dim{ grid-column:1 / -1; margin-top:4px; font-size:.9rem; color:var(--muted); }
-.vocab-card + span{ display:inline-block; margin-top:10px; font-size:.9rem; color:var(--muted); }
 
-/* Button group (shared) */
-.button-group{ display:flex; gap:10px; margin:8px 0 14px; flex-wrap:wrap; }
-.button-group button{
-  appearance:none; border:1px solid var(--card-border);
-  background:var(--btn-bg); color:var(--btn-text);
-  padding:10px 14px; border-radius:12px; font:600 14px/1.2 system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,"Noto Sans","Apple Color Emoji","Segoe UI Emoji";
-  box-shadow:var(--shadow); transform:translateY(0);
-  transition:transform 120ms ease, box-shadow 120ms ease, background 120ms ease, border-color 120ms ease;
-  cursor:pointer;
+/* Tags and details under card */
+.vocab-card .dim{
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  font-size: 0.9rem;
+  color: var(--muted);
 }
-.button-group button:hover{ background:var(--btn-bg-hover); transform:translateY(-1px); }
-.button-group button:active{ transform:translateY(0); }
-.button-group button:disabled{ cursor:not-allowed; opacity:.6; background:transparent; color:var(--btn-disabled); }
 
-/* ========================= Examples (purple box) =================== */
+/* Optional: nicer counter styling if that <span> follows the card */
+.vocab-card + span{
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* Optional tag pill style (future use) */
+.tag-pills{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+.pill{
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  background: color-mix(in oklab, var(--card-bg) 90%, transparent);
+}
+.conj-wrap h4 {
+  margin-top: 10px;
+}
+
+.conj-cell {
+  font-size: 0.95rem;
+}
+
+.conj-cell div:first-child {
+  color: #333;
+}
+
+.conj-cell div:last-child {
+  color: #111;
+}
+/* CSS — make it tasteful + readable */
 .example-block{
-  margin:14px 0 8px; padding:16px 18px; border-radius:16px;
-  background:var(--ex-bg,#fafafa); border:1px solid rgba(0,0,0,.06); box-shadow:0 2px 8px rgba(0,0,0,.06);
-  position:relative; overflow:hidden;
-}
-.example-block::before{
-  content:""; position:absolute; left:0; top:0; bottom:0; width:6px;
-  background:var(--ex-accent,#5b8def); opacity:.85;
-}
-.ex-label{
-  display:inline-block; font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; font-weight:600;
-  color:rgba(0,0,0,.65); background:rgba(0,0,0,.04);
-  border-radius:999px; padding:2px 8px; margin-bottom:8px;
-}
-.ex-fr{
-  font-size:clamp(1.05rem, 2.2vw, 1.28rem); line-height:1.5; font-weight:600; margin:4px 0 4px; color:#111;
-}
-.ex-en{
-  font-size:clamp(.9rem, 1.8vw, 1rem); line-height:1.45; margin:6px 0 0; color:rgba(0,0,0,.65); font-style:italic;
-}
-@media (prefers-color-scheme: dark){
-  .example-block{ background:#14161a; border-color:rgba(255,255,255,.08); box-shadow:0 2px 10px rgba(0,0,0,.35); }
-  .ex-label{ color:rgba(255,255,255,.75); background:rgba(255,255,255,.08); }
-  .ex-fr{ color:#f3f6ff; } .ex-en{ color:rgba(255,255,255,.75); }
-  .example-block::before{ background:var(--ex-accent, #7aa2ff); }
+  margin: 14px 0 8px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: var(--ex-bg, #fafafa);
+  border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  position: relative;
+  overflow: hidden;
 }
 
-/* =============================== Toasts ============================ */
-.toast-stack{
-  position:fixed; right:16px; bottom:16px; display:flex; flex-direction:column; gap:8px; z-index:9999;
-  pointer-events:none;
+.example-block::before{
+  content:"";
+  position:absolute;
+  left:0; top:0; bottom:0;
+  width:6px;
+  background: var(--ex-accent, #5b8def);
+  opacity:.85;
 }
-.toast-stack .toast{ pointer-events:auto; }
-.toast{
-  display:inline-flex; align-items:center; gap:10px; max-width:420px; padding:10px 12px; border-radius:10px;
-  box-shadow:0 6px 18px rgba(0,0,0,.18); background:var(--surface,#1f1f23); color:var(--text,#f5f5f5);
-  cursor:pointer; user-select:none; transition:transform .12s ease, opacity .12s ease; opacity:.98;
+
+.ex-label{
+  display:inline-block;
+  font-size:.78rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-weight:600;
+  color: rgba(0,0,0,.65);
+  background: rgba(0,0,0,.04);
+  border-radius: 999px;
+  padding: 2px 8px;
+  margin-bottom: 8px;
 }
+
+.ex-fr{
+  font-size: clamp(1.05rem, 2.2vw, 1.28rem);
+  line-height: 1.5;
+  font-weight: 600;
+  margin: 4px 0 4px;
+  color: #111;
+}
+
+.ex-en{
+  font-size: clamp(.9rem, 1.8vw, 1rem);
+  line-height: 1.45;
+  margin: 6px 0 0;
+  color: rgba(0,0,0,.65);
+  font-style: italic;
+}
+
+/* dark mode friendly defaults */
+@media (prefers-color-scheme: dark){
+  .example-block{
+    background: #14161a;
+    border-color: rgba(255,255,255,.08);
+    box-shadow: 0 2px 10px rgba(0,0,0,.35);
+  }
+  .ex-label{ color: rgba(255,255,255,.75); background: rgba(255,255,255,.08); }
+  .ex-fr{ color: #f3f6ff; }
+  .ex-en{ color: rgba(255,255,255,.75); }
+  .example-block::before{ background: var(--ex-accent, #7aa2ff); }
+}
+button.danger { background:#b91c1c; color:#fff; }
+button.danger:hover { filter:brightness(1.05); }
+.toast-stack{ position:fixed; right:16px; bottom:16px; display:flex; flex-direction:column; gap:8px; z-index:9999; }
+.toast{ display:inline-flex; align-items:center; gap:10px; max-width:420px; padding:10px 12px; border-radius:10px; box-shadow:0 6px 18px rgba(0,0,0,.18); background:var(--surface,#1f1f23); color:var(--text,#f5f5f5); cursor:pointer; user-select:none; transition:transform .12s ease, opacity .12s ease; opacity:.98; }
 .toast:hover{ transform:translateY(-1px); opacity:1; }
 .toast .toast-dot{ width:8px; height:8px; border-radius:999px; background:currentColor; display:inline-block; }
 .toast.info{    border-left:5px solid #3b82f6; color:#dbeafe; }
 .toast.success{ border-left:5px solid #22c55e; color:#dcfce7; }
 .toast.warn{    border-left:5px solid #f59e0b; color:#fef9c3; }
 .toast.error{   border-left:5px solid #ef4444; color:#fee2e2; }
-
-/* ========================= Grammar panel UI ======================== */
-.grammar-toolbar{ display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 12px; }
-.g-btn{
-  border:1px solid var(--border,#334155); background:var(--surface, hsl(220,100%,95%));
-  padding:6px 10px; border-radius:999px; font-size:13px; line-height:1; cursor:pointer;
-  transition:transform .06s ease, background .15s ease, border-color .15s ease;
+/* ===== Grammar Panel buttons/pills ===== */
+.grammar-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 12px;
 }
-.g-btn:hover{ transform:translateY(-1px); }
-.g-btn:active{ transform:translateY(0); }
-.g-btn.active{ border-color:#8b5cf6; box-shadow:0 0 0 2px rgba(139,92,246,.2) inset; }
-.grammar-actions{ display:flex; gap:8px; margin-left:auto; }
+
+.g-btn {
+  border: 1px solid var(--border, #334155);
+  background: var(--surface, hsl(220, 100%, 95%));
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform .06s ease, background .15s ease, border-color .15s ease;
+}
+.g-btn:hover { transform: translateY(-1px); }
+.g-btn:active { transform: translateY(0); }
+.g-btn.active {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 2px rgba(139,92,246,.2) inset;
+}
+
+/* Small utility for right-aligned controls */
+.grammar-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* Inputs in the toolbar */
 .grammar-toolbar input[type="file"],
-.grammar-toolbar input[type="search"]{
-  font-size:13px; padding:6px 10px; border-radius:10px; border:1px solid var(--border,#334155);
-  background:var(--surface,#0b1220); color:inherit;
-}
-.grammar-table{ width:100%; border-collapse:collapse; margin-top:8px; font-size:14px; }
-.grammar-table th, .grammar-table td{ border-bottom:1px solid rgba(148,163,184,.15); padding:8px 10px; vertical-align:top; }
-.grammar-table th{ text-align:left; font-weight:600; opacity:.85; }
-.grammar-table tr:hover{ background:rgba(148,163,184,.06); }
-
-/* =========================== Buttons (unified) ===================== */
-button,
-.save-btn,
-.save-settings-btn{
-  font-family:inherit; font-size:1rem; font-weight:600; border-radius:10px; padding:10px 20px; border:none; cursor:pointer;
-  transition:all .25s ease;
-}
-/* Primary action buttons (aliases) */
-.start-drills-btn, .save-btn, .save-settings-btn{
-  background:linear-gradient(135deg, #2563eb, #3b82f6); color:#fff; box-shadow:0 3px 10px rgba(59,130,246,.25);
-  margin-top:12px; display:inline-block;
-}
-.start-drills-btn:hover, .save-btn:hover, .save-settings-btn:hover{
-  background:linear-gradient(135deg, #1d4ed8, #2563eb);
-  box-shadow:0 5px 14px rgba(59,130,246,.35); transform:translateY(-1px);
-}
-.start-drills-btn:active, .save-btn:active, .save-settings-btn:active{
-  transform:translateY(0); box-shadow:0 2px 6px rgba(59,130,246,.3);
+.grammar-toolbar input[type="search"] {
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border, #334155);
+  background: var(--surface, #0b1220);
+  color: inherit;
 }
 
-/* Button refresh (drop-in) */
+/* Grammar table look (optional) */
+.grammar-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font-size: 14px;
+}
+.grammar-table th,
+.grammar-table td {
+  border-bottom: 1px solid rgba(148,163,184,.15);
+  padding: 8px 10px;
+  vertical-align: top;
+}
+.grammar-table th {
+  text-align: left;
+  font-weight: 600;
+  opacity: .85;
+}
+.grammar-table tr:hover {
+  background: rgba(148,163,184,.06);
+}
+
+/* Dim helper */
+.dim { opacity: .75; }
+/* Toast placement + click behavior */
+.toast-stack{
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 9999;
+  pointer-events: none; /* do NOT block underlying UI */
+}
+.toast-stack .toast{
+  pointer-events: auto; /* individual toasts remain clickable */
+}
+/* --- Button refresh (drop-in) --- */
+:root{
+  /* tweak these if you want a different vibe */
+  --btn-accent:        #6d28d9; /* purple */
+  --btn-accent-2:      #5b21b6;
+  --btn-fg:            #ffffff;
+  --btn-muted-bg:      #0f172a0d; /* subtle for outlines/ghosts */
+  --btn-danger:        #dc2626;
+  --btn-danger-2:      #b91c1c;
+  --btn-shadow:        0 2px 8px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.06);
+  --btn-shadow-hover:  0 6px 16px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.08);
+  --focus-ring:        #a78bfa;
+}
+
+/* Base button */
 button{
-  -webkit-appearance:none; appearance:none; border:0; border-radius:12px; padding:10px 14px;
+  -webkit-appearance:none;
+  appearance:none;
+  border:0;
+  border-radius:12px;
+  padding:10px 14px;
   font:600 14px/1.1 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  color:var(--btn-fg); background:linear-gradient(180deg, var(--btn-accent), var(--btn-accent-2));
-  box-shadow:var(--btn-shadow); cursor:pointer;
-  transition:transform .12s ease, box-shadow .12s ease, opacity .12s ease, filter .12s ease;
+  color:var(--btn-fg);
+  background:linear-gradient(180deg, var(--btn-accent), var(--btn-accent-2));
+  box-shadow:var(--btn-shadow);
+  cursor:pointer;
+  transition:
+    transform .12s ease,
+    box-shadow .12s ease,
+    opacity .12s ease,
+    filter .12s ease;
 }
-button.small{ padding:6px 10px; font-size:12.5px; border-radius:10px; }
-button.danger{ background:linear-gradient(180deg, var(--btn-danger), var(--btn-danger-2)); color:#fff; }
-button:hover:not(:disabled){ transform:translateY(-1px); box-shadow:var(--btn-shadow-hover); filter:saturate(1.02); }
-button:active:not(:disabled){ transform:translateY(0); filter:saturate(.98) brightness(.98); }
-button:focus-visible{ outline:3px solid var(--focus-ring); outline-offset:2px; }
-button:disabled{ opacity:.55; cursor:not-allowed; box-shadow:none; }
-.box .row button, .actions button{ margin:2px 0; }
-button[data-variant="outline"]{ background:var(--btn-muted-bg); color:inherit; box-shadow:inset 0 0 0 1px var(--muted,#e5e7eb); }
-button[data-variant="outline"]:hover:not(:disabled){ filter:none; box-shadow:inset 0 0 0 1px var(--muted,#e5e7eb), var(--btn-shadow); }
 
-/* ========================= Conjugation tweaks ====================== */
-.conj-wrap h4{ margin-top:10px; }
-.conj-cell{ font-size:.95rem; }
-.conj-cell div:first-child{ color:#333; }
-.conj-cell div:last-child{ color:#111; }
+/* Size variants you already use */
+button.small{
+  padding:6px 10px;
+  font-size:12.5px;
+  border-radius:10px;
+}
 
-/* ====================== Question Bank (Record) ===================== */
-.qb .qb-import-row{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin:8px 0; }
-.qb .qb-paste{ margin:8px 0; }
-.qb-filters{ display:flex; gap:12px; flex-wrap:wrap; margin:8px 0; }
-.qb-filters select{ padding:8px; border:1px solid #243041; background:#0f172a; color:#e2e8f0; border-radius:10px; }
-.qb-grid{ display:grid; gap:10px; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); }
-.qb-item{ padding:12px; border:1px solid #243041; border-radius:12px; background:#0e1726; display:grid; gap:6px; }
-.qb-head{ display:flex; justify-content:space-between; gap:8px; align-items:center; }
-.qb-cat{ font-size:12px; color:#9ca3af; }
-.qb-tags{ display:flex; gap:6px; flex-wrap:wrap; }
-.qb-pill{ font-size:11px; padding:2px 8px; border-radius:999px; border:1px solid #1f2937; background:#162033; }
-.qb-prompt{ font-weight:600; line-height:1.35; }
-.qb-followups{ margin:4px 0 0; padding-left:18px; }
-.qb-sample{ margin-top:4px; }
-.qb-actions{ margin-top:6px; display:flex; justify-content:flex-end; }
-.qb-file input[type=file]{ display:none; }
-.qb-file{ padding:6px 10px; border:1px solid #1f2937; background:#162033; color:#e2e8f0; border-radius:10px; cursor:pointer; }
+/* Danger variant you already use */
+button.danger{
+  background:linear-gradient(180deg, var(--btn-danger), var(--btn-danger-2));
+}
+
+/* States */
+button:hover:not(:disabled){
+  transform:translateY(-1px);
+  box-shadow:var(--btn-shadow-hover);
+  filter:saturate(1.02);
+}
+button:active:not(:disabled){
+  transform:translateY(0);
+  filter:saturate(.98) brightness(.98);
+}
+button:focus-visible{
+  outline:3px solid var(--focus-ring);
+  outline-offset:2px;
+}
+button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+  box-shadow:none;
+}
+
+/* Make button rows breathe without changing your templates */
+.box .row button{ margin:2px 0; }
+.actions button{ margin:2px 0; }
+
+/* Optional: subtle “outline” look without changing markup
+   Usage (if you want): <button data-variant="outline">…</button> */
+button[data-variant="outline"]{
+  background:var(--btn-muted-bg);
+  color:inherit;
+  box-shadow:inset 0 0 0 1px var(--muted, #e5e7eb);
+}
+button[data-variant="outline"]:hover:not(:disabled){
+  filter:none;
+  box-shadow:inset 0 0 0 1px var(--muted, #e5e7eb), var(--btn-shadow);
+}
+/* ==== Fix: panels overlaying other tabs (stacking context reset) ==== */
+
+/* Make the main content create its own stacking context so
+   child z-indexes can't jump above siblings unexpectedly */
+.view {
+  position: relative;
+  isolation: isolate; /* prevents children from escaping */
+}
+
+/* All top-level panels sit at the base z-layer by default */
+.view > .panel,
+.view > .panel * {
+  z-index: 0;
+}
+
+/* Be explicit for the vocab panel too */
+.panel.vocab-panel {
+  position: relative;
+  z-index: 0;
+}
+
+/* Keep header/tabs decisively above content */
+.app-header { z-index: 100; } /* was 2 */
+.tabs       { z-index: 90; }  /* was 1 */
+/* ---- View isolation so children can't escape their page ---- */
+.view { position: relative; isolation: isolate; }
+
+/* ---- Hide Vocab subtree when its container says aria-hidden ---- */
+.vocab-panel-root[aria-hidden="true"] {
+  display: none !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+/* ---- Safety: neutralize any full-screen overlay styles inside Vocab ---- */
+.vocab-panel-root *[style*="position:fixed"],
+.vocab-panel-root .fixed,
+.vocab-panel-root .overlay,
+.vocab-panel-root .modal,
+.vocab-panel-root .modal-overlay {
+  position: absolute !important;
+  inset: auto !important;
+  z-index: 0 !important;
+}
+
+/* Ensure panels themselves sit below header/tabs (which are sticky) */
+.panel { position: relative; z-index: 0; }
+.app-header { z-index: 100; }  /* header should always sit on top */
+.tabs       { z-index: 90;  }  /* then tabs */

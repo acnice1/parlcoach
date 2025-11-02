@@ -278,6 +278,13 @@ const toast = {
   error:  (m, ms) => pushToast(m, 'error',  ms),
 };
 
+// prevents scroll lock override  
+watch(
+  () => [state.tab, state.learnTab],
+  () => { window.scrollTo(0, 0); },
+  { flush: 'post' }
+);
+
    // CSV parser (simple, no quotes/escapes)
     async function refreshSavedListsUI() {
       try {
@@ -1659,18 +1666,21 @@ async function importGrammarCsv(evt, kind){
       Vocab.computeDue(state.flashcards);
     }
 
-    function getScroll() {
-      return { x: window.scrollX, y: window.scrollY };
-    }
-    function restoreScroll(pos) {
-      window.scrollTo(pos.x, pos.y);
-    }
-    async function withScrollLock(run) {
-      const pos = getScroll();
-      await run();
-      await nextTick();
-      restoreScroll(pos);
-    }
+
+    // app.js — replace your getScroll/restoreScroll/withScrollLock (around where they are now)
+function getScroll() { return { x: window.scrollX, y: window.scrollY }; }
+function restoreScroll(pos) { window.scrollTo(pos.x, pos.y); }
+
+async function withScrollLock(run) {
+  const before = { pos: getScroll(), tab: state.tab, learn: state.learnTab };
+  await run();
+  await nextTick();
+  const changed = (before.tab !== state.tab) || (before.learn !== state.learnTab);
+  if (!changed) restoreScroll(before.pos);
+}
+
+
+
 
     const methods = {
       // vocab

@@ -21,66 +21,53 @@
 
       <!-- Main Tabs -->
       <nav class="tabs">
-        <button :class="{active: tab==='learn'}" @click="tab='learn'">
-          Learn
-        </button>
-        <button :class="{active: tab==='record'}" @click="tab='record'">
-          Record
-        </button>
-        <button :class="{active: tab==='plan'}" @click="tab='plan'">
-          Plan
-        </button>
+        <button :class="{active: tab==='learn'}"  @click="tab='learn'">Learn</button>
+        <button :class="{active: tab==='record'}" @click="tab='record'">Record</button>
+        <button :class="{active: tab==='plan'}"   @click="tab='plan'">Plan</button>
         <!-- <button :class="{active: tab==='settings'}" @click="tab='settings'">Settings</button> -->
-        <button :class="{active: tab==='data'}" @click="tab='data'">
-          Data
-        </button>
+        <button :class="{active: tab==='data'}"   @click="tab='data'">Data</button>
       </nav>
 
       <main class="view">
         <!-- ==================== LEARN ==================== -->
-<!-- ==================== LEARN ==================== -->
-<section v-if="tab==='learn'" class="panel">
-  <nav class="subtabs">
-    <button :class="{active: learnTab==='drills'}"  @click="learnTab='drills'">Verb Drills</button>
-    <button :class="{active: learnTab==='vocab'}"   @click="learnTab='vocab'">Vocab</button>
-    <button :class="{active: learnTab==='grammar'}" @click="learnTab='grammar'">Grammar</button>
-    <!-- optional -->
-  </nav>
+        <section v-if="tab==='learn'" class="panel" :key="'learn'" id="panel-learn">
+          <nav class="subtabs">
+            <button :class="{active: learnTab==='drills'}"  @click="learnTab='drills'">Verb Drills</button>
+            <button :class="{active: learnTab==='vocab'}"   @click="learnTab='vocab'">Vocab</button>
+            <button :class="{active: learnTab==='grammar'}" @click="learnTab='grammar'">Grammar</button>
+            <!-- optional: add more sub-tabs here -->
+          </nav>
 
-  <div v-if="learnTab==='drills'">
-    <drill-panel :state="state" :methods="methods"></drill-panel>
-  </div>
+          <!-- Drills -->
+          <div v-if="learnTab==='drills'">
+            <drill-panel :state="state" :methods="methods"></drill-panel>
+          </div>
 
-  <div v-else-if="learnTab==='vocab'">
-    <vocab-panel :state="state" :methods="methods"></vocab-panel>
-  </div>
+          <!-- Vocab (wrapped to allow hard-hide when not active) -->
+          <div
+            v-else-if="learnTab==='vocab'"
+            class="vocab-panel-root"
+            :aria-hidden="!(tab==='learn' && learnTab==='vocab')"
+          >
+            <vocab-panel :state="state" :methods="methods"></vocab-panel>
+          </div>
 
-  <div v-else-if="learnTab==='grammar'">
-    <grammar-panel :state="state" :methods="methods"></grammar-panel>
-  </div>
+          <!-- Grammar -->
+          <div v-else-if="learnTab==='grammar'">
+            <grammar-panel :state="state" :methods="methods"></grammar-panel>
+          </div>
 
-</section>
-
-          <!-- ==================== MY VERBS ==================== -->
+          <!-- Optional extra Learn subviews (keep inside LEARN section) -->
           <div v-else-if="learnTab==='myverbs'">
             <div class="verbs-grid">
               <div class="box">
                 <h3>Add Verbs</h3>
                 <div class="row">
-                  <input
-                    v-model="newVerb.infinitive"
-                    placeholder="infinitive (e.g., parler)"
-                  />
-                  <input
-                    v-model="newVerb.english"
-                    placeholder="english (e.g., to speak)"
-                  />
+                  <input v-model="newVerb.infinitive" placeholder="infinitive (e.g., parler)" />
+                  <input v-model="newVerb.english" placeholder="english (e.g., to speak)" />
                 </div>
                 <div class="row">
-                  <input
-                    v-model="newVerb.tags"
-                    placeholder="tags (comma-separated)"
-                  />
+                  <input v-model="newVerb.tags" placeholder="tags (comma-separated)" />
                 </div>
                 <button @click="addVerb">Add Verb</button>
               </div>
@@ -91,23 +78,15 @@
                   <span class="front">{{ v.infinitive }}</span>
                   <span class="sep">→</span>
                   <span class="back">{{ v.english || '—' }}</span>
-                  <span class="dim"
-                    >{{ (v.tags && v.tags.length) ? v.tags.join(', ') : '—'
-                    }}</span
-                  >
-                  <button class="small" @click="openJsonEditor(v, false)">
-                    JSON
-                  </button>
+                  <span class="dim">{{ (v.tags && v.tags.length) ? v.tags.join(', ') : '—' }}</span>
+                  <button class="small" @click="openJsonEditor(v, false)">JSON</button>
                   <button class="small" @click="deleteVerb(v)">Delete</button>
                 </div>
-                <p v-if="myVerbs.length===0" class="dim">
-                  No custom verbs yet. Add some above.
-                </p>
+                <p v-if="myVerbs.length===0" class="dim">No custom verbs yet. Add some above.</p>
               </div>
             </div>
           </div>
 
-          <!-- ==================== SEED VERBS ==================== -->
           <div v-else-if="learnTab==='seedverbs'">
             <div class="box">
               <h3>Top 200 (Seed) — {{ seedVerbs.length }}</h3>
@@ -116,54 +95,31 @@
                 <span class="front">{{ v.infinitive }}</span>
                 <span class="sep">→</span>
                 <span class="back">{{ v.english || '—' }}</span>
-                <span class="dim"
-                  >{{ (v.tags && v.tags.length) ? v.tags.join(', ') : '—'
-                  }}</span
-                >
-                <button class="small" @click="openJsonEditor(v, false)">
-                  JSON
-                </button>
+                <span class="dim">{{ (v.tags && v.tags.length) ? v.tags.join(', ') : '—' }}</span>
+                <button class="small" @click="openJsonEditor(v, false)">JSON</button>
                 <button class="small" @click="deleteVerb(v)">Delete</button>
               </div>
-              <p v-if="seedVerbs.length===0" class="dim">
-                No seed verbs present.
-              </p>
+              <p v-if="seedVerbs.length===0" class="dim">No seed verbs present.</p>
             </div>
           </div>
         </section>
 
-                  <!-- ==================== VOCAB ==================== -->
-          <div v-else-if="learnTab==='vocab'">
-            <vocab-panel :state="state" :methods="methods"></vocab-panel>
-          </div>
-
-          <!-- ==================== GRAMMAR ==================== -->
-<div v-else-if="learnTab==='grammar'">
-  <grammar-panel :state="state" :methods="methods"></grammar-panel>
-</div>
-
-
         <!-- ==================== RECORD ==================== -->
-        <section v-if="tab==='record'" class="panel">
+        <section v-if="tab==='record'" class="panel" :key="'record'" id="panel-record">
           <recorder-panel :state="state" :methods="methods"></recorder-panel>
         </section>
 
-        <!-- ==================== DATA (top-level) ==================== -->
-        <!-- Data tab panel -->
-<section v-if="tab==='data'" class="tab-panel">
-  <data-panel :state="state" :methods="methods"></data-panel>
-</section>
-
-
-
+        <!-- ==================== DATA ==================== -->
+        <section v-if="tab==='data'" class="panel" :key="'data'" id="panel-data">
+          <data-panel :state="state" :methods="methods"></data-panel>
+        </section>
 
         <!-- ==================== PLAN ==================== -->
-        <section v-if="tab==='plan'" class="panel">
+        <section v-if="tab==='plan'" class="panel" :key="'plan'" id="panel-plan">
           <header class="panel-head"><h2>French Learning Plan</h2></header>
 
           <div class="plan-grid">
-            <label
-              >Level Goal
+            <label>Level Goal
               <select v-model="plan.goal" @change="savePlan">
                 <option>Government B</option>
                 <option>Government C</option>
@@ -172,23 +128,11 @@
                 <option>Custom</option>
               </select>
             </label>
-            <label
-              >Daily Minutes
-              <input
-                type="number"
-                min="10"
-                step="5"
-                v-model.number="plan.dailyMinutes"
-                @change="savePlan"
-              />
+            <label>Daily Minutes
+              <input type="number" min="10" step="5" v-model.number="plan.dailyMinutes" @change="savePlan" />
             </label>
-            <label
-              >Focus (comma-sep)
-              <input
-                v-model="plan.focus"
-                @change="savePlan"
-                placeholder="listening, oral, vocab, grammar"
-              />
+            <label>Focus (comma-sep)
+              <input v-model="plan.focus" @change="savePlan" placeholder="listening, oral, vocab, grammar" />
             </label>
           </div>
 
@@ -216,35 +160,25 @@
         </section>
 
         <!-- ==================== SETTINGS (optional; nav hidden) ==================== -->
-        <section v-if="tab==='settings'" class="panel">
+        <section v-if="tab==='settings'" class="panel" :key="'settings'" id="panel-settings">
           <header class="panel-head"><h2>Settings</h2></header>
           <div class="set-grid">
             <div>
               <h4>Storage</h4>
               <p class="dim">Audio: OPFS with IndexedDB fallback</p>
-              <button @click="requestPersistence">
-                Request Persistent Storage
-              </button>
-              <div class="dim">
-                Persistent? {{ storagePersisted ? 'Yes' : 'No' }}
-              </div>
+              <button @click="requestPersistence">Request Persistent Storage</button>
+              <div class="dim">Persistent? {{ storagePersisted ? 'Yes' : 'No' }}</div>
             </div>
 
             <div>
               <h4>Export / Import</h4>
               <button @click="exportData">Export JSON</button>
-              <input
-                type="file"
-                accept="application/json"
-                @change="importData"
-              />
+              <input type="file" accept="application/json" @change="importData" />
             </div>
 
             <div>
               <h4>Sync</h4>
-              <p class="dim">
-                No provider configured. You can wire a custom API later.
-              </p>
+              <p class="dim">No provider configured. You can wire a custom API later.</p>
               <button @click="simulateSyncPush">Simulate Push</button>
               <button @click="simulateSyncPull">Simulate Pull</button>
             </div>
@@ -252,26 +186,17 @@
             <div>
               <h4>Translator (optional)</h4>
               <label>Endpoint (LibreTranslate-style)</label>
-              <input
-                v-model="translator.endpoint"
-                placeholder="https://…/translate"
-              />
+              <input v-model="translator.endpoint" placeholder="https://…/translate" />
               <label>API Key (stored locally)</label>
               <input v-model="translator.apiKey" placeholder="optional key" />
               <button @click="saveTranslator">Save Translator Settings</button>
-              <p class="dim">
-                If empty, a local fallback will try simple guesses only.
-              </p>
+              <p class="dim">If empty, a local fallback will try simple guesses only.</p>
             </div>
           </div>
         </section>
 
         <!-- JSON Editor Modal -->
-        <div
-          v-if="jsonEditor.open"
-          class="modal-overlay"
-          @click.self="closeJsonEditor"
-        >
+        <div v-if="jsonEditor.open" class="modal-overlay" @click.self="closeJsonEditor">
           <div class="modal">
             <header class="modal-head">
               <h3>Edit JSON — {{ jsonEditor.verb?.infinitive }}</h3>
@@ -279,18 +204,14 @@
             </header>
 
             <div class="modal-row">
-              <label
-                >Mode
+              <label>Mode
                 <select v-model="jsonEditor.readonly">
                   <option :value="false">Editable</option>
                   <option :value="true">Read-only</option>
                 </select>
               </label>
-              <label class="grow"
-                >Helper
-                <select
-                  @change="insertConjSkeleton($event.target.value); $event.target.selectedIndex=0"
-                >
+              <label class="grow">Helper
+                <select @change="insertConjSkeleton($event.target.value); $event.target.selectedIndex=0">
                   <option selected disabled>Insert skeleton…</option>
                   <option value="blank">Blank template (all tenses)</option>
                   <option value="present">Présent only</option>
@@ -298,38 +219,21 @@
               </label>
             </div>
 
-            <textarea
-              class="json-area"
-              v-model="jsonEditor.text"
-              :readonly="jsonEditor.readonly"
-            ></textarea>
+            <textarea class="json-area" v-model="jsonEditor.text" :readonly="jsonEditor.readonly"></textarea>
 
             <div class="modal-actions">
-              <button @click="prettyJson" :disabled="jsonEditor.readonly">
-                Pretty
-              </button>
-              <button @click="saveJsonEditor" :disabled="jsonEditor.readonly">
-                Save
-              </button>
-              <button
-                class="danger"
-                @click="clearConj"
-                :disabled="jsonEditor.readonly"
-              >
-                Clear conj
-              </button>
-              <span class="err" v-if="jsonEditor.error"
-                >{{ jsonEditor.error }}</span
-              >
+              <button @click="prettyJson" :disabled="jsonEditor.readonly">Pretty</button>
+              <button @click="saveJsonEditor" :disabled="jsonEditor.readonly">Save</button>
+              <button class="danger" @click="clearConj" :disabled="jsonEditor.readonly">Clear conj</button>
+              <span class="err" v-if="jsonEditor.error">{{ jsonEditor.error }}</span>
             </div>
 
             <details class="dim" style="margin-top: 8px">
               <summary>What shape should this JSON be?</summary>
               <p>
-                Use keys like <code>Présent</code>, <code>Passé composé</code>,
-                etc., and inside each, provide person keys <code>je</code>,
-                <code>tu</code>, <code>il/elle/on</code>, <code>nous</code>,
-                <code>vous</code>, <code>ils/elles</code>. The drill loader maps
+                Use keys like <code>Présent</code>, <code>Passé composé</code>, etc., and inside each,
+                provide person keys <code>je</code>, <code>tu</code>, <code>il/elle/on</code>,
+                <code>nous</code>, <code>vous</code>, <code>ils/elles</code>. The drill loader maps
                 internal IDs to these display keys.
               </p>
             </details>
@@ -338,35 +242,26 @@
       </main>
 
       <!-- Toast stack (click to dismiss) -->
-<!-- Toast stack (click to dismiss) -->
-<div class="toast-stack" aria-live="polite" aria-atomic="true">
-  <div v-for="t in state.toasts"
-       :key="t.id"
-       class="toast"
-       :class="t.type"
-       role="status"
-       @click="dismissToast(t.id)"
-       title="Click to dismiss">
-    <span class="toast-dot" aria-hidden="true"></span>
-    <span>{{ t.msg }}</span>
-  </div>
-</div>
-
-
+      <div class="toast-stack" aria-live="polite" aria-atomic="true">
+        <div v-for="t in state.toasts"
+             :key="t.id"
+             class="toast"
+             :class="t.type"
+             role="status"
+             @click="dismissToast(t.id)"
+             title="Click to dismiss">
+          <span class="toast-dot" aria-hidden="true"></span>
+          <span>{{ t.msg }}</span>
+        </div>
+      </div>
     </div>
 
     <!-- Vue / Dexie from CDN -->
-    <script
-      src="https://unpkg.com/vue@3/dist/vue.global.prod.js"
-      defer
-    ></script>
-    <script
-      src="https://unpkg.com/dexie@4.0.8/dist/dexie.min.js"
-      defer
-    ></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js" defer></script>
+    <script src="https://unpkg.com/dexie@4.0.8/dist/dexie.min.js" defer></script>
 
     <!-- App -->
-    <script type="module" src="./app.js?v=2025-10-31-1"></script>
+    <script type="module" src="./app.js?v=2025-11-02-1"></script>
 
     <!-- Service worker (optional)
     <script>

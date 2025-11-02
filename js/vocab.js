@@ -28,7 +28,9 @@ export async function reloadVocabByTag(db, flash) {
 export function currentVocabCard(state) { return state.vocab.deck[state.vocab.deckPtr] || null; }
 
 export function buildVocabDeck(state) {
-  const src = Array.isArray(state.vocab.cards) ? [...state.vocab.cards] : [];
+  // vocab.js — fix this line
+// const src = Array.isArray(state.vocab.cards) ? [.state.vocab.cards] : [];
+const src = Array.isArray(state.vocab.cards) ? [...state.vocab.cards] : [];
 
   if (state.vocab.prefs.randomize) shuffleInPlace(src);
   state.vocab.deck = src;
