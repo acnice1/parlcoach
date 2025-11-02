@@ -5,6 +5,16 @@ const DrillPanel = {
 
   setup(props){
     const inputRef = Vue.ref(null);
+    const helpRef  = Vue.ref(null);
+    const helpMin  = Vue.ref(0);
+
+    // --- tiny debounce utility ---
+    const debounce = (fn, ms = 150) => {
+      let t; 
+      return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+    };
+
+    // Focus the input whenever the question changes
     Vue.watch(() => props.state.drillSession.question, async () => {
       await Vue.nextTick();
       inputRef.value?.focus({ preventScroll: true });
@@ -50,7 +60,7 @@ const DrillPanel = {
       set(val){
         const arr = String(val).split(',').map(s => s.trim()).filter(Boolean);
         props.state.drillPrefs.includeOnlyTags = arr;
-        props.methods.saveDrillPrefs();
+        props.methods.saveDrillPrefs?.();
       }
     });
 
@@ -62,18 +72,62 @@ const DrillPanel = {
       set(val){
         const arr = String(val).split(',').map(s => s.trim()).filter(Boolean);
         props.state.drillPrefs.excludeTags = arr;
-        props.methods.saveDrillPrefs();
+        props.methods.saveDrillPrefs?.();
       }
     });
 
-    // Enter-to-start from settings
-    const handleStartEnter = () => {
-      if (!props.state.drillSession.running && (props.state.verbs?.length || 0) > 0) {
-        props.methods.startDrill();
+    // --- autostart / autorefresh wiring ---
+    const hasVerbs = () => (props.state.verbs?.length || 0) > 0;
+
+    const refreshSession = () => {
+      if (!hasVerbs()) return;
+      if (props.state.drillSession?.running && typeof props.methods.refreshDrill === 'function') {
+        props.methods.refreshDrill();
+      } else {
+        props.methods.startDrill?.();
       }
     };
 
-    return { inputRef, scoreCls, includeCSV, excludeCSV, fullConj, handleStartEnter };
+    const debouncedRefresh = debounce(refreshSession, 150);
+
+    // 1) Start automatically on mount if verbs are present.
+    Vue.onMounted(() => {
+      if (hasVerbs() && !props.state.drillSession?.running) {
+        props.methods.startDrill?.();
+      }
+    });
+
+    // 2) Start automatically when verbs list becomes non-empty.
+    Vue.watch(() => props.state.verbs?.length, (n) => {
+      if ((n || 0) > 0 && !props.state.drillSession?.running) {
+        props.methods.startDrill?.();
+      }
+    });
+
+    // 3) Auto-refresh whenever persons/tenses or include/exclude tag selections change
+    //    (covers pill clicks since they mutate includeOnlyTags/excludeTags).
+    Vue.watch(
+      () => ({
+        persons: (props.state.drillPrefs?.persons || []).join(','),
+        tenses:  (props.state.drillPrefs?.tenses  || []).join(','),
+        inc:     (props.state.drillPrefs?.includeOnlyTags || []).join(','),
+        exc:     (props.state.drillPrefs?.excludeTags     || []).join(',')
+      }),
+      () => debouncedRefresh(),
+      { deep: false }
+    );
+
+    // Optional: if user toggles showEnglishTranslation we don't need to restart drills.
+    // If you ever want that to rebuild prompts, add it to the watched object above.
+
+    // Enter-to-start from settings (kept)
+    const handleStartEnter = () => {
+      if (!props.state.drillSession.running && hasVerbs()) {
+        props.methods.startDrill?.();
+      }
+    };
+
+    return { inputRef, helpRef, helpMin, scoreCls, includeCSV, excludeCSV, fullConj, handleStartEnter };
   },
 
   template: `
