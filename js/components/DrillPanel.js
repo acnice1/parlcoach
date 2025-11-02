@@ -20,17 +20,16 @@ const DrillPanel = {
       return 'bad';
     });
 
-    // 1) Add this computed:
     const fullConj = Vue.computed(() => {
       try {
         const sess = props.state.drillSession;
         if (!sess?.question?.meta) return null;
 
         const inf = sess.question.meta.infinitive;
-        const tense = sess.question.meta.tense; // human label like "Présent"
+        const tense = sess.question.meta.tense; // e.g., "Présent"
         if (!inf || !tense) return null;
 
-        // dataset is a Map: infinitive -> { "Présent": {...}, "Passé composé": {...}, ... }
+        // dataset: Map(infinitive -> { "Présent": {...}, "Passé composé": {...}, ... })
         const tensesObj = props.state.dataset?.get(inf);
         if (!tensesObj) return null;
         const block = tensesObj[tense];
@@ -49,10 +48,7 @@ const DrillPanel = {
         return Array.isArray(v) ? v.join(', ') : (v || '');
       },
       set(val){
-        const arr = String(val)
-          .split(',')
-          .map(s => s.trim())
-          .filter(Boolean);
+        const arr = String(val).split(',').map(s => s.trim()).filter(Boolean);
         props.state.drillPrefs.includeOnlyTags = arr;
         props.methods.saveDrillPrefs();
       }
@@ -64,34 +60,35 @@ const DrillPanel = {
         return Array.isArray(v) ? v.join(', ') : (v || '');
       },
       set(val){
-        const arr = String(val)
-          .split(',')
-          .map(s => s.trim())
-          .filter(Boolean);
+        const arr = String(val).split(',').map(s => s.trim()).filter(Boolean);
         props.state.drillPrefs.excludeTags = arr;
         props.methods.saveDrillPrefs();
       }
     });
 
-    // 2) Ensure you RETURN it from setup:
-    return { inputRef, scoreCls, includeCSV, excludeCSV, fullConj };
+    // Enter-to-start from settings
+    const handleStartEnter = () => {
+      if (!props.state.drillSession.running && (props.state.verbs?.length || 0) > 0) {
+        props.methods.startDrill();
+      }
+    };
+
+    return { inputRef, scoreCls, includeCSV, excludeCSV, fullConj, handleStartEnter };
   },
 
   template: `
   <div>
-    <details class="box" open>
+    <details class="box" open tabindex="0" @keydown.enter.stop.prevent="handleStartEnter">
       <summary>
-        <div class="summary-bar" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+        <div class="summary-bar" style="display:flex; align-items:center; gap:12px;">
           <h3 style="margin:0">Drill Settings</h3>
-          <div class="summary-actions" style="display:flex; align-items:center; gap:8px;">
-            <span class="dim" v-if="state.verbs.length===0">Add verbs first (My Verbs or Seed)</span>
-            <button
-              class="start-drills-btn small"
-              :disabled="state.verbs.length===0"
-              @click.stop.prevent="methods.startDrill()"
-              title="Start a drill session with current settings"
-            >▶ Start Drills</button>
-          </div>
+          <button
+            class="start-drills-btn small"
+            :disabled="state.verbs.length===0"
+            @click.stop.prevent="methods.startDrill()"
+            title="Start a drill session with current settings"
+          >▶ Start Drills</button>
+          <span class="dim" v-if="state.verbs.length===0">Add verbs first (My Verbs or Seed)</span>
         </div>
       </summary>
 
@@ -148,7 +145,7 @@ const DrillPanel = {
           <button type="button" class="pill muted" @click="methods.clearIncludeTags()">Clear</button>
         </div>
 
-        <!-- Exclude pills (optional second row) -->
+        <!-- Exclude pills -->
         <div class="tag-pills" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
           <button
             v-for="tag in state.tagPills"
@@ -167,13 +164,15 @@ const DrillPanel = {
             class="fixed-input"
             v-model="includeCSV"
             placeholder="Include-only tags (comma-sep)"
+            @keyup.enter.stop.prevent="handleStartEnter"
           />
           <input
             class="fixed-input"
             v-model="excludeCSV"
             placeholder="Exclude tags (comma-sep)"
+            @keyup.enter.stop.prevent="handleStartEnter"
           />
-          <!-- Start button moved to summary; intentionally removed here -->
+          <!-- Start button now lives in the summary (left-aligned) -->
         </div>
       </div>
     </details>
@@ -220,17 +219,12 @@ const DrillPanel = {
           Expected: <strong>{{ state.drillSession.question.answer }}</strong>
         </div>
 
-        <!-- Help wrapper keeps height to avoid page jump -->
         <div :style="{ minHeight: (helpMin || 0) + 'px' }">
           <div class="rule-help"
                ref="helpRef"
                v-if="(state.drillSession.correct === false) ||
                       (state.drillSession.correct === true && !state.drillPrefs.autoNext)">
-
-            <!-- Responsive two-column container; wraps to stacked on narrow screens -->
             <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:flex-start">
-
-              <!-- LEFT: Examples + Rules -->
               <div style="flex:1 1 280px; min-width:260px">
                 <h4 style="margin:8px 0 4px">Examples</h4>
                 <div><strong>FR:</strong> {{ state.drillSession.side.fr || '—' }}</div>
@@ -242,7 +236,6 @@ const DrillPanel = {
                 </ul>
               </div>
 
-              <!-- RIGHT: All persons (only useful on wrong, but harmless otherwise) -->
               <div style="flex:1 1 320px; min-width:280px" v-if="fullConj?.length">
                 <h4 style="margin:8px 0 4px">
                   All persons ({{ state.drillSession.question.meta.tense }})
@@ -266,7 +259,7 @@ const DrillPanel = {
     </div>
 
     <div v-else class="box empty">
-      <p>Choose persons/tenses and click <strong>Start Drill</strong>.</p>
+      <p>Choose persons/tenses and click <strong>Start Drill</strong> (or press <kbd>Enter</kbd>).</p>
     </div>
   </div>
   `
