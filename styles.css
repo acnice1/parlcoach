@@ -1582,3 +1582,83 @@ button.danger:hover { filter:brightness(1.05); }
 .toast-stack .toast{
   pointer-events: auto; /* individual toasts remain clickable */
 }
+/* --- Button refresh (drop-in) --- */
+:root{
+  /* tweak these if you want a different vibe */
+  --btn-accent:        #6d28d9; /* purple */
+  --btn-accent-2:      #5b21b6;
+  --btn-fg:            #ffffff;
+  --btn-muted-bg:      #0f172a0d; /* subtle for outlines/ghosts */
+  --btn-danger:        #dc2626;
+  --btn-danger-2:      #b91c1c;
+  --btn-shadow:        0 2px 8px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.06);
+  --btn-shadow-hover:  0 6px 16px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.08);
+  --focus-ring:        #a78bfa;
+}
+
+/* Base button */
+button{
+  -webkit-appearance:none;
+  appearance:none;
+  border:0;
+  border-radius:12px;
+  padding:10px 14px;
+  font:600 14px/1.1 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color:var(--btn-fg);
+  background:linear-gradient(180deg, var(--btn-accent), var(--btn-accent-2));
+  box-shadow:var(--btn-shadow);
+  cursor:pointer;
+  transition:
+    transform .12s ease,
+    box-shadow .12s ease,
+    opacity .12s ease,
+    filter .12s ease;
+}
+
+/* Size variants you already use */
+button.small{
+  padding:6px 10px;
+  font-size:12.5px;
+  border-radius:10px;
+}
+
+/* Danger variant you already use */
+button.danger{
+  background:linear-gradient(180deg, var(--btn-danger), var(--btn-danger-2));
+}
+
+/* States */
+button:hover:not(:disabled){
+  transform:translateY(-1px);
+  box-shadow:var(--btn-shadow-hover);
+  filter:saturate(1.02);
+}
+button:active:not(:disabled){
+  transform:translateY(0);
+  filter:saturate(.98) brightness(.98);
+}
+button:focus-visible{
+  outline:3px solid var(--focus-ring);
+  outline-offset:2px;
+}
+button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+  box-shadow:none;
+}
+
+/* Make button rows breathe without changing your templates */
+.box .row button{ margin:2px 0; }
+.actions button{ margin:2px 0; }
+
+/* Optional: subtle “outline” look without changing markup
+   Usage (if you want): <button data-variant="outline">…</button> */
+button[data-variant="outline"]{
+  background:var(--btn-muted-bg);
+  color:inherit;
+  box-shadow:inset 0 0 0 1px var(--muted, #e5e7eb);
+}
+button[data-variant="outline"]:hover:not(:disabled){
+  filter:none;
+  box-shadow:inset 0 0 0 1px var(--muted, #e5e7eb), var(--btn-shadow);
+}
