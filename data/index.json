@@ -48,5 +48,10 @@
     "file": "SC102-1-9-2004-with_examples.csv",
     "name": "SC102-1-9-2004-with_examples",
     "description": "French terms (mostly administrative/government)"
-  }
+  },
+{
+  "file": "lexique_modules_L1-L20.csv",
+  "name": "Lexique Modules L1–L20",
+  "description": "Core vocabulary from modules L1–L20 SC102-6-206-fra)"
+}
 ]

@@ -85,10 +85,10 @@ const DataPanel = {
             <input
               class="fixed-input"
               v-model="tagFilter"
-              placeholder="Filter by tag (comma-sep)"
+              placeholder="Filter by Tag"
               @input="goToFirstPage"
             />
-            <label style="display:flex; gap:6px; align-items:center;">
+              <label style="display:flex; gap:6px; align-items:center;">
               <input type="radio" value="AND" v-model="tagLogic" /> AND
             </label>
             <label style="display:flex; gap:6px; align-items:center;">
@@ -109,6 +109,8 @@ const DataPanel = {
 
           <!-- Pagination status -->
           <div class="dim" style="margin:4px 0 8px 0;" v-if="filteredTotal">
+            <p class="dim" style="margin-top:8px">Comma-separated ; * wildcards ok</P>
+        
             Showing {{ rangeStart }}–{{ rangeEnd }} of {{ filteredTotal }} (filtered). Page {{ currentPage }} of {{ totalPages }}.
           </div>
 
@@ -119,10 +121,10 @@ const DataPanel = {
               <thead>
                 <tr>
                   <th scope="col" style="text-align:left; width:44px;">Pick</th>
-                  <th scope="col" style="text-align:left;">FR</th>
+                  <th scope="col" style="text-align:center;">FR</th>
                   <th scope="col" style="text-align:left; white-space:nowrap;">Article</th>
-                  <th scope="col" style="text-align:left;">EN</th>
-                  <th scope="col" style="text-align:left;">Tags</th>
+                  <th scope="col" style="text-align:center;">EN</th>
+                  <th scope="col" style="text-align:center;">Tags</th>
                 </tr>
               </thead>
               <tbody>
@@ -194,7 +196,7 @@ const DataPanel = {
     <thead>
       <tr>
         <th scope="col" style="text-align:center;">List</th>
-        <th scope="col" style="text-align:center; white-space:nowrap;">Count</th>
+        <th scope="col" style="text-align:right; white-space:nowrap;">Count</th>
         <th scope="col" style="text-align:center;">Actions</th>
       </tr>
     </thead>
@@ -292,23 +294,31 @@ const DataPanel = {
       const sel = this.state?.wordPicker?.selected || {};
       return Object.values(sel).reduce((n, v) => n + (v ? 1 : 0), 0);
     },
+
     filteredItems() {
-      const items = this.state?.wordPicker?.items || [];
-      const list = items.map((it, idx) => ({ item: it, idx }));
-      const q = (this.tagFilter || '').trim();
-      if (!q) return list;
+  const items = this.state?.wordPicker?.items || [];
+  const list = items.map((it, idx) => ({ item: it, idx }));
+  const q = (this.tagFilter || '').trim();
+  if (!q) return list;
 
-      const wanted = q.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
-      if (!wanted.length) return list;
+  const wanted = q.split(',').map(s => s.trim()).filter(Boolean);
+  if (!wanted.length) return list;
 
-      return list.filter(({ item }) => {
-        const tags = (item.tags || []).map(t => String(t).toLowerCase());
-        if (!tags.length) return false;
-        return this.tagLogic === 'AND'
-          ? wanted.every(t => tags.includes(t))
-          : wanted.some(t => tags.includes(t));
-      });
-    },
+  // Compile glob patterns once
+  const patterns = wanted.map(w => this.globToRegex(w));
+
+  return list.filter(({ item }) => {
+    const tags = (item.tags || []).map(t => String(t).toLowerCase());
+    if (!tags.length) return false;
+
+    // Does each pattern match at least one tag?
+    const patternHits = patterns.map(rx => tags.some(tag => rx.test(tag)));
+    return this.tagLogic === 'AND'
+      ? patternHits.every(Boolean)    // all patterns must hit
+      : patternHits.some(Boolean);    // any pattern hits
+  });
+},
+
     filteredTotal() { return this.filteredItems.length; },
     totalPages() { return Math.max(1, Math.ceil(this.filteredTotal / this.pageSize)); },
     rangeStart() { return this.filteredTotal ? (this.currentPage - 1) * this.pageSize + 1 : 0; },
@@ -368,7 +378,15 @@ const DataPanel = {
     alert(e?.message || 'View failed.');
   }
 },
-    // -------- confirmations (avoid shadowing) --------
+    
+globToRegex(glob) {
+  // lower-case + escape regex chars, then turn * into .*
+  const esc = String(glob).trim().toLowerCase()
+    .replace(/[.+^${}()|[\]\\]/g, '\\$&')
+    .replace(/\*/g, '.*');
+  return new RegExp(`^${esc}$`, 'i');
+},
+// -------- confirmations (avoid shadowing) --------
     safeConfirm(msg) {
       try {
         const fn =
