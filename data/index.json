@@ -38,7 +38,7 @@
     "file": "opinion_nuance_explain_result.csv",
     "name": "Opinion — Nuance / Explain / Result",
     "description": "Nuancing an opinion, explanations, and resulting effects"
-  }
+  },
   {
   "file": "french_verb_prepositions_with_examples.csv",
   "name": "French Verbs + Prepositions — with Examples",
