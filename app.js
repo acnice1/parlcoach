@@ -262,25 +262,52 @@ const app = createApp({
 
     watch(() => [state.tab, state.learnTab], () => { window.scrollTo(0, 0); }, { flush: 'post' });
 
-    async function refreshSavedListsUI() {
-      try {
-        const s = (await db.settings.get("v1")) || { key: "v1" };
-        const listsObj = s?.vocabLists && typeof s.vocabLists === "object" ? s.vocabLists : {};
-        const meta = (s && s.vocabMeta) || {};
-        const names = Object.keys(listsObj).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
-        state.wordPicker.savedLists = names.map((name) => {
-          const items = Array.isArray(listsObj[name]) ? listsObj[name] : [];
-          const m = meta[name] || meta[name.replace(/[_-]+/g, " ")] || {};
-          const displayName = (m.name || name).trim();
-          const description = (m.description || "").trim();
-          const file = (m.file || "").trim();
-          return { name, displayName, description, desc: description, file, count: items.length };
-        });
-      } catch (e) {
-        console.warn("[Lists] refreshSavedListsUI failed:", e);
-        state.wordPicker.savedLists = [];
+async function refreshSavedListsUI() {
+  try {
+    const s = (await db.settings.get("v1")) || { key: "v1" };
+    const listsObj = s?.vocabLists && typeof s.vocabLists === "object" ? s.vocabLists : {};
+    const meta = s?.vocabMeta || {};
+
+    // Build a lookup from data/index.json → { baseName: {name, description, file} }
+    const idx = {};
+    try {
+      const entries = await listDataEntries(); // already defined above
+      for (const e of entries || []) {
+        const base = String(e.file || "")
+          .split("/")
+          .pop()
+          .replace(/\.csv$/i, "")
+          .replace(/[_-]+/g, " ")
+          .trim();
+        if (!base) continue;
+        idx[base] = {
+          name: (e.name || base).trim(),
+          description: (e.description || e.desc || "").trim(),
+          file: (e.file || "").startsWith("data/") ? e.file : (e.file ? "data/" + e.file : "")
+        };
       }
-    }
+    } catch { /* non-fatal */ }
+
+    const norm = (n) => n.replace(/[_-]+/g, " ").trim();
+    const names = Object.keys(listsObj).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+
+    state.wordPicker.savedLists = names.map((name) => {
+      const items = Array.isArray(listsObj[name]) ? listsObj[name] : [];
+      const m  = meta[name] || meta[norm(name)] || {};
+      const ix = idx[name]  || idx[norm(name)]  || {};
+
+      const displayName = (m.name || ix.name || name).trim();
+      const description = (m.description || ix.description || "").trim();
+      const file        = (m.file || ix.file || "").trim();
+
+      return { name, displayName, description, desc: description, file, count: items.length };
+    });
+  } catch (e) {
+    console.warn("[Lists] refreshSavedListsUI failed:", e);
+    state.wordPicker.savedLists = [];
+  }
+}
+
     window.refreshSavedListsUI = refreshSavedListsUI;
 
     // -------------------- Data discovery & CSV --------------------

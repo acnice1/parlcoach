@@ -190,54 +190,46 @@ const DataPanel = {
           </button>
         </div>
 
-        <div v-if="!savedLists || !savedLists.length" class="dim" style="margin-top:6px;">
-          No saved lists yet. Upload a CSV/TSV and save a list above.
-        </div>
+<tr v-for="l in savedLists" :key="l.name" style="border-bottom:1px solid var(--muted);">
+  <td style="padding:6px 0; vertical-align:top;">
+    <strong>{{ l.displayName || l.name }}</strong>
 
-        <!-- Saved lists table -->
-        <div v-else style="margin-top:8px; overflow-x:auto;">
-          <table class="data-table" style="width:100%; border-collapse:collapse; min-width:520px;">
-            <caption class="dim" style="text-align:left; padding:4px 0;">Saved vocabulary sub-lists (local)</caption>
-            <thead>
-              <tr>
-                <th scope="col" style="text-align:left;">List</th>
-                <th scope="col" style="text-align:left; white-space:nowrap;">Items</th>
-                <th scope="col" style="text-align:left; white-space:nowrap;">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="l in savedLists" :key="l.name" style="border-bottom:1px solid var(--muted);">
-                <td style="padding:6px 0; vertical-align:top;">
-                  <strong>{{ l.displayName || l.name }}</strong>
-                  <div v-if="(l.description || l.desc)" class="dim" style="font-size:12px; margin-top:2px;">
-                    {{ l.description || l.desc }}
-                  </div>
-                </td>
-                <td style="padding:6px 0; vertical-align:top; white-space:nowrap;">{{ l.count }}</td>
-                <td style="padding:6px 0; vertical-align:top; white-space:nowrap;">
-                  <button class="small" @click="loadIntoSrsAndRefresh(l.name)">Load into SRS</button>
+    <!-- file path (if known from vocabMeta) -->
+    <div v-if="l.file" class="dim" style="font-size:12px; margin-top:2px;">
+      <code>{{ l.file }}</code>
+    </div>
 
-                  <button class="small"
-                          @click="methods.loadListIntoReview ? methods.loadListIntoReview(l.name) : null"
-                          :title="(l.description || l.desc) || ''">
-                    Use in Review
-                  </button>
-                  <button class="small"
-                          @click="clearSrsForListAndRefresh(l.name)"
-                          title="Remove only the SRS cards that came from this list">
-                    Remove from SRS
-                  </button>
-                  <button class="small"
-        @click="downloadSavedList(l.name, l.displayName || l.name)"
-        title="Download this sub-list as CSV">
-  Download
-</button>
-                  <button class="small danger"
-                          @click="methods.deleteSavedList ? methods.deleteSavedList(l.name) : null">
-                    Delete
-                  </button>
-                </td>
-              </tr>
+    <!-- description from data/index.json (or manifest) -->
+    <div v-if="(l.description || l.desc)" class="dim" style="font-size:12px; margin-top:2px;">
+      {{ l.description || l.desc }}
+    </div>
+  </td>
+  <td style="padding:6px 0; vertical-align:top; white-space:nowrap;">{{ l.count }}</td>
+  <td style="padding:6px 0; vertical-align:top; white-space:nowrap;">
+    <button class="small" @click="loadIntoSrsAndRefresh(l.name)">Load into SRS</button>
+
+    <button class="small"
+            @click="methods.loadListIntoReview ? methods.loadListIntoReview(l.name) : null"
+            :title="(l.description || l.desc) || ''">
+      Use in Review
+    </button>
+    <button class="small"
+            @click="clearSrsForListAndRefresh(l.name)"
+            title="Remove only the SRS cards that came from this list">
+      Remove from SRS
+    </button>
+    <button class="small"
+            @click="downloadSavedList(l.name, l.displayName || l.name)"
+            title="Download this sub-list as CSV">
+      Download
+    </button>
+    <button class="small danger"
+            @click="methods.deleteSavedList ? methods.deleteSavedList(l.name) : null">
+      Delete
+    </button>
+  </td>
+</tr>
+
             </tbody>
           </table>
         </div>
