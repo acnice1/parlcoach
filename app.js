@@ -47,7 +47,7 @@ const i18n = createI18n({
   Vue,
   locale: 'en',            // default UI language
   fallback: 'en',
-  basePath: '/locales',    // folder with /en/common.json and /fr/common.json
+  basePath: 'locales',    // folder with /en/common.json and /fr/common.json
   preload: ['common']      // load the "common" namespace on boot
 });
 // preload both locales for 'common' so FR exists immediately
