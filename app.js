@@ -35,6 +35,8 @@ import {
 import * as Vocab from "./js/vocab.js?v=2";
 import * as Verb  from "./js/verbs.js?v=2";
 import { answersEqual, toArr } from "./js/utils.js?v=2";
+// app.js
+import PlanPanel from './js/components/PlanPanel.js';
 
 // ---------------- Vue / Dexie setup ----------------
 const db = initDexie();
@@ -67,6 +69,7 @@ const app = createApp({
     RecorderPanel,
     ProfileWidget,
     DataPanel,
+    PlanPanel,
   },
 
   setup() {
@@ -206,6 +209,8 @@ const app = createApp({
         weeklySchedule: "",
         notes: "",
       },
+
+      // SRS 
       settings: {
         key: "v1",
         srsMode: "SM2",
@@ -1303,7 +1308,7 @@ const app = createApp({
       },
 
       async clearAllSrs() {
-        if (!confirm("Delete ALL SRS cards? This cannot be undone.")) return;
+        // if (!confirm("Delete ALL SRS cards? This cannot be undone.")) return;
         if (!confirm("Really delete all SRS cards now?")) return;
 
         try { await db.vocab.clear(); }
@@ -1506,43 +1511,60 @@ const app = createApp({
       if (typeof ex === "object") return { fr: normalizeStr(ex.fr), en: normalizeStr(ex.en) };
       return null;
     }
-    function normalizeCsvRow(row) {
-      const get = (k) => (row[k] ?? row[k.toLowerCase()] ?? "").toString().trim();
-      const frLegacy = get("FR") || get("French") || get("french");
-      const enLegacy = get("EN") || get("English") || get("english");
-      const rawArticle = get("article") || get("gender") || get("Gender");
 
-      const frVerb = get("FR_verb") || get("fr_verb") || get("verb") || get("verbe");
-      const prep   = get("preposition") || get("prep");
-      const enMean = get("english_meaning") || get("meaning") || get("meaning_short");
+  //    
+  function normalizeCsvRow(row) {
+  const frLegacy = getCI(row, "FR") || getCI(row, "French") || getCI(row, "fr");
+  const enLegacy = getCI(row, "EN") || getCI(row, "English") || getCI(row, "en");
 
-      const fr = (frLegacy || [frVerb, prep].filter(Boolean).join(" ")).trim();
-      const en = (enLegacy || enMean).trim();
+  // verbs/prepositions fallback (optional)
+  const frVerb = getCI(row, "FR_verb") || getCI(row, "verb") || getCI(row, "verbe");
+  const prep   = getCI(row, "preposition") || getCI(row, "prep");
 
-const exStr = getCI(row, "example") || getCI(row, "ex");
-const exFr  = getCI(row, "example_fr");
-const exEn  = getCI(row, "example_en");
+  const fr = (frLegacy || [frVerb, prep].filter(Boolean).join(" ")).trim();
+  const en = (enLegacy || getCI(row, "english_meaning") || getCI(row, "meaning") || getCI(row, "meaning_short")).trim();
 
-      const tags = Array.isArray(row.tags)
-        ? row.tags
-        : (get("tags") || "").split(/[,|]/).map((t) => t.trim()).filter(Boolean);
+  if (!fr || !en) return null;
 
-      if (!fr || !en) return null;
+  const rawArticle = getCI(row, "article") || getCI(row, "gender");
 
-      let example = null;
-      if (exFr || exEn) example = { fr: exFr || "", en: exEn || "" };
-      else if (exStr)  example = { fr: exStr, en: "" };
+  // ---- robust example mapping ----
+  const exStr = getCI(row, "example") || getCI(row, "ex"); // single string → FR-only
+  const exFr  =
+    getCI(row, "example_fr") ||
+    getCI(row, "ex_fr") ||
+    getCI(row, "exemple_fr") ||
+    getCI(row, "example (fr)") ||
+    getCI(row, "french_example") ||
+    getCI(row, "ex_francais");
+  const exEn  =
+    getCI(row, "example_en") ||
+    getCI(row, "ex_en") ||
+    getCI(row, "exemple_en") ||
+    getCI(row, "example en") ||      // handles space
+    getCI(row, "english_example") ||
+    getCI(row, "ex_anglais");
 
-      return {
-        fr, en,
-        article: normalizeArticle(fr, rawArticle),
-        gender:
-          ["m","masc","masculin"].includes((rawArticle || "").toLowerCase()) ? "m" :
-          ["f","fem","féminin","feminin","feminine"].includes((rawArticle || "").toLowerCase()) ? "f" : "",
-        example,
-        tags,
-      };
-    }
+  let example = null;
+  if (exFr || exEn) example = { fr: exFr || "", en: exEn || "" };
+  else if (exStr)   example = { fr: exStr,     en: "" };
+
+  // tags (case-insensitive)
+  const tagsStr = getCI(row, "tags");
+  const tags = tagsStr ? tagsStr.split(/[,;|]/).map(s => s.trim()).filter(Boolean) : [];
+
+  return {
+    fr, en,
+    article: normalizeArticle(fr, rawArticle),
+    gender:
+      ["m","masc","masculin"].includes((rawArticle || "").toLowerCase()) ? "m" :
+      ["f","fem","féminin","feminin","feminine"].includes((rawArticle || "").toLowerCase()) ? "f" : "",
+    example,
+    tags,
+  };
+}
+
+    
     function normalizeVocabItem(c) {
       const fr = (c.french ?? c.front ?? "").trim();
       const en = (c.english ?? c.back  ?? "").trim();

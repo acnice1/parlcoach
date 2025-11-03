@@ -65,51 +65,6 @@
             <grammar-panel :state="state" :methods="methods"></grammar-panel>
           </div>
 
-          <!-- Optional extra Learn subviews (keep inside LEARN section) -->
-          <div v-else-if="learnTab==='myverbs'">
-            <div class="verbs-grid">
-              <div class="box">
-                <h3>Add Verbs</h3>
-                <div class="row">
-                  <input v-model="newVerb.infinitive" placeholder="infinitive (e.g., parler)" />
-                  <input v-model="newVerb.english" placeholder="english (e.g., to speak)" />
-                </div>
-                <div class="row">
-                  <input v-model="newVerb.tags" placeholder="tags (comma-separated)" />
-                </div>
-                <button @click="addVerb">Add Verb</button>
-              </div>
-
-              <div class="box">
-                <h3>My Verbs ({{ myVerbs.length }})</h3>
-                <div class="list-row" v-for="v in myVerbs" :key="v.id">
-                  <span class="front">{{ v.infinitive }}</span>
-                  <span class="sep">→</span>
-                  <span class="back">{{ v.english || '—' }}</span>
-                  <span class="dim">{{ (v.tags && v.tags.length) ? v.tags.join(', ') : '—' }}</span>
-                  <button class="small" @click="openJsonEditor(v, false)">JSON</button>
-                  <button class="small" @click="deleteVerb(v)">Delete</button>
-                </div>
-                <p v-if="myVerbs.length===0" class="dim">No custom verbs yet. Add some above.</p>
-              </div>
-            </div>
-          </div>
-
-          <div v-else-if="learnTab==='seedverbs'">
-            <div class="box">
-              <h3>Top 200 (Seed) — {{ seedVerbs.length }}</h3>
-              <p class="dim">Preloaded verbs with full conjugations.</p>
-              <div class="list-row" v-for="v in seedVerbs" :key="v.id">
-                <span class="front">{{ v.infinitive }}</span>
-                <span class="sep">→</span>
-                <span class="back">{{ v.english || '—' }}</span>
-                <span class="dim">{{ (v.tags && v.tags.length) ? v.tags.join(', ') : '—' }}</span>
-                <button class="small" @click="openJsonEditor(v, false)">JSON</button>
-                <button class="small" @click="deleteVerb(v)">Delete</button>
-              </div>
-              <p v-if="seedVerbs.length===0" class="dim">No seed verbs present.</p>
-            </div>
-          </div>
         </section>
 
         <!-- ==================== RECORD ==================== -->
@@ -123,49 +78,9 @@
         </section>
 
         <!-- ==================== PLAN ==================== -->
-        <section v-if="tab==='plan'" class="panel" :key="'plan'" id="panel-plan">
-          <header class="panel-head"><h2>French Learning Plan</h2></header>
-
-          <div class="plan-grid">
-            <label>Level Goal
-              <select v-model="plan.goal" @change="savePlan">
-                <option>Government B</option>
-                <option>Government C</option>
-                <option>DELF B1</option>
-                <option>DELF B2</option>
-                <option>Custom</option>
-              </select>
-            </label>
-            <label>Daily Minutes
-              <input type="number" min="10" step="5" v-model.number="plan.dailyMinutes" @change="savePlan" />
-            </label>
-            <label>Focus (comma-sep)
-              <input v-model="plan.focus" @change="savePlan" placeholder="listening, oral, vocab, grammar" />
-            </label>
-          </div>
-
-          <h3>Weekly Schedule</h3>
-          <textarea
-            class="plan-text"
-            v-model="plan.weeklySchedule"
-            @change="savePlan"
-            placeholder="- Mon: 30m listening + 20m SRS
-- Tue: 30m oral drills + 20m vocab
-- Wed: mock interview 30m
-- Thu: grammar 30m + SRS 20m
-- Fri: conversation 45m
-- Sat: review 30m
-- Sun: rest / light SRS"
-          ></textarea>
-
-          <h3>Notes</h3>
-          <textarea
-            class="plan-text"
-            v-model="plan.notes"
-            @change="savePlan"
-            placeholder="Personal constraints, upcoming exam date, target topics, etc."
-          ></textarea>
-        </section>
+        <section v-if="tab==='plan'" :key="'plan'">
+  <plan-panel :state="state" :methods="methods"></plan-panel>
+</section>
 
         <!-- ==================== SETTINGS (optional; nav hidden) ==================== -->
         <section v-if="tab==='settings'" class="panel" :key="'settings'" id="panel-settings">

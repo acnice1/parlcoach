@@ -1,6 +1,7 @@
 {
   "app": {
-    "title": "BienAppris"
+    "title": "BienAppris",
+    "tag": "BAP"
   },
   "tabs": {
     "learn": "Learn",
@@ -11,30 +12,55 @@
     "vocab": "Vocab",
     "grammar": "Grammar"
   },
-  "mode": {
-    "review": "Mode: Review (JSON)",
-    "srs": "Mode: Flashcards (SRS)"
+  "ui": {
+    "settings": {
+      "title": "Settings",
+      "storage": "Storage",
+      "audioNote": "Audio: OPFS with IndexedDB fallback",
+      "requestPersistence": "Request Persistent Storage",
+      "persistentQ": "Persistent?",
+      "exportImport": "Export / Import",
+      "exportJson": "Export JSON",
+      "sync": "Sync",
+      "noProvider": "No provider configured. You can wire a custom API later.",
+      "simPush": "Simulate Push",
+      "simPull": "Simulate Pull",
+      "translator": "Translator (optional)",
+      "endpoint": "Endpoint (LibreTranslate-style)",
+      "apiKey": "API Key (stored locally)",
+      "saveTranslator": "Save Translator Settings",
+      "translatorHint": "If empty, a local fallback will try simple guesses only."
+    },
+    "json": {
+      "title": "Edit JSON — {verb}",
+      "mode": "Mode",
+      "mode.editable": "Editable",
+      "mode.readonly": "Read-only",
+      "helper": "Helper",
+      "insertSkeleton": "Insert skeleton…",
+      "skel.blank": "Blank template (all tenses)",
+      "skel.present": "Présent only",
+      "pretty": "Pretty",
+      "save": "Save",
+      "clearConj": "Clear conj",
+      "shapeHintTitle": "What shape should this JSON be?",
+      "shapeHintBody": "Use keys like “Présent”, “Passé composé”, etc., and inside each, provide person keys “je”, “tu”, “il/elle/on”, “nous”, “vous”, “ils/elles”. The drill loader maps internal IDs to these display keys."
+    },
+    "toast": {
+      "clickToDismiss": "Click to dismiss"
+    }
   },
-  "toggle": {
-    "showExamples": "Show examples",
-    "showTags": "Show tags on cards"
-  },
-  "controls": {
-    "reshuffle": "Reshuffle",
-    "next": "Next"
-  },
-  "vocab": {
-    "exampleLabel": "Example",
-    "noDue": "No cards due. 🎉 Add more above or go to the Data page to import.",
-    "shortcuts": "Shortcuts: 1=Again, 2=Hard, 3=Good, 4=Easy",
-    "due": "Due",
-    "total": "Total"
-  },
-  "srs": {
-    "again": "Again",
-    "hard": "Hard",
-    "good": "Good",
-    "easy": "Easy",
-    "show": "Show"
+  "plan": {
+    "title": "French Learning Plan",
+    "goalLabel": "Level Goal",
+    "dailyMinutes": "Daily Minutes",
+    "weeklyTotal": "Weekly total",
+    "minutes": "min",
+    "focus": "Focus (comma-separated)",
+    "focusAreas": "listening, oral, vocab, grammar",
+    "weeklySchedule": "Weekly Schedule",
+    "weeklySchedulePlaceholder": "- Mon: 30m listening + 20m SRS\n- Tue: 30m oral drills + 20m vocab\n- Wed: mock interview 30m\n- Thu: grammar 30m + SRS 20m\n- Fri: conversation 45m\n- Sat: review 30m\n- Sun: rest / light SRS",
+    "notes": "Notes",
+    "notesPlaceholder": "Personal constraints, upcoming exam date, target topics, etc."
   }
 }

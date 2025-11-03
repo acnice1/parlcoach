@@ -1,6 +1,8 @@
 {
   "app": {
-    "title": "BienAppris"
+    "title": "BienAppris",
+    "tag": "BAP"
+
   },
 
   "tabs": {
@@ -13,34 +15,50 @@
     "vocab": "Lexique"
   },
 
-  "mode": {
-    "review": "Mode : Révision (JSON)",
-    "srs": "Mode : Cartes (SRS)"
+  "ui": {
+    "settings.title": "Paramètres",
+    "settings.storage": "Stockage",
+    "settings.audioNote": "Audio : OPFS avec repli IndexedDB",
+    "settings.requestPersistence": "Demander le stockage persistant",
+    "settings.persistentQ": "Persistant?",
+    "settings.exportImport": "Exporter / Importer",
+    "settings.exportJson": "Exporter en JSON",
+    "settings.sync": "Synchronisation",
+    "settings.noProvider": "Aucun fournisseur configuré. Vous pouvez brancher une API personnalisée plus tard.",
+    "settings.simPush": "Simuler un envoi",
+    "settings.simPull": "Simuler une récupération",
+    "settings.translator": "Traducteur (optionnel)",
+    "settings.endpoint": "Point de terminaison (style LibreTranslate)",
+    "settings.apiKey": "Clé API (stockée localement)",
+    "settings.saveTranslator": "Enregistrer le traducteur",
+    "settings.translatorHint": "Si vide, une solution locale tentera des hypothèses simples.",
+    "json.title": "Modifier le JSON — {verb}",
+    "json.mode": "Mode",
+    "json.mode.editable": "Modifiable",
+    "json.mode.readonly": "Lecture seule",
+    "json.helper": "Assistant",
+    "json.insertSkeleton": "Insérer un canevas…",
+    "json.skel.blank": "Modèle vierge (tous les temps)",
+    "json.skel.present": "Présent seulement",
+    "json.pretty": "Mettre en forme",
+    "json.save": "Enregistrer",
+    "json.clearConj": "Effacer la conjugaison",
+    "json.shapeHintTitle": "Quelle forme doit prendre ce JSON?",
+    "json.shapeHintBody": "Utilisez des clés comme « Présent », « Passé composé », etc., et à l’intérieur, fournissez les personnes « je », « tu », « il/elle/on », « nous », « vous », « ils/elles ». Le chargeur de drills fait la correspondance avec ces libellés.",
+    "toast.clickToDismiss": "Cliquer pour fermer"
   },
+"plan":{
+  "title": "Plan d’apprentissage du français",
+  "goal.label": "Objectif de niveau",
+  "dailyMinutes": "Minutes par jour",
+  "weeklyTotal": "Total hebdomadaire",
+  "minutes": "min",
+  "focus": "Axes (séparés par des virgules)",
+  "focus.placeholder": "écoute, oral, vocabulaire, grammaire",
+  "weeklySchedule": "Horaire hebdomadaire",
+  "weeklySchedule.placeholder": "- Lun : 30 min écoute + 20 min SRS\n- Mar : 30 min exercices oraux + 20 min vocabulaire\n- Mer : entrevue simulée 30 min\n- Jeu : grammaire 30 min + SRS 20 min\n- Ven : conversation 45 min\n- Sam : révision 30 min\n- Dim : repos / SRS léger",
+  "notes": "Notes",
+  "notes.placeholder": "Contraintes personnelles, date d’examen, thèmes ciblés, etc."
+}
 
-  "toggle": {
-    "showExamples": "Afficher les exemples",
-    "showTags": "Afficher les étiquettes"
-  },
-
-  "controls": {
-    "reshuffle": "Mélanger",
-    "next": "Suivant"
-  },
-
-  "vocab": {
-    "exampleLabel": "Exemple",
-    "noDue": "Aucune carte à réviser. 🎉 Ajoutez-en ci-dessus ou allez à l’onglet Données pour importer.",
-    "shortcuts": "Raccourcis : 1=Encore, 2=Difficile, 3=Bien, 4=Facile",
-    "due": "À réviser",
-    "total": "Total"
-  },
-
-  "srs": {
-    "again": "Encore",
-    "hard": "Difficile",
-    "good": "Bien",
-    "easy": "Facile",
-    "show": "Afficher"
-  }
 }
