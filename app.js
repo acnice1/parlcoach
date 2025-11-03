@@ -852,6 +852,15 @@ const app = createApp({
     }
     function clearExcludeTags() { state.drillPrefs.excludeTags = []; methods.saveDrillPrefs(); }
 
+    // ---------- ADD: key normalizer used by getSavedListItems ----------
+    function _normKey(s){
+      return String(s || "")
+        .normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+        .trim().toLowerCase()
+        .replace(/[_-]+/g, " ")
+        .replace(/\s+/g, " ");
+    }
+
     const methods = {
       // vocab
       reloadVocabByTag: () => Vocab.reloadVocabByTag(db, state.flashcards),
@@ -884,6 +893,42 @@ const app = createApp({
       clearIncludeTags,
       toggleExcludeTag,
       clearExcludeTags,
+
+      // ---------- ADD: getSavedListItems used by DataPanel downloads ----------
+      getSavedListItems: async (name) => {
+        const keyRaw = String(name || "").trim();
+        const want = _normKey(keyRaw);
+
+        const s = (await db.settings.get("v1")) || { key: "v1" };
+        const lists = s.vocabLists || {};
+        const meta  = s.vocabMeta  || {};
+
+        // 1) exact key
+        if (Array.isArray(lists[keyRaw])) return lists[keyRaw];
+
+        // 2) normalized key (case/spacing/underscore-insensitive)
+        for (const k of Object.keys(lists)) {
+          if (_normKey(k) === want) return Array.isArray(lists[k]) ? lists[k] : [];
+        }
+
+        // 3) match by meta.name or meta.file (basename without .csv)
+        for (const k of Object.keys(meta)) {
+          const m = meta[k] || {};
+          const byName = m.name ? _normKey(m.name) : "";
+          const byFile = m.file ? _normKey(String(m.file).replace(/\.csv$/i, "")) : "";
+          if (byName === want || byFile === want) {
+            return Array.isArray(lists[k]) ? lists[k] : [];
+          }
+        }
+
+        // 4) fallback: activeReviewList
+        const active = s.activeReviewList || "";
+        if (active && (_normKey(active) === want) && Array.isArray(lists[active])) {
+          return lists[active];
+        }
+
+        return [];
+      },
 
       // Drill prefs/save
       saveDrillPrefs: () => saveDrillPrefs(db, state),
@@ -921,7 +966,7 @@ const app = createApp({
       },
       async importQuestionBankFromText(text) {
         state._pasteErr = "";
-        try {
+               try {
           const arr = JSON.parse(text);
           if (!Array.isArray(arr)) throw new Error("Root is not an array");
           state.questionBank = arr;
@@ -989,7 +1034,7 @@ const app = createApp({
           mr.onerror = (e) => {
             console.error("[Recorder] error", e);
             toast.error("Recorder error: " + (e.error?.message || e.message || e.name));
-            try { mr.stop(); } catch {}
+                       try { mr.stop(); } catch {}
           };
           mr.onstop = async () => {
             try {
