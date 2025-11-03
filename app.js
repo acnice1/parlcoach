@@ -760,10 +760,12 @@ const app = createApp({
     }
 
     // -------------------- Methods --------------------
+    
     async function saveReviewPointer() {
       const existing = (await db.settings.get("v1")) || { key: "v1" };
       await db.settings.put({ ...existing, reviewDeckPtr: state.vocab.deckPtr, key: "v1" });
     }
+    
     async function rate(q) {
       if (!state.flashcards.currentCard) return;
       const c = state.flashcards.currentCard;

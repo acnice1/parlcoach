@@ -1,4 +1,5 @@
 // js/components/DataPanel.js
+import { makeCsvFromItems, exportFilename, downloadText } from '../data.js';
 
 const DataPanel = {
   name: 'DataPanel',
@@ -226,6 +227,11 @@ const DataPanel = {
                           title="Remove only the SRS cards that came from this list">
                     Remove from SRS
                   </button>
+                  <button class="small"
+        @click="downloadSavedList(l.name, l.displayName || l.name)"
+        title="Download this sub-list as CSV">
+  Download
+</button>
                   <button class="small danger"
                           @click="methods.deleteSavedList ? methods.deleteSavedList(l.name) : null">
                     Delete
@@ -344,6 +350,38 @@ const DataPanel = {
         return true;
       }
     },
+
+    async downloadSavedList(name, displayName) {
+  try {
+    let items = await this.methods?.getSavedListItems?.(name);
+
+    if (!items || !items.length) {
+      const wp = this.state?.wordPicker || {};
+      const dict = wp.savedDict || wp.savedMap;
+      if (dict && dict[name]?.items?.length) items = dict[name].items;
+      if ((!items || !items.length) && Array.isArray(wp.savedListsFull)) {
+        const hit = wp.savedListsFull.find(x => x.name === name);
+        if (hit?.items?.length) items = hit.items;
+      }
+      if ((!items || !items.length) && Array.isArray(wp.savedLists)) {
+        const hit = wp.savedLists.find(x => x.name === name && Array.isArray(x.items) && x.items.length);
+        if (hit) items = hit.items;
+      }
+    }
+
+    if (!items || !items.length) {
+      alert('Could not locate items for this list. Expose methods.getSavedListItems(name) to enable downloads.');
+      return;
+    }
+
+    const csv = makeCsvFromItems(items, this.normalizeArticle);
+    const fname = exportFilename((displayName || name).replace(/[^\w\-]+/g,'_'));
+    downloadText(fname, csv, 'text/csv');
+  } catch (e) {
+    console.error('[DataPanel] downloadSavedList failed', e);
+    alert('Download failed.');
+  }
+},
 
     // util
     goToFirstPage() { this.currentPage = 1; },
