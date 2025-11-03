@@ -12,6 +12,11 @@
     "vocab": "Vocab",
     "grammar": "Grammar"
   },
+
+ "vocab": {
+   
+  "showExamples":"Show Examples"
+ },
   "ui": {
     "settings": {
       "title": "Settings",

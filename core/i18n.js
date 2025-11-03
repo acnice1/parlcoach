@@ -7,7 +7,7 @@ export function createI18n(opts = {}) {
     locale: initial = 'en',
     fallback = 'en',
     storageKey = 'parl_i18n_locale',
-    basePath = '/locales',   // e.g. /locales/en/common.json
+    basePath = 'locales',   // e.g. /locales/en/common.json
     preload = ['common'],    // namespaces to load on init
     Vue // pass the Vue global from app.js
   } = opts;

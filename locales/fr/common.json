@@ -15,6 +15,11 @@
     "vocab": "Lexique"
   },
 
+   "vocab": {
+   
+  "showExamples":"Exemples"
+ },
+
   "ui": {
     "settings.title": "Paramètres",
     "settings.storage": "Stockage",

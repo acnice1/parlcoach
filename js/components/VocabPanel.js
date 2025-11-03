@@ -215,21 +215,25 @@ exEn() {
           </span>
         </label>
 
-        <!-- Show Examples (global) -->
-        <label class="toggle small" style="margin-left:8px">
-          <input type="checkbox" v-model="state.ui.showExamples" />
-          <span>Show examples</span>
-        </label>
-      </div>
+<!-- Show Examples (global) -->
+<label class="switch" style="margin-left:8px">
+  <input
+    type="checkbox"
+    :checked="!!state.ui.showExamples"
+    @change="state.ui.showExamples = $event.target.checked"
+    aria-label="Toggle: Show examples"
+  />
+  <span class="slider" aria-hidden="true"></span>
+  <span class="label-text">{{ $t('vocab.showExamples') }}</span>
+</label>
 
       <!-- Show/Hide tags toggle -->
-      <div class="row" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:10px;">
         <label class="switch">
           <input type="checkbox" v-model="state.ui.showVocabTags" aria-label="Show tags on cards" />
           <span class="slider" aria-hidden="true"></span>
           <span class="label-text">Show tags on cards</span>
         </label>
-      </div>
+    </div>
 
       <!-- ==================== REVIEW MODE ==================== -->
       <div v-if="state.vocabMode==='review'">
