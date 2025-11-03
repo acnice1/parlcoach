@@ -1,5 +1,5 @@
 // js/components/DataPanel.js
-import { makeCsvFromItems, exportFilename, downloadText } from '../data.js';
+import { makeCsvFromItems, exportFilename, downloadText, viewSavedListIntoPicker } from '../data.js';
 
 const DataPanel = {
   name: 'DataPanel',
@@ -204,10 +204,16 @@ const DataPanel = {
       {{ l.description || l.desc }}
     </div>
   </td>
-  <td style="padding:6px 0; vertical-align:top; white-space:nowrap;">{{ l.count }}</td>
-  <td style="padding:6px 0; vertical-align:top; white-space:nowrap;">
-    <button class="small" @click="loadIntoSrsAndRefresh(l.name)">Load into SRS</button>
+  <td style="padding:8px 0; vertical-align:top; white-space:nowrap;">{{ l.count }}</td>
+  <td style="padding:8px 0; vertical-align:top; white-space:nowrap;">
 
+  <button class="small"
+        @click="viewSavedList(l.name)"
+        title="Preview this list in the table above">
+  View
+</button>
+
+  <button class="small" @click="loadIntoSrsAndRefresh(l.name)">Load into SRS</button>
     <button class="small"
             @click="methods.loadListIntoReview ? methods.loadListIntoReview(l.name) : null"
             :title="(l.description || l.desc) || ''">
@@ -331,6 +337,18 @@ const DataPanel = {
   },
 
   methods: {
+    //  
+    async viewSavedList(name) {
+  try {
+    await viewSavedListIntoPicker(this.state, name, this.methods);
+    // Reset local view filters/paging
+    this.tagFilter = '';
+    this.currentPage = 1;
+  } catch (e) {
+    console.error('[DataPanel] viewSavedList failed', e);
+    alert(e?.message || 'View failed.');
+  }
+},
     // -------- confirmations (avoid shadowing) --------
     safeConfirm(msg) {
       try {

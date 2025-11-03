@@ -17,6 +17,65 @@ export function makeDelimited(rows, headers = null, delim = ',') {
   return lines.join('\r\n');
 }
 
+// --- Normalize one saved-list item → DataPanel picker row
+export function normalizeItemForPicker(it) {
+  const fr = (it?.fr ?? it?.FR ?? '').trim();
+  const en = (it?.en ?? it?.EN ?? '').trim();
+  const article = (it?.article ?? it?.Article ?? '').trim();
+  const tags =
+    Array.isArray(it?.tags)
+      ? it.tags.slice()
+      : (it?.tags ? String(it.tags).split(/[;,|]/).map(s => s.trim()).filter(Boolean) : []);
+  return { fr, en, article, tags };
+}
+
+/**
+ * Load a saved list by name and push it into the existing DataPanel picker:
+ * - fills state.wordPicker.items
+ * - selects all rows
+ * - sets state.wordPicker.listName to the display name
+ */
+export async function viewSavedListIntoPicker(state, name, methods) {
+  if (!state?.wordPicker) return;
+
+  // 1) Prefer the app-provided getter
+  let items = await methods?.getSavedListItems?.(name);
+
+  // 2) Fallbacks to common local caches (mirrors Download logic)
+  if (!items || !items.length) {
+    const wp = state.wordPicker || {};
+    const dict = wp.savedDict || wp.savedMap;
+    if (dict && dict[name]?.items?.length) items = dict[name].items;
+
+    if ((!items || !items.length) && Array.isArray(wp.savedListsFull)) {
+      const hit = wp.savedListsFull.find(x => x.name === name);
+      if (hit?.items?.length) items = hit.items;
+    }
+    if ((!items || !items.length) && Array.isArray(wp.savedLists)) {
+      const hit = wp.savedLists.find(x => x.name === name && Array.isArray(x.items) && x.items.length);
+      if (hit) items = hit.items;
+    }
+  }
+
+  if (!items || !items.length) {
+    throw new Error('Could not locate items for this list. Expose methods.getSavedListItems(name) to enable preview.');
+  }
+
+  // Normalize + push into picker model
+  const rows = items.map(normalizeItemForPicker);
+  state.wordPicker.items = rows;
+
+  // Select all
+  const sel = {};
+  rows.forEach((_, i) => { sel[i] = true; });
+  state.wordPicker.selected = sel;
+
+  // Set list name shown in the input
+  const display = (state.wordPicker.savedLists || []).find(l => l.name === name)?.displayName || name;
+  state.wordPicker.listName = display;
+}
+
+
 export function makeCsvFromItems(items, normalizeArticle) {
   // Detect available columns
   let hasFR=false, hasEN=false, hasArticle=false, hasTags=false, hasExFR=false, hasExEN=false;
