@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>ParlCoach</title>
+    <title>BienAppris</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="icons/icon-192.png" sizes="192x192" />
     <link rel="apple-touch-icon" href="icons/icon-192.png" />
@@ -29,20 +29,20 @@
 
       <!-- Main Tabs -->
       <nav class="tabs">
-        <button :class="{active: tab==='learn'}"  @click="tab='learn'">Learn</button>
-        <button :class="{active: tab==='record'}" @click="tab='record'">Record</button>
-        <button :class="{active: tab==='plan'}"   @click="tab='plan'">Plan</button>
+        <button :class="{active: tab==='learn'}"  @click="tab='learn'">{{ $t('tabs.learn') }}</button>
+        <button :class="{active: tab==='record'}" @click="tab='record'">{{ $t('tabs.record') }}</button>
+        <button :class="{active: tab==='plan'}"   @click="tab='plan'">{{ $t('tabs.plan') }}</button>
         <!-- <button :class="{active: tab==='settings'}" @click="tab='settings'">Settings</button> -->
-        <button :class="{active: tab==='data'}"   @click="tab='data'">Data</button>
+        <button :class="{active: tab==='data'}"   @click="tab='data'">{{ $t('tabs.data') }}</button>
       </nav>
 
       <main class="view">
         <!-- ==================== LEARN ==================== -->
         <section v-if="tab==='learn'" class="panel" :key="'learn'" id="panel-learn">
           <nav class="subtabs">
-            <button :class="{active: learnTab==='drills'}"  @click="learnTab='drills'">Verb Drills</button>
-            <button :class="{active: learnTab==='vocab'}"   @click="learnTab='vocab'">Vocab</button>
-            <button :class="{active: learnTab==='grammar'}" @click="learnTab='grammar'">Grammar</button>
+            <button :class="{active: learnTab==='drills'}"  @click="learnTab='drills'">{{ $t('tabs.drills') }}</button>
+            <button :class="{active: learnTab==='vocab'}"   @click="learnTab='vocab'">{{ $t('tabs.vocab') }}</button>
+            <button :class="{active: learnTab==='grammar'}" @click="learnTab='grammar'">{{ $t('tabs.grammar') }}</button>
             <!-- optional: add more sub-tabs here -->
           </nav>
 

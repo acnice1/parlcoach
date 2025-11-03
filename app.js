@@ -844,7 +844,13 @@ const app = createApp({
 
       reshuffleVocabDeck: async () => { Vocab.reshuffleVocabDeck(state); await saveReviewPointer(); },
       nextVocabCard:     async () => { Vocab.nextVocabCard(state);       await saveReviewPointer(); },
-      currentVocabCard:  () => state.vocab.deck[state.vocab.deckPtr] || null,
+     // Use the robust getter that merges examples from source cards when missing
+   // app.js (inside methods:)
+    currentVocabCard: () =>
+      (typeof Vocab.currentVocabCard === 'function'
+        ? Vocab.currentVocabCard(state)
+        : (state.vocab.deck[state.vocab.deckPtr] || null)),
+
       rate,
 
       // GRAMMAR
@@ -1357,6 +1363,24 @@ const app = createApp({
     };
 
     // -------------------- CSV helpers --------------------
+    function getCI(row, key) {
+  if (!row) return "";
+  const canon = s => (s ?? "")
+    .normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+    .trim().toLowerCase().replace(/\s+/g, "_");
+
+  const want = canon(key);
+  // direct hits first
+  if (row[key] != null) return String(row[key]).trim();
+  if (row[key?.toLowerCase?.()] != null) return String(row[key.toLowerCase()]).trim();
+
+  // scan by canonicalized key as a fallback
+  for (const k of Object.keys(row)) {
+    if (canon(k) === want) return String(row[k]).trim();
+  }
+  return "";
+}
+
     function detectDelimiter(line) {
       const candidates = [",", ";", "\t"];
       let best = ",", bestCount = 0;
@@ -1376,35 +1400,84 @@ const app = createApp({
         : [];
       return { fr: String(it.fr || "").trim(), en: String(it.en || "").trim(), article: String(it.article || "").trim(), tags: tags.map((t) => String(t)) };
     }
+ 
     function parseCsv(text) {
-      if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
-      const linesRaw = text.split(/\r?\n/);
-      const lines = linesRaw.filter((l) => l.trim() !== "");
-      if (!lines.length) return { headers: [], rows: [], delimiter: "," };
+  // Strip UTF-8 BOM
+  if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
 
-      const delimiter = detectDelimiter(lines[0]);
-      const split = (line) => {
-        const out = []; let cur = "", inQ = false;
-        for (let i = 0; i < line.length; i++) {
-          const ch = line[i], nxt = line[i + 1];
-          if (ch === '"' && inQ && nxt === '"') { cur += '"'; i++; continue; }
-          if (ch === '"') { inQ = !inQ; continue; }
-          if (ch === delimiter && !inQ) { out.push(cur); cur = ""; continue; }
-          cur += ch;
-        }
-        out.push(cur);
-        return out.map((s) => s.trim());
-      };
+  const linesRaw = text.split(/\r?\n/);
+  const lines = linesRaw.filter((l) => l.trim() !== "");
+  if (!lines.length) return { headers: [], rows: [], delimiter: "," };
 
-      const headers = split(lines[0]).map((h) => h.toLowerCase());
-      const rows = lines.slice(1).map((l) => {
-        const cols = split(l);
-        const obj = {};
-        headers.forEach((h, i) => (obj[h] = (cols[i] ?? "").trim()));
-        return obj;
-      });
-      return { headers, rows, delimiter };
+  const detectDelimiter = (line) => {
+    const candidates = [",", ";", "\t"];
+    let best = ",", bestCount = 0;
+    for (const d of candidates) {
+      const count = line.split(d).length;
+      if (count > bestCount) { best = d; bestCount = count; }
     }
+    return best;
+  };
+
+  const delimiter = detectDelimiter(lines[0]);
+
+  const split = (line) => {
+    const out = []; let cur = "", inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i], nxt = line[i + 1];
+      if (ch === '"' && inQ && nxt === '"') { cur += '"'; i++; continue; }
+      if (ch === '"') { inQ = !inQ; continue; }
+      if (ch === delimiter && !inQ) { out.push(cur); cur = ""; continue; }
+      cur += ch;
+    }
+    out.push(cur);
+    return out.map((s) => s.trim());
+  };
+
+  // Canonicalize: lowercase, trim, collapse spaces, strip accents
+  const canon = (s) =>
+    (s ?? "")
+      .normalize("NFKD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "_");
+
+  // Known synonyms → canonical name
+  const alias = (h) => {
+    const c = canon(h);
+    const map = {
+      fr: "fr", french: "fr",
+      en: "en", english: "en", translation: "en",
+      article: "article", gender: "gender",
+      partofspeech: "part_of_speech", pos: "part_of_speech",
+      tags: "tags", label: "tags", labels: "tags", topics: "tags",
+      example: "example", ex: "example",
+      example_fr: "example_fr", ex_fr: "example_fr", exemple_fr: "example_fr",
+      example_en: "example_en", ex_en: "example_en", exemple_en: "example_en",
+      english_meaning: "meaning_en", meaning_short: "meaning_en", meaning: "meaning_en",
+      verb: "verb", verbe: "verb",
+      preposition: "preposition", prep: "preposition",
+    };
+    return map[c] || c; // fall back to canonicalized header itself
+  };
+
+  const rawHeaders = split(lines[0]);
+  const headers = rawHeaders.map((h) => ({ raw: h, canon: alias(h) }));
+
+  const rows = lines.slice(1).map((l) => {
+    const cols = split(l);
+    const obj = {};
+    headers.forEach((h, i) => {
+      obj[h.canon] = (cols[i] ?? "").trim();   // store by canonical name
+      obj[h.raw]   = obj[h.raw] ?? obj[h.canon]; // keep original for debug/edge lookups
+    });
+    return obj;
+  });
+
+  return { headers: headers.map(h => h.canon), rows, delimiter };
+}
+
 
     // Normalizers for CSV → vocab items
     const normalizeStr = (s) => (s ?? "").toString().trim();
@@ -1437,9 +1510,9 @@ const app = createApp({
       const fr = (frLegacy || [frVerb, prep].filter(Boolean).join(" ")).trim();
       const en = (enLegacy || enMean).trim();
 
-      const exStr = get("example") || get("ex");
-      const exFr  = get("example_fr") || get("ex_fr") || get("exemple_fr");
-      const exEn  = get("example_en") || get("ex_en") || get("exemple_en");
+const exStr = getCI(row, "example") || getCI(row, "ex");
+const exFr  = getCI(row, "example_fr");
+const exEn  = getCI(row, "example_en");
 
       const tags = Array.isArray(row.tags)
         ? row.tags
@@ -1541,60 +1614,155 @@ const app = createApp({
       const sel = {}; state.wordPicker.items.forEach((_, i) => (sel[i] = !!flag));
       state.wordPicker.selected = sel;
     }
-    async function savePickedAsList(pickedIdxArr) {
-      const name = (state.wordPicker.listName || "").trim();
-      if (!name) { toast.info("Please enter a list name."); return; }
+  async function savePickedAsList(pickedIdxArr) {
+  const listName = (state.wordPicker.listName || "").trim();
+  if (!listName) { toast.info("Please enter a list name."); return; }
 
-      let indices;
-      if (Array.isArray(pickedIdxArr) && pickedIdxArr.length) indices = pickedIdxArr;
-      else indices = Object.entries(state.wordPicker.selected).filter(([, v]) => !!v).map(([k]) => Number(k));
+  // Decide which rows are picked
+  let indices;
+  if (Array.isArray(pickedIdxArr) && pickedIdxArr.length) {
+    indices = pickedIdxArr;
+  } else {
+    indices = Object.entries(state.wordPicker.selected || {})
+      .filter(([, v]) => !!v)
+      .map(([k]) => Number(k));
+  }
+  if (!indices.length) { toast.warn("No words selected."); return; }
 
-      const picked = indices.map((i) => state.wordPicker.items[i]).filter(Boolean).map((it) => ({
-        fr: String(it.fr || "").trim(),
-        en: String(it.en || "").trim(),
-        article: String(it.article || "").trim(),
-        example: coerceExample(it.example),
-        tags: Array.isArray(it.tags) ? it.tags.map((t) => String(t)) : [],
-      }));
-      if (!picked.length) { toast.warn("No words selected."); return; }
+  // Helper: normalize examples from any shape → {fr, en} + keep split aliases
+  const buildExample = (it) => {
+    // 1) If example is an object
+    if (it.example && typeof it.example === "object") {
+      return {
+        unified: { fr: (it.example.fr || "").trim(), en: (it.example.en || "").trim() },
+        fr: (it.example.fr || "").trim(),
+        en: (it.example.en || "").trim(),
+      };
+    }
+    // 2) If example is a single string → FR-only
+    if (typeof it.example === "string" && it.example.trim()) {
+      return { unified: { fr: it.example.trim(), en: "" }, fr: it.example.trim(), en: "" };
+    }
+    // 3) Split-field variants
+    const frSplit = (it.exampleFr || it.exFr || it.example_fr || "").trim();
+    const enSplit = (it.exampleEn || it.exEn || it.example_en || "").trim();
+    if (frSplit || enSplit) {
+      return { unified: { fr: frSplit, en: enSplit }, fr: frSplit, en: enSplit };
+    }
+    return { unified: null, fr: "", en: "" };
+  };
 
-      const plainPicked = JSON.parse(JSON.stringify(picked));
-      await saveVocabListsToSettings((curr) => ({ ...curr, [name]: plainPicked }));
+  // Build the list entries we’ll persist into settings
+  const picked = indices.map((i) => {
+    const it = state.wordPicker.items[i] || {};
+    const fr = String(it.fr || "").trim();
+    const en = String(it.en || "").trim();
+    if (!fr || !en) return null;
 
-      const settings = (await db.settings.get("v1")) || { key: "v1" };
-      await db.settings.put({ ...settings, activeReviewList: name, key: "v1" });
-      state.wordPicker.activeList = name;
+    const article = String(it.article || "").trim();
+    const ex = buildExample(it);
+    const tags = Array.isArray(it.tags)
+      ? it.tags.map((t) => String(t)).filter(Boolean)
+      : [];
 
-      await refreshSavedListsUI();
-      toast.success(`Saved list "${name}" with ${plainPicked.length} items.`);
+    return {
+      fr, en, article,
+      example: ex.unified,          // unified example object
+      // keep split aliases too (so templates can read either shape)
+      exampleFr: ex.fr,
+      exampleEn: ex.en,
+      tags,
+    };
+  }).filter(Boolean);
+
+  if (!picked.length) { toast.warn("No valid rows to save."); return; }
+
+  // Persist into settings.vocabLists[listName]
+  await saveVocabListsToSettings((curr) => ({ ...curr, [listName]: picked }));
+
+  // Mark this as the active review list
+  const settings = (await db.settings.get("v1")) || { key: "v1" };
+  await db.settings.put({ ...settings, activeReviewList: listName, key: "v1" });
+  state.wordPicker.activeList = listName;
+
+  await refreshSavedListsUI();
+  toast.success(`Saved list "${listName}" with ${picked.length} item(s).`);
+}
+// --- Replace your existing loadListIntoReview(name) with this ---
+async function loadListIntoReview(name) {
+  const listName = (name || "").trim();
+
+  // Persist chosen list so it's restored on reload
+  const settingsRec = (await db.settings.get("v1")) || { key: "v1" };
+  await db.settings.put({ ...settingsRec, activeReviewList: listName, key: "v1" });
+
+  const list = settingsRec?.vocabLists?.[listName];
+  if (!Array.isArray(list) || !list.length) {
+    toast.warn(`List "${listName || "(none)"}" not found or empty.`);
+    return;
+  }
+
+  // Normalize examples from any shape → keep unified + split fields
+  const toCard = (it) => {
+    const fr = String(it.fr || "").trim();
+    const en = String(it.en || "").trim();
+    if (!fr || !en) return null;
+
+    // Prefer existing object if present
+    let example = null;
+    if (it.example && typeof it.example === "object") {
+      example = { fr: (it.example.fr || "").trim(), en: (it.example.en || "").trim() };
+    } else if (typeof it.example === "string" && it.example.trim()) {
+      example = { fr: it.example.trim(), en: "" };
+    } else if (it.exampleFr || it.exFr || it.example_fr || it.exampleEn || it.exEn || it.example_en) {
+      example = {
+        fr: (it.exampleFr || it.exFr || it.example_fr || "").trim(),
+        en: (it.exampleEn || it.exEn || it.example_en || "").trim(),
+      };
     }
 
-    async function loadListIntoReview(name) {
-      const settings = (await db.settings.get("v1")) || { key: "v1" };
-      await db.settings.put({ ...settings, activeReviewList: name || "", key: "v1" });
+    const example_fr = (example?.fr ?? (it.exampleFr || it.exFr || it.example_fr || "")).trim();
+    const example_en = (example?.en ?? (it.exampleEn || it.exEn || it.example_en || "")).trim();
 
-      const list = settings?.vocabLists?.[name];
-      if (!Array.isArray(list) || !list.length) {
-        console.log(`[Lists] loadListIntoReview: list "${name}" not found or empty; keeping existing deck.`);
-        return;
-      }
+    const tags = Array.isArray(it.tags) ? it.tags.slice() : [];
 
-      const cards = list.map((it) => ({
-        id: null,
-        fr: (it.fr || "").trim(),
-        en: (it.en || "").trim(),
-        article: (it.article || "").trim(),
-        example: coerceExample(it.example),
-        tags: Array.isArray(it.tags) ? it.tags : [],
-        source: "list:" + name,
-      })).filter((c) => c.fr && c.en);
+    return {
+      id: null,
+      fr,
+      en,
+      article: String(it.article || "").trim(),
+      example,            // unified
+      example_fr,         // split fields preserved
+      example_en,
+      tags,
+      source: "list:" + listName,
+    };
+  };
 
-      state.vocab.cards = cards;
-      if (typeof Vocab?.buildVocabDeck === "function") Vocab.buildVocabDeck(state);
-      else { state.vocab.deck = [...state.vocab.cards]; state.vocab.deckPtr = 0; }
-      await saveReviewPointer();
-      state.tab = "learn";
-    }
+  const cards = list.map(toCard).filter(Boolean);
+  if (!cards.length) {
+    toast.warn(`List "${listName}" has no usable items (missing FR/EN).`);
+    return;
+  }
+
+  // Set Review source cards and (re)build deck
+  state.vocab.cards = cards;
+
+  if (typeof Vocab?.buildVocabDeck === "function") {
+    Vocab.buildVocabDeck(state);
+  } else {
+    state.vocab.deck = [...state.vocab.cards];
+    state.vocab.deckPtr = 0;
+  }
+
+  // Persist pointer through your existing helper (if present in scope)
+  try { await saveReviewPointer?.(); } catch {}
+
+  // Jump user to the Review UI
+  state.tab = "learn";
+  state.learnTab = "vocab";
+}
+
 
     async function loadListIntoSrs(name) {
       const settings = (await db.settings.get("v1")) || { key: "v1" };
@@ -1962,8 +2130,6 @@ const app = createApp({
 });
 
 // --- make i18n helpers available in all templates ---
-// --- make i18n helpers available in all templates ---
-// If the key has no namespace, default to "common"
 // If the key has no namespace, default to "common"
 const withDefaultNs = (k) =>
   (k.includes(':') ? k.replace(':', '.') : (k.startsWith('common.') ? k : `common.${k}`));

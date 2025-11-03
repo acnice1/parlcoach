@@ -25,7 +25,43 @@ export async function reloadVocabByTag(db, flash) {
 }
 
 
-export function currentVocabCard(state) { return state.vocab.deck[state.vocab.deckPtr] || null; }
+// vocab.js
+export function currentVocabCard(state) {
+  const d = state?.vocab?.deck?.[state?.vocab?.deckPtr] || null;
+  if (!d) return null;
+
+  // Does the deck item already carry any example?
+  const hasExample =
+    !!(d.example && (typeof d.example === 'string'
+        ? d.example.trim()
+        : (d.example.fr || d.example.en))) ||
+    !!(d.example_fr || d.example_en || d.exampleFr || d.exampleEn);
+
+  if (hasExample) return d;
+
+  // Try to recover example from the source cards array by matching fr/en
+  const frDeck = (d.fr ?? d.front ?? '').trim();
+  const enDeck = (d.en ?? d.back  ?? '').trim();
+  if (!frDeck || !enDeck) return d;
+
+  const src = (state?.vocab?.cards || []).find(c =>
+    (c?.fr ?? '').trim() === frDeck && (c?.en ?? '').trim() === enDeck
+  );
+  if (!src) return d;
+
+  // Merge in any example shapes the UI might consume
+  const merged = { ...d };
+  if (src.example !== undefined) merged.example = src.example;
+  // normalize common aliases -> keep everything the UI already supports
+  const exObj = (typeof src.example === 'object' && src.example) ? src.example : null;
+  merged.example_fr = merged.example_fr ?? exObj?.fr ?? src.example_fr ?? src.exampleFr;
+  merged.example_en = merged.example_en ?? exObj?.en ?? src.example_en ?? src.exampleEn;
+  if (src.exampleFr !== undefined) merged.exampleFr = merged.exampleFr ?? src.exampleFr;
+  if (src.exampleEn !== undefined) merged.exampleEn = merged.exampleEn ?? src.exampleEn;
+
+  return merged;
+}
+
 
 export function buildVocabDeck(state) {
   // vocab.js — fix this line
