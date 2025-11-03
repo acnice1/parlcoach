@@ -1,13 +1,28 @@
 [
   {
     "file": "administrative_vocab_1.csv",
-    "name": "Administrative Vocab 1 ~100 terms",
-    "description": "Set 1."
+    "name": "Workplace Vocab 1 ~100 terms",
+    "description": "Set 1. abonnement → classeur"
   },
   {
     "file": "administrative_vocab_2.csv",
-    "name": "Administrative Vocab 2 ~100 terms",
-    "description": "Set 2."
+    "name": "Workplace Vocab 2 ~100 terms",
+    "description": "Set 2. clavarder → engendrer"
+  },
+    {
+    "file": "administrative_vocab_3.csv",
+    "name": "Workplace Vocab 3 ~100 terms",
+    "description": "Set 3. En matière de → Mettre à contribution"
+  },
+    {
+    "file": "administrative_vocab_4.csv",
+    "name": "Workplace Vocab 4 ~100 terms",
+    "description": "Set 4. Mettre à jour → Relever de"
+  },
+    {
+    "file": "administrative_vocab_5.csv",
+    "name": "Workplacae Vocab 5 ~100 terms",
+    "description": "Set 5. Relever un défi → Vue d’ensemble "
   },
   {
     "file": "opinion_phrases_extended.csv",
