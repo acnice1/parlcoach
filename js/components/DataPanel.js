@@ -78,7 +78,7 @@ const DataPanel = {
 
         <!-- Word Picker (CSV preview area) -->
         <div v-if="rowCount" style="margin-top:12px;">
-          <h4 style="margin-bottom:6px;">Pick words to include</h4>
+          <h4 style="margin-bottom:6px;">Pick Tags to include</h4>
 
           <!-- TAG FILTER UI -->
           <div class="row" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:10px;">
@@ -204,21 +204,28 @@ const DataPanel = {
       {{ l.description || l.desc }}
     </div>
   </td>
-  <td style="padding:8px 0; vertical-align:top; white-space:nowrap;">{{ l.count }}</td>
-  <td style="padding:8px 0; vertical-align:top; white-space:nowrap;">
+  <td
+  style="padding:8px 16px 8px 0; vertical-align:top; white-space:nowrap; text-align:right; min-width:72px;">
+  {{ l.count }}
+</td>
 
-  <button class="small"
-        @click="viewSavedList(l.name)"
-        title="Preview this list in the table above">
-  View
-</button>
-
-  <button class="small" @click="loadIntoSrsAndRefresh(l.name)">Load into SRS</button>
+<td
+  style="padding:8px 0 8px 16px; vertical-align:top; white-space:nowrap;">
+  <div style="display:flex; gap:8px; flex-wrap:wrap;">
     <button class="small"
+            @click="viewSavedList(l.name)"
+            title="Preview this list in the table above">
+      View
+    </button>
+     <button class="small"
             @click="methods.loadListIntoReview ? methods.loadListIntoReview(l.name) : null"
             :title="(l.description || l.desc) || ''">
       Use in Review
     </button>
+    <button class="small" @click="loadIntoSrsAndRefresh(l.name)">
+      Load into SRS
+    </button>
+
     <button class="small"
             @click="clearSrsForListAndRefresh(l.name)"
             title="Remove only the SRS cards that came from this list">
@@ -233,7 +240,9 @@ const DataPanel = {
             @click="methods.deleteSavedList ? methods.deleteSavedList(l.name) : null">
       Delete
     </button>
-  </td>
+  </div>
+</td>
+
 </tr>
 
             </tbody>
