@@ -194,11 +194,11 @@ const DataPanel = {
   <td style="padding:6px 0; vertical-align:top;">
     <strong>{{ l.displayName || l.name }}</strong>
 
-    <!-- file path (if known from vocabMeta) -->
+    <!-- file path (if known from vocabMeta) 
     <div v-if="l.file" class="dim" style="font-size:12px; margin-top:2px;">
       <code>{{ l.file }}</code>
     </div>
-
+    -->
     <!-- description from data/index.json (or manifest) -->
     <div v-if="(l.description || l.desc)" class="dim" style="font-size:12px; margin-top:2px;">
       {{ l.description || l.desc }}
