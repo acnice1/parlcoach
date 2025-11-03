@@ -169,85 +169,95 @@ const DataPanel = {
           </div>
         </div>
       </div>
+<!-- ===== Saved Lists ===== -->
+<div class="box" style="padding:12px; margin-top:12px;">
+  <h3>Saved Vocab Sub-lists</h3>
+  <p class="dim">These are stored locally (settings). You can load any list into the SRS deck or use it in Review.</p>
 
-      <!-- ===== Saved Lists ===== -->
-      <div class="box" style="padding:12px; margin-top:12px;">
-        <h3>Saved Vocab Sub-lists</h3>
-        <p class="dim">These are stored locally (settings). You can load any list into the SRS deck or use it in Review.</p>
-
-        <!-- SRS maintenance -->
-        <div class="row" style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
-          <button class="danger"
-                  @click="safeConfirm('Delete ALL SRS cards? This cannot be undone.') && clearAllSrsAndRefresh()"
-                  title="Delete all SRS cards from the database">
-            Clear SRS (delete all)
-          </button>
-
-          <button
-                  @click="safeConfirm('Reset scheduling for ALL SRS cards to Due Now?') && resetSrsSchedulingAndRefresh()"
-                  title="Keep cards; reset due dates/ease/reps so everything is due now">
-            Reset SRS scheduling
-          </button>
-        </div>
-
-<tr v-for="l in savedLists" :key="l.name" style="border-bottom:1px solid var(--muted);">
-  <td style="padding:6px 0; vertical-align:top;">
-    <strong>{{ l.displayName || l.name }}</strong>
-
-    <!-- file path (if known from vocabMeta) 
-    <div v-if="l.file" class="dim" style="font-size:12px; margin-top:2px;">
-      <code>{{ l.file }}</code>
-    </div>
-    -->
-    <!-- description from data/index.json (or manifest) -->
-    <div v-if="(l.description || l.desc)" class="dim" style="font-size:12px; margin-top:2px;">
-      {{ l.description || l.desc }}
-    </div>
-  </td>
-  <td
-  style="padding:8px 16px 8px 0; vertical-align:top; white-space:nowrap; text-align:right; min-width:72px;">
-  {{ l.count }}
-</td>
-
-<td
-  style="padding:8px 0 8px 16px; vertical-align:top; white-space:nowrap;">
-  <div style="display:flex; gap:8px; flex-wrap:wrap;">
-    <button class="small"
-            @click="viewSavedList(l.name)"
-            title="Preview this list in the table above">
-      View
-    </button>
-     <button class="small"
-            @click="methods.loadListIntoReview ? methods.loadListIntoReview(l.name) : null"
-            :title="(l.description || l.desc) || ''">
-      Use in Review
-    </button>
-    <button class="small" @click="loadIntoSrsAndRefresh(l.name)">
-      Load into SRS
+  <!-- SRS maintenance -->
+  <div class="row" style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+    <button class="danger"
+            @click="safeConfirm('Delete ALL SRS cards? This cannot be undone.') && clearAllSrsAndRefresh()"
+            title="Delete all SRS cards from the database">
+      Clear SRS (delete all)
     </button>
 
-    <button class="small"
-            @click="clearSrsForListAndRefresh(l.name)"
-            title="Remove only the SRS cards that came from this list">
-      Remove from SRS
-    </button>
-    <button class="small"
-            @click="downloadSavedList(l.name, l.displayName || l.name)"
-            title="Download this sub-list as CSV">
-      Download
-    </button>
-    <button class="small danger"
-            @click="methods.deleteSavedList ? methods.deleteSavedList(l.name) : null">
-      Delete
+    <button
+            @click="safeConfirm('Reset scheduling for ALL SRS cards to Due Now?') && resetSrsSchedulingAndRefresh()"
+            title="Keep cards; reset due dates/ease/reps so everything is due now">
+      Reset SRS scheduling
     </button>
   </div>
-</td>
 
-</tr>
+  <!-- List table (added centered headers only) -->
+  <table class="data-table" style="width:100%; border-collapse:collapse; min-width:640px; margin-top:12px;">
+    <thead>
+      <tr>
+        <th scope="col" style="text-align:center;">List</th>
+        <th scope="col" style="text-align:center; white-space:nowrap;">Count</th>
+        <th scope="col" style="text-align:center;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
 
-            </tbody>
-          </table>
-        </div>
+      <tr v-for="l in savedLists" :key="l.name" style="border-bottom:1px solid var(--muted);">
+        <td style="padding:6px 0; vertical-align:top;">
+          <strong>{{ l.displayName || l.name }}</strong>
+          <!-- file path (if known from vocabMeta) 
+          <div v-if="l.file" class="dim" style="font-size:12px; margin-top:2px;">
+            <code>{{ l.file }}</code>
+          </div>
+          -->
+          <!-- description from data/index.json (or manifest) -->
+          <div v-if="(l.description || l.desc)" class="dim" style="font-size:12px; margin-top:2px;">
+            {{ l.description || l.desc }}
+          </div>
+        </td>
+
+        <td
+          style="padding:8px 16px 8px 0; vertical-align:top; white-space:nowrap; text-align:right; min-width:72px;">
+          {{ l.count }}
+        </td>
+
+        <td
+          style="padding:8px 0 8px 16px; vertical-align:top; white-space:nowrap;">
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="small"
+                    @click="viewSavedList(l.name)"
+                    title="Preview this list in the table above">
+              View
+            </button>
+            <button class="small"
+                    @click="methods.loadListIntoReview ? methods.loadListIntoReview(l.name) : null"
+                    :title="(l.description || l.desc) || ''">
+              Use in Review
+            </button>
+            <button class="small" @click="loadIntoSrsAndRefresh(l.name)">
+              Load into SRS
+            </button>
+
+            <button class="small"
+                    @click="clearSrsForListAndRefresh(l.name)"
+                    title="Remove only the SRS cards that came from this list">
+              Remove from SRS
+            </button>
+            <button class="small"
+                    @click="downloadSavedList(l.name, l.displayName || l.name)"
+                    title="Download this sub-list as CSV">
+              Download
+            </button>
+            <button class="small danger"
+                    @click="methods.deleteSavedList ? methods.deleteSavedList(l.name) : null">
+              Delete
+            </button>
+          </div>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+
 
       </div>
     </div>
