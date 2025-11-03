@@ -59,7 +59,13 @@ const DataPanel = {
             @click="methods.togglePickAll ? methods.togglePickAll(false) : selectAllLocal(false)">
             Clear all
           </button>
-
+          <button
+            v-if="rowCount"
+            class="small"
+            @click="cancelLoadedView"
+            title="Cancel the current loaded view (CSV or previewed list)">
+            Cancel
+          </button>
           <span class="dim" v-if="state.csv && state.csv.parsing" aria-live="polite">Parsing…</span>
         </div>
 
@@ -386,6 +392,32 @@ globToRegex(glob) {
     .replace(/\*/g, '.*');
   return new RegExp(`^${esc}$`, 'i');
 },
+
+cancelLoadedView() {
+  // Reset the Word Picker view (does NOT delete saved lists/SRS)
+  if (this.state?.wordPicker) {
+    this.state.wordPicker.items = [];
+    this.state.wordPicker.selected = {};
+    this.state.wordPicker.listName = "";
+    this.state.wordPicker.activeList = "";
+  }
+
+  // Clear CSV parse state (so the preview table disappears)
+  if (this.state?.csv) {
+    this.state.csv = null;
+  }
+
+  // Reset local filters/paging
+  this.tagFilter = '';
+  this.currentPage = 1;
+
+  // (Optional) clear the file input control if present
+  try {
+    const el = document.getElementById('csvUpload');
+    if (el) el.value = '';
+  } catch {}
+},
+
 // -------- confirmations (avoid shadowing) --------
     safeConfirm(msg) {
       try {
