@@ -493,35 +493,44 @@ const app = createApp({
       saveReviewPointer();
     }
 
-    function renderFr(card) {
-      const w = (card?.fr ?? card?.front ?? card?.french ?? "").trim();
-      if (!w) return w;
-      if (/^(l['’]\s*|le\s+|la\s+|les\s+)/i.test(w)) return w;
+  function renderFr(card) {
+  const w = (card?.fr ?? card?.front ?? card?.french ?? "").trim();
+  if (!w) return w;
 
-      const rawArticle = (card?.article ?? "").trim();
-      let article = rawArticle.toLowerCase();
-      if (article) {
-        if (article === "l'") article = "l’";
-        if (article === "l’") {
-          const bare = w.replace(/^l['’]\s*/i, "").trim();
-          return `l’${bare}`;
-        }
-        return `${article} ${w}`;
-      }
+  // If it already has an article, keep it
+  if (/^(l['’]\s*|le\s+|la\s+|les\s+)/i.test(w)) return w;
 
-      const posStr = String(card?.partOfSpeech || card?.pos || "").toLowerCase();
-      const tagsArr = Array.isArray(card?.tags) ? card.tags.map((t) => String(t).toLowerCase()) : [];
-      const hasGender = !!String(card?.gender ?? "").trim();
-      const isNoun = posStr.includes("noun") || tagsArr.some((t) => t.startsWith("noun")) || hasGender;
-      if (!isNoun) return w;
-
-      const startsWithVowelOrMuteH = /^[aeiouâêîôûéèëïüœ]/i.test(w) || /^h/i.test(w);
-      const gender = String(card?.gender || "").toLowerCase();
-      if (startsWithVowelOrMuteH) return `l’${w}`;
-      if (gender === "f" || tagsArr.includes("f")) return `la ${w}`;
-      if (gender === "m" || tagsArr.includes("m")) return `le ${w}`;
-      return w;
+  // Explicit article wins
+  const rawArticle = (card?.article ?? "").trim();
+  let article = rawArticle.toLowerCase();
+  if (article) {
+    if (article === "l'") article = "l’";
+    if (article === "l’") {
+      const bare = w.replace(/^l['’]\s*/i, "").trim();
+      return `l’${bare}`;
     }
+    return `${article} ${w}`;
+  }
+
+  // --- revised noun detection ---
+  const posStr  = String(card?.partOfSpeech || card?.pos || "").toLowerCase();
+  const tagsArr = Array.isArray(card?.tags) ? card.tags.map(t => String(t).toLowerCase()) : [];
+  const isExplicitNoun =
+    /\bnoun\b/.test(posStr) ||
+    tagsArr.some(t => /\bnoun\b/.test(t));
+
+  if (!isExplicitNoun) return w; // ← do NOT use gender to imply noun
+
+  // If it's explicitly a noun, then consider gender-based article
+  const startsWithVowelOrMuteH = /^[aeiouâêîôûéèëïüœ]/i.test(w) || /^h/i.test(w);
+  const gender = String(card?.gender || "").toLowerCase();
+
+  if (startsWithVowelOrMuteH) return `l’${w}`;
+  if (gender === "f" || tagsArr.includes("f")) return `la ${w}`;
+  if (gender === "m" || tagsArr.includes("m")) return `le ${w}`;
+  return w;
+}
+
 
     watch(() => [state.vocab.prefs.randomize, state.vocab.prefs.withoutReplacement],
           () => Vocab.buildVocabDeck(state));
