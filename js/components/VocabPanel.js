@@ -20,6 +20,19 @@ const VocabPanel = {
   },
 
   computed: {
+
+frontText() {
+  // Use SRS card in flashcards mode; review card otherwise
+  const c = (this.state.vocabMode === 'flashcards' ? this.srsCard : this.currentReviewCard) || {};
+  const dir = this.state.vocab.direction; // 'FR_EN' or 'EN_FR'
+  return dir === 'EN_FR' ? (c.en ?? c.EN ?? '') : (c.fr ?? c.FR ?? '');
+},
+backText() {
+  const c = (this.state.vocabMode === 'flashcards' ? this.srsCard : this.currentReviewCard) || {};
+  const dir = this.state.vocab.direction;
+  return dir === 'EN_FR' ? (c.fr ?? c.FR ?? '') : (c.en ?? c.EN ?? '');
+},
+
     // ---------- REVIEW: stable current card (reactive) ----------
     currentReviewCard() {
       return this.methods.currentVocabCard?.() || null;
@@ -94,6 +107,13 @@ const VocabPanel = {
   },
 
   methods: {
+
+    watch: {
+  'state.vocab.direction'() {
+    this.state.flashcards.showBack = false;
+  }
+},
+
     // style helper for the brief flash effect
     flashStyle(key) {
       if (this.flashKey !== key) return {};
@@ -366,20 +386,21 @@ const VocabPanel = {
       <!-- ==================== FLASHCARDS (SRS) ==================== -->
       <div v-if="state.vocabMode==='flashcards'">
         <div class="vocab-card" v-if="srsCard">
-          <!-- FRONT (SRS): respect direction; no renderFr on English -->
-          <div class="fr boxy">
-            <template v-if="state.vocab.direction==='FR_EN'">
-              {{ methods.renderFr ? methods.renderFr({ fr: srsFront, article: srsArticle }) : srsFront }}
-            </template>
-            <template v-else>
-              {{ srsFront }}
-            </template>
-          </div>
+         <!-- FRONT (SRS) now always derived from current picker direction -->
+<div class="fr boxy">
+  <template v-if="state.vocab.direction==='FR_EN'">
+    {{ methods.renderFr ? methods.renderFr({ fr: frontText, article: srsArticle }) : frontText }}
+  </template>
+  <template v-else>
+    {{ frontText }}
+  </template>
+</div>
 
-          <!-- English/French translation: only after Show/back (unchanged) -->
-          <div class="en boxy" v-if="state.flashcards.showBack && state.showEnglishTranslation">
-            {{ srsBack }}
-          </div>
+<!-- BACK (SRS) uses the opposite side after Show -->
+<div class="en boxy" v-if="state.flashcards.showBack && state.showEnglishTranslation">
+  {{ backText }}
+</div>
+
 
           <!-- Examples (SRS): direction-aware -->
 <div v-if="state.ui.showExamples" class="example-block" role="note" aria-label="Exemple">
