@@ -20,42 +20,42 @@ const VocabPanel = {
   },
 
   computed: {
-
+    // ---------- REVIEW: stable current card (reactive) ----------
     currentReviewCard() {
-  // one tracked value the template can depend on
-  return this.methods.currentVocabCard?.() || null;
-},
+      return this.methods.currentVocabCard?.() || null;
+    },
 
-   // ---------- REVIEW: example helpers (robust) ----------
-exFr() {
-const c = this.currentReviewCard || {};   // Accept many shapes: exampleFr, example.fr, examples.fr, plain string, etc.
-  const candidates = [
-    c.exampleFr,
-    c.examples?.fr,
-    c.example?.fr,
-    (typeof c.example === 'string' ? c.example : ''), // FR-only string
-    c.exFr,
-    c.frExample,
-    c.example_fr
-  ];
-  const v = candidates.find(v => typeof v === 'string' && v.trim());
-  return v ? v.trim() : '';
-},
-exEn() {
-  const c = this.currentReviewCard || {}; // Accept many shapes: exampleEn, example.en, examples.en, englishExample, etc.
-  const candidates = [
-    c.exampleEn,
-    c.examples?.en,
-    c.example?.en,
-    c.englishExample,
-    c.enExample,
-    c.exEn,
-    c.example_en
-  ];
-  const v = candidates.find(v => typeof v === 'string' && v.trim());
-  return v ? v.trim() : '';
-},
-
+    // ---------- REVIEW: example helpers (robust) ----------
+    exFr() {
+      const c = this.currentReviewCard || {};
+      // Accept many shapes: exampleFr, example.fr, examples.fr, plain string, etc.
+      const candidates = [
+        c.exampleFr,
+        c.examples?.fr,
+        c.example?.fr,
+        (typeof c.example === 'string' ? c.example : ''), // FR-only string
+        c.exFr,
+        c.frExample,
+        c.example_fr
+      ];
+      const v = candidates.find(v => typeof v === 'string' && v.trim());
+      return v ? v.trim() : '';
+    },
+    exEn() {
+      const c = this.currentReviewCard || {};
+      // Accept many shapes: exampleEn, example.en, examples.en, englishExample, etc.
+      const candidates = [
+        c.exampleEn,
+        c.examples?.en,
+        c.example?.en,
+        c.englishExample,
+        c.enExample,
+        c.exEn,
+        c.example_en
+      ];
+      const v = candidates.find(v => typeof v === 'string' && v.trim());
+      return v ? v.trim() : '';
+    },
 
     // ---------- SRS: safe getters ----------
     srsCard() {
@@ -68,6 +68,7 @@ exEn() {
     },
     srsBack() {
       const c = this.srsCard;
+      // back side string for SRS (shown after "Show")
       return (c?.back || c?.en || '').trim();
     },
     srsArticle() {
@@ -217,40 +218,41 @@ exEn() {
             {{ state.vocabMode === 'review' ? 'Current Mode: Review' : 'Current Mode: Flashcards (SRS)' }}
           </span>
         </label>
-<!-- Direction (SRS + tags: dir:FR_EN/dir:EN_FR) -->
-<label class="switch">
-  <select
-    :value="state.vocab.direction"
-    @change="state.vocab.direction = $event.target.value"
-    aria-label="Card direction"
-    style="padding:6px 8px; border-radius:8px; background:var(--bg, #111827); color:inherit;"
-    title="Filter SRS due-cards by direction"
-  >
-    <option value="FR_EN">FR → EN</option>
-    <option value="EN_FR">EN → FR</option>
-  </select>
-  <span class="label-text" style="margin-left:8px;">Direction</span>
-</label>
 
-<!-- Show Examples (global) -->
-<label class="switch" style="margin-left:8px">
-  <input
-    type="checkbox"
-    :checked="!!state.ui.showExamples"
-    @change="state.ui.showExamples = $event.target.checked"
-    aria-label="Toggle: Show examples"
-  />
-  <span class="slider" aria-hidden="true"></span>
-  <span class="label-text">{{ $t('vocab.showExamples') }}</span>
-</label>
+        <!-- Show Examples (global) -->
+        <label class="switch" style="margin-left:8px">
+          <input
+            type="checkbox"
+            :checked="!!state.ui.showExamples"
+            @change="state.ui.showExamples = $event.target.checked"
+            aria-label="Toggle: Show examples"
+          />
+          <span class="slider" aria-hidden="true"></span>
+          <span class="label-text">{{ $t('toggle.showExamples') }}</span>
+        </label>
 
-      <!-- Show/Hide tags toggle -->
+        <!-- Show/Hide tags toggle -->
         <label class="switch">
           <input type="checkbox" v-model="state.ui.showVocabTags" aria-label="Show tags on cards" />
           <span class="slider" aria-hidden="true"></span>
           <span class="label-text">Show tags on cards</span>
         </label>
-    </div>
+
+        <!-- Direction (SRS + tags: dir:FR_EN/dir:EN_FR) -->
+        <label class="switch">
+          <select
+            :value="state.vocab.direction"
+            @change="state.vocab.direction = $event.target.value"
+            aria-label="Card direction"
+            style="padding:6px 8px; border-radius:8px; background:var(--bg, #111827); color:inherit;"
+            title="Filter SRS due-cards by direction"
+          >
+            <option value="FR_EN">FR → EN</option>
+            <option value="EN_FR">EN → FR</option>
+          </select>
+          <span class="label-text" style="margin-left:8px;">Direction</span>
+        </label>
+      </div>
 
       <!-- ==================== REVIEW MODE ==================== -->
       <div v-if="state.vocabMode==='review'">
@@ -312,58 +314,74 @@ exEn() {
           </div>
         </details>
 
+        <!-- Card (keyed so pointer changes force re-render) -->
+        <div class="vocab-card" v-if="currentReviewCard" :key="'rev-'+state.vocab.deckPtr">
+          <!-- FRONT (Review): respect direction -->
+          <div class="fr boxy">
+            <template v-if="state.vocab.direction==='FR_EN'">
+              {{ methods.renderFr ? methods.renderFr(currentReviewCard) : (currentReviewCard.fr || '') }}
+            </template>
+            <template v-else>
+              <!-- EN_FR: do NOT call renderFr; show English plainly -->
+              {{ currentReviewCard.en || '' }}
+            </template>
+          </div>
+
+          <!-- TRANSLATION (Review): opposite side -->
+          <div class="en boxy" v-if="state.showEnglishTranslation">
+            <template v-if="state.vocab.direction==='FR_EN'">
+              {{ currentReviewCard.en || '' }}
+            </template>
+            <template v-else>
+              {{ currentReviewCard.fr || '' }}
+            </template>
+          </div>
+
+          <!-- Examples (Review): both shown when toggle is on -->
+          <div
+            v-if="state.ui.showExamples && (exFr || exEn)"
+            class="example-block"
+            role="note"
+            aria-label="Exemple"
+          >
+            <span class="ex-label">Exemple</span>
+            <p v-if="exFr" class="ex-fr">« {{ exFr }} »</p>
+            <p v-if="exEn" class="ex-en">— {{ exEn }} </p>
+          </div>
+
+          <div class="dim" v-if="state.ui.showVocabTags && currentReviewCard?.tags?.length" style="margin-top:6px;">
+            tags: {{ currentReviewCard.tags.join(', ') }}
+          </div>
+        </div>
+
+        <span v-if="state.vocab.deck.length">{{ state.vocab.deckPtr + 1 }} / {{ state.vocab.deck.length }}</span>
+
         <!-- Controls -->
-        <div class="button-group">
+        <div class="button-group" style="margin-top:8px;">
           <button @click="methods.reshuffleVocabDeck()" :disabled="!state.vocab.deck.length">Reshuffle</button>
           <button @click="methods.nextVocabCard()"      :disabled="!state.vocab.deck.length">Next</button>
         </div>
-
-        <!-- Card -->
-  <!-- REPLACE the old version that called methods.currentVocabCard() -->
-<div class="vocab-card" v-if="currentReviewCard" :key="'rev-'+state.vocab.deckPtr">
-  <div class="fr boxy">
-    {{ methods.renderFr ? methods.renderFr(currentReviewCard) : currentReviewCard.fr }}
-  </div>
-
-  <!-- English translation -->
-  <div class="en boxy" v-if="state.showEnglishTranslation">
-    {{ currentReviewCard.en }}
-  </div>
-
-  <!-- Examples -->
-  <div
-    v-if="state.ui.showExamples && (exFr || exEn)"
-    class="example-block"
-    role="note"
-    aria-label="Exemple"
-  >
-    <span class="ex-label">Exemple</span>
-    <p v-if="exFr" class="ex-fr">« {{ exFr }} »</p>
-    <p v-if="exEn" class="ex-en">— {{ exEn }} </p>
-  </div>
-
-  <div class="dim" v-if="state.ui.showVocabTags && currentReviewCard?.tags?.length" style="margin-top:6px;">
-    tags: {{ currentReviewCard.tags.join(', ') }}
-  </div>
-</div>
-
-
-        <span v-if="state.vocab.deck.length">{{ state.vocab.deckPtr + 1 }} / {{ state.vocab.deck.length }}</span>
       </div>
 
       <!-- ==================== FLASHCARDS (SRS) ==================== -->
       <div v-if="state.vocabMode==='flashcards'">
         <div class="vocab-card" v-if="srsCard">
+          <!-- FRONT (SRS): respect direction; no renderFr on English -->
           <div class="fr boxy">
-            {{ methods.renderFr ? methods.renderFr({ fr: srsFront, article: srsArticle }) : srsFront }}
+            <template v-if="state.vocab.direction==='FR_EN'">
+              {{ methods.renderFr ? methods.renderFr({ fr: srsFront, article: srsArticle }) : srsFront }}
+            </template>
+            <template v-else>
+              {{ srsFront }}
+            </template>
           </div>
 
-          <!-- English translation: only after Show/back (unchanged) -->
+          <!-- English/French translation: only after Show/back (unchanged) -->
           <div class="en boxy" v-if="state.flashcards.showBack && state.showEnglishTranslation">
             {{ srsBack }}
           </div>
 
-          <!-- Examples (NEW RULES):
+          <!-- Examples (SRS):
                - FR example obeys global toggle
                - EN example obeys global toggle AND only shows after back is revealed -->
           <div
