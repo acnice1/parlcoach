@@ -1,5 +1,12 @@
 // js/components/DataPanel.js
-import { makeCsvFromItems, exportFilename, downloadText, viewSavedListIntoPicker } from '../data.js';
+// Full rewrite with Favourites support (chips + star toggle + sorted table)
+
+import {
+  makeCsvFromItems,
+  exportFilename,
+  downloadText,
+  viewSavedListIntoPicker
+} from '../data.js';
 
 const DataPanel = {
   name: 'DataPanel',
@@ -77,7 +84,7 @@ const DataPanel = {
               placeholder="Filter by Tag"
               @input="goToFirstPage"
             />
-              <label style="display:flex; gap:6px; align-items:center;">
+            <label style="display:flex; gap:6px; align-items:center;">
               <input type="radio" value="AND" v-model="tagLogic" /> AND
             </label>
             <label style="display:flex; gap:6px; align-items:center;">
@@ -98,8 +105,7 @@ const DataPanel = {
 
           <!-- Pagination status -->
           <div class="dim" style="margin:4px 0 8px 0;" v-if="filteredTotal">
-            <p class="dim" style="margin-top:8px">Comma-separated ; * wildcards ok</P>
-        
+            <p class="dim" style="margin-top:8px">Comma-separated ; * wildcards ok</p>
             Showing {{ rangeStart }}–{{ rangeEnd }} of {{ filteredTotal }} (filtered). Page {{ currentPage }} of {{ totalPages }}.
           </div>
 
@@ -160,96 +166,121 @@ const DataPanel = {
           </div>
         </div>
       </div>
-<!-- ===== Saved Lists ===== -->
-<div class="box" style="padding:12px; margin-top:12px;">
-  <h3>Saved Vocab Sub-lists</h3>
-  <p class="dim">These are stored locally (settings). You can load any list into the SRS deck or use it in Review.</p>
 
-  <!-- SRS maintenance -->
-  <div class="row" style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
-    <button class="danger"
-            @click="safeConfirm('Delete ALL SRS cards? This cannot be undone.') && clearAllSrsAndRefresh()"
-            title="Delete all SRS cards from the database">
-      Clear SRS (delete all)
-    </button>
+      <!-- ===== Favourites (starred lists) ===== -->
+      <div class="box" style="padding:12px; margin-top:12px;" v-if="favoriteLists.length">
+        <h3 style="display:flex; align-items:center; gap:8px;">
+          <span>Favourites</span>
+          <span aria-hidden="true" title="Starred lists">⭐</span>
+        </h3>
+        <div class="dim" style="margin-top:4px;">Quick access to your starred sub-lists.</div>
 
-    <button
-            @click="safeConfirm('Reset scheduling for ALL SRS cards to Due Now?') && resetSrsSchedulingAndRefresh()"
-            title="Keep cards; reset due dates/ease/reps so everything is due now">
-      Reset SRS scheduling
-    </button>
-  </div>
-
-  <!-- List table (added centered headers only) -->
-  <table class="data-table" style="width:100%; border-collapse:collapse; min-width:640px; margin-top:12px;">
-    <thead>
-      <tr>
-        <th scope="col" style="text-align:center;">List</th>
-        <th scope="col" style="text-align:right; white-space:nowrap;">Count</th>
-        <th scope="col" style="text-align:center;">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-
-      <tr v-for="l in savedLists" :key="l.name" style="border-bottom:1px solid var(--muted);">
-        <td style="padding:6px 0; vertical-align:top;">
-          <strong>{{ l.displayName || l.name }}</strong>
-          <!-- file path (if known from vocabMeta) 
-          <div v-if="l.file" class="dim" style="font-size:12px; margin-top:2px;">
-            <code>{{ l.file }}</code>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+          <div v-for="l in favoriteLists" :key="l.name"
+               class="chip"
+               style="display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border:1px solid var(--muted); border-radius:999px;">
+            <button class="small" title="Unstar" @click="clearFavorite(l.name)" aria-label="Unstar this list">⭐</button>
+            <strong>{{ l.displayName || l.name }}</strong>
+            <span class="dim">({{ l.count }})</span>
+            <span style="width:8px;"></span>
+            <button class="small" @click="viewSavedList(l.name)" title="Preview">View</button>
+            <button class="small" @click="methods.loadListIntoReview ? methods.loadListIntoReview(l.name) : null">Review</button>
+            <button class="small" @click="loadIntoSrsAndRefresh(l.name)">SRS</button>
           </div>
-          -->
-          <!-- description from data/index.json (or manifest) -->
-          <div v-if="(l.description || l.desc)" class="dim" style="font-size:12px; margin-top:2px;">
-            {{ l.description || l.desc }}
-          </div>
-        </td>
+        </div>
+      </div>
 
-        <td
-          style="padding:8px 16px 8px 0; vertical-align:top; white-space:nowrap; text-align:right; min-width:72px;">
-          {{ l.count }}
-        </td>
+      <!-- ===== Saved Lists ===== -->
+      <div class="box" style="padding:12px; margin-top:12px;">
+        <h3>Saved Vocab Sub-lists</h3>
+        <p class="dim">These are stored locally (settings). You can load any list into the SRS deck or use it in Review.</p>
 
-        <td
-          style="padding:8px 0 8px 16px; vertical-align:top; white-space:nowrap;">
-          <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button class="small"
-                    @click="viewSavedList(l.name)"
-                    title="Preview this list in the table above">
-              View
-            </button>
-            <button class="small"
-                    @click="methods.loadListIntoReview ? methods.loadListIntoReview(l.name) : null"
-                    :title="(l.description || l.desc) || ''">
-              Use in Review
-            </button>
-            <button class="small" @click="loadIntoSrsAndRefresh(l.name)">
-              Load into SRS
-            </button>
+        <!-- SRS maintenance -->
+        <div class="row" style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="danger"
+                  @click="safeConfirm('Delete ALL SRS cards? This cannot be undone.') && clearAllSrsAndRefresh()"
+                  title="Delete all SRS cards from the database">
+            Clear SRS (delete all)
+          </button>
 
-            <button class="small"
-                    @click="clearSrsForListAndRefresh(l.name)"
-                    title="Remove only the SRS cards that came from this list">
-              Remove from SRS
-            </button>
-            <button class="small"
-                    @click="downloadSavedList(l.name, l.displayName || l.name)"
-                    title="Download this sub-list as CSV">
-              Download
-            </button>
-            <button class="small danger"
-                    @click="methods.deleteSavedList ? methods.deleteSavedList(l.name) : null">
-              Delete
-            </button>
-          </div>
-        </td>
-      </tr>
+          <button
+                  @click="safeConfirm('Reset scheduling for ALL SRS cards to Due Now?') && resetSrsSchedulingAndRefresh()"
+                  title="Keep cards; reset due dates/ease/reps so everything is due now">
+            Reset SRS scheduling
+          </button>
+        </div>
 
-    </tbody>
-  </table>
-</div>
+        <!-- List table -->
+        <table class="data-table" style="width:100%; border-collapse:collapse; min-width:640px; margin-top:12px;">
+          <thead>
+            <tr>
+              <th scope="col" style="text-align:center;">List</th>
+              <th scope="col" style="text-align:right; white-space:nowrap;">Count</th>
+              <th scope="col" style="text-align:center;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="l in savedListsSorted" :key="l.name" style="border-bottom:1px solid var(--muted);">
+              <td style="padding:6px 0; vertical-align:top;">
+                <div style="display:flex; align-items:start; gap:8px; flex-wrap:wrap;">
+                  <button class="small"
+                          :aria-pressed="isFavorite(l.name) ? 'true' : 'false'"
+                          :title="isFavorite(l.name) ? 'Unstar favourite' : 'Star as favourite'"
+                          @click="toggleFavorite(l.name)">
+                    {{ isFavorite(l.name) ? '⭐' : '☆' }}
+                  </button>
 
+                  <div>
+                    <strong>{{ l.displayName || l.name }}</strong>
+                    <div v-if="(l.description || l.desc)" class="dim" style="font-size:12px; margin-top:2px;">
+                      {{ l.description || l.desc }}
+                    </div>
+                  </div>
+                </div>
+              </td>
 
+              <td
+                style="padding:8px 16px 8px 0; vertical-align:top; white-space:nowrap; text-align:right; min-width:72px;">
+                {{ l.count }}
+              </td>
+
+              <td
+                style="padding:8px 0 8px 16px; vertical-align:top; white-space:nowrap;">
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <button class="small"
+                          @click="viewSavedList(l.name)"
+                          title="Preview this list in the table above">
+                    View
+                  </button>
+                  <button class="small"
+                          @click="methods.loadListIntoReview ? methods.loadListIntoReview(l.name) : null"
+                          :title="(l.description || l.desc) || ''">
+                    Use in Review
+                  </button>
+                  <button class="small" @click="loadIntoSrsAndRefresh(l.name)">
+                    Load into SRS
+                  </button>
+
+                  <button class="small"
+                          @click="clearSrsForListAndRefresh(l.name)"
+                          title="Remove only the SRS cards that came from this list">
+                    Remove from SRS
+                  </button>
+                  <button class="small"
+                          @click="downloadSavedList(l.name, l.displayName || l.name)"
+                          title="Download this sub-list as CSV">
+                    Download
+                  </button>
+                  <button class="small danger"
+                          @click="methods.deleteSavedList ? methods.deleteSavedList(l.name) : null">
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
       </div>
     </div>
   `,
@@ -270,52 +301,70 @@ const DataPanel = {
   },
 
   computed: {
+    // --- CSV / picker state ---
     hasHeaders() {
       return !!(this.state?.csv?.headers && this.state.csv.headers.length);
     },
     rowCount() {
       return (this.state?.wordPicker?.items || []).length || 0;
     },
-    savedLists() {
-      return this.state?.wordPicker?.savedLists || [];
-    },
+
+    // --- Selection count ---
     selectedCount() {
       const sel = this.state?.wordPicker?.selected || {};
       return Object.values(sel).reduce((n, v) => n + (v ? 1 : 0), 0);
     },
 
+    // --- Tag filtering + pagination ---
     filteredItems() {
-  const items = this.state?.wordPicker?.items || [];
-  const list = items.map((it, idx) => ({ item: it, idx }));
-  const q = (this.tagFilter || '').trim();
-  if (!q) return list;
+      const items = this.state?.wordPicker?.items || [];
+      const list = items.map((it, idx) => ({ item: it, idx }));
+      const q = (this.tagFilter || '').trim();
+      if (!q) return list;
 
-  const wanted = q.split(',').map(s => s.trim()).filter(Boolean);
-  if (!wanted.length) return list;
+      const wanted = q.split(',').map(s => s.trim()).filter(Boolean);
+      if (!wanted.length) return list;
 
-  // Compile glob patterns once
-  const patterns = wanted.map(w => this.globToRegex(w));
-
-  return list.filter(({ item }) => {
-    const tags = (item.tags || []).map(t => String(t).toLowerCase());
-    if (!tags.length) return false;
-
-    // Does each pattern match at least one tag?
-    const patternHits = patterns.map(rx => tags.some(tag => rx.test(tag)));
-    return this.tagLogic === 'AND'
-      ? patternHits.every(Boolean)    // all patterns must hit
-      : patternHits.some(Boolean);    // any pattern hits
-  });
-},
-
+      const patterns = wanted.map(w => this.globToRegex(w));
+      return list.filter(({ item }) => {
+        const tags = (item.tags || []).map(t => String(t).toLowerCase());
+        if (!tags.length) return false;
+        const patternHits = patterns.map(rx => tags.some(tag => rx.test(tag)));
+        return this.tagLogic === 'AND' ? patternHits.every(Boolean) : patternHits.some(Boolean);
+      });
+    },
     filteredTotal() { return this.filteredItems.length; },
-    totalPages() { return Math.max(1, Math.ceil(this.filteredTotal / this.pageSize)); },
-    rangeStart() { return this.filteredTotal ? (this.currentPage - 1) * this.pageSize + 1 : 0; },
-    rangeEnd() { return Math.min(this.filteredTotal, this.currentPage * this.pageSize); },
+    totalPages()    { return Math.max(1, Math.ceil(this.filteredTotal / this.pageSize)); },
+    rangeStart()    { return this.filteredTotal ? (this.currentPage - 1) * this.pageSize + 1 : 0; },
+    rangeEnd()      { return Math.min(this.filteredTotal, this.currentPage * this.pageSize); },
     pageItems() {
       const start = (this.currentPage - 1) * this.pageSize;
       const end   = start + this.pageSize;
       return this.filteredItems.slice(start, end);
+    },
+
+    // --- Favourites: set + derived lists + sorted list for table ---
+    favoriteSet() {
+      const favs = this.state?.wordPicker?.favorites;
+      return new Set(Array.isArray(favs) ? favs : []);
+    },
+    favoriteLists() {
+      const lists = this.state?.wordPicker?.savedLists || [];
+      const favs  = this.favoriteSet;
+      return lists.filter(l => favs.has(l.name));
+    },
+    savedListsSorted() {
+      const lists = this.state?.wordPicker?.savedLists || [];
+      const favs  = this.favoriteSet;
+
+      return [...lists].sort((a,b) => {
+        const aFav = favs.has(a.name) ? 1 : 0;
+        const bFav = favs.has(b.name) ? 1 : 0;
+        if (aFav !== bFav) return bFav - aFav; // favourites first
+        const aLabel = (a.displayName || a.name || '').toLowerCase();
+        const bLabel = (b.displayName || b.name || '').toLowerCase();
+        return aLabel.localeCompare(bLabel);
+      });
     },
 
     // --- SRS badge with fallbacks ---
@@ -346,8 +395,8 @@ const DataPanel = {
 
   watch: {
     tagFilter() { this.currentPage = 1; },
-    tagLogic() { this.currentPage = 1; },
-    rowCount() { this.currentPage = 1; },
+    tagLogic()  { this.currentPage = 1; },
+    rowCount()  { this.currentPage = 1; },
 
     // Live updates if your app keeps SRS arrays in memory
     'state.srs.cards': { handler() { this.refreshSrsCount(); }, deep: false },
@@ -355,53 +404,106 @@ const DataPanel = {
   },
 
   methods: {
-    //  
+    // ---------- FAVOURITES ----------
+    ensureFavoritesArray() {
+      const wp = this.state?.wordPicker;
+      if (wp && !Array.isArray(wp.favorites)) wp.favorites = [];
+    },
+    isFavorite(name) {
+      return this.favoriteSet.has(name);
+    },
+    toggleFavorite(name) {
+      this.ensureFavoritesArray();
+      const favs = this.state.wordPicker.favorites;
+      const idx = favs.indexOf(name);
+      if (idx === -1) favs.push(name);
+      else favs.splice(idx, 1);
+    },
+    clearFavorite(name) {
+      this.ensureFavoritesArray();
+      const favs = this.state.wordPicker.favorites;
+      const idx = favs.indexOf(name);
+      if (idx !== -1) favs.splice(idx, 1);
+    },
+
+    // ---------- VIEW / DOWNLOAD ----------
     async viewSavedList(name) {
-  try {
-    await viewSavedListIntoPicker(this.state, name, this.methods);
-    // Reset local view filters/paging
-    this.tagFilter = '';
-    this.currentPage = 1;
-  } catch (e) {
-    console.error('[DataPanel] viewSavedList failed', e);
-    alert(e?.message || 'View failed.');
-  }
-},
-    
+      try {
+        await viewSavedListIntoPicker(this.state, name, this.methods);
+        // Reset local view filters/paging
+        this.tagFilter = '';
+        this.currentPage = 1;
+      } catch (e) {
+        console.error('[DataPanel] viewSavedList failed', e);
+        alert(e?.message || 'View failed.');
+      }
+    },
+
+    async downloadSavedList(name, displayName) {
+      try {
+        let items = await this.methods?.getSavedListItems?.(name);
+
+        if (!items || !items.length) {
+          const wp = this.state?.wordPicker || {};
+          const dict = wp.savedDict || wp.savedMap;
+          if (dict && dict[name]?.items?.length) items = dict[name].items;
+          if ((!items || !items.length) && Array.isArray(wp.savedListsFull)) {
+            const hit = wp.savedListsFull.find(x => x.name === name);
+            if (hit?.items?.length) items = hit.items;
+          }
+          if ((!items || !items.length) && Array.isArray(wp.savedLists)) {
+            const hit = wp.savedLists.find(x => x.name === name && Array.isArray(x.items) && x.items.length);
+            if (hit) items = hit.items;
+          }
+        }
+
+        if (!items || !items.length) {
+          alert('Could not locate items for this list. Expose methods.getSavedListItems(name) to enable downloads.');
+          return;
+        }
+
+        const csv = makeCsvFromItems(items, this.normalizeArticle);
+        const fname = exportFilename((displayName || name).replace(/[^\w-]+/g, '_'));
+
+        downloadText(fname, csv, 'text/csv');
+      } catch (e) {
+        console.error('[DataPanel] downloadSavedList failed', e);
+        alert('Download failed.');
+      }
+    },
+
+    // ---------- CSV / PICKER UTILS ----------
+    cancelLoadedView() {
+      // Reset the Word Picker view (does NOT delete saved lists/SRS)
+      if (this.state?.wordPicker) {
+        this.state.wordPicker.items = [];
+        this.state.wordPicker.selected = {};
+        this.state.wordPicker.listName = "";
+        this.state.wordPicker.activeList = "";
+      }
+      // Clear CSV parse state (so the preview table disappears)
+      if (this.state?.csv) this.state.csv = null;
+
+      // Reset local filters/paging
+      this.tagFilter = '';
+      this.currentPage = 1;
+
+      // (Optional) clear the file input control if present
+      try {
+        const el = document.getElementById('csvUpload');
+        if (el) el.value = '';
+      } catch {}
+    },
+
 globToRegex(glob) {
-  // lower-case + escape regex chars, then turn * into .*
+  // Lower-case, escape regex special chars, then turn * into .*
   const esc = String(glob).trim().toLowerCase()
-    .replace(/[.+^${}()|[\]\\]/g, '\\$&')
-    .replace(/\*/g, '.*');
-  return new RegExp(`^${esc}$`, 'i');
+    .replace(/[.+^${}()|[\]\\]/g, '\\$&')  // correct escape set
+    .replace(/\*/g, '.*');                 // * -> .*
+  return new RegExp(`^${esc}$`, 'i');      // correct template literal
 },
 
-cancelLoadedView() {
-  // Reset the Word Picker view (does NOT delete saved lists/SRS)
-  if (this.state?.wordPicker) {
-    this.state.wordPicker.items = [];
-    this.state.wordPicker.selected = {};
-    this.state.wordPicker.listName = "";
-    this.state.wordPicker.activeList = "";
-  }
-
-  // Clear CSV parse state (so the preview table disappears)
-  if (this.state?.csv) {
-    this.state.csv = null;
-  }
-
-  // Reset local filters/paging
-  this.tagFilter = '';
-  this.currentPage = 1;
-
-  // (Optional) clear the file input control if present
-  try {
-    const el = document.getElementById('csvUpload');
-    if (el) el.value = '';
-  } catch {}
-},
-
-// -------- confirmations (avoid shadowing) --------
+    // ---------- CONFIRMATIONS ----------
     safeConfirm(msg) {
       try {
         const fn =
@@ -413,42 +515,7 @@ cancelLoadedView() {
       }
     },
 
-    async downloadSavedList(name, displayName) {
-  try {
-    let items = await this.methods?.getSavedListItems?.(name);
-
-    if (!items || !items.length) {
-      const wp = this.state?.wordPicker || {};
-      const dict = wp.savedDict || wp.savedMap;
-      if (dict && dict[name]?.items?.length) items = dict[name].items;
-      if ((!items || !items.length) && Array.isArray(wp.savedListsFull)) {
-        const hit = wp.savedListsFull.find(x => x.name === name);
-        if (hit?.items?.length) items = hit.items;
-      }
-      if ((!items || !items.length) && Array.isArray(wp.savedLists)) {
-        const hit = wp.savedLists.find(x => x.name === name && Array.isArray(x.items) && x.items.length);
-        if (hit) items = hit.items;
-      }
-    }
-
-    if (!items || !items.length) {
-      alert('Could not locate items for this list. Expose methods.getSavedListItems(name) to enable downloads.');
-      return;
-    }
-
-    const csv = makeCsvFromItems(items, this.normalizeArticle);
-    const fname = exportFilename((displayName || name).replace(/[^\w\-]+/g,'_'));
-    downloadText(fname, csv, 'text/csv');
-  } catch (e) {
-    console.error('[DataPanel] downloadSavedList failed', e);
-    alert('Download failed.');
-  }
-},
-
-    // util
-    goToFirstPage() { this.currentPage = 1; },
-
-    // article/tag formatting
+    // ---------- FORMATTING ----------
     normalizeArticle(a) {
       if (!a) return '';
       const s = String(a).trim().toLowerCase();
@@ -464,7 +531,7 @@ cancelLoadedView() {
       return String(tags);
     },
 
-    // selection helpers
+    // ---------- SELECTION ----------
     selectAllLocal(val) {
       const items = this.state?.wordPicker?.items || [];
       const sel = {};
@@ -477,7 +544,7 @@ cancelLoadedView() {
       if (this.state?.wordPicker) this.state.wordPicker.selected = sel;
     },
 
-    // save
+    // ---------- SAVE PICKED ----------
     onSavePicked() {
       const n = (this.newListName || '').trim();
       if (n && this.state?.wordPicker) this.state.wordPicker.listName = n;
@@ -487,14 +554,15 @@ cancelLoadedView() {
       }
     },
 
-    // pagination
+    // ---------- PAGINATION ----------
+    goToFirstPage() { this.currentPage = 1; },
     goToPage(p) { this.currentPage = Math.min(this.totalPages, Math.max(1, p)); },
     firstPage() { this.goToPage(1); },
     lastPage() { this.goToPage(this.totalPages); },
     nextPage() { this.goToPage(this.currentPage + 1); },
     prevPage() { this.goToPage(this.currentPage - 1); },
 
-    // ---- SRS count helpers ----
+    // ---------- SRS HELPERS ----------
     async refreshSrsCount() {
       if (this.methods?.countSrsCards) {
         try {
@@ -528,6 +596,7 @@ cancelLoadedView() {
   },
 
   mounted() {
+    this.ensureFavoritesArray(); // self-heal legacy states
     this.refreshSrsCount();
   },
 };

@@ -89,7 +89,7 @@ const app = createApp({
 
       // Data import/export
       csv: { rows: [], headers: [], meta: null },
-      wordPicker: { items: [], selected: {}, listName: "", savedLists: [], activeList: "" },
+      wordPicker: { items: [], selected: {}, listName: "", savedLists: [], activeList: "", favorites: [] },
 
       // UI flags (persisted)
       ui: {
@@ -2004,22 +2004,23 @@ async function loadListIntoSrs(name, opts = { frToEn: true, enToFr: true }) {
       }
     }
 
-    // EN -> FR
-    if (wantENtoFR) {
-      const k2 = keyOf(en, fr);
-      if (!have.has(k2)) {
-        toAdd.push(sanitizeSrsRow({
-          front: en, back: fr,
-          fr: en, en: fr,                 // keep the pair stored for reference (helps later if you merge)
-          article: it.article || "",
-          example: it.example || null,    // you can swap example fields later in the UI if you want
-          tags: Array.isArray(it.tags) ? [...it.tags, "dir:EN_FR"] : ["dir:EN_FR"],
-          due: nowISO, ease: 2.5, reps: 0, interval: 0, last: nowISO,
-          source: "list:" + name,
-        }));
-        have.add(k2);
-      }
-    }
+// EN -> FR
+if (wantENtoFR) {
+  const k2 = keyOf(en, fr);
+  if (!have.has(k2)) {
+    toAdd.push(sanitizeSrsRow({
+      front: en, back: fr,         // <— front/back = direction
+      fr, en,                      // <— keep language fields consistent (NO SWAP)
+      article: it.article || "",
+      example: it.example || null,
+      tags: Array.isArray(it.tags) ? [...it.tags, "dir:EN_FR"] : ["dir:EN_FR"], // <— fix spread
+      due: nowISO, ease: 2.5, reps: 0, interval: 0, last: nowISO,
+      source: "list:" + name,
+    }));
+    have.add(k2);
+  }
+}
+
   }
 
   if (toAdd.length) {
