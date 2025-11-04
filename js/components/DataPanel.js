@@ -12,23 +12,6 @@ const DataPanel = {
         SRS deck: <strong>{{ srsCount }}</strong> item<span v-if="srsCount !== 1">s</span>
       </div>
 
-      <!-- ===== Built-in JSON seeding ===== -->
-      <div class="box" style="padding:12px">
-        <h3>Vocabulary import (built-in JSON)</h3>
-        <div class="actions" style="flex-wrap:wrap; margin-top:6px">
-          <button @click="methods.importNotesAndSeedCards ? methods.importNotesAndSeedCards({ frToEn:true, enToFr:true }) : null">
-            Import general_vocab → Notes + FR↔EN Cards
-          </button>
-          <input
-            class="fixed-input"
-            v-model="state.notesTagFilter"
-            @input="methods.loadNotesByTag ? methods.loadNotesByTag() : null"
-            placeholder="Filter notes by tag"
-          />
-        </div>
-        <p class="dim" style="margin-top:8px">Use this if you want to seed from the bundled JSON file.</p>
-      </div>
-
       <!-- ===== CSV/TSV Upload ===== -->
       <div class="box" style="padding:12px; margin-top:12px;">
         <h3>Upload CSV/TSV (EN, FR, article)</h3>
