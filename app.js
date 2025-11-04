@@ -114,6 +114,7 @@ const app = createApp({
         deck: [],
         deckPtr: 0,
         prefs: { randomize: true, withoutReplacement: true },
+        direction: "FR_EN",   // << ADD: "FR_EN" or "EN_FR"
       },
 
       // SRS
@@ -241,7 +242,7 @@ const app = createApp({
     startAutoSave(state, watch, { debounceMs: 300 });
 
     // -------------------- Helpers --------------------
-    function pushToast(msg, type = 'info', ms = 2400) {
+    function pushToast(msg, type = 'info', ms = 3200) {
       const id = crypto?.randomUUID?.() || Math.random().toString(36).slice(2);
       state.toasts.push({ id, msg: String(msg), type, ts: Date.now() });
       setTimeout(() => {
@@ -563,6 +564,13 @@ async function refreshSavedListsUI() {
   return w;
 }
 
+watch(() => state.vocab.direction, () => {
+  if (state.vocabMode === "flashcards") {
+    // Recompute from allCards (computeDue) then filter
+    Vocab.computeDue(state.flashcards);
+    applySrsDirectionFilter();
+  }
+});
 
     watch(() => [state.vocab.prefs.randomize, state.vocab.prefs.withoutReplacement],
           () => Vocab.buildVocabDeck(state));
@@ -793,17 +801,35 @@ async function refreshSavedListsUI() {
       await db.settings.put({ ...existing, reviewDeckPtr: state.vocab.deckPtr, key: "v1" });
     }
     
-    async function rate(q) {
-      if (!state.flashcards.currentCard) return;
-      const c = state.flashcards.currentCard;
-      const upd =
-        state.settings.srsMode === "SM2"
-          ? sm2Schedule(c, q)
-          : fixedSchedule(c, state.settings.fixedIntervals || [1, 3, 7, 14, 30], q);
-      Object.assign(c, upd);
-      await db.vocab.update(c.id, upd);
-      Vocab.computeDue(state.flashcards);
-    }
+async function rate(q) {
+  if (!state.flashcards.currentCard) return;
+  const c = state.flashcards.currentCard;
+  const upd =
+    state.settings.srsMode === "SM2"
+      ? sm2Schedule(c, q)
+      : fixedSchedule(c, state.settings.fixedIntervals || [1, 3, 7, 14, 30], q);
+
+  Object.assign(c, upd);
+  await db.vocab.update(c.id, upd);
+
+  // Recompute due, then filter by direction
+  Vocab.computeDue(state.flashcards);
+  applySrsDirectionFilter();
+}
+
+
+    // Filter SRS due cards by direction tag added at import time (dir:FR_EN / dir:EN_FR)
+function applySrsDirectionFilter() {
+  const want = state?.vocab?.direction || "FR_EN";
+  const tag = "dir:" + want;
+  const has = Array.isArray(state.flashcards?.dueCards) ? state.flashcards.dueCards : [];
+
+  state.flashcards.dueCards = has.filter(c => (c?.tags || []).includes(tag));
+  // keep UI consistent
+  state.flashcards.currentCard = state.flashcards.dueCards[0] || null;
+  state.flashcards.showBack = false;
+}
+
 
     // Grammar normalizers
     function normRelPronRow(row, idx){
@@ -888,22 +914,31 @@ async function refreshSavedListsUI() {
         .replace(/\s+/g, " ");
     }
 
+    //  =================MERTHODS ====================================
     const methods = {
       // vocab
-      reloadVocabByTag: () => Vocab.reloadVocabByTag(db, state.flashcards),
+     
+      reloadVocabByTag: async () => {
+      await Vocab.reloadVocabByTag(db, state.flashcards);
+      // re-apply direction filter on fresh dueCards
+      applySrsDirectionFilter();
+    },
+
       addCard: () => Vocab.addCard(db, state.flashcards),
       deleteCard: (id) => Vocab.deleteCard(db, id, state.flashcards),
 
       reshuffleVocabDeck: async () => { Vocab.reshuffleVocabDeck(state); await saveReviewPointer(); },
       nextVocabCard:     async () => { Vocab.nextVocabCard(state);       await saveReviewPointer(); },
      // Use the robust getter that merges examples from source cards when missing
-   // app.js (inside methods:)
-    currentVocabCard: () =>
+     currentVocabCard: () =>
       (typeof Vocab.currentVocabCard === 'function'
         ? Vocab.currentVocabCard(state)
         : (state.vocab.deck[state.vocab.deckPtr] || null)),
 
       rate,
+
+      //  
+      countSrsCards: async () => db.vocab.count(),
 
       // GRAMMAR
       importGrammarCsv,
@@ -1867,40 +1902,70 @@ async function loadListIntoReview(name) {
   state.tab = "learn";
   state.learnTab = "vocab";
 }
+// In app.js (methods section) — replace the whole function
+async function loadListIntoSrs(name, opts = { frToEn: true, enToFr: true }) {
+  const wantFRtoEN = opts.frToEn !== false;
+  const wantENtoFR = opts.enToFr !== false;
 
+  const settings = (await db.settings.get("v1")) || { key: "v1" };
+  const list = settings?.vocabLists?.[name];
+  if (!Array.isArray(list) || !list.length) { toast.warn("List not found or empty."); return; }
 
-    async function loadListIntoSrs(name) {
-      const settings = (await db.settings.get("v1")) || { key: "v1" };
-      const list = settings?.vocabLists?.[name];
-      if (!Array.isArray(list) || !list.length) { toast.warn("List not found or empty."); return; }
+  const nowISO = new Date().toISOString();
+  const existing = await db.vocab.toArray();
+  const keyOf = (front, back) => (front || "").toLowerCase().trim() + "␟" + (back || "").toLowerCase().trim();
+  const have = new Set(existing.map((r) => keyOf(r.front || r.fr, r.back || r.en)));
 
-      const nowISO = new Date().toISOString();
-      const existing = await db.vocab.toArray();
-      const keyOf = (front, back) => (front || "").toLowerCase().trim() + "␟" + (back || "").toLowerCase().trim();
-      const have = new Set(existing.map((r) => keyOf(r.front || r.fr, r.back || r.en)));
+  const toAdd = [];
 
-      const toAdd = [];
-      for (const it of list) {
-        const fr = (it.fr || "").trim(), en = (it.en || "").trim();
-        if (!fr || !en) continue;
-        const k = keyOf(fr, en);
-        if (have.has(k)) continue;
+  for (const it of list) {
+    const fr = (it.fr || "").trim();
+    const en = (it.en || "").trim();
+    if (!fr || !en) continue;
+
+    // FR -> EN
+    if (wantFRtoEN) {
+      const k = keyOf(fr, en);
+      if (!have.has(k)) {
         toAdd.push(sanitizeSrsRow({
           front: fr, back: en, fr, en,
-          article: it.article || "", example: it.example || null,
-          tags: Array.isArray(it.tags) ? it.tags : [],
+          article: it.article || "",
+          example: it.example || null,
+          tags: Array.isArray(it.tags) ? [...it.tags, "dir:FR_EN"] : ["dir:FR_EN"],
           due: nowISO, ease: 2.5, reps: 0, interval: 0, last: nowISO,
+          source: "list:" + name,
         }));
         have.add(k);
       }
-
-      if (toAdd.length) {
-        try { await db.vocab.bulkAdd(toAdd); }
-        catch { for (const r of toAdd) { try { await db.vocab.add(r); } catch {} } }
-      }
-      if (Vocab?.reloadVocabByTag) await Vocab.reloadVocabByTag(db, state.flashcards);
-      toast.success(`Loaded "${name}" into SRS: ${toAdd.length} new card(s).`);
     }
+
+    // EN -> FR
+    if (wantENtoFR) {
+      const k2 = keyOf(en, fr);
+      if (!have.has(k2)) {
+        toAdd.push(sanitizeSrsRow({
+          front: en, back: fr,
+          fr: en, en: fr,                 // keep the pair stored for reference (helps later if you merge)
+          article: it.article || "",
+          example: it.example || null,    // you can swap example fields later in the UI if you want
+          tags: Array.isArray(it.tags) ? [...it.tags, "dir:EN_FR"] : ["dir:EN_FR"],
+          due: nowISO, ease: 2.5, reps: 0, interval: 0, last: nowISO,
+          source: "list:" + name,
+        }));
+        have.add(k2);
+      }
+    }
+  }
+
+  if (toAdd.length) {
+    try { await db.vocab.bulkAdd(toAdd); }
+    catch { for (const r of toAdd) { try { await db.vocab.add(r); } catch {} } }
+  }
+
+  if (Vocab?.reloadVocabByTag) await Vocab.reloadVocabByTag(db, state.flashcards);
+  toast.success(`Loaded "${name}" into SRS: ${toAdd.length} new card(s) across both directions.`);
+}
+
 
     // -------------------- Load-all bootstrap --------------------
     async function loadAll() {
