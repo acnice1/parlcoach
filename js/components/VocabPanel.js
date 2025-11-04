@@ -228,7 +228,7 @@ const VocabPanel = {
             aria-label="Toggle: Show examples"
           />
           <span class="slider" aria-hidden="true"></span>
-          <span class="label-text">{{ $t('toggle.showExamples') }}</span>
+          <span class="label-text">{{ $t('vocab.showExamples') }}</span>
         </label>
 
         <!-- Show/Hide tags toggle -->
