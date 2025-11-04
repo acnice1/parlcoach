@@ -381,19 +381,22 @@ const VocabPanel = {
             {{ srsBack }}
           </div>
 
-          <!-- Examples (SRS):
-               - FR example obeys global toggle
-               - EN example obeys global toggle AND only shows after back is revealed -->
-          <div
-            v-if="state.ui.showExamples && (srsExFr || (state.flashcards.showBack && srsExEn))"
-            class="example-block"
-            role="note"
-            aria-label="Exemple"
-          >
-            <span class="ex-label">Exemple</span>
-            <p v-if="srsExFr" class="ex-fr">« {{ srsExFr }} »</p>
-            <p v-if="state.flashcards.showBack && srsExEn" class="ex-en">— {{ srsExEn }}</p>
-          </div>
+          <!-- Examples (SRS): direction-aware -->
+<div v-if="state.ui.showExamples" class="example-block" role="note" aria-label="Exemple">
+  <span class="ex-label">Exemple</span>
+
+  <!-- If FR→EN, show FR example on the front; EN only after reveal -->
+  <template v-if="state.vocab.direction==='FR_EN'">
+    <p v-if="srsExFr" class="ex-fr">« {{ srsExFr }} »</p>
+    <p v-if="state.flashcards.showBack && srsExEn" class="ex-en">— {{ srsExEn }}</p>
+  </template>
+
+  <!-- If EN→FR, show EN example on the front; FR only after reveal -->
+  <template v-else>
+    <p v-if="srsExEn" class="ex-en">— {{ srsExEn }}</p>
+    <p v-if="state.flashcards.showBack && srsExFr" class="ex-fr">« {{ srsExFr }} »</p>
+  </template>
+</div>
 
           <div class="dim" v-if="state.ui.showVocabTags && srsTags.length" style="margin-top:6px;">
             tags: {{ srsTags.join(', ') }}
