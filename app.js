@@ -914,6 +914,71 @@ function applySrsDirectionFilter() {
         .replace(/\s+/g, " ");
     }
 
+    function _coerceExampleObj(ex) {
+  if (!ex) return null;
+  if (typeof ex === "string") return { fr: ex.trim(), en: "" };
+  if (typeof ex === "object") return { fr: String(ex.fr || "").trim(), en: String(ex.en || "").trim() };
+  return null;
+}
+// replace _jsonVocabToSettingsItems with this version (uses normalizeArticle)
+function _jsonVocabToSettingsItems(vocabArray) {
+  return (vocabArray || []).map(e => {
+    const fr = String(e.french ?? e.front ?? e.fr ?? "").trim();
+    const en = String(e.english ?? e.back  ?? e.en ?? "").trim();
+    if (!fr || !en) return null;
+
+    // ← use your normalizeArticle(fr, rawArticleOrGender)
+    const article = normalizeArticle(fr, e.article ?? e.gender ?? "");
+
+    const example =
+      typeof e.example === "string" ? { fr: e.example.trim(), en: "" } :
+      (e.example && typeof e.example === "object")
+        ? { fr: String(e.example.fr || "").trim(), en: String(e.example.en || "").trim() }
+        : null;
+
+    const tags = Array.isArray(e.tags)
+      ? e.tags.filter(Boolean)
+      : e.tags ? String(e.tags).split(/[;,|]/).map(s=>s.trim()).filter(Boolean) : [];
+
+    // optional: keep compact gender ("m"/"f") like normalizeCsvRow does
+    const graw = String(e.gender || "").toLowerCase();
+    const gender =
+      ["m","masc","masculin"].includes(graw) ? "m" :
+      ["f","fem","féminin","feminin","feminine"].includes(graw) ? "f" : "";
+
+    return { fr, en, article, example, tags, gender };
+  }).filter(Boolean);
+}
+
+/**
+ * Save/refresh a built-in list inside settings.vocabLists without duplicating.
+ * Returns the canonical key used for the list.
+ */
+async function upsertBuiltInJsonList(db, state, { name, description, vocab }) {
+  const settings = (await db.settings.get("v1")) || { key: "v1" };
+  const listKey = (name || "General vocab (JSON)").trim(); // use display name as key for simplicity
+  const curr = { ...(settings.vocabLists || {}) };
+
+  // Only (re)write if list is empty or doesn't exist
+  if (!Array.isArray(curr[listKey]) || curr[listKey].length === 0) {
+    curr[listKey] = _jsonVocabToSettingsItems(vocab);
+  }
+
+  // Ensure vocabMeta shows nice label/desc for the UI table
+  const meta = { ...(settings.vocabMeta || {}) };
+  meta[listKey] = {
+    file: "", // not from CSV
+    name: listKey,
+    description: description || "Built-in JSON list.",
+  };
+
+  await db.settings.put({ ...settings, vocabLists: curr, vocabMeta: meta, key: "v1" });
+
+  // Refresh the “Saved Vocab Sub-lists” UI
+  await (window.refreshSavedListsUI?.() || Promise.resolve());
+  state.wordPicker.activeList ||= listKey;
+  return listKey;
+}
     //  =================MERTHODS ====================================
     const methods = {
       // vocab
@@ -2027,46 +2092,41 @@ async function loadListIntoSrs(name, opts = { frToEn: true, enToFr: true }) {
         try { await methods.loadListIntoReview(active); }
         catch (e) { console.warn("[Lists] failed to restore activeReviewList:", active, e); }
       } else {
-        try {
-          const resp = await fetch("general_vocab.json?v=" + Date.now());
-          if (resp.ok) {
-            const raw = await resp.json();
-            const arr = Array.isArray(raw) ? raw : Array.isArray(raw?.vocab) ? raw.vocab : null;
-            if (arr) {
-              state.vocab.cards = arr.map((c, i) => ({
-                id: i + 1,
-                fr: (c.french ?? c.front ?? c.fr ?? "").trim(),
-                en: (c.english ?? c.back  ?? c.en ?? "").trim(),
-                partOfSpeech: (c.partOfSpeech ?? c.pos ?? "").trim(),
-                gender: (c.gender ?? "").trim(),
-                topic:  (c.topic  ?? "").trim(),
-                tags: Array.isArray(c.tags) ? c.tags.slice() : c.tags ? String(c.tags).split(/[;,]/).map((t) => t.trim()).filter(Boolean) : [],
-                example: coerceExample(c.example ?? c.eg ?? null),
-              }));
-              (function buildPills(cards) {
-                const topic = new Set(), tags = new Set(), pos = new Set();
-                for (const c of cards) {
-                  if (c?.topic) topic.add(c.topic);
-                  if (Array.isArray(c?.tags)) c.tags.forEach((t) => t && tags.add(t));
-                  if (c?.partOfSpeech) pos.add(c.partOfSpeech);
-                }
-                state.vocabPills.topic = Array.from(topic).sort();
-                state.vocabPills.tags  = Array.from(tags).sort();
-                state.vocabPills.pos   = Array.from(pos).sort();
-              })(state.vocab.cards);
+  try {
+    const resp = await fetch("general_vocab.json?v=" + Date.now());
+    if (resp.ok) {
+      const raw = await resp.json();
+      const arr = Array.isArray(raw) ? raw : Array.isArray(raw?.vocab) ? raw.vocab : null;
+      if (arr) {
+        // 1) Install as a built-in saved list (in settings.vocabLists)
+        const listKey = await upsertBuiltInJsonList(db, state, {
+          name: "General vocab (JSON)",
+          description: "Built-in JSON (project/management terms).",
+          vocab: arr,
+        });
 
-              if (typeof Vocab?.buildVocabDeck === "function") Vocab.buildVocabDeck(state);
-              else { state.vocab.deck = [...state.vocab.cards]; state.vocab.deckPtr = 0; await saveReviewPointer(); }
-            } else {
-              console.warn("general_vocab.json did not contain an array or a {vocab: []} shape.");
-            }
-          } else {
-            console.warn("Failed to fetch general_vocab.json:", resp.status);
-          }
-        } catch (err) {
-          console.error("Error loading general_vocab.json:", err);
+        // 2) Mark it active for Review on first boot
+        const s2 = (await db.settings.get("v1")) || { key: "v1" };
+        if (!s2.activeReviewList) {
+          await db.settings.put({ ...s2, activeReviewList: listKey, key: "v1" });
+          state.wordPicker.activeList = listKey;
         }
+
+        // 3) Load the list into Review (unified flow)
+        try { await methods.loadListIntoReview(listKey); }
+        catch (e) { console.warn("[Lists] failed to load built-in JSON into Review:", e); }
+
+      } else {
+        console.warn("general_vocab.json did not contain an array or {vocab: []}.");
       }
+    } else {
+      console.warn("Failed to fetch general_vocab.json:", resp.status);
+    }
+  } catch (err) {
+    console.error("Error loading general_vocab.json:", err);
+  }
+}
+
 
       try {
         const srsCount = await db.vocab.count();
