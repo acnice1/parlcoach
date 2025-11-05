@@ -1,4 +1,4 @@
-// js/components/DrillPanel.js
+// js/components/DrillPanel.js 
 const DrillPanel = {
   name: 'DrillPanel',
   props: ['state','methods'],
@@ -242,19 +242,19 @@ Vue.onMounted(() => {
     <details class="box" open tabindex="0" @keydown.enter.stop.prevent="handleStartEnter">
       <summary>
         <div class="summary-bar" style="display:flex; align-items:center; gap:12px;">
-          <h3 style="margin:0">Drill Settings</h3>
+          <h3 style="margin:0">{{ $t('drill.settings') }}</h3>
           <button
             class="start-drills-btn small"
             :disabled="state.verbs.length===0"
             @click.stop.prevent="methods.startDrill()"
-            title="Start a drill session with current settings"
-          >▶ Start Drills</button>
-          <span class="dim" v-if="state.verbs.length===0">Add verbs first (My Verbs or Seed)</span>
+            :title="$t('drill.startTitle')"
+          >▶ {{ $t('drill.startDrills') }}</button>
+          <span class="dim" v-if="state.verbs.length===0">{{ $t('drill.addVerbsFirst') }}</span>
         </div>
       </summary>
 
       <div class="drill-grid" style="margin-top:8px">
-        <label>Pronoms
+        <label>{{ $t('drill.pronouns') }}
           <select multiple v-model="state.drillPrefs.persons">
             <option :value="0">je</option>
             <option :value="1">tu</option>
@@ -265,16 +265,16 @@ Vue.onMounted(() => {
           </select>
         </label>
 
-        <label>Tenses
+        <label>{{ $t('drill.tenses') }}
           <select multiple v-model="state.drillPrefs.tenses">
-            <option value="present">présent</option>
-            <option value="passeCompose">passé composé</option>
-            <option value="imparfait">imparfait</option>
-            <option value="plusQueParfait">plus-que-parfait</option>
-            <option value="futur">futur simple</option>
-            <option value="conditionnelPresent">conditionnel présent</option>
-            <option value="subjonctifPresent">subjonctif présent</option>
-            <option value="imperatif">impératif</option>
+            <option value="present">{{ $t('drill.tense.present') }}</option>
+            <option value="passeCompose">{{ $t('drill.tense.passeCompose') }}</option>
+            <option value="imparfait">{{ $t('drill.tense.imparfait') }}</option>
+            <option value="plusQueParfait">{{ $t('drill.tense.plusQueParfait') }}</option>
+            <option value="futur">{{ $t('drill.tense.futur') }}</option>
+            <option value="conditionnelPresent">{{ $t('drill.tense.conditionnelPresent') }}</option>
+            <option value="subjonctifPresent">{{ $t('drill.tense.subjonctifPresent') }}</option>
+            <option value="imperatif">{{ $t('drill.tense.imperatif') }}</option>
           </select>
         </label>
 
@@ -282,13 +282,13 @@ Vue.onMounted(() => {
           <label class="switch">
             <input type="checkbox" v-model="state.drillPrefs.autoNext" />
             <span class="slider" aria-hidden="true"></span>
-            <span class="label-text">Auto-advance on correct</span>
+            <span class="label-text">{{ $t('drill.autoAdvance') }}</span>
           </label>
 
           <label class="switch">
             <input type="checkbox" v-model="state.showEnglishTranslation" />
             <span class="slider" aria-hidden="true"></span>
-            <span class="label-text">Show Verb Translation in English</span>
+            <span class="label-text">{{ $t('drill.showVerbTranslation') }}</span>
           </label>
         </div>
 
@@ -303,7 +303,7 @@ Vue.onMounted(() => {
             @click="methods.toggleIncludeTag(tag)">
             {{ tag }}
           </button>
-          <button type="button" class="pill muted" @click="methods.clearIncludeTags()">Clear</button>
+          <button type="button" class="pill muted" @click="methods.clearIncludeTags()">{{ $t('drill.clear') }}</button>
         </div>
 
         <!-- Exclude pills -->
@@ -315,22 +315,22 @@ Vue.onMounted(() => {
             class="pill"
             :class="{ active: state.drillPrefs.excludeTags?.includes(tag) }"
             @click="methods.toggleExcludeTag(tag)">
-            exclude: {{ tag }}
+            {{ $t('drill.excludePrefix') }} {{ tag }}
           </button>
-          <button type="button" class="pill muted" @click="methods.clearExcludeTags()">Clear</button>
+            <button type="button" class="pill muted" @click="methods.clearExcludeTags()">{{ $t('drill.clear') }}</button>
         </div>
 
         <div class="row" style="grid-column:1/-1; display:flex; gap:8px; flex-wrap:wrap">
           <input
             class="fixed-input"
             v-model="includeCSV"
-            placeholder="Include-only tags (comma-sep)"
+            :placeholder="$t('drill.includePlaceholder')"
             @keyup.enter.stop.prevent="handleStartEnter"
           />
           <input
             class="fixed-input"
             v-model="excludeCSV"
-            placeholder="Exclude tags (comma-sep)"
+            :placeholder="$t('drill.excludePlaceholder')"
             @keyup.enter.stop.prevent="handleStartEnter"
           />
           <!-- Start button now lives in the summary (left-aligned) -->
@@ -339,11 +339,11 @@ Vue.onMounted(() => {
     </details>
 
     <div v-if="state.drillSession.running && state.drillSession.question" class="box card drill-card">
-      <div :class="['score-display', scoreCls]">🧠 Score: {{ state.drillSession.right }} / {{ state.drillSession.total }}</div>
+      <div :class="['score-display', scoreCls]">🧠 {{ $t('drill.score') }} {{ state.drillSession.right }} / {{ state.drillSession.total }}</div>
 
       <div class="prompt" v-if="state.drillSession.side">
         <div class="drill-side">
-          <div v-if="state.showEnglishTranslation"><strong>EN:</strong> {{ state.drillSession.side.english || '—' }}</div>
+          <div v-if="state.showEnglishTranslation"><strong>{{ $t('drill.en') }}</strong> {{ state.drillSession.side.english || '—' }}</div>
         </div>
 
         <div class="label">{{ state.drillSession.question.prompt.label }}</div>
@@ -351,7 +351,7 @@ Vue.onMounted(() => {
         <input ref="inputRef"
                v-model="state.drillSession.input"
                @keyup.enter.prevent.stop="methods.checkDrill"
-               placeholder="Type it exactly (e.g., j’ai parlé ou parlé)"
+               :placeholder="$t('drill.inputPlaceholder')"
                class="drill-input"
                autocomplete="off"
                autocapitalize="off"
@@ -368,16 +368,16 @@ Vue.onMounted(() => {
         </div>
 
         <div class="controls">
-          <button @click="methods.checkDrill" title="Enter">Check</button>
-          <button @click="methods.nextDrill" title="N">Next</button>
-          <button @click="methods.stopDrill" title="Esc">Stop</button>
+          <button @click="methods.checkDrill" :title="$t('drill.keyEnter')">{{ $t('drill.check') }}</button>
+          <button @click="methods.nextDrill" :title="$t('drill.keyN')">{{ $t('drill.next') }}</button>
+          <button @click="methods.stopDrill" :title="$t('drill.keyEsc')">{{ $t('drill.stop') }}</button>
         </div>
 
         <div v-if="state.drillSession.correct === true" class="feedback correct">
-          ✅ Correct<span v-if="state.drillPrefs.autoNext">! Next question loading...</span>
+          ✅ {{ $t('drill.correct') }}<span v-if="state.drillPrefs.autoNext"> {{ $t('drill.nextLoading') }}</span>
         </div>
         <div v-else-if="state.drillSession.correct === false" class="feedback wrong">
-          Expected: <strong>{{ state.drillSession.question.answer }}</strong>
+          {{ $t('drill.expected') }} <strong>{{ state.drillSession.question.answer }}</strong>
         </div>
 
         <div :style="{ minHeight: (helpMin || 0) + 'px' }">
@@ -387,11 +387,11 @@ Vue.onMounted(() => {
                       (state.drillSession.correct === true && !state.drillPrefs.autoNext)">
             <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:flex-start">
               <div style="flex:1 1 280px; min-width:260px">
-                <h4 style="margin:8px 0 4px">Examples</h4>
-                <div><strong>FR:</strong> {{ state.drillSession.side.fr || '—' }}</div>
-                <div><strong>EN:</strong> {{ state.drillSession.side.en || '—' }}</div>
+                <h4 style="margin:8px 0 4px">{{ $t('drill.examples') }}</h4>
+                <div><strong>{{ $t('drill.fr') }}</strong> {{ state.drillSession.side.fr || '—' }}</div>
+                <div><strong>{{ $t('drill.en') }}</strong> {{ state.drillSession.side.en || '—' }}</div>
 
-                <h4 style="margin:8px 0 4px">How to form it</h4>
+                <h4 style="margin:8px 0 4px">{{ $t('drill.howToForm') }}</h4>
                 <ul style="margin:0; padding-left:18px">
                   <li v-for="(ln,i) in state.drillSession.help?.lines" :key="i" v-html="ln"></li>
                 </ul>
@@ -399,7 +399,7 @@ Vue.onMounted(() => {
 
               <div style="flex:1 1 320px; min-width:280px" v-if="fullConj?.length">
                 <h4 style="margin:8px 0 4px">
-                  All persons ({{ state.drillSession.question.meta.tense }})
+                  {{ $t('drill.allPersons') }} ({{ state.drillSession.question.meta.tense }})
                 </h4>
 
                 <div class="conj-row" style="display:flex; flex-wrap:wrap; gap:12px;">
@@ -420,7 +420,7 @@ Vue.onMounted(() => {
     </div>
 
     <div v-else class="box empty">
-      <p>Choose persons/tenses and click <strong>Start Drill</strong> (or press <kbd>Enter</kbd>).</p>
+      <p>{{ $t('drill.emptyPrompt') }} <strong>{{ $t('drill.startDrillShort') }}</strong> {{ $t('drill.orPressEnter') }}</p>
     </div>
   </div>
   `

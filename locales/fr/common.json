@@ -18,6 +18,59 @@
    "vocab": {
      "showExamples":"Exemples"
  },
+ 
+  "drill": {
+    "settings": "Paramètres des exercices",
+    "startTitle": "Démarrer une session d’exercices avec les réglages actuels",
+    "startDrills": "Lancer les exercices",
+    "addVerbsFirst": "Ajoutez d’abord des verbes (Mes verbes ou Seed)",
+    "pronouns": "Pronoms",
+    "tenses": "Temps",
+
+    "tense": {
+      "present": "présent",
+      "passeCompose": "passé composé",
+      "imparfait": "imparfait",
+      "plusQueParfait": "plus-que-parfait",
+      "futur": "futur simple",
+      "conditionnelPresent": "conditionnel présent",
+      "subjonctifPresent": "subjonctif présent",
+      "imperatif": "impératif"
+    },
+
+    "autoAdvance": "Avancer automatiquement si correct",
+    "showVerbTranslation": "Afficher la traduction du verbe en anglais",
+
+    "clear": "Réinitialiser",
+    "excludePrefix": "exclure :",
+    "includePlaceholder": "Balises à inclure (séparées par des virgules)",
+    "excludePlaceholder": "Balises à exclure (séparées par des virgules)",
+
+    "score": "Score :",
+    "fr": "FR :",
+    "en": "EN :",
+    "inputPlaceholder": "Tapez exactement (p. ex., j’ai parlé ou parlé)",
+
+    "check": "Vérifier",
+    "next": "Suivant",
+    "stop": "Arrêter",
+    "keyEnter": "Entrée",
+    "keyN": "N",
+    "keyEsc": "Échap",
+
+    "correct": "Correct",
+    "nextLoading": " ! Chargement de la prochaine question…",
+    "expected": "Réponse attendue :",
+
+    "examples": "Exemples",
+    "howToForm": "Comment le former",
+    "allPersons": "Toutes les personnes",
+
+    "emptyPrompt": "Choisissez des pronoms/temps puis cliquez sur",
+    "startDrillShort": "Démarrer l’exercice",
+    "orPressEnter": "(ou appuyez sur Entrée)."
+  },
+
 
   "ui": {
     "settings.title": "Paramètres",

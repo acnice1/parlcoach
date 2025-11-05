@@ -13,51 +13,62 @@ const DataPanel = {
   props: ['state', 'methods'],
 
   template: `
-    <div class="panel">
-      <h2 style="margin-bottom:10px">Data loaders &amp; tools</h2>
-      <div class="dim" style="margin:-4px 0 8px 0; font-size:12px;">
-        SRS deck: <strong>{{ srsCount }}</strong> item<span v-if="srsCount !== 1">s</span>
-      </div>
+<!-- ===== Import CSV/TSV (clean) ===== -->
+<div class="box" style="padding:12px; margin-top:12px;">
+  <div class="row" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+    <button
+      class="small"
+      @click="$refs.csvFile.click()"
+      title="Import a CSV or TSV file">
+      Import CSV/TSV
+    </button>
 
-      <!-- ===== CSV/TSV Upload ===== -->
-      <div class="box" style="padding:12px; margin-top:12px;">
-        <h3>Upload CSV/TSV (EN, FR, article)</h3>
-        <p class="dim" style="margin-top:4px">
-          Expected headers (case-insensitive): <code>EN</code>, <code>FR</code>, <code>article</code>. Optional: <code>tags</code>.
-        </p>
+    <input
+      ref="csvFile"
+      id="csvUpload"
+      type="file"
+      accept=".csv,text/csv,.tsv,text/tab-separated-values"
+      style="display:none"
+      @change="methods.importVocabCsv ? methods.importVocabCsv($event) : null"
+    />
 
-        <div class="actions" style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:8px;">
-          <label for="csvUpload"><strong>Choose a CSV/TSV file</strong></label>
-          <input
-            id="csvUpload"
-            type="file"
-            accept=".csv,text/csv,.tsv,text/tab-separated-values"
-            @change="methods.importVocabCsv ? methods.importVocabCsv($event) : null"
-          />
+    <!-- lightweight status -->
+    <span class="dim" v-if="state.csv && state.csv.name">Selected: {{ state.csv.name }}</span>
+    <span class="dim" v-if="rowCount">Loaded: {{ rowCount }} rows</span>
+    <span class="dim" v-if="state.csv && state.csv.parsing" aria-live="polite">Parsing…</span>
 
-          <span class="dim" v-if="rowCount">Loaded: {{ rowCount }} rows</span>
+    <!-- actions float to the right when there are rows -->
+    <div v-if="rowCount" style="margin-left:auto; display:flex; gap:8px;">
+      <button
+        class="small"
+        @click="methods.togglePickAll ? methods.togglePickAll(true) : selectAllLocal(true)">
+        Select all
+      </button>
+      <button
+        class="small"
+        @click="methods.togglePickAll ? methods.togglePickAll(false) : selectAllLocal(false)">
+        Clear all
+      </button>
+      <button
+        class="small"
+        @click="cancelLoadedView"
+        title="Cancel the current loaded view (CSV or previewed list)">
+        Cancel
+      </button>
+    </div>
+  </div>
 
-          <button
-            v-if="rowCount"
-            class="small"
-            @click="methods.togglePickAll ? methods.togglePickAll(true) : selectAllLocal(true)">
-            Select all
-          </button>
-          <button
-            v-if="rowCount"
-            class="small"
-            @click="methods.togglePickAll ? methods.togglePickAll(false) : selectAllLocal(false)">
-            Clear all
-          </button>
-          <button
-            v-if="rowCount"
-            class="small"
-            @click="cancelLoadedView"
-            title="Cancel the current loaded view (CSV or previewed list)">
-            Cancel
-          </button>
-          <span class="dim" v-if="state.csv && state.csv.parsing" aria-live="polite">Parsing…</span>
-        </div>
+  <!-- tiny helper text, tucked underneath -->
+  <div class="dim" style="font-size:12px; margin-top:6px;">
+    Headers: <code>EN</code>, <code>FR</code>  (optional: <code>article, Example_FR, Example_EN, Tags</code>)
+  </div>
+</div>
+<p v-if="state.csv?.status === 'empty'" class="dim" style="margin-top:6px;">
+  File parsed but no rows matched the required headers (EN, FR). Check column names and try again.
+</p>
+<p v-else-if="state.csv?.status === 'badHeaders'" class="dim" style="margin-top:6px;">
+  Missing required headers. Expected: EN, FR (optional: article, Example_FR, Example_EN, Tags).
+</p>
 
         <!-- Parse/normalize meta -->
         <div class="dim" style="margin-top:6px;" v-if="hasHeaders">
@@ -67,10 +78,7 @@ const DataPanel = {
           Headers: <code>{{ state.csv.headers.join(', ') }}</code>
         </div>
 
-        <!-- CSV empty/error state -->
-        <p v-if="state.csv && !rowCount" class="dim" style="margin-top:6px;">
-          File parsed but no rows matched the required headers (EN, FR). Check column names and try again.
-        </p>
+
 
         <!-- Word Picker (CSV preview area) -->
         <div v-if="rowCount" style="margin-top:12px;">
@@ -192,7 +200,7 @@ const DataPanel = {
 
       <!-- ===== Saved Lists ===== -->
       <div class="box" style="padding:12px; margin-top:12px;">
-        <h3>Saved Vocab Sub-lists</h3>
+        <h3>Saved Vocab Lists</h3>
         <p class="dim">These are stored locally (settings). You can load any list into the SRS deck or use it in Review.</p>
 
         <!-- SRS maintenance -->

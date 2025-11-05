@@ -17,6 +17,57 @@
    
   "showExamples":"Show Examples"
  },
+ "drill": {
+    "settings": "Drill Settings",
+    "startTitle": "Start a drill session with current settings",
+    "startDrills": "Start Drills",
+    "addVerbsFirst": "Add verbs first (My Verbs or Seed)",
+    "pronouns": "Pronouns",
+    "tenses": "Tenses",
+
+    "tense": {
+      "present": "present",
+      "passeCompose": "passé composé",
+      "imparfait": "imparfait",
+      "plusQueParfait": "plus-que-parfait",
+      "futur": "futur simple",
+      "conditionnelPresent": "conditional present",
+      "subjonctifPresent": "subjunctive present",
+      "imperatif": "imperative"
+    },
+
+    "autoAdvance": "Auto-advance on correct",
+    "showVerbTranslation": "Show Verb Translation in English",
+
+    "clear": "Clear",
+    "excludePrefix": "exclude:",
+    "includePlaceholder": "Include-only tags (comma-sep)",
+    "excludePlaceholder": "Exclude tags (comma-sep)",
+
+    "score": "Score:",
+    "fr": "FR:",
+    "en": "EN:",
+    "inputPlaceholder": "Type it exactly (e.g., j’ai parlé or parlé)",
+
+    "check": "Check",
+    "next": "Next",
+    "stop": "Stop",
+    "keyEnter": "Enter",
+    "keyN": "N",
+    "keyEsc": "Esc",
+
+    "correct": "Correct",
+    "nextLoading": "! Next question loading...",
+    "expected": "Expected:",
+
+    "examples": "Examples",
+    "howToForm": "How to form it",
+    "allPersons": "All persons",
+
+    "emptyPrompt": "Choose persons/tenses and click",
+    "startDrillShort": "Start Drill",
+    "orPressEnter": "(or press Enter)."
+  },
   "ui": {
     "settings": {
       "title": "Settings",
@@ -68,4 +119,6 @@
     "notes": "Notes",
     "notesPlaceholder": "Personal constraints, upcoming exam date, target topics, etc."
   }
+  
+  
 }

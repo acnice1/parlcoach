@@ -2389,6 +2389,11 @@ app.config.globalProperties.$t = (k, v) => i18n.t(withDefaultNs(k), v);
 app.config.globalProperties.$n = (x, o) => i18n.n(x, o);
 app.config.globalProperties.$d = (x, o) => i18n.d(x, o);
 
+//  expose for console debugging 
+window.$t = (k, v) => i18n.t((k.includes(':') ? k.replace(':','.') : (k.startsWith('common.') ? k : `common.${k}`)), v);
+window.$n = (x, o) => i18n.n(x, o);
+window.$d = (x, o) => i18n.d(x, o);
+window.setLocale = i18n.setLocale;
 // expose for console debugging
 window.__i18n = i18n;
 
