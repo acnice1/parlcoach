@@ -1984,8 +1984,8 @@ async function loadListIntoReview(name) {
   try { await saveReviewPointer?.(); } catch {}
 
   // Jump user to the Review UI
-  state.tab = "learn";
-  state.learnTab = "vocab";
+ // state.tab = "learn";
+  //state.learnTab = "vocab";
 }
 // In app.js (methods section) — replace the whole function
 async function loadListIntoSrs(name, opts = { frToEn: true, enToFr: true }) {

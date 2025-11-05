@@ -12,7 +12,7 @@ const DataPanel = {
   name: 'DataPanel',
   props: ['state', 'methods'],
 
-  template: `
+  template: /*html*/ `
 <!-- ===== Import CSV/TSV (clean) ===== -->
 <div class="box" style="padding:12px; margin-top:12px;">
   <div class="row" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">

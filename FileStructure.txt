@@ -1,0 +1,65 @@
+Folder PATH listing
+Volume serial number is FA5B-F606
+C:.
+¦   app.js
+¦   FileStructure.txt
+¦   general_vocab.json
+¦   index.html
+¦   interview_questions.json
+¦   manifest.webmanifest
+¦   package-lock.json
+¦   package.json
+¦   README.md
+¦   service-worker.js
+¦   styles.css
+¦   top200_french_verbs_collated.json
+¦   verb_conjugation_rules.json
+¦   
++---core
+¦       i18n.js
+¦       settings.js
+¦       
++---data
+¦       administrative_vocab_1.csv
+¦       administrative_vocab_2.csv
+¦       administrative_vocab_3.csv
+¦       administrative_vocab_4.csv
+¦       administrative_vocab_5.csv
+¦       french_verb_prepositions_with_examples.csv
+¦       index.json
+¦       lexique_modules_L1-L20.csv
+¦       opinion_agree_disagree_add.csv
+¦       opinion_nuance_explain_result.csv
+¦       opinion_phrases_extended.csv
+¦       pronom_relatifs_complexes.csv
+¦       SC102-1-9-2004-with_examples.csv
+¦       
++---icons
+¦       icon-192.png
+¦       
++---js
+¦   ¦   data.js
+¦   ¦   db.js
+¦   ¦   drills.js
+¦   ¦   plan.js
+¦   ¦   utils.js
+¦   ¦   verbs.js
+¦   ¦   vocab.js
+¦   ¦   
+¦   +---components
+¦           DataPanel.js
+¦           DrillPanel.js
+¦           GrammarPanel.js
+¦           LangSwitcher.js
+¦           PlanPanel.js
+¦           ProfileWidget.js
+¦           RecorderPanel.js
+¦           VocabPanel.js
+¦           
++---locales
+    +---en
+    ¦       common.json
+    ¦       
+    +---fr
+            common.json
+            

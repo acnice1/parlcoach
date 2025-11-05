@@ -103,6 +103,7 @@ export function isIrregularVerbRow(v) {
   return g === 'other';
 }
 
+
 // Conjugation constants
 export const PRONOUNS = ['je','tu','il/elle','nous','vous','ils/elles'];
 export const PERSON_KEY = ['je','tu','il/elle/on','nous','vous','ils/elles'];
