@@ -125,6 +125,8 @@ const app = createApp({
         showBack: false,
         counts: { total: 0, learned: 0 },
         vocabTagFilter: "",
+        againDelayMs: 0,   // 0 = stays due now; increase to e.g. 15000 for ~15s
+
       },
 
       // Top-level tabs
@@ -801,13 +803,29 @@ watch(() => state.vocab.direction, () => {
       await db.settings.put({ ...existing, reviewDeckPtr: state.vocab.deckPtr, key: "v1" });
     }
     
-async function rate(q) {
+
+    async function rate(q) {
   if (!state.flashcards.currentCard) return;
   const c = state.flashcards.currentCard;
-  const upd =
-    state.settings.srsMode === "SM2"
-      ? sm2Schedule(c, q)
-      : fixedSchedule(c, state.settings.fixedIntervals || [1, 3, 7, 14, 30], q);
+
+  const now = Date.now();
+  const againDelayMs = state?.flashcards?.againDelayMs ?? 0;
+
+  let upd;
+  if (q === 0) {
+    // Stay in the pile: due = now + againDelayMs (0 by default)
+    upd = {
+      due: new Date(now + againDelayMs).toISOString(),
+      // keep your other fields as-is; record a timestamp if you track it
+      last: new Date(now).toISOString(),
+    };
+  } else {
+    // Proceed per normal for non-Again ratings
+    upd =
+      state.settings.srsMode === "SM2"
+        ? sm2Schedule(c, q)
+        : fixedSchedule(c, state.settings.fixedIntervals || [1, 3, 7, 14, 30], q);
+  }
 
   Object.assign(c, upd);
   await db.vocab.update(c.id, upd);
@@ -815,7 +833,9 @@ async function rate(q) {
   // Recompute due, then filter by direction
   Vocab.computeDue(state.flashcards);
   applySrsDirectionFilter();
+  state.flashcards.showBack = false; // reset reveal state
 }
+
 
 
     // Filter SRS due cards by direction tag added at import time (dir:FR_EN / dir:EN_FR)

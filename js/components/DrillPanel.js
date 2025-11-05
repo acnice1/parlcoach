@@ -90,6 +90,113 @@ const DrillPanel = {
 
     const debouncedRefresh = debounce(refreshSession, 150);
 
+    // ---- Defaults + normalization for persons/tenses ----
+const ALL_PERSONS = [0,1,2,3,4,5];
+const ALL_TENSES  = [
+  'present','passeCompose','imparfait','plusQueParfait',
+  'futur','conditionnelPresent','subjonctifPresent','imperatif'
+];
+
+function normalizePersons(arr) {
+  const vals = Array.isArray(arr) ? arr : [];
+  const nums = vals.map(v => (typeof v === 'string' ? Number(v) : v))
+                   .filter(v => ALL_PERSONS.includes(v));
+  // de-dupe while preserving order
+  return [...new Set(nums)];
+}
+
+function normalizeTenses(arr) {
+  const vals = Array.isArray(arr) ? arr : [];
+  const strs = vals.map(v => String(v)).filter(v => ALL_TENSES.includes(v));
+  return [...new Set(strs)];
+}
+
+function ensureDrillDefaults({ save = false } = {}) {
+  const dp = (props.state.drillPrefs ||= {});
+  // Ensure arrays exist
+  if (!Array.isArray(dp.persons) || dp.persons.length === 0) dp.persons = [...ALL_PERSONS];
+  if (!Array.isArray(dp.tenses)  || dp.tenses.length  === 0) dp.tenses  = [...ALL_TENSES];
+
+  // Normalize types/values
+  dp.persons = normalizePersons(dp.persons);
+  dp.tenses  = normalizeTenses(dp.tenses);
+
+  if (save && typeof props.methods.saveDrillPrefs === 'function') {
+    props.methods.saveDrillPrefs();
+  }
+}
+
+// Run immediately (initial render / rehydration)
+ensureDrillDefaults({ save: false });
+
+// ---- Auto-advance on correct ----
+const autoNextTimer = Vue.ref(null);
+
+const autoNextDelay = () => Number(props.state.drillPrefs?.autoNextDelay ?? 450);
+
+Vue.watch(
+  () => ({
+    auto: !!props.state.drillPrefs?.autoNext,
+    ok: props.state.drillSession?.correct === true,
+    running: !!props.state.drillSession?.running,
+  }),
+  ({ auto, ok, running }) => {
+    // Clear any pending timer whenever the state changes
+    if (autoNextTimer.value) {
+      clearTimeout(autoNextTimer.value);
+      autoNextTimer.value = null;
+    }
+
+    // If enabled, answer is correct, and session is running, queue next question
+    if (auto && ok && running && typeof props.methods.nextDrill === 'function') {
+      autoNextTimer.value = setTimeout(() => {
+        // Guard again right before firing (user may have stopped drill)
+        if (props.state.drillPrefs?.autoNext &&
+            props.state.drillSession?.correct === true &&
+            props.state.drillSession?.running) {
+          props.methods.nextDrill();
+        }
+
+    // A
+      }, autoNextDelay()); // tweak delay to taste
+    }
+  },
+  { deep: false }
+);
+
+Vue.onBeforeUnmount(() => {
+  if (autoNextTimer.value) clearTimeout(autoNextTimer.value);
+});
+
+
+// If the whole drillPrefs object gets swapped (e.g., load from storage),
+// re-assert defaults and normalize.
+Vue.watch(
+  () => props.state.drillPrefs,
+  () => ensureDrillDefaults({ save: false }),
+  { deep: false, immediate: false }
+);
+
+// Also normalize on array changes (covers user edits / string types coming from DOM)
+Vue.watch(() => (props.state.drillPrefs?.persons || []).slice(), (arr) => {
+  const norm = normalizePersons(arr);
+  if (JSON.stringify(norm) !== JSON.stringify(arr)) {
+    props.state.drillPrefs.persons = norm;
+  }
+}, { deep: false });
+
+Vue.watch(() => (props.state.drillPrefs?.tenses || []).slice(), (arr) => {
+  const norm = normalizeTenses(arr);
+  if (JSON.stringify(norm) !== JSON.stringify(arr)) {
+    props.state.drillPrefs.tenses = norm;
+  }
+}, { deep: false });
+
+// (Optional) On first mount with verbs present, persist defaults once.
+Vue.onMounted(() => {
+  ensureDrillDefaults({ save: true });
+});
+
     // 1) Start automatically on mount if verbs are present.
     Vue.onMounted(() => {
       if (hasVerbs() && !props.state.drillSession?.running) {
