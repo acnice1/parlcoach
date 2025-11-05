@@ -132,7 +132,7 @@ ensureDrillDefaults({ save: false });
 // ---- Auto-advance on correct ----
 const autoNextTimer = Vue.ref(null);
 
-const autoNextDelay = () => Number(props.state.drillPrefs?.autoNextDelay ?? 450);
+const autoNextDelay = () => Number(props.state.drillPrefs?.autoNextDelay ?? 650);
 
 Vue.watch(
   () => ({
