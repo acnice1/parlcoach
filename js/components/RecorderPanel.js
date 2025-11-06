@@ -2,7 +2,7 @@
 export default {
   name: 'RecorderPanel',
   props: ['state','methods'],
-  template: `
+  template: /*html*/`
   <div class="recorder-panel">
 
     <header class="panel-head recorder-head" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">

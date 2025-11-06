@@ -222,7 +222,7 @@ backText() {
     this._keyHandler = null;
   },
 
-  template: `
+  template:/*html*/ `
     <div>
       <!-- Mode toggle -->
       <div class="row" style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:8px;">

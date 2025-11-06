@@ -761,21 +761,29 @@ watch(() => state.vocab.direction, () => {
       const id = await db.recordings.add(rec);
       return { id, ...rec };
     }
+
     async function loadRecordingsFromDB() {
-      const rows = await db.recordings.orderBy("createdAt").reverse().toArray();
-      const hydrated = [];
-      for (const r of rows) {
-        try {
-          const blob = opfs?.readFile ? await opfs.readFile(r.path) : await opfsRead(r.path);
-          const url = URL.createObjectURL(blob);
-          hydrated.push({ ...r, url });
-        } catch (e) {
-          console.warn("[OPFS] read fail for", r.path, e);
-          hydrated.push({ ...r, url: "" });
-        }
-      }
-      state.recordings = hydrated;
+  // Revoke old URLs before replacing the array
+  try {
+    for (const r of state.recordings) if (r?.url) URL.revokeObjectURL(r.url);
+  } catch {}
+
+  const rows = await db.recordings.orderBy("createdAt").reverse().toArray();
+  const hydrated = [];
+  for (const r of rows) {
+    try {
+      const blob = opfs?.readFile ? await opfs.readFile(r.path) : await opfsRead(r.path);
+      const url = URL.createObjectURL(blob);
+      hydrated.push({ ...r, url });
+    } catch (e) {
+      hydrated.push({ ...r, url: "" }); // keeps the row, just no playable URL
     }
+  }
+  state.recordings = hydrated; // <-- the missing line
+}
+
+
+    //  
     async function findRecordingId(r) {
       if (r?.id != null) return r.id;
       try { if (r?.path && db.recordings.where) { const row = await db.recordings.where("path").equals(r.path).first(); if (row?.id != null) return row.id; } } catch {}
@@ -2072,6 +2080,7 @@ if (wantENtoFR) {
         db.drill.get("v1"),
       ]);
 
+      //  SRS HYDRATION 
       if (settings) {
         state.settings = settings;
         state.fixedIntervalsText = (settings.fixedIntervals || [1, 3, 7, 14, 30]).join(",");
@@ -2089,6 +2098,8 @@ if (wantENtoFR) {
       }
 
       if (plan)  state.plan = plan;
+
+      // DRILL HYDRATION
       if (drill) state.drillPrefs = { ...state.drillPrefs, ...drill };
 
       state.drillPrefs.includeOnlyTags = toArr(state.drillPrefs.includeOnlyTags);
@@ -2109,6 +2120,10 @@ if (wantENtoFR) {
       const active = (settings?.activeReviewList || "").trim();
       state.wordPicker.activeList = active || "";
 
+      // RECORDINGS HYDRATION
+      await loadRecordingsFromDB();
+
+      // LIST HYDRATION 
       if (active) {
         try { await methods.loadListIntoReview(active); }
         catch (e) { console.warn("[Lists] failed to restore activeReviewList:", active, e); }
