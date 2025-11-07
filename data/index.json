@@ -53,5 +53,11 @@
   "file": "lexique_modules_L1-L20.csv",
   "name": "Lexique Modules L1–L20",
   "description": "Core vocabulary from modules L1–L20 SC102-6-206-fra)"
-}
+},
+  {
+    "file": "cause_consequence_but.csv",
+    "name": "Cause, Consequence, But",
+    "description": "Les termes subordonnées circonstancielles 
+de cause, de conséquence et de but"
+  }
 ]

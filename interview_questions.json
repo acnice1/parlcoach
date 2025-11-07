@@ -9,7 +9,12 @@
       "Si c’était à refaire, agiriez-vous différemment? Pourquoi?"
     ],
     "sampleAnswer": "Il y a quelques années, j’ai dû imposer une nouvelle méthode de suivi des projets qui exigeait plus de rigueur administrative. Plusieurs collègues étaient réticents, mais j’ai pris le temps d’expliquer les avantages à long terme. Finalement, le système a permis de réduire les erreurs et d’améliorer la transparence. Cela m’a appris qu’une décision impopulaire peut être acceptée si elle est accompagnée d’une communication claire et d’une écoute active.",
-    "tags": ["leadership", "communication", "decision-making", "management"]
+    "tags": [
+      "leadership",
+      "communication",
+      "decision-making",
+      "management"
+    ]
   },
   {
     "id": 2,
@@ -21,7 +26,12 @@
       "Pensez-vous qu’une approche différente fonctionnerait mieux dans le secteur privé?"
     ],
     "sampleAnswer": "Je distingue ce qui est urgent de ce qui est important, en me basant sur l’impact et le risque pour l’organisation. Je consulte mes partenaires clés pour valider les priorités stratégiques. Par exemple, lors d’une crise technique, j’ai reporté certaines tâches pour stabiliser le système. Cette approche pragmatique permet de gérer la pression tout en maintenant une vision à long terme.",
-    "tags": ["prioritization", "strategy", "organization", "productivity"]
+    "tags": [
+      "prioritization",
+      "strategy",
+      "organization",
+      "productivity"
+    ]
   },
   {
     "id": 3,
@@ -33,7 +43,12 @@
       "Croyez-vous que le télétravail influence la motivation des employés?"
     ],
     "sampleAnswer": "Je commencerais par identifier les causes de la démobilisation — manque de reconnaissance, surcharge, ou flou des objectifs. J’impliquerais ensuite l’équipe dans la recherche de solutions et je valoriserais les réussites. Par exemple, des rencontres hebdomadaires de reconnaissance ont considérablement amélioré le moral. La motivation se construit dans un climat de respect et de confiance.",
-    "tags": ["motivation", "leadership", "teamwork", "engagement"]
+    "tags": [
+      "motivation",
+      "leadership",
+      "teamwork",
+      "engagement"
+    ]
   },
   {
     "id": 4,
@@ -45,7 +60,12 @@
       "Les gestionnaires publics sont-ils formés adéquatement pour diriger le changement?"
     ],
     "sampleAnswer": "Un changement réussi repose sur la communication, la participation et le suivi. Il faut expliquer le pourquoi, impliquer les employés, et ajuster en fonction des résultats. Dans un projet de modernisation, j’ai créé un groupe pilote pour tester les nouveautés avant le déploiement. Le changement ne se fait pas contre les employés, mais avec eux.",
-    "tags": ["change-management", "communication", "collaboration", "innovation"]
+    "tags": [
+      "change-management",
+      "communication",
+      "collaboration",
+      "innovation"
+    ]
   },
   {
     "id": 5,
@@ -57,7 +77,13 @@
       "Comment les nouvelles technologies peuvent-elles contribuer ou nuire à cette confiance?"
     ],
     "sampleAnswer": "La confiance repose sur la transparence, la cohérence et la réactivité. Les citoyens doivent comprendre comment et pourquoi les décisions sont prises. Publier des données ouvertes et reconnaître les erreurs renforce la crédibilité. À l’inverse, l’opacité mine la confiance. Pendant la pandémie, la communication claire de certaines données a renforcé la légitimité des institutions.",
-    "tags": ["trust", "transparency", "communication", "ethics", "public-service"]
+    "tags": [
+      "trust",
+      "transparency",
+      "communication",
+      "ethics",
+      "public-service"
+    ]
   },
   {
     "id": 6,
@@ -69,7 +95,12 @@
       "Les évaluations devraient-elles être menées à l’interne ou par des experts externes?"
     ],
     "sampleAnswer": "J’utiliserais une approche fondée sur les résultats, avec des indicateurs quantitatifs et qualitatifs. Il faut définir les objectifs dès le départ et recueillir la rétroaction des bénéficiaires. Lors d’un projet pilote, nous avons ajusté les critères après avoir observé un écart entre la théorie et la pratique. L’évaluation doit servir à améliorer, pas à justifier.",
-    "tags": ["evaluation", "policy", "measurement", "results-based-management"]
+    "tags": [
+      "evaluation",
+      "policy",
+      "measurement",
+      "results-based-management"
+    ]
   },
   {
     "id": 7,
@@ -81,7 +112,13 @@
       "Pensez-vous que la fonction publique protège suffisamment les employés dans ce type de dilemme?"
     ],
     "sampleAnswer": "Je cherche à concilier mes valeurs et mes obligations professionnelles en privilégiant le dialogue. Si je suis en désaccord, j’exprime mon point de vue de façon factuelle et respectueuse. J’ai déjà soulevé des préoccupations éthiques dans un projet de collecte de données; après discussion, une solution respectueuse de la vie privée a été adoptée. La loyauté ne doit jamais signifier la complaisance.",
-    "tags": ["ethics", "integrity", "values", "public-service", "decision-making"]
+    "tags": [
+      "ethics",
+      "integrity",
+      "values",
+      "public-service",
+      "decision-making"
+    ]
   },
   {
     "id": 8,
@@ -93,7 +130,13 @@
       "Croyez-vous que la réglementation peut suivre le rythme de l’innovation?"
     ],
     "sampleAnswer": "L’intelligence artificielle offre de grandes possibilités, mais pose aussi des défis éthiques et réglementaires. Le gouvernement doit équilibrer innovation et protection des droits. Il faut établir des cadres transparents pour l’utilisation des algorithmes et former les employés afin d’assurer une adoption responsable. L’innovation ne doit pas se faire au détriment de la confiance publique.",
-    "tags": ["AI", "innovation", "technology", "ethics", "digital-government"]
+    "tags": [
+      "AI",
+      "innovation",
+      "technology",
+      "ethics",
+      "digital-government"
+    ]
   },
   {
     "id": 9,
@@ -105,7 +148,12 @@
       "Les citoyens sont-ils prêts à changer leurs habitudes pour atteindre ces objectifs?"
     ],
     "sampleAnswer": "Le principal défi est d’équilibrer croissance économique et transition écologique. Certaines industries dépendent encore des énergies fossiles. Cependant, les investissements verts, les innovations technologiques et les politiques d’achat durable sont des leviers prometteurs. Le succès dépendra aussi de la volonté citoyenne et de la coopération entre les gouvernements.",
-    "tags": ["environment", "climate-change", "sustainability", "policy"]
+    "tags": [
+      "environment",
+      "climate-change",
+      "sustainability",
+      "policy"
+    ]
   },
   {
     "id": 10,
@@ -117,6 +165,596 @@
       "Pensez-vous que les quotas sont une bonne solution?"
     ],
     "sampleAnswer": "Le gouvernement doit être un modèle d’équité et d’inclusion. La diversité ne se limite pas à la représentation, mais implique un environnement où chacun se sent respecté. Dans mon équipe, nous avons instauré des discussions sur les biais inconscients, ce qui a amélioré la cohésion. Il reste des défis, mais la diversité demeure une richesse à valoriser.",
-    "tags": ["diversity", "inclusion", "equity", "leadership", "culture"]
+    "tags": [
+      "diversity",
+      "inclusion",
+      "equity",
+      "leadership",
+      "culture"
+    ]
+  },
+  {
+    "id": 11,
+    "category": "IA, éthique et services",
+    "prompt": "Dans quelle mesure l’intelligence artificielle devrait-elle être utilisée pour améliorer les services aux citoyens? Justifiez et anticipez les risques.",
+    "followUps": [
+      "Quels cas d’usage prioriseriez-vous dans les 6 prochains mois?",
+      "Comment garantir l’explicabilité des modèles?",
+      "Quels risques de biais anticipez-vous et comment les mitiger?"
+    ],
+    "sampleAnswer": "L’IA doit être ciblée sur des cas d’usage à fort impact (orientation, tri, aide à la décision) avec des garde‑fous: transparence des modèles, évaluations de biais, supervision humaine et retrait d’urgence. On démarre par des pilotes mesurables, en impliquant juristes et sécurité.",
+    "tags": [
+      "AI",
+      "digital-government",
+      "ethics",
+      "risk",
+      "service-design"
+    ],
+    "en": "To what extent should AI be used to improve citizen services? Justify and anticipate risks.",
+    "sampleAnswer_en": "Use AI for high-impact, measurable use cases with human-in-the-loop, transparency, bias testing, and kill-switches. Start with pilots tied to outcomes.",
+    "fr": "Dans quelle mesure l’intelligence artificielle devrait-elle être utilisée pour améliorer les services aux citoyens? Justifiez et anticipez les risques."
+  },
+  {
+    "id": 12,
+    "category": "Culture & performance",
+    "prompt": "Êtes-vous d’accord avec l’idée que la productivité prime sur l’équilibre travail-vie? Pourquoi ou pourquoi pas?",
+    "followUps": [
+      "Dans quels cas la productivité l’emporte-t-elle réellement?",
+      "Quels indicateurs suivez-vous pour l’équilibre travail‑vie?",
+      "Comment prévenir les effets pervers (épuisement)?"
+    ],
+    "sampleAnswer": "Je privilégie une vision équilibrée: la productivité durable repose sur la santé et l’autonomie. On définit des objectifs orientés résultats, on mesure la charge, et on ajuste les capacités plutôt que d’allonger les horaires.",
+    "tags": [
+      "culture",
+      "productivity",
+      "wellbeing"
+    ],
+    "en": "Do you agree that productivity should trump work–life balance? Why or why not?",
+    "sampleAnswer_en": "Sustainable productivity depends on health and autonomy. Focus on outcomes, not hours; manage capacity to avoid burnout.",
+    "fr": "Êtes-vous d’accord avec l’idée que la productivité prime sur l’équilibre travail-vie? Pourquoi ou pourquoi pas?"
+  },
+  {
+    "id": 13,
+    "category": "Vie privée & transparence",
+    "prompt": "Comment concilier transparence et protection des renseignements personnels dans les services numériques? Proposez un cadre.",
+    "followUps": [
+      "Quel cadre proposez-vous (rôles, contrôles, audits)?",
+      "Comment appliquer la minimisation et l’anonymisation?",
+      "Quels mécanismes d’exception et de recours prévoyez-vous?"
+    ],
+    "sampleAnswer": "Un cadre appuyé sur la minimisation, des DPIA, la traçabilité des accès, des comités éthiques, et des audits indépendants. Transparence proactive par défaut, masquage des champs sensibles et journalisation consultable.",
+    "tags": [
+      "governance",
+      "privacy",
+      "transparency"
+    ],
+    "en": "How do you reconcile transparency and privacy in digital government? Propose a framework.",
+    "sampleAnswer_en": "Use data minimization, DPIAs, access logging, independent audits, and proactive transparency with masked sensitive fields.",
+    "fr": "Comment concilier transparence et protection des renseignements personnels dans les services numériques? Proposez un cadre."
+  },
+  {
+    "id": 14,
+    "category": "Budget & priorisation",
+    "prompt": "Si votre équipe faisait face à une coupure budgétaire de 15 %, comment prioriseriez-vous les activités? Décrivez votre approche.",
+    "followUps": [
+      "Quels critères de priorisation appliquez-vous (valeur, risque, obligations)?",
+      "Comment gérez-vous l’arrêt ordonné de produits?",
+      "Quel plan de communication et de transition proposez-vous?"
+    ],
+    "sampleAnswer": "On protège les obligations légales et la sécurité, on aligne le reste sur la valeur citoyenne/risque. On dépublie proprement: gel des features, réduction du scope, et revues trimestrielles du portefeuille.",
+    "tags": [
+      "budget",
+      "portfolio",
+      "prioritization"
+    ],
+    "en": "With a 15% budget cut, how would you prioritize activities?",
+    "sampleAnswer_en": "Protect legal/security obligations, rank by citizen value and risk, de-scope or sunset low-value work with clear comms.",
+    "fr": "Si votre équipe faisait face à une coupure budgétaire de 15 %, comment prioriseriez-vous les activités? Décrivez votre approche."
+  },
+  {
+    "id": 15,
+    "category": "Travail & organisation",
+    "prompt": "Quelles seraient les conséquences inattendues d’un passage complet au télétravail pour un ministère?",
+    "followUps": [
+      "Quels impacts sur l’équité d’accès aux opportunités?",
+      "Comment maintenez-vous la cohésion et la sécurité?",
+      "Quelles mesures de performance adaptez-vous?"
+    ],
+    "sampleAnswer": "Impacts inattendus: dilution de la cohésion, inégalités d’accès à l’info, surfaces d’attaque accrues. On répond par des rituels d’équipe, des normes d’écrit, du zero‑trust, et des parcours d’intégration adaptés.",
+    "tags": [
+      "culture",
+      "hr",
+      "telework"
+    ],
+    "en": "What unintended consequences could a full shift to telework create?",
+    "sampleAnswer_en": "Risks: cohesion, information inequity, security surface. Mitigate via written norms, rituals, zero-trust, and adapted onboarding.",
+    "fr": "Quelles seraient les conséquences inattendues d’un passage complet au télétravail pour un ministère?"
+  },
+  {
+    "id": 16,
+    "category": "Produit vs Projet",
+    "prompt": "En quoi l’approche produit (plutôt que projet) change-t-elle la prestation des services? Donnez des exemples.",
+    "followUps": [
+      "Quels indicateurs produit suivez-vous (adoption, rétention)?",
+      "Comment financez-vous en flux plutôt qu’en lot unique?",
+      "Donnez un exemple de boucle d’amélioration continue."
+    ],
+    "sampleAnswer": "L’approche produit ancre la valeur dans l’usage réel: équipes stables, financement récurrent, métriques d’adoption/rétention, et roadmap évolutive. Ex.: portail refondu via tests A/B trimestriels.",
+    "tags": [
+      "change-management",
+      "delivery",
+      "ops",
+      "product"
+    ],
+    "en": "How does a product approach change service delivery? Give examples.",
+    "sampleAnswer_en": "Stable teams, recurring funding, adoption metrics, continuous roadmaps; iterate via A/B tests and user research.",
+    "fr": "En quoi l’approche produit (plutôt que projet) change-t-elle la prestation des services? Donnez des exemples."
+  },
+  {
+    "id": 17,
+    "category": "Évaluation & indicateurs",
+    "prompt": "Comment évalueriez-vous l’efficacité d’un nouveau programme gouvernemental après 12 mois? Indicateurs et limites.",
+    "followUps": [
+      "Quels KPI mènent la décision (outcomes vs outputs)?",
+      "Quelles limites méthodologiques acceptez-vous?",
+      "Comment intégrez-vous la voix des usagers?"
+    ],
+    "sampleAnswer": "On définit des outcomes mesurables, une ligne de base et un contrefactuel. Indicateurs: accès, temps de résolution, satisfaction, coût/unité. Limites: attribution, délais, biais d’échantillonnage.",
+    "tags": [
+      "evaluation",
+      "kpi",
+      "rbm"
+    ],
+    "en": "How would you assess a new program’s effectiveness after 12 months?",
+    "sampleAnswer_en": "Define outcomes and baseline; track access, resolution time, satisfaction, unit cost; note attribution and sampling limits.",
+    "fr": "Comment évalueriez-vous l’efficacité d’un nouveau programme gouvernemental après 12 mois? Indicateurs et limites."
+  },
+  {
+    "id": 18,
+    "category": "Stratégie Cloud",
+    "prompt": "Jusqu’à quel point faut-il standardiser les technologies cloud à l’échelle du gouvernement? Avantages/risques.",
+    "followUps": [
+      "Quels composants standardiser vs. laisser au choix?",
+      "Comment éviter l’enfermement propriétaire?",
+      "Quel modèle de gouvernance (patterns, garde‑fous)?"
+    ],
+    "sampleAnswer": "Standardiser l’identité, la sécurité, l’observabilité et les patterns d’architecture; laisser l’outillage non critique souple. Multicloud pragmatique, sorties contractuelles et portabilité.",
+    "tags": [
+      "architecture",
+      "cloud",
+      "standards",
+      "technology"
+    ],
+    "en": "How far should cloud standardization go government-wide?",
+    "sampleAnswer_en": "Standardize identity, security, observability, reference patterns; keep tooling flexible; design for portability.",
+    "fr": "Jusqu’à quel point faut-il standardiser les technologies cloud à l’échelle du gouvernement? Avantages/risques."
+  },
+  {
+    "id": 19,
+    "category": "Fournisseurs & SLAs",
+    "prompt": "Comment réagiriez-vous si un partenaire externe ne respecte pas une entente de niveau de service critique?",
+    "followUps": [
+      "Quels leviers contractuels activez-vous?",
+      "Comment protégez-vous les usagers pendant l’incident?",
+      "Quels mécanismes d’escalade et d’après‑action?"
+    ],
+    "sampleAnswer": "On active l’escalade contractuelle, on protège le service minimal, et on mène une revue post‑incident avec plans correctifs mesurables et pénalités applicables.",
+    "tags": [
+      "SLA",
+      "governance",
+      "vendor"
+    ],
+    "en": "How would you respond if a partner breaches a critical SLA?",
+    "sampleAnswer_en": "Trigger escalation, protect minimum service, run a post‑incident review with corrective actions and penalties.",
+    "fr": "Comment réagiriez-vous si un partenaire externe ne respecte pas une entente de niveau de service critique?"
+  },
+  {
+    "id": 20,
+    "category": "Conduite du changement",
+    "prompt": "Quelles stratégies utiliser pour gérer la résistance au changement lors d’un déploiement majeur?",
+    "followUps": [
+      "Quels segments d’acteurs identifiez-vous?",
+      "Quel plan de communication par phase?",
+      "Quels indicateurs d’adoption suivez-vous?"
+    ],
+    "sampleAnswer": "Segmenter les acteurs, co‑construire, former en contexte, mesurer l’adoption (usage actif, satisfaction) et ajuster via boucles de rétroaction.",
+    "tags": [
+      "change-management",
+      "communications",
+      "training"
+    ],
+    "en": "Which strategies will you use to manage resistance to change in a major rollout?",
+    "sampleAnswer_en": "Segment stakeholders, co-design, context-based training, track active use and satisfaction, iterate.",
+    "fr": "Quelles stratégies utiliser pour gérer la résistance au changement lors d’un déploiement majeur?"
+  },
+  {
+    "id": 21,
+    "category": "Arbitrage & gouvernance",
+    "prompt": "Décrivez une situation où des priorités concurrentes se chevauchent. Comment arbitrer de manière équitable?",
+    "followUps": [
+      "Quels critères objectifs utilisez-vous?",
+      "Comment gérez-vous les conflits d’intérêts?",
+      "Quel mécanisme d’escalade proposez-vous?"
+    ],
+    "sampleAnswer": "On rend l’arbitrage explicite: critères valeur/risque/contraintes, comité de priorisation, transparence des décisions et options.",
+    "tags": [
+      "governance",
+      "prioritization"
+    ],
+    "en": "When priorities collide, how do you arbitrate fairly?",
+    "sampleAnswer_en": "Use explicit criteria (value, risk, constraints), a prioritization forum, and transparent decisions.",
+    "fr": "Décrivez une situation où des priorités concurrentes se chevauchent. Comment arbitrer de manière équitable?"
+  },
+  {
+    "id": 22,
+    "category": "Grands projets publics",
+    "prompt": "Selon vous, quelles sont les causes profondes des retards récurrents dans les grands projets TI publics? Solutions.",
+    "followUps": [
+      "Quelles causes racines voyez-vous (gouvernance, scope)?",
+      "Quelles pratiques agiles adaptées au secteur public?",
+      "Comment réduire le risque d’intégration tardive?"
+    ],
+    "sampleAnswer": "Causes: scope inflation, gouvernance lourde, contrats figés. Solutions: incréments livrables, intégration continue, lotissement contractuel, et décisions rapprochées des équipes.",
+    "tags": [
+      "delivery",
+      "governance",
+      "risk"
+    ],
+    "en": "Root causes of delays in large public IT projects? Solutions?",
+    "sampleAnswer_en": "Scope creep, heavy governance, fixed contracts; use incremental delivery, CI, modular contracts, empowered teams.",
+    "fr": "Selon vous, quelles sont les causes profondes des retards récurrents dans les grands projets TI publics? Solutions."
+  },
+  {
+    "id": 23,
+    "category": "Équité & inclusion numérique",
+    "prompt": "Comment mesurer l’équité d’accès aux services numériques pour des communautés mal desservies?",
+    "followUps": [
+      "Quels segments sont sous‑desservis?",
+      "Comment mesurez-vous l’accessibilité réelle (terrain)?",
+      "Quelles mesures correctives à court terme?"
+    ],
+    "sampleAnswer": "Mesurer les écarts d’usage par région, langue, capacités et connectivité; co‑concevoir avec les communautés; offrir des canaux alternatifs et du soutien humain.",
+    "tags": [
+      "equity",
+      "inclusion",
+      "measurement"
+    ],
+    "en": "How would you measure equity of access to digital services for underserved communities?",
+    "sampleAnswer_en": "Track usage gaps by region/language/ability/connectivity; co-design; provide assisted channels.",
+    "fr": "Comment mesurer l’équité d’accès aux services numériques pour des communautés mal desservies?"
+  },
+  {
+    "id": 24,
+    "category": "Open source par défaut",
+    "prompt": "Seriez-vous favorable à l’expérimentation de solutions open source par défaut? Expliquez les conditions de succès.",
+    "followUps": [
+      "Quelles conditions (licences, sécurité, gouvernance)?",
+      "Comment gérez-vous la contribution en amont?",
+      "Quels cas exigent des exceptions?"
+    ],
+    "sampleAnswer": "Favorables si gouvernance claire, SBOM, gestion des vulnérabilités et contribution active. Exceptions pour secrets ou contraintes réglementaires.",
+    "tags": [
+      "innovation",
+      "open-source",
+      "policy",
+      "procurement"
+    ],
+    "en": "Would you default to open source? Under what conditions?",
+    "sampleAnswer_en": "Yes, with governance, SBOM, vuln management, and upstream contributions; allow exceptions for regulatory/secret contexts.",
+    "fr": "Seriez-vous favorable à l’expérimentation de solutions open source par défaut? Expliquez les conditions de succès."
+  },
+  {
+    "id": 25,
+    "category": "Éthique des données & fournisseurs",
+    "prompt": "Comment traiteriez-vous un enjeu éthique lié à l’utilisation de données sensibles par un fournisseur?",
+    "followUps": [
+      "Quelles clauses contractuelles clés (localisation, audit)?",
+      "Comment limitez-vous le traitement au minimum nécessaire?",
+      "Quel processus d’alerte et de remédiation?"
+    ],
+    "sampleAnswer": "On applique la minimisation, le chiffrement, la localisation contrôlée, le droit d’audit et des plans de remédiation horodatés.",
+    "tags": [
+      "data",
+      "ethics",
+      "privacy",
+      "vendor"
+    ],
+    "en": "How would you handle an ethical issue with a vendor using sensitive data?",
+    "sampleAnswer_en": "Enforce minimization, encryption, data residency, audit rights, and time-bound remediation plans.",
+    "fr": "Comment traiteriez-vous un enjeu éthique lié à l’utilisation de données sensibles par un fournisseur?"
+  },
+  {
+    "id": 26,
+    "category": "Gouvernance produit",
+    "prompt": "Quels mécanismes proposez-vous pour améliorer la responsabilisation (accountability) des équipes produits?",
+    "followUps": [
+      "Quels rôles et RACI établissez-vous?",
+      "Quels objectifs et résultats clés (OKR)?",
+      "Quels mécanismes d’après‑action (AAR) réguliers?"
+    ],
+    "sampleAnswer": "Clarifier le RACI produit, publier un tableau de bord d’OKR, pratiquer des revues trimestrielles et AAR sur incidents et livraisons.",
+    "tags": [
+      "accountability",
+      "delivery",
+      "metrics",
+      "product"
+    ],
+    "en": "What mechanisms improve accountability in product teams?",
+    "sampleAnswer_en": "Define product RACI, publish OKR dashboards, and run regular AARs.",
+    "fr": "Quels mécanismes proposez-vous pour améliorer la responsabilisation (accountability) des équipes produits?"
+  },
+  {
+    "id": 27,
+    "category": "Sécurité & réponse aux incidents",
+    "prompt": "Si une cyberattaque survenait un vendredi soir, quel serait votre plan d’intervention et de communication?",
+    "followUps": [
+      "Quel ordre d’escalade technique et décisionnel?",
+      "Comment communiquez‑vous aux usagers et médias?",
+      "Quels tests de reprise (RTO/RPO) pratiquez‑vous?"
+    ],
+    "sampleAnswer": "Activer l’équipe CERT, isoler, contenir, communiquer en transparence (préavis, conseils), et exécuter un plan RTO/RPO testé. Post‑mortem avec actions suivies.",
+    "tags": [
+      "comms",
+      "cybersecurity",
+      "incident-response"
+    ],
+    "en": "It’s Friday night and a cyberattack hits. What is your response and comms plan?",
+    "sampleAnswer_en": "Activate CERT, contain, notify users, run tested RTO/RPO; follow with a post‑incident review.",
+    "fr": "Si une cyberattaque survenait un vendredi soir, quel serait votre plan d’intervention et de communication?"
+  },
+  {
+    "id": 28,
+    "category": "Futur des compétences",
+    "prompt": "Quelles compétences seront les plus critiques pour la fonction publique dans cinq ans? Pourquoi?",
+    "followUps": [
+      "Quelles compétences cœur vs. rares?",
+      "Comment les développer (apprentissage, mobilité)?",
+      "Quels indicateurs d’acquisition utilisez-vous?"
+    ],
+    "sampleAnswer": "Compétences clés: données/IA, cybersécurité, produit, partenariats, et rédaction claire. Investir dans l’apprentissage continu et la mobilité interne.",
+    "tags": [
+      "future-of-work",
+      "skills"
+    ],
+    "en": "Which skills will be critical in five years for the public service?",
+    "sampleAnswer_en": "Data/AI, cybersecurity, product skills, partnership, clear writing; invest in continuous learning and mobility.",
+    "fr": "Quelles compétences seront les plus critiques pour la fonction publique dans cinq ans? Pourquoi?"
+  },
+  {
+    "id": 29,
+    "category": "IA, éthique et services",
+    "prompt": "Comment établir des relations de confiance avec des parties prenantes ayant des objectifs divergents?",
+    "followUps": [
+      "Quels cas d’usage prioriseriez-vous dans les 6 prochains mois?",
+      "Comment garantir l’explicabilité des modèles?",
+      "Quels risques de biais anticipez-vous et comment les mitiger?"
+    ],
+    "sampleAnswer": "L’IA doit être ciblée sur des cas d’usage à fort impact (orientation, tri, aide à la décision) avec des garde‑fous: transparence des modèles, évaluations de biais, supervision humaine et retrait d’urgence. On démarre par des pilotes mesurables, en impliquant juristes et sécurité.",
+    "tags": [
+      "AI",
+      "digital-government",
+      "ethics",
+      "risk",
+      "service-design"
+    ],
+    "en": "To what extent should AI be used to improve citizen services? Justify and anticipate risks.",
+    "sampleAnswer_en": "Use AI for high-impact, measurable use cases with human-in-the-loop, transparency, bias testing, and kill-switches. Start with pilots tied to outcomes.",
+    "fr": "Comment établir des relations de confiance avec des parties prenantes ayant des objectifs divergents?"
+  },
+  {
+    "id": 30,
+    "category": "Automatisation & décisions",
+    "prompt": "Quelle est votre position sur l’automatisation de décisions administratives? Quelles balises mettre en place?",
+    "followUps": [
+      "Quels cas sont admissibles ou exclus?",
+      "Quel droit d’appel humain garantissez-vous?",
+      "Comment gérez-vous l’explicabilité et l’audit?"
+    ],
+    "sampleAnswer": "Automatiser les décisions répétitives et faibles enjeux; prévoir un examen humain pour les cas sensibles, une traçabilité complète et un droit d’appel.",
+    "tags": [
+      "automation",
+      "ethics",
+      "governance"
+    ],
+    "en": "What is your view on automating administrative decisions? What safeguards?",
+    "sampleAnswer_en": "Automate low-risk routine cases; ensure human appeal, traceability, and explainability.",
+    "fr": "Quelle est votre position sur l’automatisation de décisions administratives? Quelles balises mettre en place?"
+  },
+  {
+    "id": 31,
+    "category": "IA, éthique et services",
+    "prompt": "Comment justifier un investissement de 3 M$ dans un programme numérique face à d’autres priorités sociales?",
+    "followUps": [
+      "Quels cas d’usage prioriseriez-vous dans les 6 prochains mois?",
+      "Comment garantir l’explicabilité des modèles?",
+      "Quels risques de biais anticipez-vous et comment les mitiger?"
+    ],
+    "sampleAnswer": "L’IA doit être ciblée sur des cas d’usage à fort impact (orientation, tri, aide à la décision) avec des garde‑fous: transparence des modèles, évaluations de biais, supervision humaine et retrait d’urgence. On démarre par des pilotes mesurables, en impliquant juristes et sécurité.",
+    "tags": [
+      "AI",
+      "budget",
+      "digital-government",
+      "ethics",
+      "risk",
+      "service-design",
+      "strategy"
+    ],
+    "en": "To what extent should AI be used to improve citizen services? Justify and anticipate risks.",
+    "sampleAnswer_en": "Use AI for high-impact, measurable use cases with human-in-the-loop, transparency, bias testing, and kill-switches. Start with pilots tied to outcomes.",
+    "fr": "Comment justifier un investissement de 3 M$ dans un programme numérique face à d’autres priorités sociales?"
+  },
+  {
+    "id": 32,
+    "category": "Conformité vs Vitesse",
+    "prompt": "Quels compromis accepteriez-vous entre rapidité de livraison et conformité réglementaire?",
+    "followUps": [
+      "Quels contrôles intégrés au pipeline?",
+      "Où placez-vous des garde‑fous automatisés?",
+      "Quand accepter un risque résiduel?"
+    ],
+    "sampleAnswer": "Intégrer la conformité au flux de livraison (tests, SAST/DAST, approbations par seuils). Documenter le risque résiduel et les plans de mitigation.",
+    "tags": [
+      "compliance",
+      "delivery",
+      "risk"
+    ],
+    "en": "What trade-offs do you accept between speed and regulatory compliance?",
+    "sampleAnswer_en": "Bake compliance into pipelines; automate gates; document residual risk and mitigations.",
+    "fr": "Quels compromis accepteriez-vous entre rapidité de livraison et conformité réglementaire?"
+  },
+  {
+    "id": 33,
+    "category": "Plateformes & réutilisation",
+    "prompt": "Dans quelle mesure la réutilisation de composants (APIs, modèles communs) peut-elle accélérer la livraison?",
+    "followUps": [
+      "Quels composants mutualiser (identité, paiement)?",
+      "Quel catalogue et modèle de gouvernance?",
+      "Comment mesurez-vous la valeur de réutilisation?"
+    ],
+    "sampleAnswer": "Promouvoir des composants communs (identité, paiements), un catalogue référençable, des SDKs, et des métriques de réutilisation (temps/argent évités).",
+    "tags": [
+      "APIs",
+      "platforms",
+      "reuse"
+    ],
+    "en": "To what extent can reuse (APIs, common components) speed delivery?",
+    "sampleAnswer_en": "Common components + catalogs/SDKs; track reuse value (time/cost avoided).",
+    "fr": "Dans quelle mesure la réutilisation de composants (APIs, modèles communs) peut-elle accélérer la livraison?"
+  },
+  {
+    "id": 34,
+    "category": "Gestion de performance & comportement",
+    "prompt": "Comment gérer un employé performant techniquement mais dont le comportement nuit à l’équipe?",
+    "followUps": [
+      "Quels faits observables documentez-vous?",
+      "Quel plan d’amélioration avec délais?",
+      "Quand envisager une transition de rôle?"
+    ],
+    "sampleAnswer": "Séparer performance technique et comportement. Fixer des attentes claires, offrir coaching et délais; escalader si non‑respect persistant.",
+    "tags": [
+      "culture",
+      "hr",
+      "management"
+    ],
+    "en": "How do you handle a strong technical performer whose behavior harms the team?",
+    "sampleAnswer_en": "Clarify expectations, coach with timelines, escalate or change role if issues persist.",
+    "fr": "Comment gérer un employé performant techniquement mais dont le comportement nuit à l’équipe?"
+  },
+  {
+    "id": 35,
+    "category": "Politiques Cloud",
+    "prompt": "Quel serait l’impact d’une politique « cloud-only » sur la sécurité, les coûts et les talents?",
+    "followUps": [
+      "Quels risques de dépendance et coûts cachés?",
+      "Quel plan de montée en compétences?",
+      "Quelles contraintes de résidence des données?"
+    ],
+    "sampleAnswer": "Cloud‑only apporte élasticité et vitesse, mais exige gestion de coûts, compétences et risques fournisseurs; prévoir garde‑fous contractuels et FinOps.",
+    "tags": [
+      "cloud",
+      "costs",
+      "security",
+      "talent",
+      "technology"
+    ],
+    "en": "Impact of a cloud-only policy on security, costs, and talent?",
+    "sampleAnswer_en": "Elasticity and speed with vendor risk and skill needs; add FinOps and strong vendor controls.",
+    "fr": "Quel serait l’impact d’une politique « cloud-only » sur la sécurité, les coûts et les talents?"
+  },
+  {
+    "id": 36,
+    "category": "Stratégie de produit & réalignement",
+    "prompt": "Comment feriez-vous évoluer un service peu utilisé mais politiquement visible? Options et risques.",
+    "followUps": [
+      "Quelles hypothèses testez-vous rapidement?",
+      "Quelle option: pivoter, intégrer, ou arrêter?",
+      "Comment gérez-vous la communication publique?"
+    ],
+    "sampleAnswer": "Valider la valeur par des expériences ciblées. Options: pivot fonctionnel, intégration à un autre service, ou sortie ordonnée avec alternatives claires.",
+    "tags": [
+      "product",
+      "strategy",
+      "sunset"
+    ],
+    "en": "How would you evolve a low-use but politically visible service?",
+    "sampleAnswer_en": "Test value quickly; pivot, integrate, or sunset with clear alternatives and comms.",
+    "fr": "Comment feriez-vous évoluer un service peu utilisé mais politiquement visible? Options et risques."
+  },
+  {
+    "id": 37,
+    "category": "Accessibilité dès la conception",
+    "prompt": "Que pensez-vous de l’obligation d’accessibilité numérique? Comment l’intégrer dès la conception?",
+    "followUps": [
+      "Quelles normes appliquez-vous (WCAG, EN 301 549)?",
+      "Comment testez-vous avec des usagers réels?",
+      "Quel budget/temps allouez-vous dans le backlog?"
+    ],
+    "sampleAnswer": "Accessibilité by design: critères WCAG, tests utilisateurs assistifs, et budgets dédiés. Intégrer des critères dès les user stories.",
+    "tags": [
+      "accessibility",
+      "compliance",
+      "inclusion",
+      "inclusive-design"
+    ],
+    "en": "What do you think about mandatory digital accessibility? How to build it in from design?",
+    "sampleAnswer_en": "Adopt WCAG, test with assistive users, and budget accessibility in stories from day one.",
+    "fr": "Que pensez-vous de l’obligation d’accessibilité numérique? Comment l’intégrer dès la conception?"
+  },
+  {
+    "id": 38,
+    "category": "Dette technique & évolution",
+    "prompt": "Décrivez votre stratégie pour réduire la dette technique sans interrompre la valeur livrée.",
+    "followUps": [
+      "Comment la mesurez-vous (lint, complexité, incidents)?",
+      "Quel ratio capacité run vs. change?",
+      "Quelles règles pour rembourser en continu?"
+    ],
+    "sampleAnswer": "Cartographier la dette, définir un budget de remédiation (ex. 20%), l’intégrer au flux et suivre incidents, complexité et MTTR.",
+    "tags": [
+      "architecture",
+      "sustainability",
+      "tech-debt"
+    ],
+    "en": "How would you reduce technical debt without stopping delivery?",
+    "sampleAnswer_en": "Map debt, set a remediation budget (e.g., 20%), integrate into flow, track incidents/complexity/MTTR.",
+    "fr": "Décrivez votre stratégie pour réduire la dette technique sans interrompre la valeur livrée."
+  },
+  {
+    "id": 39,
+    "category": "Bénéfices & valeur réalisée",
+    "prompt": "Comment établiriez-vous un tableau de bord trimestriel de bénéfices pour un programme? Indicateurs et sources.",
+    "followUps": [
+      "Quelles sources (logs, Sondages GC, CRM)?",
+      "Quels indicateurs mènent les décisions?",
+      "Quel rythme de revue et de publication?"
+    ],
+    "sampleAnswer": "Tableau trimestriel: indicateurs de résultats (temps, satisfaction, adoption), sources traçables, et revues de bénéfices avec parties prenantes.",
+    "tags": [
+      "benefits",
+      "dashboard",
+      "measurement"
+    ],
+    "en": "How would you build a quarterly benefits dashboard?",
+    "sampleAnswer_en": "Track outcomes (time, satisfaction, adoption) from traceable sources; run quarterly reviews.",
+    "fr": "Comment établiriez-vous un tableau de bord trimestriel de bénéfices pour un programme? Indicateurs et sources."
+  },
+  {
+    "id": 40,
+    "category": "Innovation & gestion des risques",
+    "prompt": "Êtes-vous d’accord qu’il faut accepter plus de risque pour innover dans le secteur public? Donnez des exemples",
+    "followUps": [
+      "Quels espaces d’expérimentation contrôlés?",
+      "Quels critères de sortie/arrêt?",
+      "Comment protégez-vous les usagers?"
+    ],
+    "sampleAnswer": "Créer des bacs à sable avec garde‑fous, des critères de succès/arrêt, et une communication transparente. L’innovation doit rester responsable.",
+    "tags": [
+      "innovation",
+      "policy",
+      "risk"
+    ],
+    "en": "Should the public sector accept more risk to innovate? Examples.",
+    "sampleAnswer_en": "Use sandboxes with guardrails and clear stop criteria; ensure responsible, transparent innovation.",
+    "fr": "Êtes-vous d’accord qu’il faut accepter plus de risque pour innover dans le secteur public? Donnez des exemples"
   }
 ]

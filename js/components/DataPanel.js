@@ -119,7 +119,7 @@ const DataPanel = {
 
           <!-- Table preview (paginated, 20 per page) -->
           <div style="overflow-x:auto;">
-            <table class="data-table" style="width:100%; border-collapse:collapse; min-width:640px;">
+            <table class="data-table" style="width:100%; border-collapse:collapse; min-width:840px;">
               <caption class="dim" style="text-align:left; padding:4px 0;">Uploaded entries (filtered view; 20 per page)</caption>
               <thead>
                 <tr>
@@ -127,7 +127,9 @@ const DataPanel = {
                   <th scope="col" style="text-align:center;">FR</th>
                   <th scope="col" style="text-align:left; white-space:nowrap;">Article</th>
                   <th scope="col" style="text-align:center;">EN</th>
-                  <th scope="col" style="text-align:center;">Tags</th>
+                  <th scope="col" style="text-align:left;">Tags</th>
+                  <th v-if="hasExampleFR" scope="col" style="text-align:left;">Example (FR)</th>
+                  <th v-if="hasExampleEN" scope="col" style="text-align:left;">Example (EN)</th>
                 </tr>
               </thead>
               <tbody>
@@ -144,9 +146,16 @@ const DataPanel = {
                   <td style="padding:6px 0; vertical-align:top;">
                     {{ row.item.en || row.item.EN || '' }}
                   </td>
-                  <td style="padding:6px 0; vertical-align:top;">
+                  <td style="padding:6px 12px 6px 0; vertical-align:top;">
                     {{ formatTags(row.item.tags) }}
                   </td>
+                  <td v-if="hasExampleFR" style="padding:6px 0; vertical-align:top;">
+                    {{ row.item.example_fr || row.item?.example?.fr || row.item.Example_FR || row.item.Example || '' }}
+                  </td>
+                  <td v-if="hasExampleEN" style="padding:6px 0; vertical-align:top;">
+                    {{ row.item.example_en || row.item?.example?.en || row.item.Example_EN || row.item.EN_example || '' }}
+                  </td>
+
                 </tr>
               </tbody>
             </table>
@@ -316,7 +325,18 @@ const DataPanel = {
     rowCount() {
       return (this.state?.wordPicker?.items || []).length || 0;
     },
-
+    hasExampleFR() {
+      const items = this.state?.wordPicker?.items || [];
+      return items.some(it =>
+        it.example_fr || it?.example?.fr || it.Example_FR || it.example || it.Example
+      );
+    },
+    hasExampleEN() {
+      const items = this.state?.wordPicker?.items || [];
+      return items.some(it =>
+        it.example_en || it?.example?.en || it.Example_EN || it.EN_example
+      );
+    },
     // --- Selection count ---
     selectedCount() {
       const sel = this.state?.wordPicker?.selected || {};
