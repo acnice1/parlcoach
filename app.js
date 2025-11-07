@@ -40,6 +40,16 @@ import PlanPanel from './js/components/PlanPanel.js';
 
 // ---------------- Vue / Dexie setup ----------------
 const db = initDexie();
+
+
+//DEBUG 
+//window._db = db;
+//window.debugQB = async () => {
+ // const s = await window._db.settings.get("v1");
+ // console.log("questionBank length:", Array.isArray(s?.questionBank) ? s.questionBank.length : 0, s);
+//};
+
+
 const { createApp, reactive, ref, watch, toRefs, nextTick } = Vue;
 
 // --- i18n init (must be before app so we can wire $t/$n/$d) ---
@@ -746,6 +756,10 @@ watch(() => state.vocab.direction, () => {
       };
     })();
 
+
+    // RECORDING HELPERS 
+
+    
     async function persistRecording({ blob, name, mime, transcript, question, answer }) {
       const dir = "recordings";
       const path = `${dir}/${name}`;
@@ -782,7 +796,10 @@ watch(() => state.vocab.direction, () => {
   state.recordings = hydrated; // <-- the missing line
 }
 
-
+async function loadQuestionBank() {
+  const s = await db.settings.get("v1");
+  state.questionBank = Array.isArray(s?.questionBank) ? s.questionBank : [];
+}
     //  
     async function findRecordingId(r) {
       if (r?.id != null) return r.id;
@@ -2130,7 +2147,8 @@ if (wantENtoFR) {
       }
 
       applySettingsToState(state, loadSettings());
-
+      
+      
       await methods.autoImportCsvListsFromData().catch(console.warn);
       await reconcileVocabMetaFromIndex();
       await refreshSavedListsUI();
@@ -2140,6 +2158,7 @@ if (wantENtoFR) {
 
       // RECORDINGS HYDRATION
       await loadRecordingsFromDB();
+      await loadQuestionBank();
 
       // LIST HYDRATION 
       if (active) {
@@ -2266,26 +2285,36 @@ try {
       }
       state.verbs = await db.verbs.orderBy("infinitive").toArray();
 
-      if (!state.questions?.length) {
-        try {
-          const resp = await fetch("interview_questions.json?v=" + Date.now());
-          if (resp.ok) {
-            const raw = await resp.json();
-            const arr = Array.isArray(raw) ? raw : Array.isArray(raw?.questions) ? raw.questions : null;
-            if (arr) {
-              state.questions = arr.map((q, i) => ({
-                id: q.id ?? i + 1,
-                fr: (q.fr ?? q.french ?? q.prompt ?? "").trim(),
-                en: (q.en ?? q.english ?? q.translation ?? "").trim(),
-                tags: Array.isArray(q.tags) ? q.tags.slice() : [],
-              }));
-              console.log(`Loaded default interview_questions.json (${arr.length} entries).`);
-            }
-          } else {
-            console.warn("Could not load interview_questions.json (HTTP " + resp.status + ")");
-          }
-        } catch (err) { console.warn("Failed to fetch interview_questions.json", err); }
-      }
+      // LOAD INTERVIEW QUESTIONS FOR RECORDER PANEL 
+// Load interview_questions.json directly into the canonical questionBank
+try {
+  const resp = await fetch("interview_questions.json?v=" + Date.now());
+  if (resp.ok) {
+    const raw = await resp.json();
+    const arr = Array.isArray(raw) ? raw : (Array.isArray(raw?.questions) ? raw.questions : null);
+    if (arr && arr.length) {
+      state.questionBank = arr.map((q, i) => ({
+        id: q.id ?? i + 1,
+        prompt: String(q.prompt ?? q.fr ?? q.french ?? "").trim(),
+        sampleAnswer: String(q.sampleAnswer ?? q.en ?? q.english ?? q.translation ?? "").trim(),
+        category: String(q.category ?? "interview").trim(),
+        tags: Array.isArray(q.tags) ? q.tags.slice() : [],
+        followUps: Array.isArray(q.followUps) ? q.followUps.slice() : [],
+      }));
+
+      // optional: persist so it survives reloads
+      const existing = (await db.settings.get("v1")) || { key: "v1" };
+      await db.settings.put({ ...existing, questionBank: state.questionBank, key: "v1" });
+
+    console.log(`[QB] Loaded interview_questions.json (${state.questionBank.length})`);
+    }
+  } else {
+    console.warn("Could not load interview_questions.json (HTTP " + resp.status + ")");
+  }
+} catch (e) {
+  console.warn("[QB] failed to load interview_questions.json:", e);
+}
+
     }
 
     // Examples/rules helper
@@ -2453,10 +2482,10 @@ app.config.globalProperties.$n = (x, o) => i18n.n(x, o);
 app.config.globalProperties.$d = (x, o) => i18n.d(x, o);
 
 //  expose for console debugging 
-window.$t = (k, v) => i18n.t((k.includes(':') ? k.replace(':','.') : (k.startsWith('common.') ? k : `common.${k}`)), v);
-window.$n = (x, o) => i18n.n(x, o);
-window.$d = (x, o) => i18n.d(x, o);
-window.setLocale = i18n.setLocale;
+//window.$t = (k, v) => i18n.t((k.includes(':') ? k.replace(':','.') : (k.startsWith('common.') ? k : `common.${k}`)), v);
+//window.$n = (x, o) => i18n.n(x, o);
+//window.$d = (x, o) => i18n.d(x, o);
+//window.setLocale = i18n.setLocale;
 // expose for console debugging
 window.__i18n = i18n;
 
