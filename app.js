@@ -849,14 +849,25 @@ watch(() => state.vocab.direction, () => {
     // Filter SRS due cards by direction tag added at import time (dir:FR_EN / dir:EN_FR)
 function applySrsDirectionFilter() {
   const want = state?.vocab?.direction || "FR_EN";
-  const tag = "dir:" + want;
-  const has = Array.isArray(state.flashcards?.dueCards) ? state.flashcards.dueCards : [];
+  const tagWant = "dir:" + want;
 
-  state.flashcards.dueCards = has.filter(c => (c?.tags || []).includes(tag));
-  // keep UI consistent
+  const due = Array.isArray(state.flashcards?.dueCards) ? state.flashcards.dueCards : [];
+
+  // First pass: strict match on the chosen direction
+  const strict = due.filter(c => (c?.tags || []).includes(tagWant));
+
+  if (strict.length) {
+    state.flashcards.dueCards = strict;
+  } else {
+    // Fallback: include untagged cards (no dir:* tag at all)
+    const untagged = due.filter(c => !Array.isArray(c?.tags) || !c.tags.some(t => String(t).startsWith("dir:")));
+    state.flashcards.dueCards = untagged.length ? untagged : due; // last resort, don't wipe
+  }
+
   state.flashcards.currentCard = state.flashcards.dueCards[0] || null;
   state.flashcards.showBack = false;
 }
+
 
 
     // Grammar normalizers
@@ -1471,12 +1482,13 @@ async function upsertBuiltInJsonList(db, state, { name, description, vocab }) {
 
           if (state.wordPicker.activeList === listName) {
             state.wordPicker.activeList = "";
-            try { await methods.loadListIntoReview(""); } catch (e) { console.warn("[Lists] fallback failed:", e); }
+            try { await methods.loadListIntoReview(""); } catch (e) 
+            { toast.warn("[Lists] fallback failed:", e); }
           }
           refreshSavedListsUI();
-          console.log(`[Lists] Deleted "${listName}"`);
+          toast.success(`[Lists] Deleted "${listName}"`);
         } catch (e) {
-          console.error("[Lists] deleteSavedList failed:", e);
+          //console.error("[Lists] deleteSavedList failed:", e);
           toast.error("Could not delete that list.");
         }
         if (state.wordPicker.activeList === listName) {
@@ -1829,7 +1841,7 @@ async function upsertBuiltInJsonList(db, state, { name, description, vocab }) {
             `Expected headers include EN/FR/article (case-insensitive).`
           );
         } else {
-          console.log(`CSV loaded: ${items.length} row(s) normalized (of ${parsed.rows.length} raw).`);
+          toast.info(`CSV loaded: ${items.length} row(s) normalized (of ${parsed.rows.length} raw).`);
         }
       } catch (e) {
         toast.error("Failed to read CSV: " + (e.message || e));
@@ -1990,11 +2002,17 @@ async function loadListIntoReview(name) {
 
   // Persist pointer through your existing helper (if present in scope)
   try { await saveReviewPointer?.(); } catch {}
+ 
+  const count = state.vocab?.deck?.length || cards.length;
+  const plural = count === 1 ? "" : "s";
+  toast.success(`Loaded "${listName || "(unnamed)"}" into Review: ${count} card${plural}.`);
 
   // Jump user to the Review UI
  // state.tab = "learn";
   //state.learnTab = "vocab";
+     
 }
+
 // In app.js (methods section) — replace the whole function
 async function loadListIntoSrs(name, opts = { frToEn: true, enToFr: true }) {
   const wantFRtoEN = opts.frToEn !== false;
@@ -2168,13 +2186,18 @@ if (wantENtoFR) {
         const srsCount = await db.vocab.count();
         if (!srsCount && Array.isArray(state.vocab.cards) && state.vocab.cards.length) {
           const nowISO = new Date().toISOString();
-          const seedRows = state.vocab.cards.slice(0, 200).map((c) => ({
-            front: (c.fr || "").trim(), back: (c.en || "").trim(),
-            due: nowISO, ease: 2.5, reps: 0, interval: 0, last: nowISO,
-            fr: c.fr || "", en: c.en || "", article: c.article || "", example: c.example ?? null,
-            topic: c.topic || "", partOfSpeech: c.partOfSpeech || "", gender: c.gender || "",
-            tags: Array.isArray(c.tags) ? c.tags.filter(Boolean) : [],
-          })).filter((r) => r.front && r.back);
+// AFTER (adds dir:FR_EN)
+const seedRows = state.vocab.cards.slice(0, 200).map((c) => ({
+  front: (c.fr || "").trim(), back: (c.en || "").trim(),           // FR -> EN seed
+  due: nowISO, ease: 2.5, reps: 0, interval: 0, last: nowISO,
+  fr: c.fr || "", en: c.en || "", article: c.article || "", example: c.example ?? null,
+  topic: c.topic || "", partOfSpeech: c.partOfSpeech || "", gender: c.gender || "",
+  tags: (() => {
+    const base = Array.isArray(c.tags) ? c.tags.filter(Boolean) : [];
+    // ensure a direction tag so later filters don't wipe dueCards
+    return base.some(t => String(t).startsWith("dir:")) ? base : [...base, "dir:FR_EN"];
+  })(),
+})).filter((r) => r.front && r.back);
 
           const cleanSeedRows = seedRows.map(sanitizeSrsRow).filter((r) => r.front && r.back);
           if (cleanSeedRows.length) {
@@ -2206,6 +2229,31 @@ if (wantENtoFR) {
         }
         await Vocab.reloadVocabByTag(db, state.flashcards);
       } catch (e) { console.warn("[SRS bootstrap] failed:", e); }
+
+      // --- Migration: ensure direction tags exist on legacy rows ---
+try {
+  const rows = await db.vocab.toArray();
+  for (const r of rows) {
+    const tags = Array.isArray(r.tags) ? r.tags : [];
+    const hasDir = tags.some(t => String(t).startsWith("dir:"));
+    if (hasDir) continue;
+
+    // Infer direction from stored fields
+    const front = (r.front || "").trim();
+    const back  = (r.back  || "").trim();
+    const fr    = (r.fr    || "").trim();
+    const en    = (r.en    || "").trim();
+
+    let dir = "dir:FR_EN";
+    if (front && back && fr && en) {
+      if (front === en && back === fr) dir = "dir:EN_FR";
+      else dir = "dir:FR_EN";
+    }
+
+    try { await db.vocab.update(r.id, { tags: [...tags, dir] }); } catch {}
+  }
+} catch (e) { console.warn("[SRS migrate] dir tag retrofit failed:", e); }
+
 
       if (typeof Verb.maybeSeedVerbsFromTop200 === "function") {
         try { await Verb.maybeSeedVerbsFromTop200(db); } catch (e) { console.warn("[verbs] maybeSeedVerbsFromTop200 failed:", e); }
